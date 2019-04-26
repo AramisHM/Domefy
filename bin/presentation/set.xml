@@ -1,0 +1,13 @@
+
+		<FDS>
+			<info name="generated in slide-indexer" author="generated in slide-indexer" description="generated in slide-indexer" thumbnail="thumbnail.png"/>
+
+			<SlideGroup description = "Things 1" position="1.0f, 1.0f, 1.0f"/>
+		
+				<Slide img_file ="./presentation/1.xml"/>
+				<Slide img_file ="./presentation/2.xml"/>
+				<Slide img_file ="./presentation/3 #1.xml"/>
+				<Slide img_file ="./presentation/3.xml"/>
+			</SlideGroup>
+		</FDS>
+		

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="calibrator" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../../bin/Domefy-Calibrator_Debug" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../include" />
+				</Compiler>
+				<Linker>
+					<Add library="libfltk.a" />
+					<Add library="libfltk_forms.a" />
+					<Add library="libfltk_gl.a" />
+					<Add library="libfltk_images.a" />
+					<Add library="libTNet.a" />
+					<Add library="X11" />
+					<Add library="dl" />
+					<Add library="Xft" />
+					<Add library="Xext" />
+					<Add library="Xinerama" />
+					<Add library="fontconfig" />
+					<Add library="Xxf86vm" />
+					<Add library="Xfixes" />
+					<Add library="Xrender" />
+					<Add library="Xcursor" />
+					<Add directory="../../lib/Ubuntu GCC" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/calibrator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="dv_asset.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

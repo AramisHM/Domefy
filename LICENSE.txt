@@ -1,0 +1,26 @@
+Domefy v0.41.9 (fpmed-0.4)
+Copyright (c) 2014-2019, Aramis Hornung Moraes.
+All rights reserved.
+
+This code is copyright (c) Aramis Hornung Moraes.
+
+The contents of this software distribution archive may not be redistributed,
+reproduced, modified, transmitted, broadcast, published or adapted in anyway,
+shape or form, without the prior written consent of the owner,
+Aramis Hornung Moraes.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS''AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOTLIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FORA PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS ORCONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, ORPROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OFLIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDINGNEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THISSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+If you do not accept or cannot accept or comply with ALL the terms of
+the license, listed above and in this section, then you DO NOT have the
+right nor permission to use this software, such use is illegal under the
+terms of international Copyright law.

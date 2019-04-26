@@ -1,0 +1,90 @@
+#ifndef MYCUSTOMAPPLICATION_H
+#define MYCUSTOMAPPLICATION_H
+
+#include "FPMED.H"
+#include "Sample.h"
+#include "Slide.h"
+#include "SlideAnimator.h"
+#include "Urho3D.h"
+#include "Urho3DAll.h"
+#include "auxiliarAppFuncs.h"
+
+namespace Urho3D {
+class Button;
+class Connection;
+class Scene;
+class Text;
+class UIElement;
+}  // namespace Urho3D
+
+extern ServerMachine* machineMaster;
+
+#include "Sample.h"
+
+/*
+        Custom application class definition, in this
+        case, the framework for slide presentation in
+        fulldome, my master's project */
+
+#define N_SLICES 6000  // NUMBER OF SLICES FOR THE HUMAN VISIBLE PROJECT
+
+class MyCustomApplication : public Sample {
+    URHO3D_OBJECT(MyCustomApplication, Sample);
+
+   public:
+    MyCustomApplication(Context* context);
+    void Start();
+
+#ifdef fpmed_allow_cpp_application
+    void CreateScene();
+    void MoveCamera(float timeStep);
+    void HandleUpdates(StringHash eventType, VariantMap& eventData);
+    void updateCameraPosition();
+    void updateRemoteControls();
+#endif
+   protected:
+#ifdef fpmed_allow_cpp_application
+    Text* debTex; /* this will be used to show the debug info of this prototype
+                     app */
+    Material* hologramMaterial;  // this is a pointer to the billboard material
+                                 // that we will change the texture.
+    Node* hologramNode;
+    Material* holoTextArray[399];  // this is the array of pre-loaded materials
+                                   // that can be rapidly changed
+    Material* slidesMaterialArray[1024];  // this holds the individual slides
+                                          // materials
+    Material* slicesMaterials[N_SLICES];  // this holds the individual slices
+                                          // materials
+    Node* interestPointTexts_[1024];      // the texts for interest points
+
+    StaticModel* hologramPlane;
+    Node* slideNode;
+    StaticModel* slideModel;  // the master-slide model reference, used for
+                              // swap slides on the fly
+    fpmed::Slides s;          // the slides per-se
+    int currentSlideIndex;
+    SlideTransitionAnimatior*
+        mainSlideAnimator;  // used to make little animation on slide
+                            // transitions
+
+    // coords X Y are used to move camera in the polar system rather than the
+    // normal x y z
+    bool polarCam;
+    float coordX;
+    float corodY;
+
+    // coordinates for slide
+    float slideXDeg, slideYDeg;
+    float slideDistance;
+
+    int xaccel;  // used to give that momentum effect
+    int yaccel;  // used to give that momentum effect
+    float polarRadius_;
+    float loTransparency;
+    float cameraNearClipping;
+    int accelDecayIteration;
+#define accelDecayVar 25;
+    bool isholding;  // holding mouse?
+#endif               // fpmed_allow_cpp_application
+};
+#endif

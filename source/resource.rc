@@ -1,0 +1,25 @@
+#define AppIcon 101
+AppIcon ICON "../icon.ico"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "Pteronura Softworks\0"
+      VALUE "FileDescription", "Framework for multiprojection systems\0"
+      VALUE "FileVersion", "1.0\0"
+      VALUE "InternalName", "fpmed\0"
+      VALUE "LegalCopyright", "(c) 2019 Pteronura Softworks Inc. All Rights Reserved\0"
+      VALUE "OriginalFilename", "domefy.exe\0"
+      VALUE "ProductName", "Domefy - Fulldome Framework\0"
+      VALUE "ProductVersion", "1.0\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

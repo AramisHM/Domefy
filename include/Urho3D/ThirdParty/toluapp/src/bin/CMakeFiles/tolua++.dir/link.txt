@@ -1,0 +1,1 @@
+/usr/bin/cc -march=native -ffast-math -pthread -fdiagnostics-color=auto -O3 -DNDEBUG  -rdynamic CMakeFiles/tolua++.dir/tolua.c.o CMakeFiles/tolua++.dir/generated/toluabind.c.o  -o ../../../../../bin/tool/tolua++ ../lib/libtoluapp.a ../../../Lua/libLua.a -lm 

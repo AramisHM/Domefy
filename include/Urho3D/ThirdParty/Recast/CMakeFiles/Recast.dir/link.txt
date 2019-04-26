@@ -1,0 +1,2 @@
+/usr/bin/ar qc libRecast.a  CMakeFiles/Recast.dir/source/Recast.cpp.o CMakeFiles/Recast.dir/source/RecastAlloc.cpp.o CMakeFiles/Recast.dir/source/RecastArea.cpp.o CMakeFiles/Recast.dir/source/RecastContour.cpp.o CMakeFiles/Recast.dir/source/RecastFilter.cpp.o CMakeFiles/Recast.dir/source/RecastLayers.cpp.o CMakeFiles/Recast.dir/source/RecastMesh.cpp.o CMakeFiles/Recast.dir/source/RecastMeshDetail.cpp.o CMakeFiles/Recast.dir/source/RecastRasterization.cpp.o CMakeFiles/Recast.dir/source/RecastRegion.cpp.o
+/usr/bin/ranlib libRecast.a

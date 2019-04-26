@@ -1,0 +1,1 @@
+this is a file mesh used to deform the morphology of the final rendered image, to adapt minor incorrections of the dome

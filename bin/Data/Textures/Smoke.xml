@@ -1,0 +1,11 @@
+<texture>
+    <quality low="0" />
+    <face name="Smoke.dds"/>
+    <face name="Smoke.dds"/>
+    <face name="Smoke.dds"/>
+    <face name="Smoke.dds"/>
+    <face name="Smoke.dds"/>
+    <face name="Smoke.dds"/>
+    <mipmap enable="true" />
+</texture>
+

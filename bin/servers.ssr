@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<FpMED>
+	<server ComPort = "9051" SceneReplicationPort = "2345"/>
+	<vector2d name = "ServerScreenResolution" value="1280, 800" />
+	<ServerFullScreen value="0" />
+	
+	<!-- We don't need to check for local servers since its hard coded, only if the ports are different-->
+	<peer ComPort = "9051" SceneReplicationPort = "2345" ip = "127.0.0.1" />
+	<peer ComPort = "9051" SceneReplicationPort = "2345" ip = "192.168.1.5" ForceConnection = "0"/>
+</FpMED>
