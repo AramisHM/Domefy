@@ -1,5 +1,47 @@
 {
     "files.associations": {
         "bitset": "cpp"
-    }
+    },
+    "psi-header.variables": [
+        [
+            "projectCreationYear",
+            "2014"
+        ],
+        [
+            "copyrightholder",
+            "Aramis Hornung Moraes"
+        ],
+        [
+            "company",
+            "Pteronura Labs (pteronura.com)"
+        ],
+        [
+            "authoremail",
+            "aramishm@gmail.com"
+        ],
+        [
+            "author",
+            "Aramis Hornung Moraes"
+        ],
+        [
+            "projectname",
+            "FpMED - Framework for Distributed Multiprojection Systems"
+        ],
+    ],
+    "psi-header.templates": [
+        {
+            "language": "*",
+            "template": [
+                "File: <<filename>>",
+                "Project: <<projectname>>",
+                "File Created: <<filecreated('dddd, Do MMMM YYYY h:mm:ss a')>>",
+                "Author: <<author>> (<<authoremail>>)",
+                "-----",
+                "Last Modified: <<dateformat('dddd, Do MMMM YYYY h:mm:ss a')>>",
+                "Modified By: <<author>> (<<authoremail>>>)",
+                "-----",
+                "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
+            ]
+        }
+    ]
 }
