@@ -29,30 +29,24 @@
 
 //#include <Urho3D/Math/Vector2.h>
 
-// enum SlideType {
-//     ST_TITLE = 0,         // has only a title and a sub-title
-//     ST_TITLE_CONTENT = 1  // Has title, sub-title and a text/image content
-// };
-
-// typedef struct slideElement {
-//     std::string materialPath;
-//     // Urho3D::Vector2 coord; // camera coordinates on this slide
-//     fpmed::Vec3<float> coord;  // camera coordinates on this slide
-//     fpmed::Vec3<float> refPoint;
-//     int interestPointIndex;  // points to the index of slide text node
-//     bool hasRefPoint;
-//     std::string text;
-// };
-
 namespace fpmed {
 
-class GrabbabableUI {
+class GrabbableUI {
    private:
-    Urho3D::Node* node;  // the scene node that holds the Urho3D entity
+    Urho3D::Node* _node;  // the scene node that holds the Urho3D entity
+    float _xaccel;        // used to give inertia effect
+    float _yaccel;
+
+    // coords X Y
+    float _coordX;
+    float _corodY;
+    float _radius;
 
    public:
-    GrabbabableUI();
-    ~GrabbabableUI();
+    GrabbableUI();
+    ~GrabbableUI();
+    Urho3D::Node* GetSceneNode();
+    void SetSceneNode(Urho3D::Node* n);
 };
 
 }  // namespace fpmed
