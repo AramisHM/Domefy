@@ -10,9 +10,6 @@
  * Copyright 2014 - 2019 Aramis Hornung Moraes
  */
 
-// This file contains the implementation for the grabbable UI interface for the
-// fulldome platform
-
 #ifndef GRABBABLEUI_H
 #define GRABBABLEUI_H
 
@@ -20,35 +17,62 @@
 #include <string>
 #include <vector>  // c++ standar vector calss
 #include "CoreParameters.h"
-#include "vector3.h"
-
 #include "vector2.h"
+#include "vector3.h"
 
 #include "Urho3D.h"
 #include "Urho3DAll.h"
 
-//#include <Urho3D/Math/Vector2.h>
+#include <Urho3D/Scene/LogicComponent.h>
 
-namespace fpmed {
+using namespace Urho3D;
+using namespace fpmed;
 
-class GrabbableUI {
+// NOTE: You must register the component to the engine in order for it to
+// properly work use with context_->RegisterFactory<GrabbableUI>(); to do so
+
+/// Custom logic component: Used to
+class GrabbableUI : public LogicComponent {
+    // Must do this to register your class componenet
+    URHO3D_OBJECT(GrabbableUI, LogicComponent);
+
    private:
-    Urho3D::Node* _node;  // the scene node that holds the Urho3D entity
-    float _xaccel;        // used to give inertia effect
-    float _yaccel;
+    /// Forward movement speed.
+    fpmed::Vec2<float> momentum;
+    fpmed::Vec2<float> coords;
+    float radius;
 
-    // coords X Y
-    float _coordX;
-    float _corodY;
-    float _radius;
+    // Callback function pointers
+    void (*updateCallback)();
+    void (*callbackAfterExec)();
+
+    bool animationEnded;  // tells if the animation is concluded
+    Node *orbitableNode;
 
    public:
-    GrabbableUI();
+    /// Construct.
+    GrabbableUI(Context *context);
     ~GrabbableUI();
-    Urho3D::Node* GetSceneNode();
-    void SetSceneNode(Urho3D::Node* n);
-};
 
-}  // namespace fpmed
+    // Set the grabbable momentum
+
+    void SetCoordinates(fpmed::Vec2<float>);
+    void SetMomentum(fpmed::Vec2<float>);
+    void SetRadius(float r);
+    void SetOrbitableNode(Node *n);
+
+    Vec2<float> GetMomentum();
+    Vec2<float> GetCoordinates();
+    float GetRadius();
+
+    // Runs every render loop
+    virtual void Update(float timeStep) override;
+
+    // Callback templates that can be used as point to function to be executed
+    // after Updates
+
+    void SetUpdateCallback(void (*f)());
+    void SetCallbackAfterExec(void (*f)());
+};
 
 #endif

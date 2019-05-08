@@ -3,6 +3,9 @@
 #include <iostream>
 #include <sstream>
 
+// TEST COMPONENT
+#include "GrabbableUI.h"
+
 MyCustomApplication* application;
 
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
@@ -31,6 +34,7 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     context_->RegisterFactory<
         SlideTransitionAnimatior>();  // Register an object factory, in this
                                       // case, the slideanimator
+    context_->RegisterFactory<GrabbableUI>();
 #endif
 }
 
@@ -71,6 +75,7 @@ void moveNodeArroundOtherNode(float yaw, float pitch, float radius,
 }
 
 #ifdef fpmed_allow_cpp_application
+// Cpp implementation of a static scene for the application
 void MyCustomApplication::CreateScene() {
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     Renderer* renderer = GetSubsystem<Renderer>();
@@ -106,6 +111,18 @@ void MyCustomApplication::CreateScene() {
             floorObject->SetMaterial(
                 cache->GetResource<Material>("Materials/BlackGrid.xml"));
         }
+    }
+
+    // Some random mesh for testing custom componenets
+    {
+        Node* componentNodeTest = scene_->CreateChild("TestComponent");
+        componentNodeTest->SetPosition(Vector3(0.5f, 4.0f, 0.5f));
+        StaticModel* floorObject =
+            componentNodeTest->CreateComponent<StaticModel>();
+        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        floorObject->SetMaterial(
+            cache->GetResource<Material>("Materials/BlackGrid.xml"));
+        GrabbableUI* gUI = componentNodeTest->CreateComponent<GrabbableUI>();
     }
 
     // Hologram node - The actual custom code
@@ -549,7 +566,7 @@ void MyCustomApplication::Start() {
             ResourceCache* cache = GetSubsystem<ResourceCache>();
             UI* ui = GetSubsystem<UI>();
 
-            debTex = ui->GetRoot()->CreateChild<Text>();
+            debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
             debTex->SetText("Loading images, please wait a moment.");
             debTex->SetFont(
                 cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),

@@ -15,13 +15,30 @@
 
 #include "GrabbableUI.h"
 
-namespace fpmed {
-
 // constructor and destructor
-GrabbableUI::GrabbableUI() { this->_node = 0; }
+GrabbableUI::GrabbableUI(Urho3D::Context *context)
+    : Urho3D::LogicComponent(context) {
+    // Only the scene update event is needed: unsubscribe from the rest for
+    // optimization
+    SetUpdateEventMask(USE_UPDATE);
+    animationEnded = 1;
+    this->orbitableNode = 0;
+}
 GrabbableUI::~GrabbableUI() {}
 
-Urho3D::Node* GrabbableUI::GetSceneNode() { return this->_node; }
-void GrabbableUI::SetSceneNode(Urho3D::Node* n) { this->_node = n; }
+void GrabbableUI::SetCoordinates(Vec2<float> c) { this->coords = c; }
+void GrabbableUI::SetMomentum(Vec2<float> m) { this->momentum = m; }
 
-}  // namespace fpmed
+void GrabbableUI::Update(float timeStep) {
+    node_->Rotate(Quaternion(
+        timeStep *
+        0.02f));  // do some stuff with the node that has the  componenet
+    // node_->Translate(Vector3::FORWARD * moveSpeed_ * timeStep);
+    // updateCallback();
+
+    printf("%f\n", timeStep);
+}
+
+// Callback functions that might come handy
+void GrabbableUI::SetUpdateCallback(void (*f)()) { updateCallback = f; }
+void GrabbableUI::SetCallbackAfterExec(void (*f)()) { callbackAfterExec = f; }
