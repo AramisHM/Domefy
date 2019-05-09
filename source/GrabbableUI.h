@@ -29,7 +29,7 @@ using namespace Urho3D;
 using namespace fpmed;
 
 // NOTE: You must register the component to the engine in order for it to
-// properly work use with context_->RegisterFactory<GrabbableUI>(); to do so
+// properly work use with context_->RegisterFactory<GrabbableUI>(); to do soc
 
 /// Custom logic component: Used to
 class GrabbableUI : public LogicComponent {
@@ -60,6 +60,11 @@ class GrabbableUI : public LogicComponent {
     void SetMomentum(fpmed::Vec2<float>);
     void SetRadius(float r);
     void SetOrbitableNode(Node *n);
+    void MoveArroundOrbitableNode(float yaw, float pitch, float radius,
+                                  Urho3D::Vector3 correction);
+    void MoveArroundOrbitableReference(float yaw, float pitch, float radius,
+                                       Urho3D::Vector3 reference,
+                                       Urho3D::Vector3 correction);
 
     Vec2<float> GetMomentum();
     Vec2<float> GetCoordinates();

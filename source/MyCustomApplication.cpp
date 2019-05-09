@@ -16,9 +16,11 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 
 #ifdef fpmed_allow_cpp_application
 
+    // TODO: optimize this loge with componenets
     slideXDeg = 260.0f;
     slideYDeg = 0.0f;
     slideDistance = 30.0f;
+    slideGBUI = 0;
 
     polarCam = true;
     coordX = 0.0f;
@@ -244,8 +246,10 @@ void MyCustomApplication::CreateScene() {
     masterSlideNode = cameraNode_->CreateChild("Slide");
     slideNode = masterSlideNode;
     modelSlideNode = masterSlideNode->CreateChild("SlideModel");
-    // masterSlideNode->SetPosition(Vector3(20, 0, 20));
+    masterSlideNode->SetPosition(Vector3(20, 0, 20));
 
+    slideGBUI = masterSlideNode->CreateComponent<GrabbableUI>();
+    slideGBUI->SetOrbitableNode(cameraNode_);
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
@@ -372,6 +376,9 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         slideYDeg +=
             -MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.y_;
         slideYDeg = Clamp(slideYDeg, -90.0f, 90.0f);
+        slideGBUI->MoveArroundOrbitableReference(
+            slideXDeg, slideYDeg, slideDistance, Vector3(0, 0, 0),
+            Vector3(90, -90, 0));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding
@@ -526,8 +533,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     updateCameraPosition();
     // update slode position
-    moveNodeArroundOtherNode(slideXDeg, slideYDeg, slideDistance, slideNode,
-                             Vector3(0, 0, 0), Vector3(90, -90, 0));
+    // moveNodeArroundOtherNode(slideXDeg, slideYDeg, slideDistance, slideNode,
+    //                          Vector3(0, 0, 0), Vector3(90, -90, 0));
 
     // normalize polar radius
     if (polarRadius_ > 60) polarRadius_ = 60;
