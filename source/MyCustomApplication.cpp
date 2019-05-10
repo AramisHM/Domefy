@@ -339,19 +339,22 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     IntVector2 mouseMove = input->GetMouseMove();
 
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT)) {
+    if (input->GetMouseButtonDown(
+            MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
         xaccel = 0;
         yaccel = 0;
     }
 
     if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
         (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
-         Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
+         Abs(mouseMove.y_) >
+             MOMENTUM_TRIGGER_VALUE)) {  // apply momentum, AFTER reset
         xaccel = mouseMove.x_ / 3;
         yaccel = mouseMove.y_ / 3;
     }
 
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel || yaccel) {
+    if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel ||
+        yaccel) {  // move either by momentum or mouse iteraction
         if (xaccel || yaccel) {
             mouseMove.x_ = xaccel;
             mouseMove.y_ = yaccel;
@@ -376,6 +379,9 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         slideYDeg +=
             -MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.y_;
         slideYDeg = Clamp(slideYDeg, -90.0f, 90.0f);
+
+        slideGBUI->SetMomentum(Vec2<float>(mouseMove.x_ / 3, mouseMove.y_ / 3));
+
         slideGBUI->MoveArroundOrbitableReference(
             slideXDeg, slideYDeg, slideDistance, Vector3(0, 0, 0),
             Vector3(90, -90, 0));

@@ -40,11 +40,14 @@ class GrabbableUI : public LogicComponent {
     /// Forward movement speed.
     fpmed::Vec2<float> momentum;
     fpmed::Vec2<float> coords;
-    float radius;
+    float radius_;
+    float momentumTriggerVal;
 
     // Callback function pointers
     void (*updateCallback)();
     void (*callbackAfterExec)();
+    // calculates the momentum for each frame rendered
+    void UpdateMomentum(float timeStep);
 
     bool animationEnded;  // tells if the animation is concluded
     Node *orbitableNode;
