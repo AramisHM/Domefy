@@ -18,7 +18,7 @@
 void GrabbableUI::UpdateMomentum(float timeStep) {
     if (momentum.getX() || momentum.getY()) {
         // decay the momentum - TODO: make quadratic instead of linear
-        float factor = 0.9f * timeStep;
+        float factor = 0.001f * timeStep;
         if (momentum.getX() > 0) {
             float x = momentum.getX();
             x = x - factor < 0 ? 0 : x - factor;
@@ -40,7 +40,7 @@ void GrabbableUI::UpdateMomentum(float timeStep) {
             momentum.setY(y);
         }
     }
-    printf("Momentum: %f, %f\n", momentum.getX(), momentum.getY());
+    // Apply the momentum to the node
     coords += momentum;  // sum momentum to the coords
     coords.setY(Clamp(coords.getY(), -90.0f, 90.0f));
     MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
