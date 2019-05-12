@@ -343,12 +343,13 @@ void MyCustomApplication::MoveCamera(float timeStep) {
             MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
         xaccel = 0;
         yaccel = 0;
+        slideGBUI->SetMomentum(Vec2<float>(0, 0));
     }
 
+    // apply momentum, AFTER reset
     if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
         (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
-         Abs(mouseMove.y_) >
-             MOMENTUM_TRIGGER_VALUE)) {  // apply momentum, AFTER reset
+         Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
         xaccel = mouseMove.x_ / 3;
         yaccel = mouseMove.y_ / 3;
     }
@@ -374,17 +375,22 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_F)) {
-        slideXDeg +=
-            MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.x_;
-        slideYDeg +=
-            -MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.y_;
-        slideYDeg = Clamp(slideYDeg, -90.0f, 90.0f);
+        Vec2<float> slideCoords = slideGBUI->GetCoordinates();
+        Vec2<float> move;
 
-        slideGBUI->SetMomentum(Vec2<float>(mouseMove.x_ / 3, mouseMove.y_ / 3));
+        IntVector2 mouseDelta = input->GetMouseMove();
+        slideGBUI->SetMomentum(
+            Vec2<float>(mouseDelta.x_ / 25, -mouseDelta.y_ / 25));
+        move.setX(MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseDelta.x_);
+        move.setY(-MOUSE_SENSITIVITY / 4 * (slideDistance / 30) *
+                  mouseDelta.y_);
+        move.setY(Clamp(move.getY(), -90.0f, 90.0f));
+
+        slideCoords += move;
 
         slideGBUI->MoveArroundOrbitableReference(
-            slideXDeg, slideYDeg, slideDistance, Vector3(0, 0, 0),
-            Vector3(90, -90, 0));
+            slideCoords.getX(), slideCoords.getY(), slideDistance,
+            Vector3(0, 0, 0), Vector3(90, -90, 0));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding
@@ -538,9 +544,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     isholding = input->GetMouseButtonDown(MOUSEB_RIGHT);
 
     updateCameraPosition();
-    // update slode position
-    // moveNodeArroundOtherNode(slideXDeg, slideYDeg, slideDistance, slideNode,
-    //                          Vector3(0, 0, 0), Vector3(90, -90, 0));
 
     // normalize polar radius
     if (polarRadius_ > 60) polarRadius_ = 60;
@@ -552,17 +555,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 }
 
 void MyCustomApplication::updateCameraPosition() {
-    // float radiusMagnetude = Cos(Abs(pitch_));
-    // Vector3 oldpos = hologramNode->GetPosition();
-    // cameraNode_->SetPosition(
-    //     Vector3((Cos(yaw_) * polarRadius_ * radiusMagnetude) + oldpos.x_,
-    //             (Sin(pitch_) * polarRadius_) + oldpos.y_,
-    //             (-Sin(yaw_) * polarRadius_ * radiusMagnetude) + oldpos.z_));
-
-    // // Construct new orientation for the camera scene node from yaw and
-    // pitch.
-    // // Roll is fixed to zero
-    // cameraNode_->SetRotation(Quaternion(pitch_, yaw_ - 90, 0.0f));
     moveNodeArroundOtherNode(yaw_, pitch_, polarRadius_, cameraNode_,
                              hologramNode->GetPosition());
 }

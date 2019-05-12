@@ -18,7 +18,8 @@
 void GrabbableUI::UpdateMomentum(float timeStep) {
     if (momentum.getX() || momentum.getY()) {
         // decay the momentum - TODO: make quadratic instead of linear
-        float factor = 0.001f * timeStep;
+        float decayFactor = 0.5f;
+        float factor = decayFactor * timeStep;
         if (momentum.getX() > 0) {
             float x = momentum.getX();
             x = x - factor < 0 ? 0 : x - factor;
@@ -103,9 +104,12 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     animationEnded = 1;
     this->orbitableNode = 0;  // ground
     momentumTriggerVal = 1.0f;
+    this->coords = Vec2<float>(260, 0);
+    radius_ = 15.0f;
 }
 GrabbableUI::~GrabbableUI() {}
 
+Vec2<float> GrabbableUI::GetCoordinates() { return coords; }
 void GrabbableUI::SetCoordinates(Vec2<float> c) { this->coords = c; }
 void GrabbableUI::SetMomentum(Vec2<float> m) { this->momentum = m; }
 void GrabbableUI::SetOrbitableNode(Node* n) { orbitableNode = n; }
