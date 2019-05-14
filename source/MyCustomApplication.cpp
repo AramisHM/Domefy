@@ -33,9 +33,10 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     accelDecayIteration = 0;
     currentSlideIndex = 0;
     polarRadius_ = 30.0f;
-    context_->RegisterFactory<
-        SlideTransitionAnimatior>();  // Register an object factory, in this
-                                      // case, the slideanimator
+
+    // Register an object factory, in this
+    // case, the slideanimator
+    context_->RegisterFactory<SlideTransitionAnimatior>();
     context_->RegisterFactory<GrabbableUI>();
 #endif
 }
@@ -123,8 +124,7 @@ void MyCustomApplication::CreateScene() {
             componentNodeTest->CreateComponent<StaticModel>();
         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
         floorObject->SetMaterial(
-            cache->GetResource<Material>("Materials/BlackGrid.xml"));
-        GrabbableUI* gUI = componentNodeTest->CreateComponent<GrabbableUI>();
+            cache->GetResource<Material>("Materials/vhp/coronal/222.xml"));
     }
 
     // Hologram node - The actual custom code
@@ -252,6 +252,32 @@ void MyCustomApplication::CreateScene() {
     slideGBUI->SetOrbitableNode(cameraNode_);
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+
+    // TODO: add these nodes in a specific class/module or at least in a
+    // separated function call issue-2 - add anatomic cut viewer
+    {
+        this->viewerNode = cameraNode_->CreateChild("Viewer");
+        // TODO: make it a global node in the class
+        Node* viewerModelNode = viewerNode->CreateChild("ViewerModel");
+
+        StaticModel* viewerModel =
+            viewerModelNode->CreateComponent<StaticModel>();
+        viewerModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+
+        viewerModel->SetMaterial(
+            cache->GetResource<Material>("Materials/vhp/coronal/222.xml"));
+        viewerModelNode->SetScale(Vector3(
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() /
+                340,  // we divide by a big number, because images are genaraly
+                      // very big unities
+            0,
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
+                340));
+        // TODO: set the material
+
+        viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
+        viewerGrab->SetOrbitableNode(cameraNode_);
+    }
 
     // no slides at all
     if (s.getNumberOfSlides()) {

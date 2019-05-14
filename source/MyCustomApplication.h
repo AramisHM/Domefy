@@ -68,6 +68,11 @@ class MyCustomApplication : public Sample {
         mainSlideAnimator;  // used to make little animation on slide
                             // transitions
 
+    // The viewer node itself, contains a sub-node named "ViewerModel" with the
+    // model
+    Node* viewerNode;
+    GrabbableUI* viewerGrab;
+
     // coords X Y are used to move camera in the polar system rather than the
     // normal x y z
     bool polarCam;
@@ -76,6 +81,7 @@ class MyCustomApplication : public Sample {
 
     // coordinates for slide
     GrabbableUI* slideGBUI;
+
     float slideXDeg, slideYDeg;
     float slideDistance;
 
