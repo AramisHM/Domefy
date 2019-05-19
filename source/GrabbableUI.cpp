@@ -95,6 +95,29 @@ void GrabbableUI::MoveArroundOrbitableReference(float yaw, float pitch,
     }
 }
 
+void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
+    // Moves slide arround camera
+    // Get mouse move
+    // Apply momentum
+    // Calculate movement and clamp
+    // apply the movement to the current coords
+
+    Vec2<float> slideCoords = GetCoordinates();
+    Vec2<float> move;
+
+    move.setX(MOUSE_SENSITIVITY / 3.1415926f * (radius_ / 30) *
+              mouseDelta.getX());
+    move.setY(-MOUSE_SENSITIVITY / 3.1415926f * (radius_ / 30) *
+              mouseDelta.getY());
+    move.setY(Clamp(move.getY(), -90.0f, 90.0f));
+
+    slideCoords += move;
+
+    MoveArroundOrbitableReference(slideCoords.getX(), slideCoords.getY(),
+                                  radius_, Vector3(0, 0, 0),
+                                  Vector3(90, -90, 0));
+}
+
 // constructor and destructor
 GrabbableUI::GrabbableUI(Urho3D::Context* context)
     : Urho3D::LogicComponent(context) {
@@ -105,7 +128,8 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     this->orbitableNode = 0;  // ground
     momentumTriggerVal = 1.0f;
     this->coords = Vec2<float>(260, 0);
-    radius_ = 15.0f;
+    radius_ = 25.0f;
+    MOUSE_SENSITIVITY = 0.2f;
 }
 GrabbableUI::~GrabbableUI() {}
 

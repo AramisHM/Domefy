@@ -21,7 +21,6 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     slideYDeg = 0.0f;
     slideDistance = 30.0f;
     slideGBUI = 0;
-
     polarCam = true;
     coordX = 0.0f;
     corodY = 0.0f;
@@ -33,9 +32,10 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     accelDecayIteration = 0;
     currentSlideIndex = 0;
     polarRadius_ = 30.0f;
-    context_->RegisterFactory<
-        SlideTransitionAnimatior>();  // Register an object factory, in this
-                                      // case, the slideanimator
+
+    // Register an object factory, in this
+    // case, the slideanimator
+    context_->RegisterFactory<SlideTransitionAnimatior>();
     context_->RegisterFactory<GrabbableUI>();
 #endif
 }
@@ -123,8 +123,7 @@ void MyCustomApplication::CreateScene() {
             componentNodeTest->CreateComponent<StaticModel>();
         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
         floorObject->SetMaterial(
-            cache->GetResource<Material>("Materials/BlackGrid.xml"));
-        GrabbableUI* gUI = componentNodeTest->CreateComponent<GrabbableUI>();
+            cache->GetResource<Material>("Materials/Stone.xml"));
     }
 
     // Hologram node - The actual custom code
@@ -253,6 +252,32 @@ void MyCustomApplication::CreateScene() {
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
+    // TODO: add these nodes in a specific class/module or at least in a
+    // separated function call issue-2 - add anatomic cut viewer
+    {
+        this->viewerNode = cameraNode_->CreateChild("Viewer");
+        // TODO: make it a global node in the class
+        Node* viewerModelNode = viewerNode->CreateChild("ViewerModel");
+
+        StaticModel* viewerModel =
+            viewerModelNode->CreateComponent<StaticModel>();
+        viewerModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+
+        viewerModel->SetMaterial(
+            cache->GetResource<Material>("Materials/Stone.xml"));
+        viewerModelNode->SetScale(Vector3(
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() /
+                340,  // we divide by a big number, because images are genaraly
+                      // very big unities
+            0,
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
+                340));
+        // TODO: set the material
+
+        viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
+        viewerGrab->SetOrbitableNode(cameraNode_);
+    }
+
     // no slides at all
     if (s.getNumberOfSlides()) {
         slideModel->SetMaterial(
@@ -375,22 +400,16 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_F)) {
-        Vec2<float> slideCoords = slideGBUI->GetCoordinates();
-        Vec2<float> move;
-
-        IntVector2 mouseDelta = input->GetMouseMove();
-        slideGBUI->SetMomentum(
-            Vec2<float>(mouseDelta.x_ / 25, -mouseDelta.y_ / 25));
-        move.setX(MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseDelta.x_);
-        move.setY(-MOUSE_SENSITIVITY / 4 * (slideDistance / 30) *
-                  mouseDelta.y_);
-        move.setY(Clamp(move.getY(), -90.0f, 90.0f));
-
-        slideCoords += move;
-
-        slideGBUI->MoveArroundOrbitableReference(
-            slideCoords.getX(), slideCoords.getY(), slideDistance,
-            Vector3(0, 0, 0), Vector3(90, -90, 0));
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // slideGBUI->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        slideGBUI->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+    }
+    if (input->GetKeyDown(KEY_J)) {
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // viewerGrab->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        viewerGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding

@@ -15,6 +15,7 @@ if(MINGW)
 endif(MINGW)
 
 
+include_directories (./)
 include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
@@ -52,7 +53,6 @@ if(WIN32)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 else()
-
 	include_directories(${CMAKE_SOURCE_DIR}/include)
 		
 	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/*.a")

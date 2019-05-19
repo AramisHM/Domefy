@@ -42,6 +42,7 @@ class GrabbableUI : public LogicComponent {
     fpmed::Vec2<float> coords;
     float radius_;
     float momentumTriggerVal;
+    float MOUSE_SENSITIVITY = 0.2f;  // make methodes to get and set
 
     // Callback function pointers
     void (*updateCallback)();
@@ -68,7 +69,9 @@ class GrabbableUI : public LogicComponent {
     void MoveArroundOrbitableReference(float yaw, float pitch, float radius,
                                        Urho3D::Vector3 reference,
                                        Urho3D::Vector3 correction);
-
+    // Given a mouse movement, automatically apply the movement to the root
+    // node.
+    void ApplyMouseMove(Vec2<int> move);
     Vec2<float> GetMomentum();
     Vec2<float> GetCoordinates();
     float GetRadius();
