@@ -2,6 +2,7 @@
 #define MYCUSTOMAPPLICATION_H
 
 #include "FPMED.H"
+#include "GrabbableUI.h"
 #include "Sample.h"
 #include "Slide.h"
 #include "SlideAnimator.h"
@@ -44,8 +45,8 @@ class MyCustomApplication : public Sample {
 #endif
    protected:
 #ifdef fpmed_allow_cpp_application
-    Text* debTex; /* this will be used to show the debug info of this prototype
-                     app */
+    Urho3D::Text* debTex; /* this will be used to show the debug info of this
+                     prototype app */
     Material* hologramMaterial;  // this is a pointer to the billboard material
                                  // that we will change the texture.
     Node* hologramNode;
@@ -67,6 +68,11 @@ class MyCustomApplication : public Sample {
         mainSlideAnimator;  // used to make little animation on slide
                             // transitions
 
+    // The viewer node itself, contains a sub-node named "ViewerModel" with the
+    // model
+    Node* viewerNode;
+    GrabbableUI* viewerGrab;
+
     // coords X Y are used to move camera in the polar system rather than the
     // normal x y z
     bool polarCam;
@@ -74,6 +80,8 @@ class MyCustomApplication : public Sample {
     float corodY;
 
     // coordinates for slide
+    GrabbableUI* slideGBUI;
+
     float slideXDeg, slideYDeg;
     float slideDistance;
 

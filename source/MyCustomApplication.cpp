@@ -3,6 +3,9 @@
 #include <iostream>
 #include <sstream>
 
+// TEST COMPONENT
+#include "GrabbableUI.h"
+
 MyCustomApplication* application;
 
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
@@ -13,10 +16,11 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 
 #ifdef fpmed_allow_cpp_application
 
+    // TODO: optimize this loge with componenets
     slideXDeg = 260.0f;
     slideYDeg = 0.0f;
     slideDistance = 30.0f;
-
+    slideGBUI = 0;
     polarCam = true;
     coordX = 0.0f;
     corodY = 0.0f;
@@ -28,9 +32,11 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     accelDecayIteration = 0;
     currentSlideIndex = 0;
     polarRadius_ = 30.0f;
-    context_->RegisterFactory<
-        SlideTransitionAnimatior>();  // Register an object factory, in this
-                                      // case, the slideanimator
+
+    // Register an object factory, in this
+    // case, the slideanimator
+    context_->RegisterFactory<SlideTransitionAnimatior>();
+    context_->RegisterFactory<GrabbableUI>();
 #endif
 }
 
@@ -71,6 +77,7 @@ void moveNodeArroundOtherNode(float yaw, float pitch, float radius,
 }
 
 #ifdef fpmed_allow_cpp_application
+// Cpp implementation of a static scene for the application
 void MyCustomApplication::CreateScene() {
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     Renderer* renderer = GetSubsystem<Renderer>();
@@ -106,6 +113,17 @@ void MyCustomApplication::CreateScene() {
             floorObject->SetMaterial(
                 cache->GetResource<Material>("Materials/BlackGrid.xml"));
         }
+    }
+
+    // Some random mesh for testing custom componenets
+    {
+        Node* componentNodeTest = scene_->CreateChild("TestComponent");
+        componentNodeTest->SetPosition(Vector3(0.5f, 4.0f, 0.5f));
+        StaticModel* floorObject =
+            componentNodeTest->CreateComponent<StaticModel>();
+        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        floorObject->SetMaterial(
+            cache->GetResource<Material>("Materials/Stone.xml"));
     }
 
     // Hologram node - The actual custom code
@@ -227,10 +245,38 @@ void MyCustomApplication::CreateScene() {
     masterSlideNode = cameraNode_->CreateChild("Slide");
     slideNode = masterSlideNode;
     modelSlideNode = masterSlideNode->CreateChild("SlideModel");
-    // masterSlideNode->SetPosition(Vector3(20, 0, 20));
+    masterSlideNode->SetPosition(Vector3(20, 0, 20));
 
+    slideGBUI = masterSlideNode->CreateComponent<GrabbableUI>();
+    slideGBUI->SetOrbitableNode(cameraNode_);
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+
+    // TODO: add these nodes in a specific class/module or at least in a
+    // separated function call issue-2 - add anatomic cut viewer
+    {
+        this->viewerNode = cameraNode_->CreateChild("Viewer");
+        // TODO: make it a global node in the class
+        Node* viewerModelNode = viewerNode->CreateChild("ViewerModel");
+
+        StaticModel* viewerModel =
+            viewerModelNode->CreateComponent<StaticModel>();
+        viewerModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+
+        viewerModel->SetMaterial(
+            cache->GetResource<Material>("Materials/Stone.xml"));
+        viewerModelNode->SetScale(Vector3(
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() /
+                340,  // we divide by a big number, because images are genaraly
+                      // very big unities
+            0,
+            viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
+                340));
+        // TODO: set the material
+
+        viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
+        viewerGrab->SetOrbitableNode(cameraNode_);
+    }
 
     // no slides at all
     if (s.getNumberOfSlides()) {
@@ -318,11 +364,14 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     IntVector2 mouseMove = input->GetMouseMove();
 
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT)) {
+    if (input->GetMouseButtonDown(
+            MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
         xaccel = 0;
         yaccel = 0;
+        slideGBUI->SetMomentum(Vec2<float>(0, 0));
     }
 
+    // apply momentum, AFTER reset
     if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
         (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
          Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
@@ -330,7 +379,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         yaccel = mouseMove.y_ / 3;
     }
 
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel || yaccel) {
+    if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel ||
+        yaccel) {  // move either by momentum or mouse iteraction
         if (xaccel || yaccel) {
             mouseMove.x_ = xaccel;
             mouseMove.y_ = yaccel;
@@ -350,11 +400,16 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_F)) {
-        slideXDeg +=
-            MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.x_;
-        slideYDeg +=
-            -MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseMove.y_;
-        slideYDeg = Clamp(slideYDeg, -90.0f, 90.0f);
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // slideGBUI->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        slideGBUI->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+    }
+    if (input->GetKeyDown(KEY_J)) {
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // viewerGrab->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        viewerGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding
@@ -508,9 +563,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     isholding = input->GetMouseButtonDown(MOUSEB_RIGHT);
 
     updateCameraPosition();
-    // update slode position
-    moveNodeArroundOtherNode(slideXDeg, slideYDeg, slideDistance, slideNode,
-                             Vector3(0, 0, 0), Vector3(90, -90, 0));
 
     // normalize polar radius
     if (polarRadius_ > 60) polarRadius_ = 60;
@@ -522,17 +574,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 }
 
 void MyCustomApplication::updateCameraPosition() {
-    // float radiusMagnetude = Cos(Abs(pitch_));
-    // Vector3 oldpos = hologramNode->GetPosition();
-    // cameraNode_->SetPosition(
-    //     Vector3((Cos(yaw_) * polarRadius_ * radiusMagnetude) + oldpos.x_,
-    //             (Sin(pitch_) * polarRadius_) + oldpos.y_,
-    //             (-Sin(yaw_) * polarRadius_ * radiusMagnetude) + oldpos.z_));
-
-    // // Construct new orientation for the camera scene node from yaw and
-    // pitch.
-    // // Roll is fixed to zero
-    // cameraNode_->SetRotation(Quaternion(pitch_, yaw_ - 90, 0.0f));
     moveNodeArroundOtherNode(yaw_, pitch_, polarRadius_, cameraNode_,
                              hologramNode->GetPosition());
 }
@@ -549,7 +590,7 @@ void MyCustomApplication::Start() {
             ResourceCache* cache = GetSubsystem<ResourceCache>();
             UI* ui = GetSubsystem<UI>();
 
-            debTex = ui->GetRoot()->CreateChild<Text>();
+            debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
             debTex->SetText("Loading images, please wait a moment.");
             debTex->SetFont(
                 cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
