@@ -26,7 +26,8 @@
 //#include "Urho3DAll.h"
 #include "AutoDetectServer.h"
 
-#define fpmed_version "0.194.01"
+// major, year+month, version, minor
+#define fpmed_version "0.195.0.1"
 
 // UI includes
 #include <FL/Fl.H>
