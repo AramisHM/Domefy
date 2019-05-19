@@ -21,7 +21,6 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     slideYDeg = 0.0f;
     slideDistance = 30.0f;
     slideGBUI = 0;
-
     polarCam = true;
     coordX = 0.0f;
     corodY = 0.0f;
@@ -124,7 +123,7 @@ void MyCustomApplication::CreateScene() {
             componentNodeTest->CreateComponent<StaticModel>();
         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
         floorObject->SetMaterial(
-            cache->GetResource<Material>("Materials/vhp/coronal/222.xml"));
+            cache->GetResource<Material>("Materials/Stone.xml"));
     }
 
     // Hologram node - The actual custom code
@@ -265,7 +264,7 @@ void MyCustomApplication::CreateScene() {
         viewerModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
         viewerModel->SetMaterial(
-            cache->GetResource<Material>("Materials/vhp/coronal/222.xml"));
+            cache->GetResource<Material>("Materials/Stone.xml"));
         viewerModelNode->SetScale(Vector3(
             viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() /
                 340,  // we divide by a big number, because images are genaraly
@@ -401,22 +400,16 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_F)) {
-        Vec2<float> slideCoords = slideGBUI->GetCoordinates();
-        Vec2<float> move;
-
-        IntVector2 mouseDelta = input->GetMouseMove();
-        slideGBUI->SetMomentum(
-            Vec2<float>(mouseDelta.x_ / 25, -mouseDelta.y_ / 25));
-        move.setX(MOUSE_SENSITIVITY / 4 * (slideDistance / 30) * mouseDelta.x_);
-        move.setY(-MOUSE_SENSITIVITY / 4 * (slideDistance / 30) *
-                  mouseDelta.y_);
-        move.setY(Clamp(move.getY(), -90.0f, 90.0f));
-
-        slideCoords += move;
-
-        slideGBUI->MoveArroundOrbitableReference(
-            slideCoords.getX(), slideCoords.getY(), slideDistance,
-            Vector3(0, 0, 0), Vector3(90, -90, 0));
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // slideGBUI->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        slideGBUI->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+    }
+    if (input->GetKeyDown(KEY_J)) {
+        IntVector2 md = input->GetMouseMove();
+        // optional
+        // viewerGrab->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
+        viewerGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding

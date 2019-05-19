@@ -1,48 +1,72 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Linux",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/fpmed",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "gdb",
+      // "MIDebuggerPath": "C:/MinGW/bin/gdb.exe",
+      "setupCommands": [
         {
-            "name": "Debug Linux",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/bin/fpmed",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            // "MIDebuggerPath": "C:/MinGW/bin/gdb.exe",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-        {
-            "name": "Debug Windows",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/bin/fpmed.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            "MIDebuggerPath": "C:/MinGW/bin/gdb.exe",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         }
-    ]
+      ]
+    },
+    {
+      "name": "Debug Windows",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/fpmed.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "gdb",
+      "MIDebuggerPath": "C:/MinGW/bin/gdb.exe",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
+      "psi-header.variables": [
+        ["projectCreationYear", "2017"],
+        ["projectname", "fpmed"],
+        ["author", "Aramis Hornung"],
+        ["authoremail", "aramishm@gmail.com"]
+      ],
+      "psi-header.templates": [
+        {
+          "language": "*",
+          "template": [
+            "File: <<filename>>",
+            "Project: <<projectname>>",
+            "File Created: <<filecreated('dddd, Do MMMM YYYY h:mm:ss a')>>",
+            "Author: <<author>> (<<authoremail>>)",
+            "-----",
+            "Last Modified: <<dateformat('dddd, Do MMMM YYYY h:mm:ss a')>>",
+            "Modified By: <<author>> (<<authoremail>>>)",
+            "-----",
+            "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>, <<company>>"
+          ]
+        }
+      ]
+    }
+  ]
 }
