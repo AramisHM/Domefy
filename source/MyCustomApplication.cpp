@@ -3,8 +3,9 @@
 #include <iostream>
 #include <sstream>
 
-// TEST COMPONENT
+// Our custom componenets
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
+#include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>  // creates the vhp model
 
 MyCustomApplication* application;
@@ -34,10 +35,11 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     currentSlideIndex = 0;
     polarRadius_ = 30.0f;
 
-    // Register an object factories
+    // Register the object factories
     context_->RegisterFactory<SlideTransitionAnimatior>();
     context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<VHP>();
+    context_->RegisterFactory<Slide>();
 #endif
 }
 
@@ -140,89 +142,17 @@ void MyCustomApplication::CreateScene() {
     hologramNode->SetRotation(Quaternion(-90, 180, 0));
     hologramNode->SetScale(Vector3(19.50f, 10.0f, 12.60f));
 
-    // VHP
+    // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
     VHP* vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
                                                  // for the coponent somewhere
     vhp->CreateModel();
 
-    // ------- slide node PROTOTYPE of FDS file -------
-    s.LoadSlides("./presentation/set.xml");
-    int maxSize = s.getNumberOfSlides();
-    int slideTextRefId = 0;
+    // Howdy, slides goes here partner.
+    Slide* slideComp = cameraNode_->CreateComponent<Slide>();
+    slideComp->CreateSlide(Urho3D::String("./presentation/set.xml"));
 
-    // iterate the slides
-    for (int i = 0; i < maxSize; ++i) {
-        slidesMaterialArray[i] =
-            cache->GetResource<Material>(s.slides.at(i).materialPath.c_str());
-
-        if (s.slides[i].hasRefPoint == true) {
-            Node* nodeSet = scene_->CreateChild("hologramPointOfInterest");
-            nodeSet->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
-
-            BillboardSet* billboardObject =
-                nodeSet->CreateComponent<BillboardSet>();
-            billboardObject->SetNumBillboards(1);
-            billboardObject->SetMaterial(
-                cache->GetResource<Material>("Materials/point.xml"));
-            billboardObject->SetSorted(true);
-
-            Billboard* bb = billboardObject->GetBillboard(0);
-            bb->position_ = Vector3(s.slides[i].refPoint.getX(),
-                                    s.slides[i].refPoint.getY(),
-                                    s.slides[i].refPoint.getZ());
-            bb->size_ = Vector2(0.5f, 0.5f);
-            bb->enabled_ = true;
-            billboardObject->Commit();
-
-            float fontSize = 15.0f;
-
-            // add text to reference point if any
-            if (s.slides[i].text != std::string("")) {
-                s.slides[i].interestPointIndex = slideTextRefId;
-
-                Node* shapeTextNode = scene_->CreateChild("text1");
-
-                interestPointTexts_[slideTextRefId] =
-                    shapeTextNode;  // save reference
-
-                shapeTextNode->SetPosition(Vector3(
-                    s.slides[i].refPoint.getX(), s.slides[i].refPoint.getY(),
-                    s.slides[i].refPoint.getZ()));
-
-                Text3D* shapeText = shapeTextNode->CreateComponent<Text3D>();
-                shapeText->SetFont(
-                    cache->GetResource<Urho3D::Font>("Fonts/BlueHighway.sdf"),
-                    fontSize);
-                shapeText->SetText(s.slides[i].text.c_str());
-                // shapeText->SetWordwrap(true);
-                shapeText->SetWidth(12.0f);
-
-                shapeTextNode->Rotate(Quaternion(-180.0f, 0.0f, 180.0f));
-                shapeTextNode->SetScale(
-                    Vector3((fontSize * 0.16f), (fontSize * 0.16f),
-                            (fontSize * 0.16f)));  // O = i*0.16;
-                shapeText->SetColor(Color());
-
-                shapeText->SetFaceCameraMode(FC_ROTATE_XYZ);
-
-                ++slideTextRefId;
-            }
-        }
-    }
-
-    Node* masterSlideNode;
-    Node* modelSlideNode;
-    masterSlideNode = cameraNode_->CreateChild("Slide");
-    slideNode = masterSlideNode;
-    modelSlideNode = masterSlideNode->CreateChild("SlideModel");
-    masterSlideNode->SetPosition(Vector3(20, 0, 20));
-
-    slideGBUI = masterSlideNode->CreateComponent<GrabbableUI>();
-    slideGBUI->SetOrbitableNode(cameraNode_);
-    slideModel = modelSlideNode->CreateComponent<StaticModel>();
-    slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-
+    // TODO: Howdy, make the viewer componenet
     // TODO: add these nodes in a specific class/module or at least in a
     // separated function call issue-2 - add anatomic cut viewer
     {
@@ -238,8 +168,7 @@ void MyCustomApplication::CreateScene() {
             cache->GetResource<Material>("Materials/Stone.xml"));
         viewerModelNode->SetScale(Vector3(
             viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() /
-                340,  // we divide by a big number, because images are genaraly
-                      // very big unities
+                340,
             0,
             viewerModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
                 340));
@@ -248,30 +177,6 @@ void MyCustomApplication::CreateScene() {
         viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
         viewerGrab->SetOrbitableNode(cameraNode_);
     }
-
-    // no slides at all
-    if (s.getNumberOfSlides()) {
-        slideModel->SetMaterial(
-            slidesMaterialArray[0]);  // starts in the first slide
-
-        // breaks here
-        modelSlideNode->SetScale(Vector3(
-            slideModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() / 45,
-            0,
-            slideModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
-                45));
-    }
-    // modelSlideNode->SetRotation(Quaternion(-90,180,0));
-    modelSlideNode->SetRotation(Quaternion(0, 180, 0));
-
-    // Create our custom Mover component that will move & animate the model
-    // during each frame's update
-    mainSlideAnimator =
-        masterSlideNode->CreateComponent<SlideTransitionAnimatior>();
-    mainSlideAnimator->setCameraUpdateCallback(cameraCallback);
-    // mainSlideAnimator->SetParameters(0, 400);
-
-    // ------- slide node -------
 
     // More lights
     const unsigned NUM_LIGHTS = 9;
@@ -339,7 +244,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
             MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
         xaccel = 0;
         yaccel = 0;
-        slideGBUI->SetMomentum(Vec2<float>(0, 0));
+        // slideGBUI->SetMomentum(Vec2<float>(0, 0)); // must call it from the
+        // new componenet
     }
 
     // apply momentum, AFTER reset
