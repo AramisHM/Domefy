@@ -22,7 +22,6 @@
 
 //#include "Splash.h"
 
-#include "CodeEditor.h"
 //#include "Urho3DAll.h"
 #include "AutoDetectServer.h"
 

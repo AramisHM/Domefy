@@ -4,8 +4,8 @@
 #include <sstream>
 
 // TEST COMPONENT
+#include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/VHP/VHP.h>  // creates the vhp model
-#include "GrabbableUI.h"
 
 MyCustomApplication* application;
 

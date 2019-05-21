@@ -1,8 +1,8 @@
 #ifndef MYCUSTOMAPPLICATION_H
 #define MYCUSTOMAPPLICATION_H
 
-#include "FPMED.H"
-#include "GrabbableUI.h"
+#include <Application/Components/GrabbableUI/GrabbableUI.h>
+#include <FPMED.H>
 #include "Sample.h"
 #include "Slide.h"
 #include "SlideAnimator.h"
