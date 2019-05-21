@@ -4,6 +4,7 @@
 #include <sstream>
 
 // TEST COMPONENT
+#include <Application/Components/VHP/VHP.h>  // creates the vhp model
 #include "GrabbableUI.h"
 
 MyCustomApplication* application;
@@ -11,7 +12,7 @@ MyCustomApplication* application;
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 // ENABLE SCRIPTS
 #ifdef fpmed_allow_scripted_application
-    context_->RegisterSubsystem(new Script(context_));
+    context_->RegisterSubskkystem(new Script(context_));
 #endif
 
 #ifdef fpmed_allow_cpp_application
@@ -33,10 +34,10 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     currentSlideIndex = 0;
     polarRadius_ = 30.0f;
 
-    // Register an object factory, in this
-    // case, the slideanimator
+    // Register an object factories
     context_->RegisterFactory<SlideTransitionAnimatior>();
     context_->RegisterFactory<GrabbableUI>();
+    context_->RegisterFactory<VHP>();
 #endif
 }
 
@@ -139,41 +140,11 @@ void MyCustomApplication::CreateScene() {
     hologramNode->SetRotation(Quaternion(-90, 180, 0));
     hologramNode->SetScale(Vector3(19.50f, 10.0f, 12.60f));
 
-    int height_offset = 5;
-
-    for (int h = 0; h < N_SLICES; ++h) {
-        slicesMaterials[h] = 0;  // null initialization
-    }
-
-    // Visible Human Project - VHP
-    for (int h = 4450; h < N_SLICES; h = h + 3) {
-        Urho3D::Material* mushroomMat = cache->GetResource<Material>(
-            "Materials/vhp/" + Urho3D::String(6189 - h) + ".xml");
-
-        if (!mushroomMat) {
-            slicesMaterials[h] = 0;
-            continue;
-        }
-
-        std::stringstream ss;
-        ss << "VHP-";
-        ss << h;
-
-        ss << "\0";
-        std::string nodeName = ss.str();
-        printf("\n\n added slice %s\n\n", nodeName.c_str());
-        Node* floorNode = scene_->CreateChild(nodeName.c_str());
-        floorNode->SetPosition(
-            Vector3(0.0f, h * 0.0035f - height_offset, 0.0f));
-        floorNode->SetScale(Vector3(10.0f, 0.0f, 5.13f));
-        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
-        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-
-        mushroomMat->SetShaderParameter("MatDiffColor",
-                                        Color(1.1f, 1.1f, 1.1f, 1.0f));
-        floorObject->SetMaterial(mushroomMat);
-        slicesMaterials[h] = mushroomMat;  // STORE IT FOR LATER REFERENCING
-    }
+    // VHP
+    Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
+    VHP* vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
+                                                 // for the coponent somewhere
+    vhp->CreateModel();
 
     // ------- slide node PROTOTYPE of FDS file -------
     s.LoadSlides("./presentation/set.xml");

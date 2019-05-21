@@ -20,6 +20,7 @@
 #include <vector2.h>
 #include <vector3.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>  // c++ standar vector calss
 
@@ -30,15 +31,23 @@ using namespace fpmed;
 // properly work use with context_->RegisterFactory<Name of your component>();
 // to do so
 
+#define MAX_NUM_SLICES 7000
+
 /// Custom logic component: Used to create the Visible Human
 class VHP : public LogicComponent {
     // Must do this to register your class componenet
     URHO3D_OBJECT(VHP, LogicComponent);
 
    private:
+    unsigned int numberOfSlices;
+    unsigned int heightOffset = 5;
+    Material* slicesMaterials[MAX_NUM_SLICES];
+
    public:
-    VHP(Context *context);
+    VHP(Context* context);
     ~VHP();
+    // Creates the model from Visible Human Project
+    void CreateModel();
 
     // Override
     virtual void Update(float timeStep) override;
