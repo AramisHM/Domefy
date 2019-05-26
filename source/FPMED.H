@@ -10,20 +10,20 @@
 #include <windows.h>
 #endif
 
+#include <Core/CoreParameters.h>
+#include <Core/Environment.h>
+#include <Core/FpmedCore.h>
+#include <Core/ProjectorMachine.h>
+#include <Core/ServerMachine.h>
+#include <Forms/GUIWindows.h>
+#include <Forms/fpmed_forms.h>
 #include <stdio.h>
 #include <string.h>
-#include "CoreParameters.h"
-#include "Environment.h"
-#include "FpmedCore.h"
-#include "GUIWindows.h"
-#include "ProjectorMachine.h"
-#include "ServerMachine.h"
-#include "fpmed_forms.h"
 
 //#include "Splash.h"
 
 //#include "Urho3DAll.h"
-#include "AutoDetectServer.h"
+#include <Core/AutoDetectServer.h>
 
 // major, year+month, version, minor
 #define fpmed_version "0.195.0.1"

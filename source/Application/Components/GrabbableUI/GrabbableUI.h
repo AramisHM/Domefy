@@ -13,9 +13,9 @@
 #ifndef GRABBABLEUI_H
 #define GRABBABLEUI_H
 
-#include <CoreParameters.h>
-#include <vector2.h>
-#include <vector3.h>
+#include <Core/CoreParameters.h>
+#include <Math/vector2.h>
+#include <Math/vector3.h>
 #include <iostream>
 #include <string>
 #include <vector>  // c++ standar vector calss

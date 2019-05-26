@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "defs.h"
 
 // Some types moved to separate header due to size of operators
-#include "vector3.h"
+#include "Math/vector3.h"
 #include "vector2.h"
 #include "color4.h"
 #include "matrix3x3.h"

@@ -1,17 +1,17 @@
 /*
- * File: VHP.h
+ * File: AnatomicViewer.h
  * Project: FpMED - Framework for Distributed Multiprojection Systems
- * File Created: Saturday, 18th May 2019 9:54:43 pm
+ * File Created: Saturday, 25th May 2019 1:43:28 pm
  * Author: Aramis Hornung Moraes (aramishm@gmail.com)
  * -----
- * Last Modified: Saturday, 18th May 2019 9:57:32 pm
+ * Last Modified: Saturday, 25th May 2019 1:43:46 pm
  * Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
  * -----
  * Copyright 2014 - 2019 Aramis Hornung Moraes
  */
 
-#ifndef VHP_H
-#define VHP_H
+#ifndef ANATOMICVIEWER_H
+#define ANATOMICVIEWER_H
 
 #include <Core/CoreParameters.h>
 #include <Math/vector2.h>
@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>  // c++ standar vector calss
 
+#include <Application/Components/GrabbableUI/GrabbableUI.h>
+
 using namespace Urho3D;
 using namespace fpmed;
 
@@ -31,23 +33,23 @@ using namespace fpmed;
 // properly work use with context_->RegisterFactory<Name of your component>();
 // to do so
 
-#define MAX_NUM_SLICES 7000
-
 /// Custom logic component: Used to create the Visible Human
-class VHP : public LogicComponent {
+class AnatomicViewer : public LogicComponent {
     // Must do this to register your class componenet
-    URHO3D_OBJECT(VHP, LogicComponent);
+    URHO3D_OBJECT(AnatomicViewer, LogicComponent);
 
    private:
-    unsigned int numberOfSlices;
-    unsigned int heightOffset = 5;
-    Material* slicesMaterials[MAX_NUM_SLICES];
+    Node* viewerNode;  // The reference node that orbits arround the root node
+    Node* viewerModelNode;    // the reference to the model node
+    GrabbableUI* viewerGrab;  // the grabbable ui componenet to move the viewer
+                              // arround the camera
 
    public:
-    VHP(Context* context);
-    ~VHP();
-    // Creates the model from Visible Human Project
-    void CreateModel();
+    AnatomicViewer(Context* context);
+    ~AnatomicViewer();
+
+    // CreateViewer - Creates the viewer model into the root node.
+    void CreateViewer();
 
     // Override
     virtual void Update(float timeStep) override;

@@ -16,11 +16,13 @@ endif(MINGW)
 
 
 include_directories (./)
+# include_directories(${CMAKE_SOURCE_DIR}/source/) ## same as above
 include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
 include_directories (../include/enet)
 include_directories (../include/tnet)
+include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 
 add_executable (fpmed ${Fpmed_Sources2} ${Fpmed_Includes})
 
@@ -33,7 +35,6 @@ set_target_properties(fpmed
 if(WIN32)
 	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/*.a")
 	
-	include_directories(${CMAKE_SOURCE_DIR}/include)
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
   	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} Comdlg32.lib Comctl32.lib ole32.lib oleaut32.lib winmm.lib ws2_32.lib opengl32.lib imm32.lib version.lib advapi32.lib kernel32.lib user32.lib gdi32.lib Setupapi.lib shell32.lib shlwapi.lib)
 	
@@ -53,7 +54,6 @@ if(WIN32)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 else()
-	include_directories(${CMAKE_SOURCE_DIR}/include)
 		
 	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/*.a")
 

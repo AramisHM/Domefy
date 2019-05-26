@@ -1,17 +1,17 @@
 /*
- * File: VHP.h
+ * File: VirtualObject.h
  * Project: FpMED - Framework for Distributed Multiprojection Systems
- * File Created: Saturday, 18th May 2019 9:54:43 pm
+ * File Created: Saturday, 25th May 2019 2:35:37 pm
  * Author: Aramis Hornung Moraes (aramishm@gmail.com)
  * -----
- * Last Modified: Saturday, 18th May 2019 9:57:32 pm
+ * Last Modified: Saturday, 25th May 2019 2:37:18 pm
  * Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
  * -----
  * Copyright 2014 - 2019 Aramis Hornung Moraes
  */
 
-#ifndef VHP_H
-#define VHP_H
+#ifndef VIRTUALOBJECTCOMPONENT_H
+#define VIRTUALOBJECTCOMPONENT_H
 
 #include <Core/CoreParameters.h>
 #include <Math/vector2.h>
@@ -33,19 +33,15 @@ using namespace fpmed;
 
 #define MAX_NUM_SLICES 7000
 
-/// Custom logic component: Used to create the Visible Human
-class VHP : public LogicComponent {
+/// Custom logic component: Used to create the virtual "hologram"
+class VirtualObject : public LogicComponent {
     // Must do this to register your class componenet
-    URHO3D_OBJECT(VHP, LogicComponent);
+    URHO3D_OBJECT(VirtualObject, LogicComponent);
 
    private:
-    unsigned int numberOfSlices;
-    unsigned int heightOffset = 5;
-    Material* slicesMaterials[MAX_NUM_SLICES];
-
    public:
-    VHP(Context* context);
-    ~VHP();
+    VirtualObject(Context* context);
+    ~VirtualObject();
     // Creates the model from Visible Human Project
     void CreateModel();
 

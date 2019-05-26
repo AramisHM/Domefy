@@ -13,9 +13,9 @@
 #ifndef SLIDE_H
 #define SLIDE_H
 
-#include <CoreParameters.h>
-#include <vector2.h>
-#include <vector3.h>
+#include <Core/CoreParameters.h>
+#include <Math/vector2.h>
+#include <Math/vector3.h>
 #include <iostream>
 #include <string>
 #include <vector>  // c++ standar vector calss
@@ -23,7 +23,7 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
-#include <Slide.h>  // TODO: refactor this cllass to SlideReader
+#include <Application/Slide/Slide.h>  // TODO: refactor this cllass to SlideReader
 #include <Urho3D/Scene/LogicComponent.h>
 
 using namespace Urho3D;

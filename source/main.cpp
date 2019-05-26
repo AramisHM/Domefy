@@ -4,14 +4,14 @@
 // Copyright Aramis Hornung Moraes 2014-2019
 //
 
-#include "FPMED.H"
-#include "MyCustomApplication.h"
-#include "Sample.h"
-#include "Urho3D.h"
-#include "Urho3DAll.h"
-#include "auxiliarAppFuncs.h"
+#include <Application/MyCustomApplication.h>
+#include <Application/Sample.h>
+#include <Core/auxiliarAppFuncs.h>
+#include <FPMED.H>
+#include <Urho3D.h>
+#include <Urho3DAll.h>
 
-#include "ScriptEditor.h"
+#include <Forms/ScriptEditor.h>
 
 namespace Urho3D {
 class Button;
