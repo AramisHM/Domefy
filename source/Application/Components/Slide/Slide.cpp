@@ -21,16 +21,17 @@ Slide::~Slide() {}
 void Slide::CreateSlide(Urho3D::String filePath) {
     // TODO: reade the code below and remove unecessary blocks
     // ------- slide node PROTOTYPE of FDS file -------
-    s.LoadSlides(filePath.CString());  // default was: ./presentation/set.xml
-    int maxSize = s.getNumberOfSlides();
+    slideReader.LoadSlides(
+        filePath.CString());  // default was: ./presentation/set.xml
+    int maxSize = slideReader.getNumberOfSlides();
     int slideTextRefId = 0;
 
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
 
     // iterate the slides
     for (int i = 0; i < maxSize; ++i) {
-        slidesMaterialArray[i] =
-            cache->GetResource<Material>(s.slides.at(i).materialPath.c_str());
+        slidesMaterialArray[i] = cache->GetResource<Material>(
+            slideReader.slides.at(i).materialPath.c_str());
 
         // TODO:
         // The segment below is the code that adds the points of interest in the
@@ -108,7 +109,7 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
     // no slides at all
-    if (s.getNumberOfSlides()) {
+    if (slideReader.getNumberOfSlides()) {
         slideModel->SetMaterial(
             slidesMaterialArray[0]);  // starts in the first slide
 
@@ -134,3 +135,22 @@ void Slide::CreateSlide(Urho3D::String filePath) {
 
 // TODO: implement it for something maybe?
 void Slide::Update(float timeStep) {}
+void Slide::NextSlide() {
+    if (!slideReader.getNumberOfSlides())  // no slides at all
+        return;
+    if (currentSlideIndex < slideReader.getNumberOfSlides() - 1)
+        ++currentSlideIndex;
+    slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
+    // mainSlideAnimator->SetParameters(slideReader.slides[currentSlideIndex],
+    // &pitch_,
+    //                                  &yaw_, &polarRadius_, 0, 2000);
+}
+void Slide::PreviousSlide() {
+    if (!slideReader.getNumberOfSlides())  // no slides at all
+        return;
+    if (currentSlideIndex > 0) --currentSlideIndex;
+    slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
+    // mainSlideAnimator->SetParameters(s.slides[currentSlideIndex],
+    // &pitch_,
+    //                                  &yaw_, &polarRadius_, 0, 2000);
+}

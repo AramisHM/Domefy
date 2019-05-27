@@ -33,7 +33,8 @@ void VHP::CreateModel() {
     // Visible Human Project - VHP
     for (int h = 4450; h < numberOfSlices; h = h + 3) {
         Urho3D::Material* mushroomMat = cache->GetResource<Urho3D::Material>(
-            "Materials/vhp/axial/" + Urho3D::String(6189 - h) + ".xml");
+            "/home/aramis/research/Materials/vhp/axial/" +
+            Urho3D::String(6189 - h) + ".xml");
 
         if (!mushroomMat) {
             slicesMaterials[h] = 0;

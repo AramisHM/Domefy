@@ -23,9 +23,9 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
+#include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Slide/Slide.h>  // TODO: refactor this cllass to SlideReader
 #include <Urho3D/Scene/LogicComponent.h>
-
 using namespace Urho3D;
 using namespace fpmed;
 
@@ -45,7 +45,7 @@ class Slide : public LogicComponent {
    private:
     // the slide reader, reads files and convert info that we can bring to our
     // 3D application
-    fpmed::Slides s;
+    fpmed::Slides slideReader;
 
     // this holds the individual slides materials
     Material* slidesMaterialArray[MAX_SLIDE_COUNT];
@@ -67,6 +67,9 @@ class Slide : public LogicComponent {
     // the fly. Saves use one step, had we try to get it by the node children.
     StaticModel* slideModel;
 
+    // Simple indicator of wich slide we currently are.
+    int currentSlideIndex;
+
    public:
     // Slide - The constructor
     Slide(Context* context);
@@ -77,6 +80,12 @@ class Slide : public LogicComponent {
 
     // Runs every render loop
     virtual void Update(float timeStep) override;
+
+    // Go to next slide
+    void NextSlide();
+
+    // Go to previous slide
+    void PreviousSlide();
 };
 
 #endif

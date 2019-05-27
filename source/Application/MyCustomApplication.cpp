@@ -20,21 +20,21 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 #ifdef fpmed_allow_cpp_application
 
     // TODO: optimize this loge with componenets
-    slideXDeg = 260.0f;
-    slideYDeg = 0.0f;
-    slideDistance = 30.0f;
-    slideGBUI = 0;
-    polarCam = true;
-    coordX = 0.0f;
-    corodY = 0.0f;
-    xaccel = 0;  // used to give inertia effect
-    yaccel = 0;
-    hologramNode = 0;  // must neutralize it for testing that helps
-                       // differentiate server from projector instances
-    isholding = false;
-    accelDecayIteration = 0;
-    currentSlideIndex = 0;
-    polarRadius_ = 30.0f;
+    // slideXDeg = 260.0f;
+    // slideYDeg = 0.0f;
+    // slideDistance = 30.0f;
+    // slideGrab = 0;
+    // polarCam = true;
+    // coordX = 0.0f;
+    // corodY = 0.0f;
+    // xaccel = 0;  // used to give inertia effect
+    // yaccel = 0;
+    // hologramNode = 0;  // must neutralize it for testing that helps
+    //                    // differentiate server from projector instances
+    // isholding = false;
+    // accelDecayIteration = 0;
+    // currentSlideIndex = 0;
+    // polarRadius_ = 30.0f;
 
     // Register the object factories
     context_->RegisterFactory<SlideTransitionAnimatior>();
@@ -150,8 +150,8 @@ void MyCustomApplication::CreateScene() {
     vhp->CreateModel();
 
     // Howdy, slides goes here partner.
-    Slide* slideComp = cameraNode_->CreateComponent<Slide>();
-    slideComp->CreateSlide(Urho3D::String("./presentation/set.xml"));
+    this->slideComponent = cameraNode_->CreateComponent<Slide>();
+    slideComponent->CreateSlide(Urho3D::String("./presentation/set.xml"));
 
     // TODO: Howdy, anatomic viewer
     cameraNode_->CreateComponent<AnatomicViewer>();
@@ -189,8 +189,6 @@ void MyCustomApplication::CreateScene() {
         light->SetShadowResolution(0.5f);
         light->SetShadowNearFarRatio(0.01f);
     }
-
-    loTransparency = 1.0f;
     cameraNearClipping = 0.01f;
 }
 #endif
@@ -222,7 +220,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
             MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
         xaccel = 0;
         yaccel = 0;
-        // slideGBUI->SetMomentum(Vec2<float>(0, 0)); // must call it from the
+        // slideGrab->SetMomentum(Vec2<float>(0, 0)); // must call it from the
         // new componenet
     }
 
@@ -236,34 +234,15 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel ||
         yaccel) {  // move either by momentum or mouse iteraction
-        if (xaccel || yaccel) {
-            mouseMove.x_ = xaccel;
-            mouseMove.y_ = yaccel;
-
-            if (accelDecayIteration <= 0) {
-                if (xaccel > 0) --xaccel;
-                if (yaccel > 0) --yaccel;
-                if (xaccel < 0) ++xaccel;
-                if (yaccel < 0) ++yaccel;
-                accelDecayIteration = accelDecayVar;
-            } else
-                --accelDecayIteration;
-        }
-        yaw_ += MOUSE_SENSITIVITY * mouseMove.x_;
-        pitch_ += MOUSE_SENSITIVITY * mouseMove.y_;
-        pitch_ = Clamp(pitch_, -90.0f, 90.0f);
+        // camera momentum
     }
 
     if (input->GetKeyDown(KEY_F)) {
         IntVector2 md = input->GetMouseMove();
-        // optional
-        // slideGBUI->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
-        slideGBUI->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+        slideGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
     if (input->GetKeyDown(KEY_J)) {
         IntVector2 md = input->GetMouseMove();
-        // optional
-        // viewerGrab->SetMomentum(Vec2<float>(md.x_ / 10, -md.y_ / 10));
         viewerGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
@@ -327,41 +306,18 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_P)) {
-        loTransparency += 0.01f;
-        for (int h = 0; h < N_SLICES; h = h + 1) {
-            Urho3D::Material* mushroomMat = slicesMaterials[h];
+        // transparence logic
+        // loTransparency += 0.01f;
+        // for (int h = 0; h < N_SLICES; h = h + 1) {
+        //     Urho3D::Material* mushroomMat = slicesMaterials[h];
 
-            if (!mushroomMat) continue;
-            mushroomMat->SetShaderParameter(
-                "MatDiffColor", Color(1.1f, 1.1f, 1.1f, loTransparency));
-        }
-        printf("%f\n", loTransparency);
-
-        // send command to other projectors
-        std::stringstream ss;
-        ss << "TRANSP;";
-        ss << loTransparency;
-        ss << ";";
-        sendExternalCommand(ss.str());
+        //     if (!mushroomMat) continue;
+        //     mushroomMat->SetShaderParameter(
+        //         "MatDiffColor", Color(1.1f, 1.1f, 1.1f, loTransparency));
+        // }
     }
     if (input->GetKeyDown(KEY_O)) {
-        loTransparency -= 0.01f;
-        for (int h = 0; h < N_SLICES; h = h + 1) {
-            Urho3D::Material* mushroomMat = slicesMaterials[h];
-
-            if (!mushroomMat) continue;
-            mushroomMat->SetShaderParameter(
-                "MatDiffColor", Color(1.1f, 1.1f, 1.1f, loTransparency));
-            printf("setted transparency\n", loTransparency);
-        }
-        printf("%f\n", loTransparency);
-
-        // send command to other projectors
-        std::stringstream ss;
-        ss << "TRANSP;";
-        ss << loTransparency;
-        ss << ";";
-        sendExternalCommand(ss.str());
+        // inverse logic for transparency onto VHP model
     }
     // move translate
     if (input->GetKeyDown(KEY_UP)) {
@@ -381,34 +337,19 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     // slide zoom
     if (input->GetKeyDown(KEY_G)) {
-        if (slideDistance < 0.01f) slideDistance = 0.01f;
-
-        if (slideDistance > 30.0f) slideDistance = 30.0f;
-
-        slideDistance +=
-            MOUSE_SENSITIVITY / 6 * (slideDistance / 30) * mouseMove.y_;
+        float radius = slideGrab->GetRadius();
+        slideGrab->SetRadius(
+            radius + (MOUSE_SENSITIVITY / 6 * (radius / 30) * mouseMove.y_));
     }
 
     if (input->GetMouseMoveWheel())
         polarRadius_ += input->GetMouseMoveWheel() * 1;
 
-    if (input->GetKeyPress(KEY_RIGHT)) {  // next slide
-        if (!s.getNumberOfSlides())       // no slides at all
-            return;
-        if (currentSlideIndex < s.getNumberOfSlides() - 1) ++currentSlideIndex;
-        slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
-        // mainSlideAnimator->SetParameters(s.slides[currentSlideIndex],
-        // &pitch_,
-        //                                  &yaw_, &polarRadius_, 0, 2000);
+    if (input->GetKeyPress(KEY_RIGHT)) {
+        slideComponent->NextSlide();
     }
-    if (input->GetKeyPress(KEY_LEFT)) {  // previous slide
-        if (!s.getNumberOfSlides())      // no slides at all
-            return;
-        if (currentSlideIndex > 0) --currentSlideIndex;
-        slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
-        // mainSlideAnimator->SetParameters(s.slides[currentSlideIndex],
-        // &pitch_,
-        //                                  &yaw_, &polarRadius_, 0, 2000);
+    if (input->GetKeyPress(KEY_LEFT)) {
+        slideComponent->PreviousSlide();
     }
     if (input->GetKeyPress(KEY_F3)) {
         if (selected_serv > 0)  // Servidor
@@ -424,8 +365,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     if (polarRadius_ < 0.3f) polarRadius_ = 0.3f;
 
     // normalize transparency
-    if (loTransparency > 1.0f) loTransparency = 1.0f;
-    if (loTransparency < 0.01f) loTransparency = 0.01f;
+    // if (loTransparency > 1.0f) loTransparency = 1.0f;
+    // if (loTransparency < 0.01f) loTransparency = 0.01f;
 }
 
 void MyCustomApplication::updateCameraPosition() {
@@ -461,17 +402,18 @@ void MyCustomApplication::Start() {
             ResourceCache* cache = GetSubsystem<ResourceCache>();
             int seq = 8650;
 
-            for (int i = 0; i < 399; ++i)  // yes, its 399 textures.
-            {
-                char filename[512];
-                char finalPath[1024];
-                sprintf(filename, "SAM_%d.xml", seq);
-                sprintf(finalPath, ".\\converted_images\\Materials\\%s",
-                        filename);
-                holoTextArray[i] = cache->GetResource<Material>(finalPath);
+            // TODO : Finish hologram component
+            // for (int i = 0; i < 399; ++i)  // yes, its 399 textures.
+            // {
+            //     char filename[512];
+            //     char finalPath[1024];
+            //     sprintf(filename, "SAM_%d.xml", seq);
+            //     sprintf(finalPath, ".\\converted_images\\Materials\\%s",
+            //             filename);
+            //     holoTextArray[i] = cache->GetResource<Material>(finalPath);
 
-                ++seq;
-            }
+            //     ++seq;
+            // }
         }
     }
     SubscribeToEvent(E_POSTRENDERUPDATE,
@@ -524,12 +466,12 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             // hologramNode->SetWorldRotation(Quaternion(20.0f, 0.0f, 0.0f));
             char text[512];
 
+            // make a class for debug text compnent
             sprintf(text,
                     "SECTOR: %d\nCAM: %f, %f, %f\nZ AXIS ANGLE: %f\nyaw: %f "
-                    "pitch: %f\nFface cam: %f, %f, %f \n"
-                    "slide: %f,  %f",
+                    "pitch: %f\nFface cam: %f, %f, %f \n",
                     sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis, yaw_,
-                    pitch_, v.x_, v.y_, v.z_, slideXDeg, slideYDeg);
+                    pitch_, v.x_, v.y_, v.z_);
 
             String txt = String(text);
             debTex->SetText(txt);

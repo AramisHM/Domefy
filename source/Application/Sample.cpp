@@ -19,7 +19,7 @@ static const Urho3D::StringHash E_CLIENTOBJECTID("ClientObjectID");
 // Identifier for the node ID parameter in the event data
 static const Urho3D::StringHash P_ID("ID");
 
-// Control bits we define
+// Control bits we define\
 static const unsigned CTRL_FORWARD = 1;
 static const unsigned CTRL_BACK = 2;
 static const unsigned CTRL_LEFT = 4;
@@ -28,7 +28,7 @@ static const unsigned CTRL_RIGHT = 8;
 // DEFINE_APPLICATION_MAIN(Sample) // instead of it use the main(){}
 
 #include <Core/ProjectorMachine.h>
-#include <core/ServerMachine.h>
+#include <Core/ServerMachine.h>
 ServerMachine* machineMaster = 0;
 ProjectorMachine* projectorMachine = 0;
 TNETServer* ScriptServ =

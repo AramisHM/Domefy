@@ -147,6 +147,9 @@ void GrabbableUI::Update(float timeStep) {
         // simulate the momentum if any
         // MoveArroundOrbitableNode();
         UpdateMomentum(timeStep);
+
+        if (radius_ < 0.01f) radius_ = 0.01f;
+        if (radius_ > 30.0f) radius_ = 30.f;
     }
     // node_->Translate(Vector3::FORWARD * moveSpeed_ * timeStep);
     // updateCallback();
@@ -157,3 +160,6 @@ void GrabbableUI::Update(float timeStep) {
 // Callback functions that might come handy
 void GrabbableUI::SetUpdateCallback(void (*f)()) { updateCallback = f; }
 void GrabbableUI::SetCallbackAfterExec(void (*f)()) { callbackAfterExec = f; }
+
+void GrabbableUI::SetRadius(float r) { radius_ = r; }
+float GrabbableUI::GetRadius() { return radius_; }
