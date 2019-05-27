@@ -6,7 +6,7 @@
 #ifndef SLIDESHOW_H
 #define SLIDESHOW_H
 
-#include "Application/Slide/Slide.h"
+#include "Application/SlideReader/SlideReader.h"
 
 #include <Urho3D/Scene/LogicComponent.h>
 

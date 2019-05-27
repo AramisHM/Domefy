@@ -6,7 +6,7 @@
 #ifndef SLIDESHOW_H
 #define SLIDESHOW_H
 
-#include "Slide.h"
+#include "SlideReader.h"
 
 #include <Core/CoreParameters.h>
 #include <iostream>

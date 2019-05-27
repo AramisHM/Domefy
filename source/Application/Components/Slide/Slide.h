@@ -24,7 +24,7 @@
 #include <Urho3DAll.h>
 
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
-#include <Application/Slide/Slide.h>  // TODO: refactor this cllass to SlideReader
+#include <Application/SlideReader/SlideReader.h>  // TODO: refactor this cllass to SlideReader
 #include <Urho3D/Scene/LogicComponent.h>
 using namespace Urho3D;
 using namespace fpmed;
