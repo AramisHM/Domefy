@@ -52,6 +52,8 @@ class GrabbableUI : public LogicComponent {
 
     bool animationEnded;  // tells if the animation is concluded
     Node *orbitableNode;
+    Vector3 rotationOffset;  // always apply it to the model when calculating
+                             // its transformations
 
    public:
     /// Construct.
@@ -84,6 +86,8 @@ class GrabbableUI : public LogicComponent {
 
     void SetUpdateCallback(void (*f)());
     void SetCallbackAfterExec(void (*f)());
+
+    void SetRotationOffset(Vector3 v);
 };
 
 #endif

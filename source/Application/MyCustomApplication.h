@@ -1,6 +1,7 @@
 #ifndef MYCUSTOMAPPLICATION_H
 #define MYCUSTOMAPPLICATION_H
 
+#include <Application/Components/AnatomicViewer/AnatomicViewer.h>
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
@@ -72,8 +73,14 @@ class MyCustomApplication : public Sample {
     // Node* viewerNode;
     GrabbableUI* viewerGrab;
 
-    // coords X Y are used to move camera in the polar system rather than the
-    // normal x y z
+    // The anatomic viewer componenet
+    AnatomicViewer* anatomicViewer;
+
+    // Camera Grabbable
+    GrabbableUI* cameraGrab;
+
+    // coords X Y are used to move camera in the polar system rather than
+    // the normal x y z
     bool polarCam;
     float coordX;
     float corodY;

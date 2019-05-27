@@ -53,6 +53,9 @@ class AnatomicViewer : public LogicComponent {
 
     // Override
     virtual void Update(float timeStep) override;
+
+    // Passes the data to GrabbableUI to apply movement and momentum
+    void ApplyMouseMove(Vec2<int> d);
 };
 
 #endif

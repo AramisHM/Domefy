@@ -45,7 +45,7 @@ void GrabbableUI::UpdateMomentum(float timeStep) {
     coords += momentum;  // sum momentum to the coords
     coords.setY(Clamp(coords.getY(), -90.0f, 90.0f));
     MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
-                                  Vector3(0, 0, 0), Vector3(90, -90, 0));
+                                  Vector3(0, 0, 0), rotationOffset);
 }
 
 // Move a node arround according to a sphere space system
@@ -102,7 +102,7 @@ void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
     // Calculate movement and clamp
     // apply the movement to the current coords
 
-    Vec2<float> slideCoords = GetCoordinates();
+    Vec2<float> coords = GetCoordinates();
     Vec2<float> move;
 
     move.setX(MOUSE_SENSITIVITY / 3.1415926f * (radius_ / 30) *
@@ -111,11 +111,10 @@ void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
               mouseDelta.getY());
     move.setY(Clamp(move.getY(), -90.0f, 90.0f));
 
-    slideCoords += move;
+    coords += move;
 
-    MoveArroundOrbitableReference(slideCoords.getX(), slideCoords.getY(),
-                                  radius_, Vector3(0, 0, 0),
-                                  Vector3(90, -90, 0));
+    MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
+                                  Vector3(0, 0, 0), rotationOffset);
 }
 
 // constructor and destructor
@@ -130,10 +129,11 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     this->coords = Vec2<float>(260, 0);
     radius_ = 25.0f;
     MOUSE_SENSITIVITY = 0.2f;
+    rotationOffset = Vector3(90, -90, 0);
 }
 GrabbableUI::~GrabbableUI() {}
 
-Vec2<float> GrabbableUI::GetCoordinates() { return coords; }
+Vec2<float> GrabbableUI::GetCoordinates() { return this->coords; }
 void GrabbableUI::SetCoordinates(Vec2<float> c) { this->coords = c; }
 void GrabbableUI::SetMomentum(Vec2<float> m) { this->momentum = m; }
 void GrabbableUI::SetOrbitableNode(Node* n) { orbitableNode = n; }
@@ -163,3 +163,5 @@ void GrabbableUI::SetCallbackAfterExec(void (*f)()) { callbackAfterExec = f; }
 
 void GrabbableUI::SetRadius(float r) { radius_ = r; }
 float GrabbableUI::GetRadius() { return radius_; }
+
+void GrabbableUI::SetRotationOffset(Vector3 v) { rotationOffset = v; }

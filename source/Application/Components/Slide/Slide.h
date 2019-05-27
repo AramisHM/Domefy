@@ -81,6 +81,9 @@ class Slide : public LogicComponent {
     // Runs every render loop
     virtual void Update(float timeStep) override;
 
+    // Passes the data to GrabbableUI to apply movement and momentum
+    void ApplyMouseMove(Vec2<int> d);
+
     // Go to next slide
     void NextSlide();
 

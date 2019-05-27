@@ -41,6 +41,7 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
     context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<VHP>();
     context_->RegisterFactory<Slide>();
+    context_->RegisterFactory<AnatomicViewer>();
 #endif
 }
 
@@ -130,7 +131,7 @@ void MyCustomApplication::CreateScene() {
             cache->GetResource<Material>("Materials/Stone.xml"));
     }
 
-    // Hologram node - The actual custom code
+    // Hologram node - The actual custom code TODO: make componenet
     hologramNode = scene_->CreateChild("Hologram");
     hologramNode->SetPosition(Vector3(0, 0, 0));
     hologramPlane = hologramNode->CreateComponent<StaticModel>();
@@ -143,6 +144,10 @@ void MyCustomApplication::CreateScene() {
     hologramNode->SetRotation(Quaternion(-90, 180, 0));
     hologramNode->SetScale(Vector3(19.50f, 10.0f, 12.60f));
 
+    cameraGrab = cameraNode_->CreateComponent<GrabbableUI>();
+    cameraGrab->SetRotationOffset(Vector3(0.0f, -90.0f, 0));
+    cameraGrab->SetOrbitableNode(hologramNode);
+
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
     VHP* vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
@@ -154,7 +159,8 @@ void MyCustomApplication::CreateScene() {
     slideComponent->CreateSlide(Urho3D::String("./presentation/set.xml"));
 
     // TODO: Howdy, anatomic viewer
-    cameraNode_->CreateComponent<AnatomicViewer>();
+    anatomicViewer = cameraNode_->CreateComponent<AnatomicViewer>();
+    anatomicViewer->CreateViewer();  // must be called
 
     // More lights
     const unsigned NUM_LIGHTS = 9;
@@ -216,34 +222,37 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     IntVector2 mouseMove = input->GetMouseMove();
 
+    // if (input->GetMouseButtonDown(
+    //         MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
+    //     xaccel = 0;
+    //     yaccel = 0;
+    //     // slideGrab->SetMomentum(Vec2<float>(0, 0)); // must call it from
+    //     the
+    //     // new componenet
+    // }
+
+    // // apply momentum, AFTER reset
+    // if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
+    //     (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
+    //      Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
+    //     xaccel = mouseMove.x_ / 3;
+    //     yaccel = mouseMove.y_ / 3;
+    // }
+
     if (input->GetMouseButtonDown(
-            MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
-        xaccel = 0;
-        yaccel = 0;
-        // slideGrab->SetMomentum(Vec2<float>(0, 0)); // must call it from the
-        // new componenet
-    }
-
-    // apply momentum, AFTER reset
-    if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
-        (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
-         Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
-        xaccel = mouseMove.x_ / 3;
-        yaccel = mouseMove.y_ / 3;
-    }
-
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT) || xaccel ||
-        yaccel) {  // move either by momentum or mouse iteraction
+            MOUSEB_RIGHT)) {  // move either by momentum or mouse iteraction
         // camera momentum
+        IntVector2 md = input->GetMouseMove();
+        cameraGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
     if (input->GetKeyDown(KEY_F)) {
         IntVector2 md = input->GetMouseMove();
-        slideGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+        slideComponent->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
     if (input->GetKeyDown(KEY_J)) {
         IntVector2 md = input->GetMouseMove();
-        viewerGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+        anatomicViewer->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
     }
 
     // Read WASD keys and move the camera scene node to the corresponding
@@ -278,31 +287,16 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_N)) {
-        cameraNearClipping -= 0.1f;
-        Urho3D::Camera* camComp = cameraNode_->GetComponent<Urho3D::Camera>();
-        camComp->SetNearClip(cameraNearClipping);
-        printf("camera clip: %f\n", cameraNearClipping);
-
-        // send command to other projectors
-        std::stringstream ss;
-        ss << "ZSEC;";
-        ss << cameraNearClipping;
-        ss << ";";
-        sendExternalCommand(ss.str());
+        // nearclip logic
+        // cameraNearClipping -= 0.1f;
+        // Urho3D::Camera* camComp =
+        // cameraNode_->GetComponent<Urho3D::Camera>();
+        // camComp->SetNearClip(cameraNearClipping);
+        // printf("camera clip: %f\n", cameraNearClipping);
     }
 
     if (input->GetKeyDown(KEY_M)) {
-        cameraNearClipping += 0.1f;
-        Urho3D::Camera* camComp = cameraNode_->GetComponent<Urho3D::Camera>();
-        camComp->SetNearClip(cameraNearClipping);
-        printf("camera clip: %f\n", cameraNearClipping);
-
-        // send command to other projectors
-        std::stringstream ss;
-        ss << "ZSEC;";
-        ss << cameraNearClipping;
-        ss << ";";
-        sendExternalCommand(ss.str());
+        // inverse near clip logic
     }
 
     if (input->GetKeyDown(KEY_P)) {
@@ -358,7 +352,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     isholding = input->GetMouseButtonDown(MOUSEB_RIGHT);
 
-    updateCameraPosition();
+    // updateCameraPosition();
 
     // normalize polar radius
     if (polarRadius_ > 60) polarRadius_ = 60;
@@ -370,8 +364,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 }
 
 void MyCustomApplication::updateCameraPosition() {
-    moveNodeArroundOtherNode(yaw_, pitch_, polarRadius_, cameraNode_,
-                             hologramNode->GetPosition());
+    // moveNodeArroundOtherNode(yaw_, pitch_, polarRadius_, cameraNode_,
+    //                          hologramNode->GetPosition());
 }
 #endif
 

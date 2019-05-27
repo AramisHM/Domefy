@@ -37,6 +37,11 @@ void AnatomicViewer::CreateViewer() {
             340));
     // TODO: set the material
 
-    this->viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
+    viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
     viewerGrab->SetOrbitableNode(node_);
+}
+
+// Passes the data to GrabbableUI to apply movement and momentum
+void AnatomicViewer::ApplyMouseMove(Vec2<int> d) {
+    viewerGrab->ApplyMouseMove(d);
 }

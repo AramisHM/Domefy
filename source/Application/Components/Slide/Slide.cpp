@@ -154,3 +154,6 @@ void Slide::PreviousSlide() {
     // &pitch_,
     //                                  &yaw_, &polarRadius_, 0, 2000);
 }
+
+// Passes the data to GrabbableUI to apply movement and momentum
+void Slide::ApplyMouseMove(Vec2<int> d) { slideGrabbableUI->ApplyMouseMove(d); }
