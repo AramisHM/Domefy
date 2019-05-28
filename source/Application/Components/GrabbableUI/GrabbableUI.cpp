@@ -41,59 +41,60 @@ void GrabbableUI::UpdateMomentum(float timeStep) {
             momentum.setY(y);
         }
     }
+
     // Apply the momentum to the node
     coords += momentum;  // sum momentum to the coords
     coords.setY(Clamp(coords.getY(), -90.0f, 90.0f));
     MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
-                                  Vector3(0, 0, 0), rotationOffset);
+                                  rotationOffset);
 }
 
 // Move a node arround according to a sphere space system
-void GrabbableUI::MoveArroundOrbitableNode(
+void GrabbableUI::MoveArroundOrbitableReference(
     float yaw, float pitch, float radius,
     Urho3D::Vector3 correction = Vector3(0.0f, -90.0f, 0.0f)) {
     coords = Vec2<float>(yaw, pitch);
     radius_ = radius;
-    if (orbitableNode) {
-        float radiusMagnetude = Cos(Abs(pitch));
-        Vector3 oldpos;
-        if (node_ == orbitableNode) {  // linked reference
-            oldpos = Vector3(.0f, .0f, .0f);
-        } else {
-            oldpos = orbitableNode->GetPosition();
-        }
+    float radiusMagnetude = Cos(Abs(pitch));
 
-        node_->SetPosition(
-            Vector3((Cos(yaw) * radius * radiusMagnetude) + oldpos.x_,
-                    (Sin(pitch) * radius) + oldpos.y_,
-                    (-Sin(yaw) * radius * radiusMagnetude) + oldpos.z_));
-
-        // Construct new orientation for the camera scene node from yaw and
-        // pitch. Roll is fixed to zero
-        node_->SetRotation(Quaternion(pitch + correction.x_,
-                                      yaw + correction.y_, correction.z_));
+    // RereferenceVector
+    Vector3 oldpos;
+    if (dynamicOrbitableReference == false) {
+        oldpos = orbitableReference;
+    } else {
+        oldpos = orbitableNode->GetPosition();
     }
+
+    node_->SetPosition(
+        Vector3((Cos(yaw) * radius * radiusMagnetude) + oldpos.x_,
+                (Sin(pitch) * radius) + oldpos.y_,
+                (-Sin(yaw) * radius * radiusMagnetude) + oldpos.z_));
+
+    // Construct new orientation for the camera scene node from yaw and
+    // pitch. Roll is fixed to zero
+    node_->SetRotation(
+        Quaternion(pitch + correction.x_, yaw + correction.y_, correction.z_));
 }
 
-void GrabbableUI::MoveArroundOrbitableReference(float yaw, float pitch,
-                                                float radius,
-                                                Urho3D::Vector3 reference,
-                                                Urho3D::Vector3 correction) {
-    coords = Vec2<float>(yaw, pitch);
-    radius_ = radius;
-    if (orbitableNode) {
-        float radiusMagnetude = Cos(Abs(pitch));
-        node_->SetPosition(
-            Vector3((Cos(yaw) * radius * radiusMagnetude) + reference.x_,
-                    (Sin(pitch) * radius) + reference.y_,
-                    (-Sin(yaw) * radius * radiusMagnetude) + reference.z_));
+// void GrabbableUI::MoveArroundOrbitableReference(float yaw, float pitch,
+//                                                 float radius,
+//                                                 Urho3D::Vector3 reference,
+//                                                 Urho3D::Vector3 correction) {
+//     coords = Vec2<float>(yaw, pitch);
+//     radius_ = radius;
+//     if (orbitableNode) {
+//         float radiusMagnetude = Cos(Abs(pitch));
+//         node_->SetPosition(
+//             Vector3((Cos(yaw) * radius * radiusMagnetude) + reference.x_,
+//                     (Sin(pitch) * radius) + reference.y_,
+//                     (-Sin(yaw) * radius * radiusMagnetude) + reference.z_));
 
-        // Construct new orientation for the camera scene node from yaw and
-        // pitch. Roll is fixed to zero
-        node_->SetRotation(Quaternion(pitch + correction.x_,
-                                      yaw + correction.y_, correction.z_));
-    }
-}
+//         // Construct new orientation for the camera scene node from yaw and
+//         // pitch. Roll is fixed to zero
+//         node_->SetRotation(Quaternion(pitch + correction.x_,
+//                                       yaw + correction.y_, correction.z_));
+//     }
+// }
 
 void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
     // Moves slide arround camera
@@ -114,7 +115,7 @@ void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
     coords += move;
 
     MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
-                                  Vector3(0, 0, 0), rotationOffset);
+                                  rotationOffset);
 }
 
 // constructor and destructor
@@ -130,13 +131,22 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     radius_ = 25.0f;
     MOUSE_SENSITIVITY = 0.2f;
     rotationOffset = Vector3(90, -90, 0);
+    dynamicOrbitableReference = false;
 }
 GrabbableUI::~GrabbableUI() {}
 
 Vec2<float> GrabbableUI::GetCoordinates() { return this->coords; }
 void GrabbableUI::SetCoordinates(Vec2<float> c) { this->coords = c; }
 void GrabbableUI::SetMomentum(Vec2<float> m) { this->momentum = m; }
-void GrabbableUI::SetOrbitableNode(Node* n) { orbitableNode = n; }
+void GrabbableUI::SetOrbitableReference(Node* n) {
+    orbitableNode = n;
+    dynamicOrbitableReference = true;
+}
+void GrabbableUI::SetOrbitableReference(Vector3 v) {
+    orbitableNode = NULL;
+    orbitableReference = v;
+    dynamicOrbitableReference = false;
+}
 
 void GrabbableUI::Update(float timeStep) {
     // node_->Rotate(Quaternion(
@@ -145,7 +155,7 @@ void GrabbableUI::Update(float timeStep) {
 
     if (orbitableNode != NULL) {
         // simulate the momentum if any
-        // MoveArroundOrbitableNode();
+        // MoveArroundOrbitableReference();
         UpdateMomentum(timeStep);
 
         if (radius_ < 0.01f) radius_ = 0.01f;
@@ -159,9 +169,17 @@ void GrabbableUI::Update(float timeStep) {
 
 // Callback functions that might come handy
 void GrabbableUI::SetUpdateCallback(void (*f)()) { updateCallback = f; }
+
 void GrabbableUI::SetCallbackAfterExec(void (*f)()) { callbackAfterExec = f; }
 
 void GrabbableUI::SetRadius(float r) { radius_ = r; }
+
 float GrabbableUI::GetRadius() { return radius_; }
 
 void GrabbableUI::SetRotationOffset(Vector3 v) { rotationOffset = v; }
+
+void GrabbableUI::SumRadius(float r) { radius_ += r; }
+
+void GrabbableUI::SetMinimumRadiusDistance(float r) { maxDistance = r; }
+
+void GrabbableUI::SetMaximumRadiusDistance(float r) { minDistance = r; }

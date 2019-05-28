@@ -104,7 +104,10 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     masterSlideNode->SetPosition(Vector3(20, 0, 20));
 
     slideGrabbableUI = masterSlideNode->CreateComponent<GrabbableUI>();
-    slideGrabbableUI->SetOrbitableNode(node_);
+    // slideGrabbableUI->SetOrbitableReference(node_);
+    // this is supposed to link to the camera, therefore, camera always is at
+    // center.
+    slideGrabbableUI->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 

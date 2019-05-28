@@ -31,7 +31,7 @@ using namespace fpmed;
 // NOTE: You must register the component to the engine in order for it to
 // properly work use with context_->RegisterFactory<GrabbableUI>(); to do soc
 
-/// Custom logic component: Used to
+/// Custom logic component: Used to move entities arround a reference
 class GrabbableUI : public LogicComponent {
     // Must do this to register your class componenet
     URHO3D_OBJECT(GrabbableUI, LogicComponent);
@@ -43,6 +43,9 @@ class GrabbableUI : public LogicComponent {
     float radius_;
     float momentumTriggerVal;
     float MOUSE_SENSITIVITY = 0.2f;  // make methodes to get and set
+    float maxDistance;
+    float minDistance;
+    bool dynamicOrbitableReference;
 
     // Callback function pointers
     void (*updateCallback)();
@@ -50,8 +53,9 @@ class GrabbableUI : public LogicComponent {
     // calculates the momentum for each frame rendered
     void UpdateMomentum(float timeStep);
 
-    bool animationEnded;  // tells if the animation is concluded
-    Node *orbitableNode;
+    bool animationEnded;         // tells if the animation is concluded
+    Node *orbitableNode;         // dynamic reference, a scene node
+    Vector3 orbitableReference;  // fix, just a position
     Vector3 rotationOffset;  // always apply it to the model when calculating
                              // its transformations
 
@@ -65,12 +69,13 @@ class GrabbableUI : public LogicComponent {
     void SetCoordinates(fpmed::Vec2<float>);
     void SetMomentum(fpmed::Vec2<float>);
     void SetRadius(float r);
-    void SetOrbitableNode(Node *n);
-    void MoveArroundOrbitableNode(float yaw, float pitch, float radius,
-                                  Urho3D::Vector3 correction);
+    void SetOrbitableReference(Node *n);
+    void SetOrbitableReference(Vector3 v);
     void MoveArroundOrbitableReference(float yaw, float pitch, float radius,
-                                       Urho3D::Vector3 reference,
                                        Urho3D::Vector3 correction);
+    // void MoveArroundOrbitableReference(float yaw, float pitch, float radius,
+    //                                    Urho3D::Vector3 reference,
+    //                                    Urho3D::Vector3 correction);
     // Given a mouse movement, automatically apply the movement to the root
     // node.
     void ApplyMouseMove(Vec2<int> move);
@@ -87,7 +92,15 @@ class GrabbableUI : public LogicComponent {
     void SetUpdateCallback(void (*f)());
     void SetCallbackAfterExec(void (*f)());
 
+    // Apply this rotation for every render update
     void SetRotationOffset(Vector3 v);
+
+    // Instead of setting, sometimes is required to sum the value.
+    void SumRadius(float r);
+
+    void SetMinimumRadiusDistance(float r);
+
+    void SetMaximumRadiusDistance(float r);
 };
 
 #endif

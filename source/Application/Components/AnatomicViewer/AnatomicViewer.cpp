@@ -38,7 +38,10 @@ void AnatomicViewer::CreateViewer() {
     // TODO: set the material
 
     viewerGrab = viewerNode->CreateComponent<GrabbableUI>();
-    viewerGrab->SetOrbitableNode(node_);
+    // viewerGrab->SetOrbitableReference(node_); // this is dynamic
+    // this is supposed to link to the camera, therefore, camera always is at
+    // center.
+    viewerGrab->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
 }
 
 // Passes the data to GrabbableUI to apply movement and momentum

@@ -84,6 +84,10 @@ void moveNodeArroundOtherNode(float yaw, float pitch, float radius,
 #ifdef fpmed_allow_cpp_application
 // Cpp implementation of a static scene for the application
 void MyCustomApplication::CreateScene() {
+    // adjust camera fov
+    Camera* cameraComp = cameraNode_->GetComponent<Camera>();
+    cameraComp->SetFov(85.0f);
+
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     Renderer* renderer = GetSubsystem<Renderer>();
     renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
@@ -146,7 +150,7 @@ void MyCustomApplication::CreateScene() {
 
     cameraGrab = cameraNode_->CreateComponent<GrabbableUI>();
     cameraGrab->SetRotationOffset(Vector3(0.0f, -90.0f, 0));
-    cameraGrab->SetOrbitableNode(hologramNode);
+    cameraGrab->SetOrbitableReference(hologramNode);
 
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
@@ -337,7 +341,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetMouseMoveWheel())
-        polarRadius_ += input->GetMouseMoveWheel() * 1;
+        // mouse scroll
+        cameraGrab->SumRadius(input->GetMouseMoveWheel() * 1);
 
     if (input->GetKeyPress(KEY_RIGHT)) {
         slideComponent->NextSlide();
