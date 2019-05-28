@@ -16,6 +16,10 @@
 VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
     numberOfSlices = 6000;  // Default value for female project
     heightOffset = 5;
+
+    sagitalLevel = 0.0f;
+    coronalLevel = 0.0f;
+    axialLevel = 0.0f;
 }
 VHP::~VHP() {}
 
@@ -44,8 +48,8 @@ void VHP::CreateModel() {
         std::stringstream ss;
         ss << "VHP-";
         ss << h;
-
         ss << "\0";
+
         std::string nodeName = ss.str();
         printf("\n\n added slice %s\n\n", nodeName.c_str());
         Node* someNode;
@@ -62,3 +66,15 @@ void VHP::CreateModel() {
         slicesMaterials[h] = mushroomMat;  // STORE IT FOR LATER REFERENCING
     }
 }
+
+void VHP::SumSagitalCut(float level) {
+    sagitalLevel += level;
+    for (int h = 4450; h < numberOfSlices; h = h + 3) {
+        Material* m = slicesMaterials[h];
+
+        if (!m) continue;  // ignore
+        m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
+    }
+}
+void VHP::SumCoronal(float level) { coronalLevel += level; }
+void VHP::SumAxial(float level) { axialLevel += level; }

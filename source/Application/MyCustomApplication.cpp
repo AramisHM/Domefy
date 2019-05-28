@@ -154,8 +154,8 @@ void MyCustomApplication::CreateScene() {
 
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
-    VHP* vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
-                                                 // for the coponent somewhere
+    vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
+                                            // for the coponent somewhere
     vhp->CreateModel();
 
     // Howdy, slides goes here partner.
@@ -247,7 +247,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
             MOUSEB_RIGHT)) {  // move either by momentum or mouse iteraction
         // camera momentum
         IntVector2 md = input->GetMouseMove();
-        cameraGrab->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+        cameraGrab->ApplyMouseMove(Vec2<int>(md.x_, -md.y_));
     }
 
     if (input->GetKeyDown(KEY_F)) {
@@ -313,6 +313,9 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         //     mushroomMat->SetShaderParameter(
         //         "MatDiffColor", Color(1.1f, 1.1f, 1.1f, loTransparency));
         // }
+
+        // do some cutting
+        vhp->SumSagitalCut(0.01f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model

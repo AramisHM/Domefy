@@ -43,6 +43,11 @@ class VHP : public LogicComponent {
     unsigned int heightOffset = 5;
     Material* slicesMaterials[MAX_NUM_SLICES];
 
+    // level of the sagital cut
+    float sagitalLevel;
+    float coronalLevel;
+    float axialLevel;
+
    public:
     VHP(Context* context);
     ~VHP();
@@ -51,6 +56,15 @@ class VHP : public LogicComponent {
 
     // Override
     virtual void Update(float timeStep) override;
+
+    // SumSagitalCut -- adds the value from parameter to the sagital cut level
+    void SumSagitalCut(float level);
+
+    // SumCoronalCut -- adds the value from parameter to the coronal cut level
+    void SumCoronal(float level);
+
+    // SumAxialCut -- adds the value from parameter to the axial cut level
+    void SumAxial(float level);
 };
 
 #endif

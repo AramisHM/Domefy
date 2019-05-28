@@ -5,6 +5,7 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
+#include <Application/Components/VHP/VHP.h>
 #include <Application/Sample.h>
 #include <Core/auxiliarAppFuncs.h>
 #include <FPMED.H>
@@ -78,6 +79,9 @@ class MyCustomApplication : public Sample {
 
     // Camera Grabbable
     GrabbableUI* cameraGrab;
+
+    // Visible Human Project Component - The actual model
+    VHP* vhp;
 
     // coords X Y are used to move camera in the polar system rather than
     // the normal x y z
