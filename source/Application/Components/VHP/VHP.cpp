@@ -20,6 +20,9 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
     sagitalLevel = 0.0f;
     coronalLevel = 0.0f;
     axialLevel = 0.0f;
+
+    axialLength = 10.0f;
+    axialHeight = 5.13f;
 }
 VHP::~VHP() {}
 
@@ -31,10 +34,13 @@ void VHP::CreateModel() {
 
     // neutralize the pointers
     for (int h = 0; h < numberOfSlices; ++h) {
-        slicesMaterials[h] = 0;  // null initialization
+        // null initialization, frounding
+        slicesMaterials[h] = 0;
+        slicesNodes[h] = 0;
     }
-    printf("carregando..\n");
-    // Visible Human Project - VHP
+    printf("loading..\n");
+
+    // Visible Human Project Axial
     for (int h = 4450; h < numberOfSlices; h = h + 3) {
         Urho3D::Material* mushroomMat = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/axial/" +
@@ -42,6 +48,7 @@ void VHP::CreateModel() {
 
         if (!mushroomMat) {
             slicesMaterials[h] = 0;
+            slicesNodes[h] = 0;
             continue;
         }
 
@@ -56,14 +63,45 @@ void VHP::CreateModel() {
         someNode = node_;
         Node* floorNode = someNode->CreateChild(nodeName.c_str());
         floorNode->SetPosition(Vector3(0.0f, h * 0.0035f - heightOffset, 0.0f));
-        floorNode->SetScale(Vector3(10.0f, 0.0f, 5.13f));
+        floorNode->SetScale(Vector3(axialLength, 0.0f, axialHeight));
         StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
 
         mushroomMat->SetShaderParameter("MatDiffColor",
                                         Color(1.1f, 1.1f, 1.1f, 1.0f));
         floorObject->SetMaterial(mushroomMat);
-        slicesMaterials[h] = mushroomMat;  // STORE IT FOR LATER REFERENCING
+
+        // STORE IT FOR LATER REFERENCING
+        slicesMaterials[h] = mushroomMat;
+        slicesNodes[h] = floorNode;
+    }
+
+    // experimental sagital dataset
+    for (int h = 1; h < 1000; h = h + 3) {
+        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
+            "/home/aramis/research/Materials/vhp/sagital/lowres/" +
+            Urho3D::String(h) + ".xml");
+
+        if (!m) {
+            continue;
+        }
+
+        std::stringstream ss;
+        ss << "VHP-LRA-";
+        ss << h;
+        ss << "\0";
+        std::string nodeName = ss.str();
+
+        Node* someNode;
+        someNode = node_;
+        Node* sliceNode = someNode->CreateChild(nodeName.c_str());
+        sliceNode->SetPosition(Vector3(0.0f, h * 0.0035f - heightOffset, 0.0f));
+        sliceNode->SetScale(Vector3(2, 0.0f, 10));
+        StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
+        sliceMesh->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+
+        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 1.0f));
+        sliceMesh->SetMaterial(m);
     }
 }
 
@@ -71,9 +109,14 @@ void VHP::SumSagitalCut(float level) {
     sagitalLevel += level;
     for (int h = 4450; h < numberOfSlices; h = h + 3) {
         Material* m = slicesMaterials[h];
+        Node* n = slicesNodes[h];
 
-        if (!m) continue;  // ignore
-        m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
+        if (!m || !n) continue;  // no node or material.: ignore
+
+        // m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
+
+        m->SetUVTransform(Vector2(0.5f, 0.0f), 0, Vector2(0.5f, 1.0f));
+        n->SetScale(Vector3(axialLength / 2, 0, axialHeight));
     }
 }
 void VHP::SumCoronal(float level) { coronalLevel += level; }

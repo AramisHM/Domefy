@@ -19,23 +19,6 @@ MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 
 #ifdef fpmed_allow_cpp_application
 
-    // TODO: optimize this loge with componenets
-    // slideXDeg = 260.0f;
-    // slideYDeg = 0.0f;
-    // slideDistance = 30.0f;
-    // slideGrab = 0;
-    // polarCam = true;
-    // coordX = 0.0f;
-    // corodY = 0.0f;
-    // xaccel = 0;  // used to give inertia effect
-    // yaccel = 0;
-    // hologramNode = 0;  // must neutralize it for testing that helps
-    //                    // differentiate server from projector instances
-    // isholding = false;
-    // accelDecayIteration = 0;
-    // currentSlideIndex = 0;
-    // polarRadius_ = 30.0f;
-
     // Register the object factories
     context_->RegisterFactory<SlideTransitionAnimatior>();
     context_->RegisterFactory<GrabbableUI>();

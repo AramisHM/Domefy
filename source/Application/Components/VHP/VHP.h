@@ -42,11 +42,16 @@ class VHP : public LogicComponent {
     unsigned int numberOfSlices;
     unsigned int heightOffset = 5;
     Material* slicesMaterials[MAX_NUM_SLICES];
+    Node* slicesNodes[MAX_NUM_SLICES];
 
     // level of the sagital cut
     float sagitalLevel;
     float coronalLevel;
     float axialLevel;
+
+    // dimensions
+    float axialLength;
+    float axialHeight;
 
    public:
     VHP(Context* context);
