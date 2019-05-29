@@ -108,7 +108,7 @@ void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
 
     float radiusInfluence = 1;
     if (radiusAltersMoveSpace == true) {
-        radiusInfluence = (radius_ / 30);
+        radiusInfluence = (radius_ / maxDistance);
     }
 
     move.setX(MOUSE_SENSITIVITY / 3.1415926f * radiusInfluence *
@@ -138,6 +138,8 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     rotationOffset = Vector3(90, -90, 0);
     dynamicOrbitableReference = false;
     radiusAltersMoveSpace = true;
+    minDistance = 0.01f;
+    maxDistance = 30.0f;
 }
 GrabbableUI::~GrabbableUI() {}
 
@@ -164,8 +166,8 @@ void GrabbableUI::Update(float timeStep) {
         // MoveArroundOrbitableReference();
         UpdateMomentum(timeStep);
 
-        if (radius_ < 0.01f) radius_ = 0.01f;
-        if (radius_ > 30.0f) radius_ = 30.f;
+        if (radius_ < minDistance) radius_ = minDistance;
+        if (radius_ > maxDistance) radius_ = maxDistance;
     }
     // node_->Translate(Vector3::FORWARD * moveSpeed_ * timeStep);
     // updateCallback();
