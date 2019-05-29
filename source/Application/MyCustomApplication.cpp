@@ -134,6 +134,9 @@ void MyCustomApplication::CreateScene() {
     cameraGrab = cameraNode_->CreateComponent<GrabbableUI>();
     cameraGrab->SetRotationOffset(Vector3(0.0f, -90.0f, 0));
     cameraGrab->SetOrbitableReference(hologramNode);
+    // movement arround is not affected by how close it is to the
+    // orbitable object
+    cameraGrab->SetRadiusAlterMoveSpeed(false);
 
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");

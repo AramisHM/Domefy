@@ -40,6 +40,7 @@ class GrabbableUI : public LogicComponent {
     /// Forward movement speed.
     fpmed::Vec2<float> momentum;
     fpmed::Vec2<float> coords;
+    bool radiusAltersMoveSpace;
     float radius_;
     float momentumTriggerVal;
     float MOUSE_SENSITIVITY = 0.2f;  // make methodes to get and set
@@ -101,6 +102,10 @@ class GrabbableUI : public LogicComponent {
     void SetMinimumRadiusDistance(float r);
 
     void SetMaximumRadiusDistance(float r);
+
+    // Tells us whenever, the radius influences the element movement when
+    // dragged.
+    void SetRadiusAlterMoveSpeed(bool alterMoveSpeed);
 };
 
 #endif

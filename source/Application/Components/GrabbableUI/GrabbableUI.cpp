@@ -66,9 +66,9 @@ void GrabbableUI::MoveArroundOrbitableReference(
     }
 
     node_->SetPosition(
-        Vector3((Cos(yaw) * radius * radiusMagnetude) + oldpos.x_,
+        Vector3((Cos(yaw) * radius_ * radiusMagnetude) + oldpos.x_,
                 (Sin(pitch) * radius) + oldpos.y_,
-                (-Sin(yaw) * radius * radiusMagnetude) + oldpos.z_));
+                (-Sin(yaw) * radius_ * radiusMagnetude) + oldpos.z_));
 
     // Construct new orientation for the camera scene node from yaw and
     // pitch. Roll is fixed to zero
@@ -106,9 +106,14 @@ void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
     Vec2<float> coords = GetCoordinates();
     Vec2<float> move;
 
-    move.setX(MOUSE_SENSITIVITY / 3.1415926f * (radius_ / 30) *
+    float radiusInfluence = 1;
+    if (radiusAltersMoveSpace == true) {
+        radiusInfluence = (radius_ / 30);
+    }
+
+    move.setX(MOUSE_SENSITIVITY / 3.1415926f * radiusInfluence *
               mouseDelta.getX());
-    move.setY(-MOUSE_SENSITIVITY / 3.1415926f * (radius_ / 30) *
+    move.setY(-MOUSE_SENSITIVITY / 3.1415926f * radiusInfluence *
               mouseDelta.getY());
     move.setY(Clamp(move.getY(), -90.0f, 90.0f));
 
@@ -132,6 +137,7 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     MOUSE_SENSITIVITY = 0.2f;
     rotationOffset = Vector3(90, -90, 0);
     dynamicOrbitableReference = false;
+    radiusAltersMoveSpace = true;
 }
 GrabbableUI::~GrabbableUI() {}
 
@@ -183,3 +189,7 @@ void GrabbableUI::SumRadius(float r) { radius_ += r; }
 void GrabbableUI::SetMinimumRadiusDistance(float r) { maxDistance = r; }
 
 void GrabbableUI::SetMaximumRadiusDistance(float r) { minDistance = r; }
+
+void GrabbableUI::SetRadiusAlterMoveSpeed(bool alterMoveSpeed) {
+    radiusAltersMoveSpace = alterMoveSpeed;
+}
