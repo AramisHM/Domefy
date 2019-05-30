@@ -14,7 +14,7 @@
 
 // constructor and destructor
 VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
-    numberOfSlices = 6000;  // Default value for female project
+    numberOfSlices = 6189;  // Default value for female project
     heightOffset = 5;
 
     sagitalLevel = 0.0f;
@@ -23,6 +23,8 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
 
     axialLength = 10.0f;
     axialHeight = 5.13f;
+
+    coronalBasedDatesed = sagitalBasedDatesed = axialBasedDatesed = 0;
 }
 VHP::~VHP() {}
 
@@ -32,77 +34,126 @@ void VHP::Update(float timeStep) {}  // TODO: implement it for something maybe?
 void VHP::CreateModel() {
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
 
+    // Data dimensions precalculations
+    int axialSliceQuantity = 5189;
+    int sagitalSliceQuantity = 1024;
+    int coronalSliceQuantity = 525;
+
+    float modelNormalWidth = 1.0f;
+    float modelNormalHeight = 2.5662f;
+    float modelNormalDepth = 0.5127f;
+
+    float sliceAxialInterval = (modelNormalHeight / axialSliceQuantity);
+    float sliceSagitalInterval = (modelNormalWidth / sagitalSliceQuantity);
+    float sliceCoronalInterval = (modelNormalDepth / coronalSliceQuantity);
+
     // neutralize the pointers
     for (int h = 0; h < numberOfSlices; ++h) {
         // null initialization, frounding
         slicesMaterials[h] = 0;
         slicesNodes[h] = 0;
     }
-    printf("loading..\n");
 
-    // Visible Human Project Axial
-    for (int h = 4450; h < numberOfSlices; h = h + 3) {
-        Urho3D::Material* mushroomMat = cache->GetResource<Urho3D::Material>(
-            "/home/aramis/research/Materials/vhp/axial/" +
-            Urho3D::String(6189 - h) + ".xml");
+    // // Visible Human Project Axial
+    // Node* axialBasedDatesed;
+    // axialBasedDatesed = node_->CreateChild("axialSetBase");
+    // for (int h = 4450; h < axialSliceQuantity; h = h + 3) {
+    //     Urho3D::Material* mushroomMat = cache->GetResource<Urho3D::Material>(
+    //         "/home/aramis/research/Materials/vhp/axial/" +
+    //         Urho3D::String(6189 - h) + ".xml");
 
-        if (!mushroomMat) {
-            slicesMaterials[h] = 0;
-            slicesNodes[h] = 0;
-            continue;
-        }
+    //     if (!mushroomMat) {
+    //         slicesMaterials[h] = 0;
+    //         slicesNodes[h] = 0;
+    //         continue;
+    //     }
 
-        std::stringstream ss;
-        ss << "VHP-";
-        ss << h;
-        ss << "\0";
+    //     std::stringstream ss;
+    //     ss << "VHP-";
+    //     ss << h;
+    //     ss << "\0";
+    //     std::string nodeName = ss.str();
+    //     printf("\n\n added slice %s\n\n", nodeName.c_str());
+    //     Node* sliceNode = axialBasedDatesed->CreateChild(nodeName.c_str());
+    //     sliceNode->SetPosition(Vector3(0.0f, (h * sliceAxialInterval),
+    //     0.0f)); sliceNode->SetScale(Vector3(modelNormalDepth, 0.0f,
+    //     modelNormalWidth)); StaticModel* floorObject =
+    //     sliceNode->CreateComponent<StaticModel>(); floorObject->SetModel(
+    //         cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-        std::string nodeName = ss.str();
-        printf("\n\n added slice %s\n\n", nodeName.c_str());
-        Node* someNode;
-        someNode = node_;
-        Node* floorNode = someNode->CreateChild(nodeName.c_str());
-        floorNode->SetPosition(Vector3(0.0f, h * 0.0035f - heightOffset, 0.0f));
-        floorNode->SetScale(Vector3(axialLength, 0.0f, axialHeight));
-        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
-        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    //     mushroomMat->SetShaderParameter("MatDiffColor",
+    //                                     Color(1.1f, 1.1f, 1.1f, 2.0f));
+    //     floorObject->SetMaterial(mushroomMat);
 
-        mushroomMat->SetShaderParameter("MatDiffColor",
-                                        Color(1.1f, 1.1f, 1.1f, 1.0f));
-        floorObject->SetMaterial(mushroomMat);
+    //     // STORE IT FOR LATER REFERENCING
+    //     slicesMaterials[h] = mushroomMat;
+    //     slicesNodes[h] = sliceNode;
+    // }
+    // axialBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, 0.0f));
+    // axialBasedDatesed->SetScale(5.25f);
+    // axialBasedDatesed->SetPosition(Vector3(-2.5662f, -6.8, 0));
 
-        // STORE IT FOR LATER REFERENCING
-        slicesMaterials[h] = mushroomMat;
-        slicesNodes[h] = floorNode;
-    }
-
-    // experimental sagital dataset
-    for (int h = 1; h < 1000; h = h + 3) {
+    //  Lowres Sagital
+    sagitalBasedDatesed = node_->CreateChild("lowredSagitalSetBase");
+    for (int h = 0; h < sagitalSliceQuantity + 1; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/sagital/lowres/" +
             Urho3D::String(h) + ".xml");
 
-        if (!m) {
-            continue;
-        }
+        if (!m) continue;
 
         std::stringstream ss;
-        ss << "VHP-LRA-";
+        ss << "VHP-LRS-";  // LRA means "low res sagital"
         ss << h;
         ss << "\0";
         std::string nodeName = ss.str();
 
-        Node* someNode;
-        someNode = node_;
-        Node* sliceNode = someNode->CreateChild(nodeName.c_str());
-        sliceNode->SetPosition(Vector3(0.0f, h * 0.0035f - heightOffset, 0.0f));
-        sliceNode->SetScale(Vector3(2, 0.0f, 10));
+        Node* sliceNode = sagitalBasedDatesed->CreateChild(nodeName.c_str());
+        sliceNode->SetPosition(Vector3(0.0f, (h * sliceSagitalInterval), 0.0f));
+        sliceNode->SetScale(Vector3(2.5662f, 0.0f, 0.5127f));
         StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
-        sliceMesh->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        sliceMesh->SetModel(
+            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 1.0f));
+        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
         sliceMesh->SetMaterial(m);
     }
+    sagitalBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, -90.0f));
+    sagitalBasedDatesed->SetScale(5.25f);
+    sagitalBasedDatesed->SetPosition(
+        Vector3(0.0f, 0.0f, modelNormalWidth * 2.5));
+
+    // Lowres Coronal
+    coronalBasedDatesed = node_->CreateChild("lowredCoronalSetBase");
+    for (int h = 0; h < coronalSliceQuantity + 1; ++h) {
+        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
+            "/home/aramis/research/Materials/vhp/coronal/lowres/" +
+            Urho3D::String(h) + ".xml");
+
+        if (!m) continue;
+
+        std::stringstream ss;
+        ss << "VHP-LRC-";  // LRC means "low res coronal"
+        ss << h;
+        ss << "\0";
+        std::string nodeName = ss.str();
+
+        Node* sliceNode = coronalBasedDatesed->CreateChild(nodeName.c_str());
+        sliceNode->SetPosition(Vector3(0.0f, (h * sliceCoronalInterval), 0.0f));
+        sliceNode->SetScale(Vector3(modelNormalHeight, 0.0f, modelNormalWidth));
+        StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
+        sliceMesh->SetModel(
+            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
+
+        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
+        sliceMesh->SetMaterial(m);
+    }
+    coronalBasedDatesed->SetRotation(Quaternion(0.0f, 0.0f, -90.0f));
+    coronalBasedDatesed->SetScale(5.25f);
+    coronalBasedDatesed->SetPosition(
+        Vector3(2.5 * -modelNormalDepth, 0.0f, 0.0f));
+
+    coronalBasedDatesed->SetEnabledRecursive(false);
 }
 
 void VHP::SumSagitalCut(float level) {
@@ -111,7 +162,7 @@ void VHP::SumSagitalCut(float level) {
         Material* m = slicesMaterials[h];
         Node* n = slicesNodes[h];
 
-        if (!m || !n) continue;  // no node or material.: ignore
+        if (!n || !m) continue;  // no node or material.: ignore
 
         // m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
 
@@ -121,3 +172,10 @@ void VHP::SumSagitalCut(float level) {
 }
 void VHP::SumCoronal(float level) { coronalLevel += level; }
 void VHP::SumAxial(float level) { axialLevel += level; }
+
+void VHP::SetSagitalBaseVisible(bool isVisible) {
+    sagitalBasedDatesed->SetEnabledRecursive(isVisible);
+}
+void VHP::SetCoronalBaseVisible(bool isVisible) {
+    coronalBasedDatesed->SetEnabledRecursive(isVisible);
+}

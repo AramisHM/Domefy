@@ -107,6 +107,28 @@ void MyCustomApplication::CreateScene() {
         }
     }
 
+    // north plane
+    {
+        Node* floorNode = scene_->CreateChild("FloorTile");
+        floorNode->SetPosition(Vector3(0.0f, 0.0f, 30.0f));
+        floorNode->SetScale(Vector3(15.0f, 1.0f, 15.0f));
+        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
+        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        floorObject->SetMaterial(
+            cache->GetResource<Material>("Materials/Stone.xml"));
+    }
+
+    // west plane
+    {
+        Node* floorNode = scene_->CreateChild("FloorTile");
+        floorNode->SetPosition(Vector3(30.0f, 0.0f, 0.0f));
+        floorNode->SetScale(Vector3(4.0f, 1.0f, 4.f));
+        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
+        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        floorObject->SetMaterial(
+            cache->GetResource<Material>("Materials/Stone.xml"));
+    }
+
     // Some random mesh for testing custom componenets
     {
         Node* componentNodeTest = scene_->CreateChild("TestComponent");
@@ -301,7 +323,9 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         // }
 
         // do some cutting
-        vhp->SumSagitalCut(0.01f);
+        // vhp->SumSagitalCut(0.01f);
+
+        vhp->SetSagitalBaseVisible(false);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model

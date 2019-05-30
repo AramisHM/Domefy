@@ -53,6 +53,11 @@ class VHP : public LogicComponent {
     float axialLength;
     float axialHeight;
 
+    // Slices bases
+    Node* coronalBasedDatesed;
+    Node* sagitalBasedDatesed;
+    Node* axialBasedDatesed;
+
    public:
     VHP(Context* context);
     ~VHP();
@@ -62,14 +67,21 @@ class VHP : public LogicComponent {
     // Override
     virtual void Update(float timeStep) override;
 
-    // SumSagitalCut -- adds the value from parameter to the sagital cut level
+    // SumSagitalCut - Adds the value from parameter to the sagital cut level
     void SumSagitalCut(float level);
 
-    // SumCoronalCut -- adds the value from parameter to the coronal cut level
+    // SumCoronalCut - Adds the value from parameter to the coronal cut level
     void SumCoronal(float level);
 
-    // SumAxialCut -- adds the value from parameter to the axial cut level
+    // SumAxialCut - Adds the value from parameter to the axial cut level
     void SumAxial(float level);
+
+    // SetSagitalBaseVisible - Enables or disables the rendering of the sagital
+    // planes.
+    void SetSagitalBaseVisible(bool isVisible);
+    // SetCoronalBaseVisible - Enables or disables the rendering of the coronal
+    // planes.
+    void SetCoronalBaseVisible(bool isVisible);
 };
 
 #endif
