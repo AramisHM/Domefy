@@ -462,6 +462,16 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                               posCam.y_, posCam.z_);
         int sector = angle_Z_axis / 0.9f;
 
+        // Define witch image dataset to show
+        if ((angle_Z_axis > 45 && angle_Z_axis < 135) ||
+            (angle_Z_axis > 225 && angle_Z_axis < 315)) {
+            vhp->SetSagitalBaseVisible(true);
+            vhp->SetCoronalBaseVisible(false);
+        } else {
+            vhp->SetSagitalBaseVisible(false);
+            vhp->SetCoronalBaseVisible(true);
+        }
+
         if (sector <= 398) {
             // hologramPlane->SetMaterial(holoTextArray[sector]);
         }

@@ -98,7 +98,7 @@ void VHP::CreateModel() {
     for (int h = 0; h < sagitalSliceQuantity + 1; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/sagital/lowres/" +
-            Urho3D::String(h) + ".xml");
+            Urho3D::String(sagitalSliceQuantity - h) + ".xml");
 
         if (!m) continue;
 
@@ -121,7 +121,7 @@ void VHP::CreateModel() {
     sagitalBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, -90.0f));
     sagitalBasedDatesed->SetScale(5.25f);
     sagitalBasedDatesed->SetPosition(
-        Vector3(0.0f, 0.0f, modelNormalWidth * 2.5));
+        Vector3(0.0f, 0.0f, modelNormalWidth * modelNormalHeight));
 
     // Lowres Coronal
     coronalBasedDatesed = node_->CreateChild("lowredCoronalSetBase");
@@ -151,9 +151,9 @@ void VHP::CreateModel() {
     coronalBasedDatesed->SetRotation(Quaternion(0.0f, 0.0f, -90.0f));
     coronalBasedDatesed->SetScale(5.25f);
     coronalBasedDatesed->SetPosition(
-        Vector3(2.5 * -modelNormalDepth, 0.0f, 0.0f));
+        Vector3(modelNormalHeight * -modelNormalDepth, 0.0f, 0.0f));
 
-    coronalBasedDatesed->SetEnabledRecursive(false);
+    coronalBasedDatesed->SetEnabledRecursive(false);  // initial state
 }
 
 void VHP::SumSagitalCut(float level) {
