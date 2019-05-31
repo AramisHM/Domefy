@@ -82,6 +82,9 @@ class VHP : public LogicComponent {
     // SetCoronalBaseVisible - Enables or disables the rendering of the coronal
     // planes.
     void SetCoronalBaseVisible(bool isVisible);
+    // SetAxialBaseVisible - Enables or disables the rendering of the axial
+    // planes.
+    void SetAxialBaseVisible(bool isVisible);
 };
 
 #endif

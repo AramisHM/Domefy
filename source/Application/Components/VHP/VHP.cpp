@@ -54,47 +54,42 @@ void VHP::CreateModel() {
         slicesNodes[h] = 0;
     }
 
-    // // Visible Human Project Axial
-    // Node* axialBasedDatesed;
-    // axialBasedDatesed = node_->CreateChild("axialSetBase");
-    // for (int h = 4450; h < axialSliceQuantity; h = h + 3) {
-    //     Urho3D::Material* mushroomMat = cache->GetResource<Urho3D::Material>(
-    //         "/home/aramis/research/Materials/vhp/axial/" +
-    //         Urho3D::String(6189 - h) + ".xml");
+    //  Lowres Axial
+    axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
+    for (int h = 1001; h < 1001 + axialSliceQuantity + 1; ++h) {
+        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
+            "/home/aramis/research/Materials/vhp/axial/lowres/" +
+            Urho3D::String(h) + ".xml");
 
-    //     if (!mushroomMat) {
-    //         slicesMaterials[h] = 0;
-    //         slicesNodes[h] = 0;
-    //         continue;
-    //     }
+        if (!m) continue;
 
-    //     std::stringstream ss;
-    //     ss << "VHP-";
-    //     ss << h;
-    //     ss << "\0";
-    //     std::string nodeName = ss.str();
-    //     printf("\n\n added slice %s\n\n", nodeName.c_str());
-    //     Node* sliceNode = axialBasedDatesed->CreateChild(nodeName.c_str());
-    //     sliceNode->SetPosition(Vector3(0.0f, (h * sliceAxialInterval),
-    //     0.0f)); sliceNode->SetScale(Vector3(modelNormalDepth, 0.0f,
-    //     modelNormalWidth)); StaticModel* floorObject =
-    //     sliceNode->CreateComponent<StaticModel>(); floorObject->SetModel(
-    //         cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
+        std::stringstream ss;
+        ss << "VHP-LRA-";  // LRA means "low res axial"
+        ss << h;
+        ss << "\0";
+        std::string nodeName = ss.str();
 
-    //     mushroomMat->SetShaderParameter("MatDiffColor",
-    //                                     Color(1.1f, 1.1f, 1.1f, 2.0f));
-    //     floorObject->SetMaterial(mushroomMat);
+        Node* sliceNode = axialBasedDatesed->CreateChild(nodeName.c_str());
+        sliceNode->SetPosition(Vector3(0.0f, (h * sliceAxialInterval), 0.0f));
+        sliceNode->SetScale(Vector3(0.5127f, 0.0f, 1.0f));
+        sliceNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));  // flip sides
+        StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
+        sliceMesh->SetModel(
+            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-    //     // STORE IT FOR LATER REFERENCING
-    //     slicesMaterials[h] = mushroomMat;
-    //     slicesNodes[h] = sliceNode;
-    // }
-    // axialBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, 0.0f));
-    // axialBasedDatesed->SetScale(5.25f);
-    // axialBasedDatesed->SetPosition(Vector3(-2.5662f, -6.8, 0));
+        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
+        sliceMesh->SetMaterial(m);
+    }
+    axialBasedDatesed->SetRotation(Quaternion(0.0f, 180.0f, 180.0f));
+    axialBasedDatesed->SetScale(5.25f);
+    axialBasedDatesed->SetPosition(Vector3(
+        0.0f,
+        modelNormalHeight * modelNormalHeight +
+            (modelNormalWidth * modelNormalHeight) + 0.15f,  // 0.15f is a guess
+        0.0f));
 
     //  Lowres Sagital
-    sagitalBasedDatesed = node_->CreateChild("lowredSagitalSetBase");
+    sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
     for (int h = 0; h < sagitalSliceQuantity + 1; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/sagital/lowres/" +
@@ -103,7 +98,7 @@ void VHP::CreateModel() {
         if (!m) continue;
 
         std::stringstream ss;
-        ss << "VHP-LRS-";  // LRA means "low res sagital"
+        ss << "VHP-LRS-";  // LRS means "low res sagital"
         ss << h;
         ss << "\0";
         std::string nodeName = ss.str();
@@ -121,10 +116,11 @@ void VHP::CreateModel() {
     sagitalBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, -90.0f));
     sagitalBasedDatesed->SetScale(5.25f);
     sagitalBasedDatesed->SetPosition(
-        Vector3(0.0f, 0.0f, modelNormalWidth * modelNormalHeight));
+        Vector3(0.0f, 0.0f,
+                modelNormalWidth * modelNormalHeight));  // No idea why is this.
 
     // Lowres Coronal
-    coronalBasedDatesed = node_->CreateChild("lowredCoronalSetBase");
+    coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
     for (int h = 0; h < coronalSliceQuantity + 1; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/coronal/lowres/" +
@@ -178,4 +174,7 @@ void VHP::SetSagitalBaseVisible(bool isVisible) {
 }
 void VHP::SetCoronalBaseVisible(bool isVisible) {
     coronalBasedDatesed->SetEnabledRecursive(isVisible);
+}
+void VHP::SetAxialBaseVisible(bool isVisible) {
+    axialBasedDatesed->SetEnabledRecursive(isVisible);
 }

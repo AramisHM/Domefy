@@ -462,14 +462,25 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                               posCam.y_, posCam.z_);
         int sector = angle_Z_axis / 0.9f;
 
-        // Define witch image dataset to show
-        if ((angle_Z_axis > 45 && angle_Z_axis < 135) ||
-            (angle_Z_axis > 225 && angle_Z_axis < 315)) {
-            vhp->SetSagitalBaseVisible(true);
+        Vec2<float> camCoords = cameraGrab->GetCoordinates();
+        float camLong = camCoords.getX();
+        float camLat = abs(camCoords.getY());  // its mirrored under and upper
+
+        if ((camLat > 45 && camLat < 91)) {
+            vhp->SetAxialBaseVisible(true);
+            vhp->SetSagitalBaseVisible(false);
             vhp->SetCoronalBaseVisible(false);
         } else {
-            vhp->SetSagitalBaseVisible(false);
-            vhp->SetCoronalBaseVisible(true);
+            vhp->SetAxialBaseVisible(false);
+            // Define witch image dataset to show
+            if ((camLong > 45 && camLong < 135) ||
+                (camLong > 225 && camLong < 315)) {
+                vhp->SetSagitalBaseVisible(true);
+                vhp->SetCoronalBaseVisible(false);
+            } else {
+                vhp->SetSagitalBaseVisible(false);
+                vhp->SetCoronalBaseVisible(true);
+            }
         }
 
         if (sector <= 398) {
@@ -488,12 +499,14 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             // hologramNode->SetWorldRotation(Quaternion(20.0f, 0.0f, 0.0f));
             char text[512];
 
+            fpmed::Vec2<float> camCoords = cameraGrab->GetCoordinates();
+
             // make a class for debug text compnent
             sprintf(text,
                     "SECTOR: %d\nCAM: %f, %f, %f\nZ AXIS ANGLE: %f\nyaw: %f "
                     "pitch: %f\nFface cam: %f, %f, %f \n",
-                    sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis, yaw_,
-                    pitch_, v.x_, v.y_, v.z_);
+                    sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis,
+                    camCoords.getX(), camCoords.getY(), v.x_, v.y_, v.z_);
 
             String txt = String(text);
             debTex->SetText(txt);

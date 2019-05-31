@@ -45,6 +45,16 @@ void GrabbableUI::UpdateMomentum(float timeStep) {
     // Apply the momentum to the node
     coords += momentum;  // sum momentum to the coords
     coords.setY(Clamp(coords.getY(), -90.0f, 90.0f));
+
+    // Limit the value between 0 and 360
+    // TODO: this code is not very efficient, make it more robust
+    float xCoord = coords.getX();
+    if (xCoord > 360)
+        xCoord = 360 - xCoord;
+    else if (xCoord < 0)
+        xCoord = 360 + xCoord;
+    coords.setX(xCoord);
+
     MoveArroundOrbitableReference(coords.getX(), coords.getY(), radius_,
                                   rotationOffset);
 }
