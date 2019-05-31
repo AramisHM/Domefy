@@ -86,18 +86,18 @@ void MyCustomApplication::CreateScene() {
     zone->SetFogEnd(300.0f);
 
     //  directional light
-    Node* lightNode = scene_->CreateChild("DirectionalLight");
-    lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
-    Light* light = lightNode->CreateComponent<Light>();
-    light->SetLightType(LIGHT_DIRECTIONAL);
-    light->SetColor(Color(1.0f, 1.0f, 1.0f));
-    light->SetSpecularIntensity(5.0f);
+    // Node* lightNode = scene_->CreateChild("DirectionalLight");
+    // lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
+    // Light* light = lightNode->CreateComponent<Light>();
+    // light->SetLightType(LIGHT_DIRECTIONAL);
+    // light->SetColor(Color(1.0f, 1.0f, 1.0f));
+    // light->SetSpecularIntensity(5.0f);
 
     // floor
     for (int y = -1; y <= 1; ++y) {
         for (int x = -1; x <= 1; ++x) {
             Node* floorNode = scene_->CreateChild("FloorTile");
-            floorNode->SetPosition(Vector3(x * 20.5f, -10.0f, y * 20.5f));
+            floorNode->SetPosition(Vector3(x * 20.5f, -25.0f, y * 20.5f));
             floorNode->SetScale(Vector3(20.0f, 1.0f, 20.f));
             StaticModel* floorObject =
                 floorNode->CreateComponent<StaticModel>();
@@ -175,38 +175,38 @@ void MyCustomApplication::CreateScene() {
     anatomicViewer->CreateViewer();  // must be called
 
     // More lights
-    const unsigned NUM_LIGHTS = 9;
-    cameraNode_->SetPosition(Vector3(40, 40, 40));
+    // const unsigned NUM_LIGHTS = 9;
+    // cameraNode_->SetPosition(Vector3(40, 40, 40));
 
-    for (unsigned i = 0; i < NUM_LIGHTS; ++i) {
-        Node* lightNode = scene_->CreateChild("SpotLight");
-        Light* light = lightNode->CreateComponent<Light>();
+    // for (unsigned i = 0; i < NUM_LIGHTS; ++i) {
+    //     Node* lightNode = scene_->CreateChild("SpotLight");
+    //     Light* light = lightNode->CreateComponent<Light>();
 
-        float angle = 0.0f;
+    //     float angle = 0.0f;
 
-        Vector3 position((i % 3) * 60.0f - 60.0f, 45.0f,
-                         (i / 3) * 60.0f - 60.0f);
-        Color color(((i + 1) & 1) * 0.5f + 0.5f,
-                    (((i + 1) >> 1) & 1) * 0.5f + 0.5f,
-                    (((i + 1) >> 2) & 1) * 0.5f + 0.5f);
+    //     Vector3 position((i % 3) * 60.0f - 60.0f, 45.0f,
+    //                      (i / 3) * 60.0f - 60.0f);
+    //     Color color(((i + 1) & 1) * 0.5f + 0.5f,
+    //                 (((i + 1) >> 1) & 1) * 0.5f + 0.5f,
+    //                 (((i + 1) >> 2) & 1) * 0.5f + 0.5f);
 
-        lightNode->SetPosition(position);
-        lightNode->SetDirection(Vector3(Sin(angle), -1.5f, Cos(angle)));
-        light->SetLightType(LIGHT_SPOT);
-        light->SetRange(90.0f);
-        light->SetRampTexture(
-            cache->GetResource<Texture2D>("Textures/RampExtreme.png"));
-        light->SetFov(45.0f);
-        light->SetColor(color);
-        light->SetSpecularIntensity(1.0f);
-        light->SetCastShadows(true);
-        light->SetShadowBias(BiasParameters(0.00002f, 0.0f));
+    //     lightNode->SetPosition(position);
+    //     lightNode->SetDirection(Vector3(Sin(angle), -1.5f, Cos(angle)));
+    //     light->SetLightType(LIGHT_SPOT);
+    //     light->SetRange(90.0f);
+    //     light->SetRampTexture(
+    //         cache->GetResource<Texture2D>("Textures/RampExtreme.png"));
+    //     light->SetFov(45.0f);
+    //     light->SetColor(color);
+    //     light->SetSpecularIntensity(1.0f);
+    //     light->SetCastShadows(true);
+    //     light->SetShadowBias(BiasParameters(0.00002f, 0.0f));
 
-        light->SetShadowFadeDistance(100.0f);
-        light->SetShadowDistance(125.0f);
-        light->SetShadowResolution(0.5f);
-        light->SetShadowNearFarRatio(0.01f);
-    }
+    //     light->SetShadowFadeDistance(100.0f);
+    //     light->SetShadowDistance(125.0f);
+    //     light->SetShadowResolution(0.5f);
+    //     light->SetShadowNearFarRatio(0.01f);
+    // }
     cameraNearClipping = 0.01f;
 }
 #endif

@@ -77,7 +77,9 @@ void VHP::CreateModel() {
         sliceMesh->SetModel(
             cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
+        m->SetShaderParameter("MatDiffColor", Color(4.0f, 4.0f, 4.0f, 0.05f));
+        // m->SetTechnique(0, cache->GetResource<Technique>(
+        //                        "Techniques/DiffAlphaTranslucent.xml"));
         sliceMesh->SetMaterial(m);
     }
     axialBasedDatesed->SetRotation(Quaternion(0.0f, 180.0f, 180.0f));
@@ -110,7 +112,9 @@ void VHP::CreateModel() {
         sliceMesh->SetModel(
             cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
+        m->SetShaderParameter("MatDiffColor", Color(4.0f, 4.0f, 4.0f, 0.05f));
+        // m->SetTechnique(0, cache->GetResource<Technique>(
+        //                        "Techniques/DiffAlphaTranslucent.xml"));
         sliceMesh->SetMaterial(m);
     }
     sagitalBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, -90.0f));
@@ -141,7 +145,9 @@ void VHP::CreateModel() {
         sliceMesh->SetModel(
             cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
 
-        m->SetShaderParameter("MatDiffColor", Color(1.1f, 1.1f, 1.1f, 0.8f));
+        m->SetShaderParameter("MatDiffColor", Color(4.0f, 4.0f, 4.0f, 0.05f));
+        // m->SetTechnique(0, cache->GetResource<Technique>(
+        //                        "Techniques/DiffAlphaTranslucent.xml"));
         sliceMesh->SetMaterial(m);
     }
     coronalBasedDatesed->SetRotation(Quaternion(0.0f, 0.0f, -90.0f));
@@ -166,6 +172,7 @@ void VHP::SumSagitalCut(float level) {
         n->SetScale(Vector3(axialLength / 2, 0, axialHeight));
     }
 }
+
 void VHP::SumCoronal(float level) { coronalLevel += level; }
 void VHP::SumAxial(float level) { axialLevel += level; }
 
