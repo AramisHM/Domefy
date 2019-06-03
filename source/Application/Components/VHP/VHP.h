@@ -33,6 +33,8 @@ using namespace fpmed;
 
 #define MAX_NUM_SLICES 7000
 
+enum VHPBaseType { sagital = 1, coronal = 2, axial = 3, invalid = 0 };
+
 /// Custom logic component: Used to create the Visible Human
 class VHP : public LogicComponent {
     // Must do this to register your class componenet
@@ -41,22 +43,47 @@ class VHP : public LogicComponent {
    private:
     unsigned int numberOfSlices;
     unsigned int heightOffset = 5;
-    Material* slicesMaterials[MAX_NUM_SLICES];
-    Node* slicesNodes[MAX_NUM_SLICES];
 
-    // level of the sagital cut
+    // level of the anatomic cuts
     float sagitalLevel;
     float coronalLevel;
     float axialLevel;
-
-    // dimensions
-    float axialLength;
-    float axialHeight;
 
     // Slices bases
     Node* coronalBasedDatesed;
     Node* sagitalBasedDatesed;
     Node* axialBasedDatesed;
+
+    // Data dimensions precalculations
+    // TODO: Add description to each one of them
+    int axialSliceQuantity;
+    int sagitalSliceQuantity;
+    int coronalSliceQuantity;
+    float modelNormalWidth;
+    float modelNormalHeight;
+    float modelNormalDepth;
+    float sliceAxialInterval;
+    float sliceSagitalInterval;
+    float sliceCoronalInterval;
+
+    // the entire model transparency and colo
+    // TODO: make own functions
+    float _modelTransparency;
+    Color _modelColor;
+
+    // set of materials and nodes to perform the anatomic cuts
+    Material* _axialSlicesMaterials[MAX_NUM_SLICES];
+    Node* _axialSlicesNodes[MAX_NUM_SLICES];
+    Material* _sagitalSlicesMaterials[MAX_NUM_SLICES];
+    Node* _sagialSlicesNodes[MAX_NUM_SLICES];
+    Material* _coronalSlicesMaterials[MAX_NUM_SLICES];
+    Node* _coronalSlicesNodes[MAX_NUM_SLICES];
+
+    // the node reference that has the camera componenet
+    Node* _viewingReferenceNode;
+
+    // 1 sagital, 2 coronal, 3 axial and 0 invalid
+    VHPBaseType _currentReferenceBase;
 
    public:
     VHP(Context* context);
@@ -85,6 +112,19 @@ class VHP : public LogicComponent {
     // SetAxialBaseVisible - Enables or disables the rendering of the axial
     // planes.
     void SetAxialBaseVisible(bool isVisible);
+
+    // UpdateWhatBaseToShow - Gets relative coordinates to the viwing camera,
+    // and define what base to show
+    void UpdateWhatBaseToShow();
+
+    // GetCurrentShowingBase - returns 1 if sagital, 2 coronal and 3 axial; 0 if
+    // invalid. It indicates what set of images is beeing used to show the model
+    // to the viewer
+    VHPBaseType GetCurrentShowingBase();
+
+    // SetViewNodeReference - Sets the node that we use as reference to
+    // calculate what image base to use
+    void SetViewNodeReference(Node* n);
 };
 
 #endif

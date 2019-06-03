@@ -165,6 +165,7 @@ void MyCustomApplication::CreateScene() {
     vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
                                             // for the coponent somewhere
     vhp->CreateModel();
+    vhp->SetViewNodeReference(cameraNode_);
 
     // Howdy, slides goes here partner.
     this->slideComponent = cameraNode_->CreateComponent<Slide>();
@@ -323,9 +324,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         // }
 
         // do some cutting
-        // vhp->SumSagitalCut(0.01f);
-
-        vhp->SetSagitalBaseVisible(false);
+        vhp->SumSagitalCut(0.01f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model
@@ -462,26 +461,27 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                               posCam.y_, posCam.z_);
         int sector = angle_Z_axis / 0.9f;
 
-        Vec2<float> camCoords = cameraGrab->GetCoordinates();
-        float camLong = camCoords.getX();
-        float camLat = abs(camCoords.getY());  // its mirrored under and upper
+        // Vec2<float> camCoords = cameraGrab->GetCoordinates();
+        // float camLong = camCoords.getX();
+        // float camLat = abs(camCoords.getY());  // its mirrored under and
+        // upper
 
-        if ((camLat > 45 && camLat < 91)) {
-            vhp->SetAxialBaseVisible(true);
-            vhp->SetSagitalBaseVisible(false);
-            vhp->SetCoronalBaseVisible(false);
-        } else {
-            vhp->SetAxialBaseVisible(false);
-            // Define witch image dataset to show
-            if ((camLong > 45 && camLong < 135) ||
-                (camLong > 225 && camLong < 315)) {
-                vhp->SetSagitalBaseVisible(true);
-                vhp->SetCoronalBaseVisible(false);
-            } else {
-                vhp->SetSagitalBaseVisible(false);
-                vhp->SetCoronalBaseVisible(true);
-            }
-        }
+        // if ((camLat > 45 && camLat < 91)) {
+        //     vhp->SetAxialBaseVisible(true);
+        //     vhp->SetSagitalBaseVisible(false);
+        //     vhp->SetCoronalBaseVisible(false);
+        // } else {
+        //     vhp->SetAxialBaseVisible(false);
+        //     // Define witch image dataset to show
+        //     if ((camLong > 45 && camLong < 135) ||
+        //         (camLong > 225 && camLong < 315)) {
+        //         vhp->SetSagitalBaseVisible(true);
+        //         vhp->SetCoronalBaseVisible(false);
+        //     } else {
+        //         vhp->SetSagitalBaseVisible(false);
+        //         vhp->SetCoronalBaseVisible(true);
+        //     }
+        // }
 
         if (sector <= 398) {
             // hologramPlane->SetMaterial(holoTextArray[sector]);
