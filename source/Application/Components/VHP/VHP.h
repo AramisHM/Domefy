@@ -123,8 +123,11 @@ class VHP : public LogicComponent {
     VHPBaseType GetCurrentShowingBase();
 
     // SetViewNodeReference - Sets the node that we use as reference to
-    // calculate what image base to use
+    // calculate what   base to use
     void SetViewNodeReference(Node* n);
+
+    // SetModelTransparency - Sets the transparency of the model
+    void SetModelTransparency(float level);
 };
 
 #endif

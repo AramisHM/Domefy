@@ -325,6 +325,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
         // do some cutting
         vhp->SumSagitalCut(0.01f);
+        vhp->SetModelTransparency(0.003f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model

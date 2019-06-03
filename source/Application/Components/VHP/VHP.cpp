@@ -251,3 +251,35 @@ void VHP::UpdateWhatBaseToShow() {
 VHPBaseType VHP::GetCurrentShowingBase() { return _currentReferenceBase; }
 
 void VHP::SetViewNodeReference(Node* n) { _viewingReferenceNode = n; }
+
+void VHP::SetModelTransparency(float level) {
+    _modelTransparency = level;
+
+    for (int h = 0; h < axialSliceQuantity; ++h) {
+        Material* m = _axialSlicesMaterials[h];
+
+        if (!m) continue;  // no node or material.: ignore
+
+        Variant va = Variant(Vector4(_modelColor.r_, _modelColor.g_,
+                                     _modelColor.b_, _modelTransparency));
+        m->SetShaderParameter("MatDiffColor", va);
+    }
+    for (int h = 0; h < sagitalSliceQuantity; ++h) {
+        Material* m = _sagitalSlicesMaterials[h];
+
+        if (!m) continue;  // no node or material.: ignore
+
+        Variant va = Variant(Vector4(_modelColor.r_, _modelColor.g_,
+                                     _modelColor.b_, _modelTransparency));
+        m->SetShaderParameter("MatDiffColor", va);
+    }
+    for (int h = 0; h < coronalSliceQuantity; ++h) {
+        Material* m = _coronalSlicesMaterials[h];
+
+        if (!m) continue;  // no node or material.: ignore
+
+        Variant va = Variant(Vector4(_modelColor.r_, _modelColor.g_,
+                                     _modelColor.b_, _modelTransparency));
+        m->SetShaderParameter("MatDiffColor", va);
+    }
+}
