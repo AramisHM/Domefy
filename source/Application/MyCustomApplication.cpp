@@ -86,12 +86,12 @@ void MyCustomApplication::CreateScene() {
     zone->SetFogEnd(300.0f);
 
     //  directional light
-    // Node* lightNode = scene_->CreateChild("DirectionalLight");
-    // lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
-    // Light* light = lightNode->CreateComponent<Light>();
-    // light->SetLightType(LIGHT_DIRECTIONAL);
-    // light->SetColor(Color(1.0f, 1.0f, 1.0f));
-    // light->SetSpecularIntensity(5.0f);
+    Node* lightNode = scene_->CreateChild("DirectionalLight");
+    lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
+    Light* light = lightNode->CreateComponent<Light>();
+    light->SetLightType(LIGHT_DIRECTIONAL);
+    light->SetColor(Color(1.0f, 1.0f, 1.0f));
+    light->SetSpecularIntensity(5.0f);
 
     // floor
     for (int y = -1; y <= 1; ++y) {
@@ -132,10 +132,11 @@ void MyCustomApplication::CreateScene() {
     // Some random mesh for testing custom componenets
     {
         Node* componentNodeTest = scene_->CreateChild("TestComponent");
-        componentNodeTest->SetPosition(Vector3(0.5f, 4.0f, 0.5f));
+        componentNodeTest->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
         StaticModel* floorObject =
             componentNodeTest->CreateComponent<StaticModel>();
-        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        floorObject->SetModel(cache->GetResource<Model>(
+            "Models/DoubleSidedMirroredPlaneRef.mdl"));
         floorObject->SetMaterial(
             cache->GetResource<Material>("Materials/Stone.xml"));
     }
@@ -324,8 +325,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         // }
 
         // do some cutting
-        vhp->SumSagitalCut(0.01f);
-        vhp->SetModelTransparency(0.003f);
+        vhp->SetSagitalCut(0.8f, 0.0f);
+        // vhp->SetModelTransparency(0.003f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model

@@ -94,8 +94,8 @@ class VHP : public LogicComponent {
     // Override
     virtual void Update(float timeStep) override;
 
-    // SumSagitalCut - Adds the value from parameter to the sagital cut level
-    void SumSagitalCut(float level);
+    // SetSagitalCut - Adds the value from parameter to the sagital cut level
+    void SetSagitalCut(float leftLevel, float rightLevel);
 
     // SumCoronalCut - Adds the value from parameter to the coronal cut level
     void SumCoronal(float level);

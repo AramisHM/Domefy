@@ -40,8 +40,7 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
     sliceSagitalInterval = (modelNormalWidth / sagitalSliceQuantity);
     sliceCoronalInterval = (modelNormalDepth / coronalSliceQuantity);
 
-    _currentReferenceBase = VHPBaseType::invalid;  // 4 means invalid
-
+    _currentReferenceBase = invalid;
     _modelColor = Color(7.0f, 7.0f, 7.0f, 3.0f);
 }
 VHP::~VHP() {}
@@ -63,12 +62,12 @@ void VHP::CreateModel() {
         _coronalSlicesNodes[h] = 0;
     }
 
-    //  Lowres Axial
+    //  Lowres Axial ------------------------------------------------
     axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
-    for (int h = 1001; h < 1001 + axialSliceQuantity + 1; ++h) {
+    for (int h = 0; h < axialSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/axial/lowres/" +
-            Urho3D::String(h) + ".xml");
+            Urho3D::String(1001 + h) + ".xml");
 
         if (!m) continue;
 
@@ -79,12 +78,13 @@ void VHP::CreateModel() {
         std::string nodeName = ss.str();
 
         Node* sliceNode = axialBasedDatesed->CreateChild(nodeName.c_str());
-        sliceNode->SetPosition(Vector3(0.0f, (h * sliceAxialInterval), 0.0f));
-        sliceNode->SetScale(Vector3(0.5127f, 0.0f, 1.0f));
-        sliceNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));  // flip sides
+        sliceNode->SetPosition(Vector3(
+            0.0f, ((axialSliceQuantity - h) * sliceAxialInterval), 0.0f));
+        sliceNode->SetScale(Vector3(modelNormalWidth, 0.0f, modelNormalDepth));
+        // sliceNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));  // flip sides
         StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
         sliceMesh->SetModel(
-            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
+            cache->GetResource<Model>("Models/DoubleSidedMirroredPlane.mdl"));
 
         m->SetShaderParameter("MatDiffColor", _modelColor);
         // m->SetTechnique(0, cache->GetResource<Technique>(
@@ -95,17 +95,13 @@ void VHP::CreateModel() {
         _axialSlicesNodes[h] = sliceNode;
         _axialSlicesMaterials[h] = m;
     }
-    axialBasedDatesed->SetRotation(Quaternion(0.0f, 180.0f, 180.0f));
-    axialBasedDatesed->SetScale(5.25f);
-    axialBasedDatesed->SetPosition(Vector3(
-        0.0f,
-        modelNormalHeight * modelNormalHeight +
-            (modelNormalWidth * modelNormalHeight) + 0.15f,  // 0.15f is a guess
-        0.0f));
+    // axialBasedDatesed->SetRotation(Quaternion(0.0f, 180.0f, 180.0f));
+    // axialBasedDatesed->SetPosition(Vector3(modelNormalDepth / 2, 0.0f,
+    // 0.0f));
 
-    //  Lowres Sagital
+    //  Lowres Sagital ------------------------------------------------
     sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
-    for (int h = 1; h < sagitalSliceQuantity + 1; ++h) {
+    for (int h = 0; h < sagitalSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/sagital/lowres/" +
             Urho3D::String(sagitalSliceQuantity - h) + ".xml");
@@ -120,10 +116,10 @@ void VHP::CreateModel() {
 
         Node* sliceNode = sagitalBasedDatesed->CreateChild(nodeName.c_str());
         sliceNode->SetPosition(Vector3(0.0f, (h * sliceSagitalInterval), 0.0f));
-        sliceNode->SetScale(Vector3(2.5662f, 0.0f, 0.5127f));
+        sliceNode->SetScale(Vector3(modelNormalDepth, 0.0f, modelNormalHeight));
         StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
         sliceMesh->SetModel(
-            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
+            cache->GetResource<Model>("Models/DoubleSidedMirroredPlane.mdl"));
 
         m->SetShaderParameter("MatDiffColor", _modelColor);
         // m->SetTechnique(0, cache->GetResource<Technique>(
@@ -134,15 +130,13 @@ void VHP::CreateModel() {
         _sagialSlicesNodes[h] = sliceNode;
         _sagitalSlicesMaterials[h] = m;
     }
-    sagitalBasedDatesed->SetRotation(Quaternion(0.0f, 90.0f, -90.0f));
-    sagitalBasedDatesed->SetScale(5.25f);
+    sagitalBasedDatesed->SetRotation(Quaternion(-90.0f, 90.0f, 0.0f));
     sagitalBasedDatesed->SetPosition(
-        Vector3(0.0f, 0.0f,
-                modelNormalWidth * modelNormalHeight));  // No idea why is this.
+        Vector3(modelNormalWidth, 0.0f, modelNormalDepth));
 
-    // Lowres Coronal
+    // Lowres Coronal ------------------------------------------------
     coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
-    for (int h = 0; h < coronalSliceQuantity + 1; ++h) {
+    for (int h = 0; h < coronalSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             "/home/aramis/research/Materials/vhp/coronal/lowres/" +
             Urho3D::String(h) + ".xml");
@@ -157,10 +151,10 @@ void VHP::CreateModel() {
 
         Node* sliceNode = coronalBasedDatesed->CreateChild(nodeName.c_str());
         sliceNode->SetPosition(Vector3(0.0f, (h * sliceCoronalInterval), 0.0f));
-        sliceNode->SetScale(Vector3(modelNormalHeight, 0.0f, modelNormalWidth));
+        sliceNode->SetScale(Vector3(modelNormalWidth, 0.0f, modelNormalHeight));
         StaticModel* sliceMesh = sliceNode->CreateComponent<StaticModel>();
         sliceMesh->SetModel(
-            cache->GetResource<Model>("Models/PlaneMirrored.mdl"));
+            cache->GetResource<Model>("Models/DoubleSidedMirroredPlane.mdl"));
 
         m->SetShaderParameter("MatDiffColor", _modelColor);
         // m->SetTechnique(0, cache->GetResource<Technique>(
@@ -171,18 +165,13 @@ void VHP::CreateModel() {
         _coronalSlicesNodes[h] = sliceNode;
         _coronalSlicesMaterials[h] = m;
     }
-    coronalBasedDatesed->SetRotation(Quaternion(0.0f, 0.0f, -90.0f));
-    coronalBasedDatesed->SetScale(5.25f);
-    coronalBasedDatesed->SetPosition(
-        Vector3(modelNormalHeight * -modelNormalDepth, 0.0f, 0.0f));
-
-    coronalBasedDatesed->SetEnabledRecursive(false);  // initial state
+    coronalBasedDatesed->SetRotation(Quaternion(-90.0f, 0.0f, 0.0f));
+    coronalBasedDatesed->SetPosition(Vector3(0.0f, 0.0f, modelNormalDepth));
 }
 
 // TODO: considerate what base is beeing shown
 // at the moment only works for axial image-set
-void VHP::SumSagitalCut(float level) {
-    sagitalLevel += level;
+void VHP::SetSagitalCut(float leftLevel, float rightLevel) {
     for (int h = 0; h < axialSliceQuantity; ++h) {
         Material* m = _axialSlicesMaterials[h];
         Node* n = _axialSlicesNodes[h];
@@ -191,14 +180,14 @@ void VHP::SumSagitalCut(float level) {
 
         // m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
 
-        m->SetUVTransform(Vector2(0.5f, 0.0f), 0, Vector2(0.5f, 1.0f));
-        n->SetScale(Vector3(modelNormalWidth / 2, 0, modelNormalDepth));
-        n->SetPosition(
-            Vector3(0.0f, (h * sliceAxialInterval),
-                    -modelNormalDepth /
-                        2));  // these values are very confusing... TODO: make
-                              // model in blender that results in calculations
-                              // that makes more sense
+        n->SetScale(Vector3(modelNormalWidth * (1.0f - leftLevel), 0,
+                            modelNormalDepth));
+        n->SetPosition(Vector3(
+            modelNormalWidth * leftLevel,                   // alter
+            (axialSliceQuantity - h) * sliceAxialInterval,  // don't alter
+            0.0f));                                         // don't alter
+        m->SetUVTransform(Vector2((leftLevel), 0.0f), 0,
+                          Vector2((1.0f - leftLevel), 1.0f));
     }
 }
 
@@ -231,18 +220,18 @@ void VHP::UpdateWhatBaseToShow() {
             SetAxialBaseVisible(true);
             SetSagitalBaseVisible(false);
             SetCoronalBaseVisible(false);
-            _currentReferenceBase = VHPBaseType::axial;
+            _currentReferenceBase = axial;
         } else {
             SetAxialBaseVisible(false);
             if ((yAngle > 45 && yAngle < 135) ||
                 (yAngle > 225 && yAngle < 315)) {
-                SetSagitalBaseVisible(true);
-                SetCoronalBaseVisible(false);
-                _currentReferenceBase = VHPBaseType::sagital;
-            } else {
                 SetSagitalBaseVisible(false);
                 SetCoronalBaseVisible(true);
-                _currentReferenceBase = VHPBaseType::coronal;
+                _currentReferenceBase = sagital;
+            } else {
+                SetSagitalBaseVisible(true);
+                SetCoronalBaseVisible(false);
+                _currentReferenceBase = coronal;
             }
         }
     }
