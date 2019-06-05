@@ -325,7 +325,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         // }
 
         // do some cutting
-        vhp->SetSagitalCut(0.8f, 0.0f);
+        vhp->SetSagitalCut(0.2f, 0.2f);
         // vhp->SetModelTransparency(0.003f);
     }
     if (input->GetKeyDown(KEY_O)) {

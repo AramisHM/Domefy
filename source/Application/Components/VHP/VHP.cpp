@@ -175,19 +175,22 @@ void VHP::SetSagitalCut(float leftLevel, float rightLevel) {
     for (int h = 0; h < axialSliceQuantity; ++h) {
         Material* m = _axialSlicesMaterials[h];
         Node* n = _axialSlicesNodes[h];
-
         if (!n || !m) continue;  // no node or material.: ignore
 
-        // m->SetUVTransform(Vector2(sagitalLevel, 0.0f), 0, 1);
+        // Scale (OK)
+        n->SetScale(Vector3(
+            modelNormalWidth * (1.0f - (leftLevel + rightLevel)),  // alter
+            0,                                                     // same
+            modelNormalDepth));                                    // same
 
-        n->SetScale(Vector3(modelNormalWidth * (1.0f - leftLevel), 0,
-                            modelNormalDepth));
-        n->SetPosition(Vector3(
-            modelNormalWidth * leftLevel,                   // alter
-            (axialSliceQuantity - h) * sliceAxialInterval,  // don't alter
-            0.0f));                                         // don't alter
+        // Position
+        n->SetPosition(
+            Vector3(modelNormalWidth * leftLevel,                   // alter
+                    (axialSliceQuantity - h) * sliceAxialInterval,  // same
+                    0.0f));                                         // same
+        // UV
         m->SetUVTransform(Vector2((leftLevel), 0.0f), 0,
-                          Vector2((1.0f - leftLevel), 1.0f));
+                          Vector2(1.0f - (leftLevel + rightLevel), 1.0f));
     }
 }
 
