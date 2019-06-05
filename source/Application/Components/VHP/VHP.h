@@ -66,6 +66,14 @@ class VHP : public LogicComponent {
     float sliceSagitalInterval;
     float sliceCoronalInterval;
 
+    // anatomic cuts levels
+    float _sagitalLeftLevel;
+    float _sagitalRightLevel;
+    float _coronalFrontLevel;
+    float _coronalBackLevel;
+    float _axialUpperLevel;
+    float _axialLowerLevel;
+
     // the entire model transparency and colo
     // TODO: make own functions
     float _modelTransparency;
@@ -84,6 +92,10 @@ class VHP : public LogicComponent {
 
     // 1 sagital, 2 coronal, 3 axial and 0 invalid
     VHPBaseType _currentReferenceBase;
+
+    // UpdateAnatomicCuts - Updates the anatomic cuts from all image datases
+    // (internal)
+    void UpdateAnatomicCuts();
 
    public:
     VHP(Context* context);

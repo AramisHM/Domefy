@@ -86,12 +86,12 @@ void MyCustomApplication::CreateScene() {
     zone->SetFogEnd(300.0f);
 
     //  directional light
-    Node* lightNode = scene_->CreateChild("DirectionalLight");
-    lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
-    Light* light = lightNode->CreateComponent<Light>();
-    light->SetLightType(LIGHT_DIRECTIONAL);
-    light->SetColor(Color(1.0f, 1.0f, 1.0f));
-    light->SetSpecularIntensity(5.0f);
+    // Node* lightNode = scene_->CreateChild("DirectionalLight");
+    // lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
+    // Light* light = lightNode->CreateComponent<Light>();
+    // light->SetLightType(LIGHT_DIRECTIONAL);
+    // light->SetColor(Color(1.0f, 1.0f, 1.0f));
+    // light->SetSpecularIntensity(5.0f);
 
     // floor
     for (int y = -1; y <= 1; ++y) {

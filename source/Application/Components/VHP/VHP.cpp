@@ -42,11 +42,21 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
 
     _currentReferenceBase = invalid;
     _modelColor = Color(7.0f, 7.0f, 7.0f, 3.0f);
+
+    _sagitalLeftLevel = 0.0f;
+    _sagitalRightLevel = 0.0f;
+    _coronalFrontLevel = 0.0f;
+    _coronalBackLevel = 0.0f;
+    _axialUpperLevel = 0.0f;
+    _axialLowerLevel = 0.0f;
 }
 VHP::~VHP() {}
 
 // Update
-void VHP::Update(float timeStep) { UpdateWhatBaseToShow(); }
+void VHP::Update(float timeStep) {
+    UpdateWhatBaseToShow();
+    UpdateAnatomicCuts();
+}
 
 void VHP::CreateModel() {
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -172,26 +182,8 @@ void VHP::CreateModel() {
 // TODO: considerate what base is beeing shown
 // at the moment only works for axial image-set
 void VHP::SetSagitalCut(float leftLevel, float rightLevel) {
-    for (int h = 0; h < axialSliceQuantity; ++h) {
-        Material* m = _axialSlicesMaterials[h];
-        Node* n = _axialSlicesNodes[h];
-        if (!n || !m) continue;  // no node or material.: ignore
-
-        // Scale (OK)
-        n->SetScale(Vector3(
-            modelNormalWidth * (1.0f - (leftLevel + rightLevel)),  // alter
-            0,                                                     // same
-            modelNormalDepth));                                    // same
-
-        // Position
-        n->SetPosition(
-            Vector3(modelNormalWidth * leftLevel,                   // alter
-                    (axialSliceQuantity - h) * sliceAxialInterval,  // same
-                    0.0f));                                         // same
-        // UV
-        m->SetUVTransform(Vector2((leftLevel), 0.0f), 0,
-                          Vector2(1.0f - (leftLevel + rightLevel), 1.0f));
-    }
+    _sagitalLeftLevel = leftLevel;
+    _sagitalRightLevel = rightLevel;
 }
 
 void VHP::SumCoronal(float level) { coronalLevel += level; }
@@ -230,11 +222,11 @@ void VHP::UpdateWhatBaseToShow() {
                 (yAngle > 225 && yAngle < 315)) {
                 SetSagitalBaseVisible(false);
                 SetCoronalBaseVisible(true);
-                _currentReferenceBase = sagital;
+                _currentReferenceBase = coronal;
             } else {
                 SetSagitalBaseVisible(true);
                 SetCoronalBaseVisible(false);
-                _currentReferenceBase = coronal;
+                _currentReferenceBase = sagital;
             }
         }
     }
@@ -273,5 +265,68 @@ void VHP::SetModelTransparency(float level) {
         Variant va = Variant(Vector4(_modelColor.r_, _modelColor.g_,
                                      _modelColor.b_, _modelTransparency));
         m->SetShaderParameter("MatDiffColor", va);
+    }
+}
+
+void VHP::UpdateAnatomicCuts() {
+    // Y-axis (axial) base (OK)
+    for (int h = 0; h < axialSliceQuantity; ++h) {
+        Material* m = _axialSlicesMaterials[h];
+        Node* n = _axialSlicesNodes[h];
+        if (!n || !m) continue;  // no node or material.: ignore
+
+        // Scale
+        n->SetScale(Vector3(
+            modelNormalWidth *
+                (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // alter
+            0,                                                      // same
+            modelNormalDepth));                                     // same
+
+        // Position
+        n->SetPosition(
+            Vector3(modelNormalWidth * _sagitalLeftLevel,           // alter
+                    (axialSliceQuantity - h) * sliceAxialInterval,  // same
+                    0.0f));                                         // same
+        // UV
+        m->SetUVTransform(
+            Vector2((_sagitalLeftLevel), 0.0f), 0,
+            Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel), 1.0f));
+    }
+
+    // X-axis (sagital) base
+    if (_currentReferenceBase == sagital) {
+        // precalculate occluding planes
+        int lq, rq;  // left quantity and right quantity
+        lq = sagitalSliceQuantity * _sagitalLeftLevel;
+        rq = sagitalSliceQuantity * _sagitalRightLevel;
+
+        for (int h = 0; h < sagitalSliceQuantity; ++h) {
+            Material* m = _sagitalSlicesMaterials[h];
+            Node* n = _sagialSlicesNodes[h];
+            if (!n || !m) continue;  // no node or material.: ignore
+
+            // Scale
+            // n->SetScale(Vector3(
+            //     modelNormalWidth * (1.0f - (leftLevel + rightLevel)),  //
+            //     alter 0, // same modelNormalDepth)); // same
+
+            // Position
+            // n->SetPosition(
+            //     Vector3(modelNormalWidth * leftLevel,                   //
+            //     alter
+            //             (axialSliceQuantity - h) * sliceAxialInterval,  //
+            //             same 0.0f)); // same
+            // UV
+            // m->SetUVTransform(Vector2((leftLevel), 0.0f), 0,
+            //                   Vector2(1.0f - (leftLevel +
+            //                   rightLevel), 1.0f));
+
+            // Occlusion
+            if (h < lq || h > (sagitalSliceQuantity - rq)) {
+                n->SetEnabled(false);
+            } else {
+                n->SetEnabled(true);
+            }
+        }
     }
 }
