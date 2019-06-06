@@ -189,7 +189,7 @@ void VHP::SetCoronalCut(float frontLevel, float backLevel) {
     _coronalBackLevel = backLevel;
 }
 
-void VHP::SetAxialCut(float lowerLevel, float upperLevel) {
+void VHP::SetAxialCut(float upperLevel, float lowerLevel) {
     _axialLowerLevel = lowerLevel;
     _axialUpperLevel = upperLevel;
 }
@@ -278,63 +278,40 @@ void VHP::SetModelTransparency(float level) {
 
 void VHP::UpdateAnatomicCuts() {
     // Y-axis (axial) base
-    for (int h = 0; h < axialSliceQuantity; ++h) {
-        Material* m = _axialSlicesMaterials[h];
-        Node* n = _axialSlicesNodes[h];
-        if (!n || !m) continue;  // no node or material.: ignore
-
-        // Scale
-        n->SetScale(Vector3(
-            modelNormalWidth *
-                (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // x
-            0,                                                      // y
-            modelNormalDepth *
-                (1.0f - (_coronalBackLevel + _coronalFrontLevel))));  // z
-
-        // Position
-        n->SetPosition(
-            Vector3(modelNormalWidth * _sagitalLeftLevel,           // x
-                    (axialSliceQuantity - h) * sliceAxialInterval,  // y
-                    modelNormalDepth * _coronalFrontLevel));        // z
-        // UV
-        m->SetUVTransform(
-            Vector2(_sagitalLeftLevel, _coronalBackLevel),  // offset x,y
-            0,                                              // rotation
-            Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel),
-                    1.0f - (_coronalBackLevel +
-                            _coronalFrontLevel)));  // repeat x, y
-    }
-
-    // X-axis (sagital) base
-    if (_currentReferenceBase == sagital) {
+    if (_currentReferenceBase == axial) {
         // precalculate occluding planes
-        int lq, rq;  // left quantity and right quantity
-        lq = sagitalSliceQuantity * _sagitalLeftLevel;
-        rq = sagitalSliceQuantity * _sagitalRightLevel;
+        int uc, lc;  // upper cut and lower cut
+        uc = axialSliceQuantity * _axialUpperLevel;
+        lc = axialSliceQuantity * _axialLowerLevel;
 
-        for (int h = 0; h < sagitalSliceQuantity; ++h) {
-            Material* m = _sagitalSlicesMaterials[h];
-            Node* n = _sagialSlicesNodes[h];
+        for (int h = 0; h < axialSliceQuantity; ++h) {
+            Material* m = _axialSlicesMaterials[h];
+            Node* n = _axialSlicesNodes[h];
             if (!n || !m) continue;  // no node or material.: ignore
 
             // Scale
-            // n->SetScale(Vector3(
-            //     modelNormalWidth * (1.0f - (leftLevel + rightLevel)),  //
-            //     alter 0, // same modelNormalDepth)); // same
+            n->SetScale(Vector3(
+                modelNormalWidth *
+                    (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // x
+                0,                                                      // y
+                modelNormalDepth *
+                    (1.0f - (_coronalBackLevel + _coronalFrontLevel))));  // z
 
             // Position
-            // n->SetPosition(
-            //     Vector3(modelNormalWidth * leftLevel,                   //
-            //     alter
-            //             (axialSliceQuantity - h) * sliceAxialInterval,  //
-            //             same 0.0f)); // same
+            n->SetPosition(
+                Vector3(modelNormalWidth * _sagitalLeftLevel,           // x
+                        (axialSliceQuantity - h) * sliceAxialInterval,  // y
+                        modelNormalDepth * _coronalFrontLevel));        // z
             // UV
-            // m->SetUVTransform(Vector2((leftLevel), 0.0f), 0,
-            //                   Vector2(1.0f - (leftLevel +
-            //                   rightLevel), 1.0f));
+            m->SetUVTransform(
+                Vector2(_sagitalLeftLevel, _coronalBackLevel),  // offset x,y
+                0,                                              // rotation
+                Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel),
+                        1.0f - (_coronalBackLevel +
+                                _coronalFrontLevel)));  // repeat x, y
 
             // Occlusion
-            if (h < rq || h > (sagitalSliceQuantity - lq)) {
+            if (h < uc || h > (axialSliceQuantity - lc)) {
                 n->SetEnabled(false);
             } else {
                 n->SetEnabled(true);
@@ -342,12 +319,53 @@ void VHP::UpdateAnatomicCuts() {
         }
     }
 
-    // Z-axis (sagital) base
+    // X-axis (sagital) base
+    if (_currentReferenceBase == sagital) {
+        // precalculate occluding planes
+        int lc, rc;  // left cut and right cut
+        lc = sagitalSliceQuantity * _sagitalLeftLevel;
+        rc = sagitalSliceQuantity * _sagitalRightLevel;
+
+        for (int h = 0; h < sagitalSliceQuantity; ++h) {
+            Material* m = _sagitalSlicesMaterials[h];
+            Node* n = _sagialSlicesNodes[h];
+            if (!n || !m) continue;  // no node or material.: ignore
+
+            // Scale
+            n->SetScale(Vector3(
+                modelNormalDepth *
+                    (1.0f - (_coronalBackLevel + _coronalFrontLevel)),  // x
+                0,                                                      // y
+                modelNormalHeight *
+                    (1.0f - (_axialUpperLevel + _axialLowerLevel))));  // z
+
+            // Position
+            n->SetPosition(Vector3(modelNormalDepth * _coronalBackLevel,    // x
+                                   (h * sliceSagitalInterval),              // y
+                                   modelNormalHeight * _axialLowerLevel));  // z
+            // UV
+            m->SetUVTransform(
+                Vector2(_coronalBackLevel, _axialUpperLevel),  // offset x,y
+                0,                                             // rotation
+                Vector2(1.0f - (_coronalFrontLevel + _coronalBackLevel),
+                        1.0f - (_axialUpperLevel +
+                                _axialLowerLevel)));  // repeat x, y
+
+            // Occlusion
+            if (h < rc || h > (sagitalSliceQuantity - lc)) {
+                n->SetEnabled(false);
+            } else {
+                n->SetEnabled(true);
+            }
+        }
+    }
+
+    // Z-axis (coronal) base
     if (_currentReferenceBase == coronal) {
         // precalculate occluding planes
-        int lc, rc;  // left and right cut
-        lc = coronalSliceQuantity * _sagitalLeftLevel;
-        rc = coronalSliceQuantity * _sagitalRightLevel;
+        int fc, bc;  // front and back cut qauntity
+        fc = coronalSliceQuantity * _coronalFrontLevel;
+        bc = coronalSliceQuantity * _coronalBackLevel;
 
         for (int h = 0; h < coronalSliceQuantity; ++h) {
             Material* m = _coronalSlicesMaterials[h];
@@ -357,26 +375,30 @@ void VHP::UpdateAnatomicCuts() {
             // Scale
             n->SetScale(Vector3(
                 modelNormalWidth *
-                    (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // alter
-                0,                                                      // same
-                modelNormalHeight));                                    // same
+                    (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // x
+                0,                                                      // y
+                modelNormalHeight *
+                    (1.0f - (_axialUpperLevel + _axialLowerLevel))));  // z
 
             // Position
-            n->SetPosition(
-                Vector3(modelNormalWidth * _sagitalLeftLevel,  // alter
-                        (h * sliceCoronalInterval),            // same
-                        0.0f));                                // same
+            n->SetPosition(Vector3(modelNormalWidth * _sagitalLeftLevel,    // x
+                                   (h * sliceCoronalInterval),              // y
+                                   modelNormalHeight * _axialLowerLevel));  // z
             // UV
             m->SetUVTransform(
-                Vector2((_sagitalLeftLevel), 0.0f), 0,
-                Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel), 1.0f));
+                Vector2((_sagitalLeftLevel), _axialUpperLevel), 0,
+                Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel),
+                        1.0f - (_axialUpperLevel + _axialLowerLevel)));
 
             // Occlusion
-            // if (h < lq || h > (coronalSliceQuantity - rq)) {
-            //     n->SetEnabled(false);
-            // } else {
-            //     n->SetEnabled(true);
-            // }
+            // this is confusing becaue the image
+            // base starts from back to front. It is
+            // indeed tricky, might need a flag to invert.
+            if (h < bc || h > (coronalSliceQuantity - fc)) {
+                n->SetEnabled(false);
+            } else {
+                n->SetEnabled(true);
+            }
         }
     }
 }

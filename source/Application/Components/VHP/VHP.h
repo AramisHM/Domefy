@@ -112,9 +112,10 @@ class VHP : public LogicComponent {
     void SetCoronalCut(float frontLevel, float backLevel);
 
     // SetAxialCut - Sets the value from parameter to the axial cut level
-    void SetAxialCut(float lowerLevel, float upperLevel);
+    void SetAxialCut(float upperLevel, float lowerLevel);
 
-    // SumCoronalCut - Adds the value from parameter to the coronal cut level
+    // SumCoronalCut - Adds the value from parameter to the coronal cut
+    // level
     void SumCoronal(float level);
 
     // SumAxialCut - Adds the value from parameter to the axial cut level
