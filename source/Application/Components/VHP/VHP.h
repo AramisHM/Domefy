@@ -94,7 +94,6 @@ class VHP : public LogicComponent {
     VHPBaseType _currentReferenceBase;
 
     // UpdateAnatomicCuts - Updates the anatomic cuts from all image datases
-    // (internal)
     void UpdateAnatomicCuts();
 
    public:
@@ -106,8 +105,14 @@ class VHP : public LogicComponent {
     // Override
     virtual void Update(float timeStep) override;
 
-    // SetSagitalCut - Adds the value from parameter to the sagital cut level
+    // SetSagitalCut - Sets the value from parameter to the sagital cut level
     void SetSagitalCut(float leftLevel, float rightLevel);
+
+    // SetCoronalCut - Sets the value from parameter to the coronal cut level
+    void SetCoronalCut(float frontLevel, float backLevel);
+
+    // SetAxialCut - Sets the value from parameter to the axial cut level
+    void SetAxialCut(float lowerLevel, float upperLevel);
 
     // SumCoronalCut - Adds the value from parameter to the coronal cut level
     void SumCoronal(float level);

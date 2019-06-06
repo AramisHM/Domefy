@@ -179,11 +179,19 @@ void VHP::CreateModel() {
     coronalBasedDatesed->SetPosition(Vector3(0.0f, 0.0f, modelNormalDepth));
 }
 
-// TODO: considerate what base is beeing shown
-// at the moment only works for axial image-set
 void VHP::SetSagitalCut(float leftLevel, float rightLevel) {
     _sagitalLeftLevel = leftLevel;
     _sagitalRightLevel = rightLevel;
+}
+
+void VHP::SetCoronalCut(float frontLevel, float backLevel) {
+    _coronalFrontLevel = frontLevel;
+    _coronalBackLevel = backLevel;
+}
+
+void VHP::SetAxialCut(float lowerLevel, float upperLevel) {
+    _axialLowerLevel = lowerLevel;
+    _axialUpperLevel = upperLevel;
 }
 
 void VHP::SumCoronal(float level) { coronalLevel += level; }
@@ -269,7 +277,7 @@ void VHP::SetModelTransparency(float level) {
 }
 
 void VHP::UpdateAnatomicCuts() {
-    // Y-axis (axial) base (OK)
+    // Y-axis (axial) base
     for (int h = 0; h < axialSliceQuantity; ++h) {
         Material* m = _axialSlicesMaterials[h];
         Node* n = _axialSlicesNodes[h];
@@ -278,19 +286,23 @@ void VHP::UpdateAnatomicCuts() {
         // Scale
         n->SetScale(Vector3(
             modelNormalWidth *
-                (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // alter
-            0,                                                      // same
-            modelNormalDepth));                                     // same
+                (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // x
+            0,                                                      // y
+            modelNormalDepth *
+                (1.0f - (_coronalBackLevel + _coronalFrontLevel))));  // z
 
         // Position
         n->SetPosition(
-            Vector3(modelNormalWidth * _sagitalLeftLevel,           // alter
-                    (axialSliceQuantity - h) * sliceAxialInterval,  // same
-                    0.0f));                                         // same
+            Vector3(modelNormalWidth * _sagitalLeftLevel,           // x
+                    (axialSliceQuantity - h) * sliceAxialInterval,  // y
+                    modelNormalDepth * _coronalFrontLevel));        // z
         // UV
         m->SetUVTransform(
-            Vector2((_sagitalLeftLevel), 0.0f), 0,
-            Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel), 1.0f));
+            Vector2(_sagitalLeftLevel, _coronalBackLevel),  // offset x,y
+            0,                                              // rotation
+            Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel),
+                    1.0f - (_coronalBackLevel +
+                            _coronalFrontLevel)));  // repeat x, y
     }
 
     // X-axis (sagital) base
