@@ -322,11 +322,49 @@ void VHP::UpdateAnatomicCuts() {
             //                   rightLevel), 1.0f));
 
             // Occlusion
-            if (h < lq || h > (sagitalSliceQuantity - rq)) {
+            if (h < rq || h > (sagitalSliceQuantity - lq)) {
                 n->SetEnabled(false);
             } else {
                 n->SetEnabled(true);
             }
+        }
+    }
+
+    // Z-axis (sagital) base
+    if (_currentReferenceBase == coronal) {
+        // precalculate occluding planes
+        int lc, rc;  // left and right cut
+        lc = coronalSliceQuantity * _sagitalLeftLevel;
+        rc = coronalSliceQuantity * _sagitalRightLevel;
+
+        for (int h = 0; h < coronalSliceQuantity; ++h) {
+            Material* m = _coronalSlicesMaterials[h];
+            Node* n = _coronalSlicesNodes[h];
+            if (!n || !m) continue;  // no node or material.: ignore
+
+            // Scale
+            n->SetScale(Vector3(
+                modelNormalWidth *
+                    (1.0f - (_sagitalLeftLevel + _sagitalRightLevel)),  // alter
+                0,                                                      // same
+                modelNormalHeight));                                    // same
+
+            // Position
+            n->SetPosition(
+                Vector3(modelNormalWidth * _sagitalLeftLevel,  // alter
+                        (h * sliceCoronalInterval),            // same
+                        0.0f));                                // same
+            // UV
+            m->SetUVTransform(
+                Vector2((_sagitalLeftLevel), 0.0f), 0,
+                Vector2(1.0f - (_sagitalLeftLevel + _sagitalRightLevel), 1.0f));
+
+            // Occlusion
+            // if (h < lq || h > (coronalSliceQuantity - rq)) {
+            //     n->SetEnabled(false);
+            // } else {
+            //     n->SetEnabled(true);
+            // }
         }
     }
 }

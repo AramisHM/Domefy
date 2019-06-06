@@ -167,6 +167,7 @@ void MyCustomApplication::CreateScene() {
                                             // for the coponent somewhere
     vhp->CreateModel();
     vhp->SetViewNodeReference(cameraNode_);
+    vhpNode->SetScale(6.0f);
 
     // Howdy, slides goes here partner.
     this->slideComponent = cameraNode_->CreateComponent<Slide>();
@@ -325,8 +326,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         // }
 
         // do some cutting
-        vhp->SetSagitalCut(0.2f, 0.2f);
-        // vhp->SetModelTransparency(0.003f);
+        vhp->SetSagitalCut(0.5f, 0.2f);
+        vhp->SetModelTransparency(0.05f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model
