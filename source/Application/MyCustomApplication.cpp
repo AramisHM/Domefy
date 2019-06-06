@@ -82,6 +82,7 @@ void MyCustomApplication::CreateScene() {
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
     zone->SetAmbientColor(Color(0.1f, 0.1f, 0.1f));
+    zone->SetFogColor(Color(0.85f, 0.85f, 0.85f));
     zone->SetFogStart(100.0f);
     zone->SetFogEnd(300.0f);
 
@@ -93,19 +94,19 @@ void MyCustomApplication::CreateScene() {
     // light->SetColor(Color(1.0f, 1.0f, 1.0f));
     // light->SetSpecularIntensity(5.0f);
 
-    // floor
-    for (int y = -1; y <= 1; ++y) {
-        for (int x = -1; x <= 1; ++x) {
-            Node* floorNode = scene_->CreateChild("FloorTile");
-            floorNode->SetPosition(Vector3(x * 20.5f, -25.0f, y * 20.5f));
-            floorNode->SetScale(Vector3(20.0f, 1.0f, 20.f));
-            StaticModel* floorObject =
-                floorNode->CreateComponent<StaticModel>();
-            floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-            floorObject->SetMaterial(
-                cache->GetResource<Material>("Materials/BlackGrid.xml"));
-        }
-    }
+    // // floor
+    // for (int y = -1; y <= 1; ++y) {
+    //     for (int x = -1; x <= 1; ++x) {
+    //         Node* floorNode = scene_->CreateChild("FloorTile");
+    //         floorNode->SetPosition(Vector3(x * 20.5f, -25.0f, y * 20.5f));
+    //         floorNode->SetScale(Vector3(20.0f, 1.0f, 20.f));
+    //         StaticModel* floorObject =
+    //             floorNode->CreateComponent<StaticModel>();
+    //         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    //         floorObject->SetMaterial(
+    //             cache->GetResource<Material>("Materials/BlackGrid.xml"));
+    //     }
+    // }
 
     // north plane
     {
@@ -258,6 +259,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
             MOUSEB_RIGHT)) {  // move either by momentum or mouse iteraction
         // camera momentum
         IntVector2 md = input->GetMouseMove();
+        cameraGrab->SetMomentum(Vec2<float>(md.x_ / 5, md.y_ / 5));
         cameraGrab->ApplyMouseMove(Vec2<int>(md.x_, -md.y_));
     }
 
