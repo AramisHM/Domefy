@@ -16,6 +16,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"time"
 
 	"github.com/AramisHM/Domefy/webserver/services/domefy"
@@ -90,6 +92,12 @@ func main() {
 
 	fmt.Println("Copyright (c) 2019, Pteronura.com, all rights reserverd")
 	fmt.Println("Domefy Backend Server [v", config.Config.SystemVersion, "]")
+
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", fs)
+
+	log.Println("Listening...")
+	http.ListenAndServe(":3000", nil)
 
 	if config.IsDockerized() {
 		router.RunTLS(":9090", "certificate.crt", "private.key")

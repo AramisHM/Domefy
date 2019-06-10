@@ -33,13 +33,15 @@ func RegisterDomefy(router *gin.Engine) {
 
 // SetExampleTextMessage - Sets the debug text auxiliar message
 func SetExampleTextMessage(c *gin.Context) {
+	paramObj := rest.GetPostParameters(c)
+	cmdStr := paramObj["command"].(string)
 
-	conn, err := net.Dial("udp", "127.0.0.1:7491")
+	conn, err := net.Dial("udp", "127.0.0.1:42871")
 	if err != nil {
 		fmt.Printf("Some error %v", err)
 		return
 	}
-	fmt.Fprintf(conn, "auxiliar_text;YELLOWW;")
+	fmt.Fprintf(conn, cmdStr)
 
 	c.JSON(http.StatusOK, "done")
 

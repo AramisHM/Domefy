@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Go Webserver (WIN32)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/webserver/main.go"
+    },
+    {
       "name": "Debug Linux",
       "type": "cppdbg",
       "request": "launch",

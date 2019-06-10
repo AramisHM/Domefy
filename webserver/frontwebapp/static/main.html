@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>Hello World</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <h2>Welcome!</h2>
+    <p>The text below will show on the Domefy application</p>
+    <br />
+    <p>
+      It is expected for the front-end webserver and backend webserver to be
+      running.
+    </p>
+    <form id="contactForm">
+      Text to display in Domefy: <input type="text" name="command" />
+      <input type="submit" />
+    </form>
+
+    <script>
+      (function($) {
+        $.fn.serializeFormJSON = function() {
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+            if (o[this.name]) {
+              if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || "");
+            } else {
+              o[this.name] = this.value || "";
+            }
+          });
+          return o;
+        };
+      })(jQuery);
+      $(document).ready(function() {
+        $("#contactForm").submit(function(event) {
+          event.preventDefault();
+          var data = $(this).serializeFormJSON();
+          var json = JSON.stringify(data);
+          console.log(json);
+          $.post("http://localhost:9090/setExampleTextMessage", json);
+        });
+      });
+    </script>
+  </body>
+</html>
