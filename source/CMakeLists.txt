@@ -36,8 +36,26 @@ if(WIN32)
 	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/*.a")
 	
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
-  	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} Comdlg32.lib Comctl32.lib ole32.lib oleaut32.lib winmm.lib ws2_32.lib opengl32.lib imm32.lib version.lib advapi32.lib kernel32.lib user32.lib gdi32.lib Setupapi.lib shell32.lib shlwapi.lib)
-	
+  	target_link_libraries (
+		  fpmed LINK_PUBLIC
+		  ${Dependency_Libs}
+		  Comdlg32.lib
+		  Comctl32.lib
+		  ole32.lib
+		  oleaut32.lib
+		  winmm.lib
+		  ws2_32.lib
+		  opengl32.lib
+		  imm32.lib
+		  version.lib
+		  advapi32.lib
+		  kernel32.lib
+		  user32.lib
+		  gdi32.lib
+		  Setupapi.lib
+		  shell32.lib
+		  shlwapi.lib)
+
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)
 	add_definitions(-DURHO3D_FILEWATCHER)
@@ -72,7 +90,7 @@ else()
 	add_definitions(-DURHO3D_URHO2D)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 
-	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
+	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} "${CMAKE_SOURCE_DIR}/lib/GCC/windows/libAHMNet.a" pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
 endif()
 
 

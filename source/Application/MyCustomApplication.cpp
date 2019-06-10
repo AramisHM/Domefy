@@ -9,6 +9,8 @@
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>  // creates the vhp model
 
+extern std::string commandString;  // main.cpp
+
 MyCustomApplication* application;
 
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
@@ -511,9 +513,10 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             // make a class for debug text compnent
             sprintf(text,
                     "SECTOR: %d\nCAM: %f, %f, %f\nZ AXIS ANGLE: %f\nyaw: %f "
-                    "pitch: %f\nFface cam: %f, %f, %f \n",
+                    "pitch: %f\nFface cam: %f, %f, %f \nExt command %s",
                     sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis,
-                    camCoords.getX(), camCoords.getY(), v.x_, v.y_, v.z_);
+                    camCoords.getX(), camCoords.getY(), v.x_, v.y_, v.z_,
+                    commandString.c_str());
 
             String txt = String(text);
             debTex->SetText(txt);
@@ -523,7 +526,7 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 }
 
 void MyCustomApplication::updateRemoteControls() {
-    std::string auxiliarCommand = updateExternalCommands();
+    std::string auxiliarCommand = updateEnetCommands();
 
     if (auxiliarCommand != "") {
         if (isCommandEquals(auxiliarCommand, "TRANSP")) {

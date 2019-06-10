@@ -71,6 +71,7 @@ int ServerMachine::UpdateServerBeacon()  // TODO : make test to check the
 {
     char *message;
     char *token;
+
     if (beaconServ->update(10) ==
         TEE_MESSAGE)  // a message arrived to the network
     {

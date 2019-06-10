@@ -2,6 +2,7 @@
 
 TNETClient *fndProjClient = 0;
 TNETServer *fndProjServer = 0;
+
 std::string tempBuffer;
 
 // Warning: dont forget to call deinitializeAutoDetecServer)_, after using
@@ -89,7 +90,7 @@ void sendExternalCommand(std::string command, int ntries) {
 // Any command can be sent and interpreted with values
 // TODO: create enumeration
 // TODO: move it to another class
-std::string updateExternalCommands() {
+std::string updateEnetCommands() {
     // try listen for incomming messages
     while (fndProjServer->update(8) == TEE_MESSAGE)  // as fast as possible
     {

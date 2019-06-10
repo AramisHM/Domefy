@@ -13,6 +13,8 @@
 
 #include <Forms/ScriptEditor.h>
 
+#include <ahm/net/net.h>
+
 namespace Urho3D {
 class Button;
 class Connection;
@@ -25,12 +27,26 @@ extern ServerMachine *machineMaster;
 extern ProjectorMachine *projectorMachine;
 extern TNETServer *ScriptServ;
 extern MyCustomApplication *application;
+conn extChanel;
+std::string commandString;
+std::string ListenForExternalCommands() {
+    if (sock_read(&extChanel, 1) > 0) {
+        printf(
+            "\nReceived a command via AHMNet from %s, with the following data: "
+            "%s\n\n",
+            sender_ip(&extChanel), extChanel.buf);
+        commandString = std::string(extChanel.buf);
+    }
+}
 
 int main(int argc, char *argv[]) {
     ScriptEditor sEdit;
 
     // Used to ensure a one time loop at the next while block
     int oneTimeLoop = 0;
+
+    ahmnet_init();
+    udp_listen("127.0.0.1:42871", &extChanel);
 
     fpmedInit(argc, argv);
 
@@ -189,7 +205,8 @@ int main(int argc, char *argv[]) {
                     machineMaster->getServerProperties().SceneReplicationPort);
 
                 while (application->isApplication()) {  // roda a aplicacao Urho
-                                                        // COMO Servidor
+                    // COMO Servidor
+                    ListenForExternalCommands();
                     application->RunFrameC();
                     machineMaster->Update();  // respond to projectors trying to
                                               // connect to me directly
@@ -217,5 +234,8 @@ int main(int argc, char *argv[]) {
             deinitializeAutoDetecServer();
         }
     }
+
+    ahmnet_clean();
+
     return 0;
 }

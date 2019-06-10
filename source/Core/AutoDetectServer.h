@@ -2,6 +2,7 @@
 #define AUTODETECTSERVER_H
 // Autodetect local network's projector
 
+#include <ahm/net/net.h>
 #include <string>
 #include "FpmedCore.h"
 #include "tnet/TNet.h"
@@ -13,5 +14,6 @@ int UpdateAuxiliarGlobalCommands();
 void sendExternalCommand(std::string command, int ntries = 1);
 bool isCommandEquals(std::string command, std::string compareStr);
 float getCommandValueAsFloat(std::string command);
-std::string updateExternalCommands();
+std::string updateEnetCommands();
+
 #endif
