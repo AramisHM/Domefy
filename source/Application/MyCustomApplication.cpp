@@ -10,6 +10,7 @@
 #include <Application/Components/VHP/VHP.h>  // creates the vhp model
 
 extern std::string commandString;  // main.cpp
+std::string auxiliarText;
 
 MyCustomApplication* application;
 
@@ -48,24 +49,6 @@ void makeNodeFaceCamera(Urho3D::Node* node, Urho3D::Camera* camComp) {
     node->Rotate(Quaternion(-90.0f, 0.0f, 0.0f));
 }
 
-// Move a node arround according to a sphere space system
-void moveNodeArroundOtherNode(float yaw, float pitch, float radius,
-                              Urho3D::Node* node, Urho3D::Vector3 reference,
-                              Urho3D::Vector3 correction = Vector3(0.0f, -90.0f,
-                                                                   0.0f)) {
-    float radiusMagnetude = Cos(Abs(pitch));
-    Vector3 oldpos = reference;
-    node->SetPosition(
-        Vector3((Cos(yaw) * radius * radiusMagnetude) + oldpos.x_,
-                (Sin(pitch) * radius) + oldpos.y_,
-                (-Sin(yaw) * radius * radiusMagnetude) + oldpos.z_));
-
-    // Construct new orientation for the camera scene node from yaw and pitch.
-    // Roll is fixed to zero
-    node->SetRotation(
-        Quaternion(pitch + correction.x_, yaw + correction.y_, correction.z_));
-}
-
 #ifdef fpmed_allow_cpp_application
 // Cpp implementation of a static scene for the application
 void MyCustomApplication::CreateScene() {
@@ -87,28 +70,6 @@ void MyCustomApplication::CreateScene() {
     zone->SetFogColor(Color(0.85f, 0.85f, 0.85f));
     zone->SetFogStart(100.0f);
     zone->SetFogEnd(300.0f);
-
-    //  directional light
-    // Node* lightNode = scene_->CreateChild("DirectionalLight");
-    // lightNode->SetDirection(Vector3(0.5f, -1.0f, 0.5f));
-    // Light* light = lightNode->CreateComponent<Light>();
-    // light->SetLightType(LIGHT_DIRECTIONAL);
-    // light->SetColor(Color(1.0f, 1.0f, 1.0f));
-    // light->SetSpecularIntensity(5.0f);
-
-    // // floor
-    // for (int y = -1; y <= 1; ++y) {
-    //     for (int x = -1; x <= 1; ++x) {
-    //         Node* floorNode = scene_->CreateChild("FloorTile");
-    //         floorNode->SetPosition(Vector3(x * 20.5f, -25.0f, y * 20.5f));
-    //         floorNode->SetScale(Vector3(20.0f, 1.0f, 20.f));
-    //         StaticModel* floorObject =
-    //             floorNode->CreateComponent<StaticModel>();
-    //         floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    //         floorObject->SetMaterial(
-    //             cache->GetResource<Material>("Materials/BlackGrid.xml"));
-    //     }
-    // }
 
     // north plane
     {
@@ -180,46 +141,47 @@ void MyCustomApplication::CreateScene() {
     anatomicViewer = cameraNode_->CreateComponent<AnatomicViewer>();
     anatomicViewer->CreateViewer();  // must be called
 
-    // More lights
-    // const unsigned NUM_LIGHTS = 9;
-    // cameraNode_->SetPosition(Vector3(40, 40, 40));
-
-    // for (unsigned i = 0; i < NUM_LIGHTS; ++i) {
-    //     Node* lightNode = scene_->CreateChild("SpotLight");
-    //     Light* light = lightNode->CreateComponent<Light>();
-
-    //     float angle = 0.0f;
-
-    //     Vector3 position((i % 3) * 60.0f - 60.0f, 45.0f,
-    //                      (i / 3) * 60.0f - 60.0f);
-    //     Color color(((i + 1) & 1) * 0.5f + 0.5f,
-    //                 (((i + 1) >> 1) & 1) * 0.5f + 0.5f,
-    //                 (((i + 1) >> 2) & 1) * 0.5f + 0.5f);
-
-    //     lightNode->SetPosition(position);
-    //     lightNode->SetDirection(Vector3(Sin(angle), -1.5f, Cos(angle)));
-    //     light->SetLightType(LIGHT_SPOT);
-    //     light->SetRange(90.0f);
-    //     light->SetRampTexture(
-    //         cache->GetResource<Texture2D>("Textures/RampExtreme.png"));
-    //     light->SetFov(45.0f);
-    //     light->SetColor(color);
-    //     light->SetSpecularIntensity(1.0f);
-    //     light->SetCastShadows(true);
-    //     light->SetShadowBias(BiasParameters(0.00002f, 0.0f));
-
-    //     light->SetShadowFadeDistance(100.0f);
-    //     light->SetShadowDistance(125.0f);
-    //     light->SetShadowResolution(0.5f);
-    //     light->SetShadowNearFarRatio(0.01f);
-    // }
     cameraNearClipping = 0.01f;
 }
 #endif
 
+std::vector<std::string> split(std::string strToSplit, char delimeter) {
+    std::stringstream ss(strToSplit);
+    std::string item;
+    std::vector<std::string> splittedStrings;
+    while (std::getline(ss, item, delimeter)) {
+        splittedStrings.push_back(item);
+    }
+    return splittedStrings;
+}
+
 /* Moves the camera arrount */
 #ifdef fpmed_allow_cpp_application
 void MyCustomApplication::MoveCamera(float timeStep) {
+    {  // external commands
+        std::vector<std::string> commandSplitted;
+        commandSplitted = split(commandString, ';');
+
+        int cmdLen = commandSplitted.size();
+        if (cmdLen > 0) {
+            printf("command recvd: %s\n", commandSplitted[0].c_str());
+
+            if (cmdLen > 1) {
+                std::string cmd, pa, pb, pc, pd;  // cmd and parameters
+                cmd = commandSplitted[0];
+
+                if (!cmd.compare(std::string("extext"))) {  // external text
+                    auxiliarText = commandSplitted[1];
+                }
+                if (!cmd.compare(std::string("sag-a"))) {  // external text
+                    int factor = std::atof(commandSplitted[1].c_str());
+                    printf("\nconta: %f\n", (float)(factor / 100.0f));
+                    vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f);
+                }
+            }
+        }
+    }
+
     UI* ui = GetSubsystem<UI>();
     Input* input = GetSubsystem<Input>();
 
@@ -239,23 +201,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     // is hidden
 
     IntVector2 mouseMove = input->GetMouseMove();
-
-    // if (input->GetMouseButtonDown(
-    //         MOUSEB_RIGHT)) {  // reset momentum when mouse interacts
-    //     xaccel = 0;
-    //     yaccel = 0;
-    //     // slideGrab->SetMomentum(Vec2<float>(0, 0)); // must call it from
-    //     the
-    //     // new componenet
-    // }
-
-    // // apply momentum, AFTER reset
-    // if (!input->GetMouseButtonDown(MOUSEB_RIGHT) && isholding == true &&
-    //     (Abs(mouseMove.x_) > MOMENTUM_TRIGGER_VALUE ||
-    //      Abs(mouseMove.y_) > MOMENTUM_TRIGGER_VALUE)) {
-    //     xaccel = mouseMove.x_ / 3;
-    //     yaccel = mouseMove.y_ / 3;
-    // }
 
     if (input->GetMouseButtonDown(
             MOUSEB_RIGHT)) {  // move either by momentum or mouse iteraction
@@ -469,28 +414,6 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             triangulateTarget(posHolo.x_, posHolo.y_, posHolo.z_, posCam.x_,
                               posCam.y_, posCam.z_);
         int sector = angle_Z_axis / 0.9f;
-
-        // Vec2<float> camCoords = cameraGrab->GetCoordinates();
-        // float camLong = camCoords.getX();
-        // float camLat = abs(camCoords.getY());  // its mirrored under and
-        // upper
-
-        // if ((camLat > 45 && camLat < 91)) {
-        //     vhp->SetAxialBaseVisible(true);
-        //     vhp->SetSagitalBaseVisible(false);
-        //     vhp->SetCoronalBaseVisible(false);
-        // } else {
-        //     vhp->SetAxialBaseVisible(false);
-        //     // Define witch image dataset to show
-        //     if ((camLong > 45 && camLong < 135) ||
-        //         (camLong > 225 && camLong < 315)) {
-        //         vhp->SetSagitalBaseVisible(true);
-        //         vhp->SetCoronalBaseVisible(false);
-        //     } else {
-        //         vhp->SetSagitalBaseVisible(false);
-        //         vhp->SetCoronalBaseVisible(true);
-        //     }
-        // }
 
         if (sector <= 398) {
             // hologramPlane->SetMaterial(holoTextArray[sector]);

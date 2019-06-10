@@ -1,48 +1,81 @@
 <html>
-  <head>
-    <title>Hello World</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  </head>
-  <body>
-    <h2>Welcome!</h2>
-    <p>The text below will show on the Domefy application</p>
-    <br />
-    <p>
-      It is expected for the front-end webserver and backend webserver to be
-      running.
-    </p>
-    <form id="contactForm">
-      Text to display in Domefy: <input type="text" name="command" />
-      <input type="submit" />
-    </form>
 
-    <script>
-      (function($) {
-        $.fn.serializeFormJSON = function() {
-          var o = {};
-          var a = this.serializeArray();
-          $.each(a, function() {
-            if (o[this.name]) {
-              if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-              }
-              o[this.name].push(this.value || "");
-            } else {
-              o[this.name] = this.value || "";
+<head>
+  <title>Hello World</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+  <h2>Welcome!</h2>
+  <p>The text below will show on the Domefy application</p>
+  <br />
+  <p>
+    It is expected for the front-end webserver and backend webserver to be
+    running.
+  </p>
+  <form id="contactForm">
+    Text to display in Domefy: <input type="text" name="command" />
+    <input type="submit" />
+  </form>
+
+  <p>Default range slider:</p>
+  <input type="range" id="testrange" min="1" max="100" value="100" oninput="sendData(this.value)">
+
+  <script>
+
+    var p = document.getElementById("testrange");
+
+
+    (function ($) {
+      $.fn.serializeFormJSON = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+          if (o[this.name]) {
+            if (!o[this.name].push) {
+              o[this.name] = [o[this.name]];
             }
-          });
-          return o;
-        };
-      })(jQuery);
-      $(document).ready(function() {
-        $("#contactForm").submit(function(event) {
-          event.preventDefault();
-          var data = $(this).serializeFormJSON();
-          var json = JSON.stringify(data);
-          console.log(json);
-          $.post("http://localhost:9090/setExampleTextMessage", json);
+            o[this.name].push(this.value || "");
+          } else {
+            o[this.name] = this.value || "";
+          }
         });
+        return o;
+      };
+    })(jQuery);
+
+
+    $(document).ready(function () {
+
+      $("#contactForm").submit(function (event) {
+        event.preventDefault();
+        var data = $(this).serializeFormJSON();
+        var json = JSON.stringify(data);
+        console.log(json);
+        $.post("http://10.97.246.187:9090/setExampleTextMessage", json);
       });
-    </script>
-  </body>
+
+    });
+
+    function sendData(data) {
+      $.ajax
+        ({
+          type: "POST",
+          //the url where you want to sent the userName and password to
+          url: 'http://10.97.246.187:9090/setExampleTextMessage',
+          dataType: 'json',
+          async: false,
+          //json object to sent to the authentication url
+          data: '{"command": "' + "sag-a;" + data + '", "jata" : "' + "jata" + '"}',
+          success: function () {
+
+            // alert("Thanks!");
+          }
+        })
+    }
+
+
+  </script>
+</body>
+
 </html>
