@@ -13,18 +13,11 @@
     It is expected for the front-end webserver and backend webserver to be
     running.
   </p>
-  <form id="contactForm">
-    Text to display in Domefy: <input type="text" name="command" />
-    <input type="submit" />
-  </form>
 
-  <p>Default range slider:</p>
-  <input type="range" id="testrange" min="1" max="100" value="100" oninput="sendData(this.value)">
 
   <script>
 
     var p = document.getElementById("testrange");
-
 
     (function ($) {
       $.fn.serializeFormJSON = function () {
