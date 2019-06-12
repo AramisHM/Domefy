@@ -142,9 +142,42 @@ void MyCustomApplication::CreateScene() {
     anatomicViewer->CreateViewer();  // must be called
 
     cameraNearClipping = 0.01f;
+
+    // viewports --------------------------------
+    Graphics* graphics = GetSubsystem<Graphics>();
+
+    renderer->SetNumViewports(2);
+    // Set up the front camera viewport
+    SharedPtr<Viewport> viewport(
+        new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
+    renderer->SetViewport(0, viewport);
+
+    SharedPtr<RenderPath> effectRenderPath = viewport->GetRenderPath()->Clone();
+    effectRenderPath->Append(
+        cache->GetResource<XMLFile>("PostProcess/Bloom.xml"));
+    effectRenderPath->Append(
+        cache->GetResource<XMLFile>("PostProcess/FXAA2.xml"));
+    // Make the bloom mixing parameter more pronounced
+    effectRenderPath->SetShaderParameter("BloomMix", Vector2(0.9f, 0.6f));
+    effectRenderPath->SetEnabled("Bloom", false);
+    effectRenderPath->SetEnabled("FXAA2", false);
+    viewport->SetRenderPath(effectRenderPath);
+
+    Node* rearCameraNode_;
+    rearCameraNode_ = cameraNode_->CreateChild("rear camera");
+    rearCameraNode_->CreateComponent<Camera>();
+    // Set up the rear camera viewport on top of the front view ("rear view
+    // mirror") The viewport index must be greater in that case, otherwise the
+    // view would be left behind
+    SharedPtr<Viewport> rearViewport(new Viewport(
+        context_, scene_, rearCameraNode_->GetComponent<Camera>(),
+        IntRect(graphics->GetWidth() * 2 / 3, 32, graphics->GetWidth() - 32,
+                graphics->GetHeight() / 3)));
+    renderer->SetViewport(1, rearViewport);
 }
 #endif
 
+// TODO: move to a class
 std::vector<std::string> split(std::string strToSplit, char delimeter) {
     std::stringstream ss(strToSplit);
     std::string item;
@@ -194,11 +227,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     const float MOVE_SPEED = 5.0f;
     // Mouse sensitivity as degrees per pixel
     const float MOUSE_SENSITIVITY = 0.2f;
-    const float POLAR_RADIUS = 50.0f;
-    const int MOMENTUM_TRIGGER_VALUE = 1;
-    // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp
-    // the pitch between -90 and 90 degrees Only move the camera when the cursor
-    // is hidden
 
     IntVector2 mouseMove = input->GetMouseMove();
 
@@ -250,31 +278,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         hologramNode->Translate(Vector3::DOWN * MOVE_SPEED * timeStep);
     }
 
-    if (input->GetKeyDown(KEY_N)) {
-        // nearclip logic
-        // cameraNearClipping -= 0.1f;
-        // Urho3D::Camera* camComp =
-        // cameraNode_->GetComponent<Urho3D::Camera>();
-        // camComp->SetNearClip(cameraNearClipping);
-        // printf("camera clip: %f\n", cameraNearClipping);
-    }
-
-    if (input->GetKeyDown(KEY_M)) {
-        // inverse near clip logic
-    }
-
     if (input->GetKeyDown(KEY_P)) {
-        // transparence logic
-        // loTransparency += 0.01f;
-        // for (int h = 0; h < N_SLICES; h = h + 1) {
-        //     Urho3D::Material* mushroomMat = slicesMaterials[h];
-
-        //     if (!mushroomMat) continue;
-        //     mushroomMat->SetShaderParameter(
-        //         "MatDiffColor", Color(1.1f, 1.1f, 1.1f, loTransparency));
-        // }
-
-        // do some cutting
         vhp->SetSagitalCut(0.5f, 0.2f);
         vhp->SetCoronalCut(0.2f, 0.5f);
         vhp->SetAxialCut(0.08f, 0.5f);
@@ -328,10 +332,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     // normalize polar radius
     if (polarRadius_ > 60) polarRadius_ = 60;
     if (polarRadius_ < 0.3f) polarRadius_ = 0.3f;
-
-    // normalize transparency
-    // if (loTransparency > 1.0f) loTransparency = 1.0f;
-    // if (loTransparency < 0.01f) loTransparency = 0.01f;
 }
 
 void MyCustomApplication::updateCameraPosition() {
@@ -366,19 +366,6 @@ void MyCustomApplication::Start() {
         {
             ResourceCache* cache = GetSubsystem<ResourceCache>();
             int seq = 8650;
-
-            // TODO : Finish hologram component
-            // for (int i = 0; i < 399; ++i)  // yes, its 399 textures.
-            // {
-            //     char filename[512];
-            //     char finalPath[1024];
-            //     sprintf(filename, "SAM_%d.xml", seq);
-            //     sprintf(finalPath, ".\\converted_images\\Materials\\%s",
-            //             filename);
-            //     holoTextArray[i] = cache->GetResource<Material>(finalPath);
-
-            //     ++seq;
-            // }
         }
     }
     SubscribeToEvent(E_POSTRENDERUPDATE,
@@ -448,65 +435,4 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     }
 }
 
-void MyCustomApplication::updateRemoteControls() {
-    std::string auxiliarCommand = updateEnetCommands();
-
-    if (auxiliarCommand != "") {
-        if (isCommandEquals(auxiliarCommand, "TRANSP")) {
-            float val = getCommandValueAsFloat(auxiliarCommand);
-            printf("\n\n\ntransparency: %f\n\n\n", val);
-
-            for (int h = 1; h < N_SLICES; ++h) {
-                std::stringstream ss;
-                ss << "VHP-";
-                ss << h;
-                Urho3D::Node* slice;
-                slice = scene_->GetChild(ss.str().c_str());
-                if (!slice) continue;
-                Urho3D::Material* mat =
-                    slice->GetComponent<StaticModel>()->GetMaterial();
-
-                mat->SetShaderParameter("MatDiffColor",
-                                        Color(1.1f, 1.1f, 1.1f, val));
-            }
-        }
-
-        if (isCommandEquals(auxiliarCommand, "ZSEC")) {
-            float val = getCommandValueAsFloat(auxiliarCommand);
-            printf("\n\n\zsec: %f\n\n\n", val);
-
-            Urho3D::Node* mainCameraNode;
-            mainCameraNode = scene_->GetChild("Camera");
-            Urho3D::Node* tempCameraNode;
-            tempCameraNode = mainCameraNode->GetChild("CameraFrontNode_");
-            // probabily has offset
-            Urho3D::Node* tempNodeRef;
-            if (!tempCameraNode) {
-                tempNodeRef = mainCameraNode->GetChild("CameraOffset");
-                tempCameraNode = tempNodeRef->GetChild("CameraFrontNode_");
-            } else {
-                tempNodeRef = mainCameraNode;
-            }
-            tempCameraNode = tempNodeRef->GetChild("CameraFrontNode_");
-            Urho3D::Camera* camComp = tempCameraNode->GetComponent<Camera>();
-            camComp->SetNearClip(val);
-
-            tempCameraNode = tempNodeRef->GetChild("CameraUpNode_");
-            camComp = tempCameraNode->GetComponent<Camera>();
-            camComp->SetNearClip(val);
-
-            tempCameraNode = tempNodeRef->GetChild("CameraBackNode_");
-            camComp = tempCameraNode->GetComponent<Camera>();
-            camComp->SetNearClip(val);
-
-            tempCameraNode = tempNodeRef->GetChild("CameraRightNode_");
-            camComp = tempCameraNode->GetComponent<Camera>();
-            camComp->SetNearClip(val);
-
-            tempCameraNode = tempNodeRef->GetChild("CameraLeftNode_");
-            camComp = tempCameraNode->GetComponent<Camera>();
-            camComp->SetNearClip(val);
-        }
-    }
-}
 #endif

@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         // We entered once, next time it will exit
         oneTimeLoop = 0;
 
-        sEdit.editScriptLoop();
+        sEdit.editScriptLoop();  // TODO: remove this script editor
 
         // All parameters have been loaded,
         // now lets start Urho3D.
@@ -180,14 +180,6 @@ int main(int argc, char *argv[]) {
                            application->IsConnectedToServer()) {
                         application->RunFrameC();
                         standByScene = false;
-
-                        application
-                            ->updateRemoteControls();  // model transparency and
-                                                       // zsec
-                        // se chegar algum comando para calibrar a imagem
-                        // application->loopCalibrateCamera();
-                        // TODO: conflito, o calibrador consome os pacotes da
-                        // funcao de comandos externos
 
                         // keep checking if server is running
                         UpdateAutoDetectProjectorServer();

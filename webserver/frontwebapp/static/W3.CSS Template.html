@@ -205,6 +205,9 @@
           <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
             oninput="sendData(this.value)">
 
+          <iframe src="./webgl_loader_amf.html" name="targetframe" allowTransparency="true" scrolling="no"
+            frameborder="1" height="390" width="100%">
+          </iframe>
 
           <!-- <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>
             &nbsp;Like</button> -->
@@ -245,6 +248,7 @@
             </div>
           </div>
         </div>
+        
         <br>
 
         <div class="w3-card w3-round w3-white w3-padding-16 w3-center">
@@ -277,11 +281,6 @@
   <footer class="w3-container w3-theme-d5">
     <p>Copyright (C) 2019 <a href="https://www.aramishm.com/" target="_blank">Aramis Hornung Moraes</a></p>
   </footer>
-
-
-
-
-
 
 
 
@@ -368,7 +367,7 @@
           //the url where you want to sent the userName and password to
           url: 'http://10.97.246.187:9090/setExampleTextMessage',
           dataType: 'json',
-          async: false,
+          async: true,
           //json object to sent to the authentication url
           data: '{"command": "' + "sag-a;" + data + '", "jata" : "' + "jata" + '"}',
           success: function () {

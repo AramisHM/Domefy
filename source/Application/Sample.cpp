@@ -58,6 +58,7 @@ void Sample::Setup() {
         (selected_serv == 1 && machineMaster &&
          machineMaster->getServerProperties().fullScreen);
     engineParameters_["Headless"] = false;
+    engineParameters_["Borderless"] = true;
     if (selected_serv == 0)  // é projetor
     {
         engineParameters_["WindowWidth"] =
@@ -222,7 +223,7 @@ int Sample::Prepare() {
         Setup();
         if (exitCode_) return exitCode_;
 
-        if (!engine_->Initialize(engineParameters_)) {
+        if (engine_->Initialize(engineParameters_) == false) {
             ErrorExit();
             fl_alert(
                 "An error occurred right before trying to create 3D scene. Try "
