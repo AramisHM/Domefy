@@ -58,7 +58,7 @@ void Sample::Setup() {
         (selected_serv == 1 && machineMaster &&
          machineMaster->getServerProperties().fullScreen);
     engineParameters_["Headless"] = false;
-    engineParameters_["Borderless"] = true;
+    engineParameters_["Borderless"] = false;
     if (selected_serv == 0)  // é projetor
     {
         engineParameters_["WindowWidth"] =
@@ -212,7 +212,6 @@ int Sample::isApplication() {
 }
 // auxiliar functions --------------------------
 
-// extra functions --------------------------
 int Sample::Prepare() {
     // Emscripten-specific: C++ exceptions are turned off by default in -O1 (and
     // above), unless '-s DISABLE_EXCEPTION_CATCHING=0' flag is set Urho3D build
@@ -258,119 +257,6 @@ int Sample::RunFrameC() {
         return EXIT_FAILURE;
     }
 }
-void Sample::loopCalibrateCamera() {
-    if (selected_serv == 0)  // Projector
-    {
-        char* calibrationPacket;
-        if (calibrationServ->update(1) == TEE_MESSAGE) {
-            char *mode, *axis = 0;
-            float calValue;
-
-            Node* sceneCal = sceneDome_;
-            Node* calNodeCam = sceneDome_->GetChild("CameraDome");
-            Camera* calCam = calNodeCam->GetComponent<Camera>();
-            Vector3 direction;
-            // Mostra mensagem
-            calibrationPacket = calibrationServ->getMessage();
-            printf("CALIBRATION COMMAND: [%s]>: %s\n",
-                   calibrationServ->getPacket().getSenderIP(),
-                   calibrationPacket);
-
-            mode = strtok(calibrationPacket, ";");
-
-            if (!strcmp("rst", mode))  // not fov mode
-            {
-                // Reload the projector configuratiosn from the file
-                {
-                    fpmed::Vec3<float> projPos, projRot, projScale;
-
-                    // le os parametros do projetor no arquivo de projetor
-                    projPos =
-                        globalEnv.getProjector(selected_proj).getPosition();
-                    projRot =
-                        globalEnv.getProjector(selected_proj).getRotation();
-                    projScale =
-                        globalEnv.getProjector(selected_proj).getScale();
-                    calCam->SetFarClip(500.0f);
-                    calCam->SetFov(
-                        globalEnv.getProjector(selected_proj).getFov());
-                    calNodeCam->SetPosition(Vector3(
-                        projPos.getX(), projPos.getY(), projPos.getZ()));
-                    calNodeCam->SetRotation(Quaternion(
-                        projRot.getX(), projRot.getY(), projRot.getZ()));
-                    calNodeCam->SetScale(Vector3(
-                        projScale.getX(), projScale.getY(), projScale.getZ()));
-                }
-            } else if (!strcmp("dmp", mode))  // not fov mode
-            {
-                FILE* fp;
-                fp = fopen("dumpDataCalibration.txt", "wb");
-
-                Vector3 calCamP = calNodeCam->GetPosition();
-                Quaternion calCamQ = calNodeCam->GetRotation();
-                Vector3 calCamR = calCamQ.EulerAngles();
-                fprintf(fp,
-                        "<vector3d name=\"ProjectorPosition\" value=\"%f, %f, "
-                        "%f\" />\n",
-                        calCamP.x_, calCamP.y_, calCamP.z_);
-                fprintf(fp,
-                        "<vector3d name=\"ProjectorRotation\" value=\"%f, %f, "
-                        "%f\" />\n",
-                        calCamR.x_, calCamR.y_, calCamR.z_);
-                fprintf(fp, "<float name=\"FOV\" value=\"%f\" />",
-                        calCam->GetFov());
-
-                fclose(fp);
-            } else {
-                if (strcmp("ccf", mode))  // not fov mode
-                {
-                    axis = strtok(NULL, ";");
-
-                    if (!strcmp("x", axis))
-                        direction =
-                            -Vector3(0, 0, 1);  // hacked, dome is sideways
-                    if (!strcmp("y", axis)) direction = Vector3(0, 1, 0);
-                    if (!strcmp("z", axis))
-                        direction =
-                            Vector3(1, 0, 0);  // hacked, dome is sideways
-                }
-                calValue = atof(strtok(NULL, ";"));
-
-                // Apply the calibration
-                if (!strcmp("ccp", mode))  // apply translation
-                {
-                    direction = direction * calValue;
-                    calNodeCam->SetPosition(
-                        Vector3(calNodeCam->GetPosition() + direction));
-                }
-                if (!strcmp("ccr", mode))  // apply rotation
-                {
-                    direction = direction * calValue;
-                    calNodeCam->Rotate(
-                        Quaternion(direction.z_, direction.y_, -direction.x_));
-                }
-                if (!strcmp("ccf", mode))  // apply rotation
-                {
-                    calCam->SetFov(calCam->GetFov() + calValue);
-                }
-            }
-        }
-    }
-
-    int auxiliarCommand = UpdateAuxiliarGlobalCommands();
-
-    if (auxiliarCommand != 0)  // toogle grid on
-    {
-        char* enabled = strtok(NULL, ";");
-        Node* gridDomeNode = sceneDome_->GetChild("VIRTUAL_DOME_GRID", LOCAL);
-
-        if (auxiliarCommand == 55)
-            gridDomeNode->SetEnabled(true);
-        else if (auxiliarCommand == 56)
-            gridDomeNode->SetEnabled(false);
-    }
-}
-// extra functions --------------------------
 
 void Sample::SetWindowTitleAndIcon() {
     ResourceCache* cache = GetSubsystem<ResourceCache>();

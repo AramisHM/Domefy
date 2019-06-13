@@ -14,7 +14,9 @@
 #include <Application/Components/Slide/Slide.h>
 
 // constructor and destructor
-Slide::Slide(Urho3D::Context* context) : Urho3D::LogicComponent(context) {}
+Slide::Slide(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
+    currentSlideIndex = 0;
+}
 Slide::~Slide() {}
 
 // CreateSlide - Load data and creates the slide model into the root node
