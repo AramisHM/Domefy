@@ -1,66 +1,68 @@
-/*	This file is part of the FpMED (Domefy) Project Copyright (c) 2014-2017 Aramis Hornung Moraes
-	See Fpmed.h for license and conditions for using this code
+/*	This file is part of the FpMED (Domefy) Project Copyright (c) 2014-2017
+   Aramis Hornung Moraes See Fpmed.h for license and conditions for using this
+   code
 */
 
 #pragma once
 
-#include "tnet/TNet.h"
 #include "Urho3D/Engine/Application.h"
+#include "tnet/TNet.h"
 
 // scripts include
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/AngelScript/ScriptFile.h>
 #include <Urho3D/AngelScript/ScriptInstance.h>
 
-
-namespace Urho3D
-{
+namespace Urho3D {
 class Node;
 class Scene;
 class Sprite;
-}
+}  // namespace Urho3D
 
 using namespace Urho3D;
 
-
-class Sample : public Application
-{
+class Sample : public Application {
     // Enable type information.
     URHO3D_OBJECT(Sample, Application);
 
-public:
+   public:
     /// Construct.
     Sample(Context* context);
 
     /// Setup before engine initialization. Modifies the engine parameters.
     virtual void Setup();
-    /// Setup after engine initialization. Creates the logo, console & debug HUD.
+    /// Setup after engine initialization. Creates the logo, console & debug
+    /// HUD.
     virtual void Start();
     /// Cleanup after the main loop. Called by Application.
     virtual void Stop();
 
-	// replicate position and rotation of the master camera into the projector's camera
-	void SyncCameraPosRot();
+    // replicate position and rotation of the master camera into the projector's
+    // camera
+    void SyncCameraPosRot();
 
-	/// AUXILIAR CUSTOM FUNCTIONS ---------------------------------------
-	// indicates if the application instance is  connected to a server (if is replicating the scene) - Useful to know if a client is replicating a scene
-	int IsConnectedToServer();
-	void StartSceneServer(int port);
-	void ConnectToSceneServer(int port, char *ip);
-	int isApplication();
-	void CloseApplication();
-	// either use the Run() application, or the two below functions
-	int Prepare(); // custom run methode
-	int RunFrameC(); // custom update frame methode
-	/// AUXILIAR CUSTOM FUNCTIONS ---------------------------------------
+    /// AUXILIAR CUSTOM FUNCTIONS ---------------------------------------
+    // indicates if the application instance is  connected to a server (if is
+    // replicating the scene) - Useful to know if a client is replicating a
+    // scene
+    int IsConnectedToServer();
+    void StartSceneServer(int port);
+    void ConnectToSceneServer(int port, char* ip);
+    int isApplication();
+    void CloseApplication();
+    // either use the Run() application, or the two below functions
+    int Prepare();    // custom run methode
+    int RunFrameC();  // custom update frame methode
+    /// AUXILIAR CUSTOM FUNCTIONS ---------------------------------------
 
-
-	/// Listen to a port for external tools aiming the camera real-time-calibration.
-	/// This function works best at the game-loop, in order to keep it alive, and listening.
-	/// For calibrating, just send the right packets data to the designed port for this to work
+    /// Listen to a port for external tools aiming the camera
+    /// real-time-calibration. This function works best at the game-loop, in
+    /// order to keep it alive, and listening. For calibrating, just send the
+    /// right packets data to the designed port for this to work
     void loopCalibrateCamera();
 
-    /// The default scene we load while we have nothing to replicate, at leaste we show something to be projected.
+    /// The default scene we load while we have nothing to replicate, at leaste
+    /// we show something to be projected.
     void createStandbyScene();
     /// Construct the scene content.
     void CreateScene();
@@ -69,9 +71,12 @@ public:
     /// Subscribe to update, UI and network events.
     void SubscribeToEvents();
 
-protected:
-    /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const { return String::EMPTY; }
+   protected:
+    /// Return XML patch instructions for screen joystick layout for a specific
+    /// sample app, if any.
+    virtual String GetScreenJoystickPatchString() const {
+        return String::EMPTY;
+    }
     /// Initialize touch input on mobile platform.
     void InitTouchInput();
     /// Control logo visibility.
@@ -81,10 +86,10 @@ protected:
     SharedPtr<Sprite> logoSprite_;
     /// Scene.
     SharedPtr<Scene> scene_;
-	SharedPtr<Scene> sceneDome_;
+    SharedPtr<Scene> sceneDome_;
     /// Camera scene node.
     SharedPtr<Node> cameraNode_;
-	SharedPtr<Node> cameraNodeDome_;
+    SharedPtr<Node> cameraNodeDome_;
     /// Camera yaw angle.
     float yaw_;
     /// Camera pitch angle.
@@ -92,11 +97,14 @@ protected:
     /// Flag to indicate whether touch input has been enabled.
     bool touchEnabled_;
 
-	SharedPtr<ScriptInstance> frameworkScriptInstance;
+    SharedPtr<ScriptInstance> frameworkScriptInstance;
 
-	bool appHasStarted;
+    bool appHasStarted;
 
-private:
+    // CreateDomeCamera - Creates the dome camera node.
+    Node* CreateDomeCamera();
+
+   private:
     /// Create logo.
     void CreateLogo();
     /// Set custom window Title & Icon
@@ -105,12 +113,14 @@ private:
     void CreateConsoleAndDebugHud();
     /// Handle key down event to process key controls common to all samples.
     void HandleKeyDown(StringHash eventType, VariantMap& eventData);
-    /// Handle scene update event to control camera's pitch and yaw for all samples.
+    /// Handle scene update event to control camera's pitch and yaw for all
+    /// samples.
     void HandleSceneUpdate(StringHash eventType, VariantMap& eventData);
     /// Handle touch begin event to initialize touch input on desktop platform.
     void HandleTouchBegin(StringHash eventType, VariantMap& eventData);
-	void handleIncomingNetworkScriptCommands(); // passes theh commands that come from network to script application
-
+    void handleIncomingNetworkScriptCommands();  // passes theh commands that
+                                                 // come from network to script
+                                                 // application
 
     /// Screen joystick index for navigational controls (mobile platforms only).
     unsigned screenJoystickIndex_;
@@ -119,10 +129,13 @@ private:
     /// Pause flag.
     bool paused_;
 
-	// setup a simple udp server
-	TNETServer *calibrationServ; // backdoor server used to remotely configurate a fulldome-only projector TODO: fazer logica para inicializar somente quando uam flag assim informar, essa falg por usa vez seria informada no arquivo de configuração
-
-
+    // setup a simple udp server
+    TNETServer*
+        calibrationServ;  // backdoor server used to remotely configurate a
+                          // fulldome-only projector TODO: fazer logica para
+                          // inicializar somente quando uam flag assim informar,
+                          // essa falg por usa vez seria informada no arquivo de
+                          // configuração
 
     /// Handle the logic post-update event.
     void HandlePostUpdate(StringHash eventType, VariantMap& eventData);
@@ -132,15 +145,17 @@ private:
     void HandleDisconnect(StringHash eventType, VariantMap& eventData);
     /// Handle pressing the start server button.
     void HandleStartServer(StringHash eventType, VariantMap& eventData);
-    /// Handle connection status change (just update the buttons that should be shown.)
+    /// Handle connection status change (just update the buttons that should be
+    /// shown.)
     void HandleConnectionStatus(StringHash eventType, VariantMap& eventData);
     /// Handle a client connecting to the server.
     void HandleClientConnected(StringHash eventType, VariantMap& eventData);
     /// Handle a client disconnecting from the server.
     void HandleClientDisconnected(StringHash eventType, VariantMap& eventData);
-    /// Handle remote event from server which tells our controlled object node ID.
+    /// Handle remote event from server which tells our controlled object node
+    /// ID.
     void HandleClientObjectID(StringHash eventType, VariantMap& eventData);
-	void HandleUpdate(StringHash eventType, VariantMap& eventData);
+    void HandleUpdate(StringHash eventType, VariantMap& eventData);
 
     /// Mapping from client connections to controllable objects.
     HashMap<Connection*, WeakPtr<Node> > serverObjects_;

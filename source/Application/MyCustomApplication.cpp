@@ -93,6 +93,12 @@ void MyCustomApplication::CreateScene() {
             cache->GetResource<Material>("Materials/Stone.xml"));
     }
 
+    // skyboxskybox
+    Node* skyNode = scene_->CreateChild("Sky");
+    Skybox* skybox = skyNode->CreateComponent<Skybox>();
+    skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
+
     // Some random mesh for testing custom componenets
     {
         Node* componentNodeTest = scene_->CreateChild("TestComponent");
@@ -147,33 +153,17 @@ void MyCustomApplication::CreateScene() {
     Graphics* graphics = GetSubsystem<Graphics>();
 
     renderer->SetNumViewports(2);
-    // Set up the front camera viewport
     SharedPtr<Viewport> viewport(
         new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 
-    SharedPtr<RenderPath> effectRenderPath = viewport->GetRenderPath()->Clone();
-    effectRenderPath->Append(
-        cache->GetResource<XMLFile>("PostProcess/Bloom.xml"));
-    effectRenderPath->Append(
-        cache->GetResource<XMLFile>("PostProcess/FXAA2.xml"));
-    // Make the bloom mixing parameter more pronounced
-    effectRenderPath->SetShaderParameter("BloomMix", Vector2(0.9f, 0.6f));
-    effectRenderPath->SetEnabled("Bloom", false);
-    effectRenderPath->SetEnabled("FXAA2", false);
-    viewport->SetRenderPath(effectRenderPath);
+    Node* domeCamNode = CreateDomeCamera();
 
-    Node* rearCameraNode_;
-    rearCameraNode_ = cameraNode_->CreateChild("rear camera");
-    rearCameraNode_->CreateComponent<Camera>();
-    // Set up the rear camera viewport on top of the front view ("rear view
-    // mirror") The viewport index must be greater in that case, otherwise the
-    // view would be left behind
-    SharedPtr<Viewport> rearViewport(new Viewport(
-        context_, scene_, rearCameraNode_->GetComponent<Camera>(),
+    SharedPtr<Viewport> virtualDomeSceneViewport(new Viewport(
+        context_, sceneDome_, domeCamNode->GetComponent<Camera>(),
         IntRect(graphics->GetWidth() * 2 / 3, 32, graphics->GetWidth() - 32,
                 graphics->GetHeight() / 3)));
-    renderer->SetViewport(1, rearViewport);
+    renderer->SetViewport(1, virtualDomeSceneViewport);
 }
 #endif
 
@@ -368,7 +358,7 @@ void MyCustomApplication::Start() {
             int seq = 8650;
         }
     }
-    SubscribeToEvent(E_POSTRENDERUPDATE,
+    SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
     // create C++ app
     CreateScene();

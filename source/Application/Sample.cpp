@@ -58,7 +58,7 @@ void Sample::Setup() {
         (selected_serv == 1 && machineMaster &&
          machineMaster->getServerProperties().fullScreen);
     engineParameters_["Headless"] = false;
-    engineParameters_["Borderless"] = false;
+    engineParameters_["Borderless"] = true;
     if (selected_serv == 0)  // é projetor
     {
         engineParameters_["WindowWidth"] =
@@ -212,6 +212,7 @@ int Sample::isApplication() {
 }
 // auxiliar functions --------------------------
 
+// extra functions --------------------------
 int Sample::Prepare() {
     // Emscripten-specific: C++ exceptions are turned off by default in -O1 (and
     // above), unless '-s DISABLE_EXCEPTION_CATCHING=0' flag is set Urho3D build
@@ -257,6 +258,119 @@ int Sample::RunFrameC() {
         return EXIT_FAILURE;
     }
 }
+void Sample::loopCalibrateCamera() {
+    if (selected_serv == 0)  // Projector
+    {
+        char* calibrationPacket;
+        if (calibrationServ->update(1) == TEE_MESSAGE) {
+            char *mode, *axis = 0;
+            float calValue;
+
+            Node* sceneCal = sceneDome_;
+            Node* calNodeCam = sceneDome_->GetChild("CameraDome");
+            Camera* calCam = calNodeCam->GetComponent<Camera>();
+            Vector3 direction;
+            // Mostra mensagem
+            calibrationPacket = calibrationServ->getMessage();
+            printf("CALIBRATION COMMAND: [%s]>: %s\n",
+                   calibrationServ->getPacket().getSenderIP(),
+                   calibrationPacket);
+
+            mode = strtok(calibrationPacket, ";");
+
+            if (!strcmp("rst", mode))  // not fov mode
+            {
+                // Reload the projector configuratiosn from the file
+                {
+                    fpmed::Vec3<float> projPos, projRot, projScale;
+
+                    // le os parametros do projetor no arquivo de projetor
+                    projPos =
+                        globalEnv.getProjector(selected_proj).getPosition();
+                    projRot =
+                        globalEnv.getProjector(selected_proj).getRotation();
+                    projScale =
+                        globalEnv.getProjector(selected_proj).getScale();
+                    calCam->SetFarClip(500.0f);
+                    calCam->SetFov(
+                        globalEnv.getProjector(selected_proj).getFov());
+                    calNodeCam->SetPosition(Vector3(
+                        projPos.getX(), projPos.getY(), projPos.getZ()));
+                    calNodeCam->SetRotation(Quaternion(
+                        projRot.getX(), projRot.getY(), projRot.getZ()));
+                    calNodeCam->SetScale(Vector3(
+                        projScale.getX(), projScale.getY(), projScale.getZ()));
+                }
+            } else if (!strcmp("dmp", mode))  // not fov mode
+            {
+                FILE* fp;
+                fp = fopen("dumpDataCalibration.txt", "wb");
+
+                Vector3 calCamP = calNodeCam->GetPosition();
+                Quaternion calCamQ = calNodeCam->GetRotation();
+                Vector3 calCamR = calCamQ.EulerAngles();
+                fprintf(fp,
+                        "<vector3d name=\"ProjectorPosition\" value=\"%f, %f, "
+                        "%f\" />\n",
+                        calCamP.x_, calCamP.y_, calCamP.z_);
+                fprintf(fp,
+                        "<vector3d name=\"ProjectorRotation\" value=\"%f, %f, "
+                        "%f\" />\n",
+                        calCamR.x_, calCamR.y_, calCamR.z_);
+                fprintf(fp, "<float name=\"FOV\" value=\"%f\" />",
+                        calCam->GetFov());
+
+                fclose(fp);
+            } else {
+                if (strcmp("ccf", mode))  // not fov mode
+                {
+                    axis = strtok(NULL, ";");
+
+                    if (!strcmp("x", axis))
+                        direction =
+                            -Vector3(0, 0, 1);  // hacked, dome is sideways
+                    if (!strcmp("y", axis)) direction = Vector3(0, 1, 0);
+                    if (!strcmp("z", axis))
+                        direction =
+                            Vector3(1, 0, 0);  // hacked, dome is sideways
+                }
+                calValue = atof(strtok(NULL, ";"));
+
+                // Apply the calibration
+                if (!strcmp("ccp", mode))  // apply translation
+                {
+                    direction = direction * calValue;
+                    calNodeCam->SetPosition(
+                        Vector3(calNodeCam->GetPosition() + direction));
+                }
+                if (!strcmp("ccr", mode))  // apply rotation
+                {
+                    direction = direction * calValue;
+                    calNodeCam->Rotate(
+                        Quaternion(direction.z_, direction.y_, -direction.x_));
+                }
+                if (!strcmp("ccf", mode))  // apply rotation
+                {
+                    calCam->SetFov(calCam->GetFov() + calValue);
+                }
+            }
+        }
+    }
+
+    int auxiliarCommand = UpdateAuxiliarGlobalCommands();
+
+    if (auxiliarCommand != 0)  // toogle grid on
+    {
+        char* enabled = strtok(NULL, ";");
+        Node* gridDomeNode = sceneDome_->GetChild("VIRTUAL_DOME_GRID", LOCAL);
+
+        if (auxiliarCommand == 55)
+            gridDomeNode->SetEnabled(true);
+        else if (auxiliarCommand == 56)
+            gridDomeNode->SetEnabled(false);
+    }
+}
+// extra functions --------------------------
 
 void Sample::SetWindowTitleAndIcon() {
     ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -591,7 +705,7 @@ void Sample::CreateScene() {
         // up
         {
             SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-            domeRenderTexture->SetSize(3000, 3000, Graphics::GetRGBFormat(),
+            domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
                                        TEXTURE_RENDERTARGET);
             domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
             SharedPtr<Material> renderMaterial(new Material(context_));
@@ -618,7 +732,7 @@ void Sample::CreateScene() {
         // right
         {
             SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-            domeRenderTexture->SetSize(3000, 3000, Graphics::GetRGBFormat(),
+            domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
                                        TEXTURE_RENDERTARGET);
             domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
             SharedPtr<Material> renderMaterial(new Material(context_));
@@ -645,7 +759,7 @@ void Sample::CreateScene() {
         // back
         {
             SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-            domeRenderTexture->SetSize(3000, 3000, Graphics::GetRGBFormat(),
+            domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
                                        TEXTURE_RENDERTARGET);
             domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
             SharedPtr<Material> renderMaterial(new Material(context_));
@@ -672,7 +786,7 @@ void Sample::CreateScene() {
         // left
         {
             SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-            domeRenderTexture->SetSize(3000, 3000, Graphics::GetRGBFormat(),
+            domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
                                        TEXTURE_RENDERTARGET);
             domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
             SharedPtr<Material> renderMaterial(new Material(context_));
@@ -699,7 +813,7 @@ void Sample::CreateScene() {
         // front
         {
             SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-            domeRenderTexture->SetSize(3000, 3000, Graphics::GetRGBFormat(),
+            domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
                                        TEXTURE_RENDERTARGET);
             domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
             SharedPtr<Material> renderMaterial(new Material(context_));
@@ -905,4 +1019,198 @@ void Sample::HandleClientDisconnected(StringHash eventType,
 }
 void Sample::HandleClientObjectID(StringHash eventType, VariantMap& eventData) {
     clientObjectID_ = eventData[P_ID].GetUInt();
+}
+
+// TODO: this code is redundant, remove the old one that is based in the network
+// replication.
+// Returns the node with the dome camera node
+Node* Sample::CreateDomeCamera() {
+    ResourceCache* cache = GetSubsystem<ResourceCache>();
+
+    if (!sceneDome_) sceneDome_ = new Scene(context_);
+    sceneDome_->Clear();
+    sceneDome_->CreateComponent<Octree>(LOCAL);
+    // sceneDome_->CreateComponent<PhysicsWorld>(LOCAL);
+
+    Node* zoneNode = sceneDome_->CreateChild("Zone", LOCAL);
+    Zone* zone = zoneNode->CreateComponent<Zone>();
+    zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
+    // zone->SetAmbientColor(Color(0.30f, 0.50f, 0.40f)); // TODO : remove
+    // later
+    zone->SetFogStart(250 / 4);
+    zone->SetFogEnd(500);
+
+    Node* domeNode = sceneDome_->CreateChild("VIRTUAL_DOME", LOCAL);
+    // domeNode->SetPosition(
+    //     Vector3(posDome.getX(), posDome.getY(), posDome.getZ()));
+    // domeNode->SetScale(
+    //     Vector3(scaleDome.getX(), scaleDome.getY(), scaleDome.getZ()));
+    // domeNode->SetRotation(
+    //     Quaternion(rotDome.getX(), rotDome.getY(), rotDome.getZ()));
+    StaticModel* domeMesh = domeNode->CreateComponent<StaticModel>();
+    domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
+
+    // é o cliente domo (entao vamos criar a visao projetor dele)
+    {
+        fpmed::Vec3<float> projPos, projRot, projScale;
+
+        // le os parametros do projetor no arquivo de projetor
+        projPos = fpmed::Vec3<float>(
+            0, -4.0,
+            0);  // globalEnv.getProjector(selected_proj).getPosition();
+        projRot = fpmed::Vec3<float>(
+            -90, 0,
+            90);  // globalEnv.getProjector(selected_proj).getRotation();
+        projScale = fpmed::Vec3<float>(
+            0, 0, 0);  // globalEnv.getProjector(selected_proj).getScale();
+
+        cameraNodeDome_ = sceneDome_->CreateChild("CameraDome", LOCAL);
+        Camera* cameraDome = cameraNodeDome_->CreateComponent<Camera>();
+        cameraDome->SetFarClip(500.0f);
+        cameraDome->SetFov(35.900139f);
+        cameraNodeDome_->SetPosition(
+            Vector3(projPos.getX(), projPos.getY(), projPos.getZ()));
+        cameraNodeDome_->SetRotation(
+            Quaternion(projRot.getX(), projRot.getY(), projRot.getZ()));
+        cameraNodeDome_->SetScale(
+            Vector3(projScale.getX(), projScale.getY(), projScale.getZ()));
+    }
+
+    Node* cameraReferenceForDomeRender = 0;
+    // if (haveOffsetCamera(globalEnv.getProjector(selected_proj)))
+    //     cameraReferenceForDomeRender = cameraNode_->GetChild("CameraOffset");
+    // else
+    cameraReferenceForDomeRender = cameraNode_;
+
+    // up
+    {
+        SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+                                   TEXTURE_RENDERTARGET);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface = domeRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        Node* cameraRttDomeNode_ =
+            cameraReferenceForDomeRender->CreateChild("CameraUpNode_", LOCAL);
+        Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
+        cameraRttDomeNode_->SetRotation(Quaternion(-90.0f, 0.0f, 0.0f));
+        camera->SetFarClip(500.0f);
+        camera->SetAspectRatio(1.0f);
+        camera->SetFov(90.0f);
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        domeMesh->SetMaterial(0, renderMaterial);
+    }
+    // right
+    {
+        SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+                                   TEXTURE_RENDERTARGET);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface = domeRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        Node* cameraRttDomeNode_ = cameraReferenceForDomeRender->CreateChild(
+            "CameraRightNode_", LOCAL);
+        Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
+        cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 90.0f, 0.0f));
+        camera->SetFarClip(500.0f);
+        camera->SetAspectRatio(1.0f);
+        camera->SetFov(90.0f);
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        domeMesh->SetMaterial(1, renderMaterial);
+    }
+    // back
+    {
+        SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+                                   TEXTURE_RENDERTARGET);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface = domeRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        Node* cameraRttDomeNode_ =
+            cameraReferenceForDomeRender->CreateChild("CameraBackNode_", LOCAL);
+        Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
+        cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 180.0f, 0.0f));
+        camera->SetFarClip(500.0f);
+        camera->SetAspectRatio(1.0f);
+        camera->SetFov(90.0f);
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        domeMesh->SetMaterial(2, renderMaterial);
+    }
+    // left
+    {
+        SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+                                   TEXTURE_RENDERTARGET);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface = domeRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        Node* cameraRttDomeNode_ =
+            cameraReferenceForDomeRender->CreateChild("CameraLeftNode_", LOCAL);
+        Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
+        cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 270.0f, 0.0f));
+        camera->SetFarClip(500.0f);
+        camera->SetAspectRatio(1.0f);
+        camera->SetFov(90.0f);
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        domeMesh->SetMaterial(3, renderMaterial);
+    }
+    // front
+    {
+        SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+                                   TEXTURE_RENDERTARGET);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface = domeRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        Node* cameraRttDomeNode_ = cameraReferenceForDomeRender->CreateChild(
+            "CameraFrontNode_", LOCAL);
+        Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
+        cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
+        camera->SetFarClip(500.0f);
+        camera->SetAspectRatio(1.0f);
+        camera->SetFov(90.0f);
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        domeMesh->SetMaterial(4, renderMaterial);
+    }
+    return cameraNodeDome_;
 }
