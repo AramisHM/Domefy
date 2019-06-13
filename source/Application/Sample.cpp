@@ -58,7 +58,7 @@ void Sample::Setup() {
         (selected_serv == 1 && machineMaster &&
          machineMaster->getServerProperties().fullScreen);
     engineParameters_["Headless"] = false;
-    engineParameters_["Borderless"] = true;
+    engineParameters_["Borderless"] = false;
     if (selected_serv == 0)  // é projetor
     {
         engineParameters_["WindowWidth"] =

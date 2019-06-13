@@ -12,6 +12,12 @@
 #include <Urho3DAll.h>
 
 #include <ahm/net/net.h>
+#include <fstream>
+
+#include <streambuf>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 namespace Urho3D {
 class Button;
@@ -24,6 +30,28 @@ class UIElement;
 extern MyCustomApplication *application;
 conn extChanel;
 std::string commandString;
+
+void testJSON() {
+    // instead, you could also write (which looks very similar to the JSON
+    // above)
+    json j2 = {{"pi", 3.141},
+               {"happy", true},
+               {"name", "Niels"},
+               {"nothing", nullptr},
+               {"answer", {{"everything", 42}}},
+               {"list", {1, 0, 2}},
+               {"object", {{"currency", "USD"}, {"value", 42.99}}}};
+
+    printf("%s", j2.dump().c_str());
+
+    std::ifstream t("./pucpr-arena-digital.json");
+    json myConfig;
+    t >> myConfig;
+
+    for (const auto &item : myConfig["presets"]) {
+        printf("%s", item["name"].get<std::string>().c_str());
+    }
+}
 
 void ListenForExternalCommands() {
     if (sock_read(&extChanel, 1) > 0) {
@@ -40,8 +68,9 @@ void ListenForExternalCommands() {
 int main(int argc, char *argv[]) {
     ahmnet_init();
     udp_listen("127.0.0.1:42871", &extChanel);
-
     fpmedInit(argc, argv);
+
+    testJSON();
 
     Urho3D::ParseArguments(argc, argv);
     Urho3D::Context *context = new Urho3D::Context();

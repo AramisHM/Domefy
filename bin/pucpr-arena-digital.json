@@ -1,0 +1,72 @@
+{
+    "type": "projection-description",
+    "name": "PUCPR Digital Arena",
+    "presets": [
+        {
+            "name": "DS-1",
+            "resolution": {
+                "x": 1920,
+                "y": 1080
+            },
+            "offset_position": {
+                "x": -0.15,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "offset_rotation": {
+                "x": 45.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "proj_position": {
+                "x": -2.682008,
+                "y": -0.464000,
+                "z": 0.055000
+            },
+            "proj_rotation": {
+                "x": -19.379545,
+                "y": 89.937462,
+                "z": -0.703675
+            },
+            "viewport_pos": {
+                "x": 0,
+                "y": 0
+            },
+            "far_clip": 1,
+            "fov": 1
+        },
+        {
+            "name": "DS-2",
+            "resolution": {
+                "x": 1920,
+                "y": 1080
+            },
+            "offset_position": {
+                "x": -0.15,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "offset_rotation": {
+                "x": 45.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "proj_position": {
+                "x": -2.682008,
+                "y": -0.464000,
+                "z": 0.055000
+            },
+            "proj_rotation": {
+                "x": -19.379545,
+                "y": 89.937462,
+                "z": -0.703675
+            },
+            "viewport_pos": {
+                "x": 0,
+                "y": 0
+            },
+            "far_clip": 1,
+            "fov": 1
+        }
+    ]
+}
