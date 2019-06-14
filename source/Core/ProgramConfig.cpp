@@ -17,7 +17,12 @@ namespace fpmed {
 ProgramConfig* ProgramConfig::_instance = NULL;
 
 // constructor
-ProgramConfig::ProgramConfig() { nProjections = 0; }
+ProgramConfig::ProgramConfig() {
+    nProjections = 0;
+    _fullscreen = false;
+    _borderless = false;
+    _resolution = Vec2<int>(640, 480);
+}
 
 ProgramConfig* ProgramConfig::GetInstance() {
     if (_instance == NULL) {
@@ -59,13 +64,23 @@ int ProgramConfig::LoadConfigFile(std::string path) {
         p._offsetRot = offRot;
         p._projPos = projPos;
         p._projRot = projRot;
+        p.fov = item["fov"].get<float>();
 
         _projections.push_back(p);  // save for later referencing
         ++nProjections;
     }
-    return 0;
+
+    _borderless = myConfig["borderless"].get<bool>();
+    _fullscreen = myConfig["fullscreen"].get<bool>();
+
+    _resolution = Vec2<int>(myConfig["master-resolution"]["x"].get<int>(),
+                            myConfig["master-resolution"]["y"].get<int>());
 }
 
 std::list<Projection> ProgramConfig::GetProjections() { return _projections; }
+
+bool ProgramConfig::IsFullscreen() { return _fullscreen; }
+bool ProgramConfig::IsBorderless() { return _borderless; }
+Vec2<int> ProgramConfig::GetWindowResolution() { return _resolution; }
 
 }  // namespace fpmed

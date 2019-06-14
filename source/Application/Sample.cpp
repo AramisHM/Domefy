@@ -7,6 +7,7 @@
 
 #include <Application/Sample.h>
 
+#include <Core/ProgramConfig.h>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Network/NetworkPriority.h>
@@ -48,29 +49,18 @@ Sample::Sample(Context* context)
 }
 
 void Sample::Setup() {
+    fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
+
     // Modify engine startup parameters
     engineParameters_["WindowTitle"] = GetTypeName();
     engineParameters_["Fpmed-logfile"] =
         GetSubsystem<FileSystem>()->GetAppPreferencesDir("urho3d", "logs") +
         GetTypeName() + ".log";
-    engineParameters_["FullScreen"] =
-        false || (selected_serv == 0 && globalEnv.getFullScreen()) ||
-        (selected_serv == 1 && machineMaster &&
-         machineMaster->getServerProperties().fullScreen);
+    engineParameters_["FullScreen"] = config->IsFullscreen();
     engineParameters_["Headless"] = false;
-    engineParameters_["Borderless"] = false;
-    if (selected_serv == 0)  // é projetor
-    {
-        engineParameters_["WindowWidth"] =
-            globalEnv.getScreenResolution().getX();
-        engineParameters_["WindowHeight"] =
-            globalEnv.getScreenResolution().getY();
-    } else {
-        engineParameters_["WindowWidth"] =
-            machineMaster->getServerProperties().resolution.getX();
-        engineParameters_["WindowHeight"] =
-            machineMaster->getServerProperties().resolution.getY();
-    }
+    engineParameters_["Borderless"] = config->IsBorderless();
+    engineParameters_["WindowWidth"] = config->GetWindowResolution().getX();
+    engineParameters_["WindowHeight"] = config->GetWindowResolution().getY();
 }
 
 void Sample::CreateLogo() {

@@ -2,6 +2,7 @@
     "type": "projection-description",
     "name": "PUCPR Digital Arena",
     "borderless": false,
+    "fullscreen": false,
     "master-resolution": {
         "x": 1920,
         "y": 1080

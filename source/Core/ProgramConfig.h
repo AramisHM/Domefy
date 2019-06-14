@@ -33,6 +33,7 @@ typedef struct Pojection {
     fpmed::Vec3<float> _offsetRot;
     fpmed::Vec3<float> _projPos;
     fpmed::Vec3<float> _projRot;
+    float fov;
 } Projection;
 
 // Singleton class that holds all configurations for our software.
@@ -43,23 +44,32 @@ class ProgramConfig {
    public:
     // This is how clients can access the single instance
     static ProgramConfig *GetInstance();
-    int LoadConfigFile(std::string path);
 
+    int LoadConfigFile(std::string path);
     // GetProjections - Returns the std::list of viewport projections.
     std::list<Projection> GetProjections();
+
+    bool IsFullscreen();
+
+    // IsBorderless - Determins if the window instance should render the frame
+    // arround it
+    bool IsBorderless();
+
+    // WindowResolution - What is the resolution of the application window.
+    Vec2<int> GetWindowResolution();
 
    protected:
     std::list<Projection> _projections;
     unsigned int nProjections;  // number of projections loaded
+    bool _fullscreen;
+    bool _borderless;
+    Vec2<int> _resolution;
 
    private:
     static ProgramConfig *_instance;
     ProgramConfig();
     ProgramConfig(const ProgramConfig &);
     ProgramConfig &operator=(const ProgramConfig &);
-
-    // standard private declarations
-    bool _fullscreen;
 };
 
 }  // namespace fpmed
