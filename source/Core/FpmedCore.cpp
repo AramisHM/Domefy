@@ -236,9 +236,6 @@ void fpmedInit(int argc, char *argv[]) {
 
     Urho3D::SetRandomSeed(time(NULL));  // TODO : check randomness
 
-    // FLTK Windows
-    flag_edit_script = 0;
-
     if (argc <= 1)  // show profile window choice
         window_profile_setup = desenha_janela_page_1();
     else if (selected_serv == 0 && selected_proj == -1)  // its projector

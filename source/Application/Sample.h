@@ -9,6 +9,7 @@
 #include "tnet/TNet.h"
 
 // scripts include
+#include <Core/ProgramConfig.h>
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/AngelScript/ScriptFile.h>
 #include <Urho3D/AngelScript/ScriptInstance.h>
@@ -102,7 +103,7 @@ class Sample : public Application {
     bool appHasStarted;
 
     // CreateDomeCamera - Creates the dome camera node.
-    Node* CreateDomeCamera();
+    Node* CreateDomeCamera(Projection p);
 
    private:
     /// Create logo.

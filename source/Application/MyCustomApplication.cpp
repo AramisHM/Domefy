@@ -8,6 +8,7 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>  // creates the vhp model
+#include <Core/ProgramConfig.h>
 
 extern std::string commandString;  // main.cpp
 std::string auxiliarText;
@@ -150,6 +151,9 @@ void MyCustomApplication::CreateScene() {
     cameraNearClipping = 0.01f;
 
     // viewports --------------------------------
+    ProgramConfig* config = ProgramConfig::GetInstance();
+    std::list<Projection> projections = config->GetProjections();
+
     Graphics* graphics = GetSubsystem<Graphics>();
 
     renderer->SetNumViewports(2);
@@ -157,7 +161,7 @@ void MyCustomApplication::CreateScene() {
         new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 
-    Node* domeCamNode = CreateDomeCamera();
+    Node* domeCamNode = CreateDomeCamera(projections.front());
 
     SharedPtr<Viewport> virtualDomeSceneViewport(new Viewport(
         context_, sceneDome_, domeCamNode->GetComponent<Camera>(),

@@ -1024,7 +1024,7 @@ void Sample::HandleClientObjectID(StringHash eventType, VariantMap& eventData) {
 // TODO: this code is redundant, remove the old one that is based in the network
 // replication.
 // Returns the node with the dome camera node
-Node* Sample::CreateDomeCamera() {
+Node* Sample::CreateDomeCamera(Projection p) {
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
     if (!sceneDome_) sceneDome_ = new Scene(context_);
@@ -1050,30 +1050,19 @@ Node* Sample::CreateDomeCamera() {
     StaticModel* domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
 
-    // é o cliente domo (entao vamos criar a visao projetor dele)
     {
-        fpmed::Vec3<float> projPos, projRot, projScale;
-
-        // le os parametros do projetor no arquivo de projetor
-        projPos = fpmed::Vec3<float>(
-            0, -4.0,
-            0);  // globalEnv.getProjector(selected_proj).getPosition();
-        projRot = fpmed::Vec3<float>(
-            -90, 0,
-            90);  // globalEnv.getProjector(selected_proj).getRotation();
-        projScale = fpmed::Vec3<float>(
-            0, 0, 0);  // globalEnv.getProjector(selected_proj).getScale();
+        fpmed::Vec3<float> projPos, projRot;
 
         cameraNodeDome_ = sceneDome_->CreateChild("CameraDome", LOCAL);
         Camera* cameraDome = cameraNodeDome_->CreateComponent<Camera>();
         cameraDome->SetFarClip(500.0f);
         cameraDome->SetFov(35.900139f);
         cameraNodeDome_->SetPosition(
-            Vector3(projPos.getX(), projPos.getY(), projPos.getZ()));
-        cameraNodeDome_->SetRotation(
-            Quaternion(projRot.getX(), projRot.getY(), projRot.getZ()));
-        cameraNodeDome_->SetScale(
-            Vector3(projScale.getX(), projScale.getY(), projScale.getZ()));
+            Vector3(p._projPos.getX(), p._projPos.getY(), p._projPos.getZ()));
+        cameraNodeDome_->SetRotation(Quaternion(
+            p._projRot.getX(), p._projRot.getY(), p._projRot.getZ()));
+        // cameraNodeDome_->SetScale(
+        //     Vector3(projScale.getX(), projScale.getY(), projScale.getZ()));
     }
 
     Node* cameraReferenceForDomeRender = 0;
