@@ -11,11 +11,11 @@
     {
       "name": "DS-1",
       "resolution": {
-        "x": 1920,
-        "y": 1080
+        "x": 200,
+        "y": 200
       },
       "viewport_pos": {
-        "x": 0,
+        "x": 600,
         "y": 0
       },
       "offset_position": {

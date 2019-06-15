@@ -60,6 +60,10 @@ int ProgramConfig::LoadConfigFile(std::string path) {
                             item["proj_rotation"]["y"].get<float>(),
                             item["proj_rotation"]["z"].get<float>());
 
+        p._viewport = Vec4<int>(item["viewport_pos"]["x"].get<int>(),
+                                item["viewport_pos"]["y"].get<int>(),
+                                item["resolution"]["x"].get<int>(),
+                                item["resolution"]["y"].get<int>());
         p._offsetPos = offPos;
         p._offsetRot = offRot;
         p._projPos = projPos;

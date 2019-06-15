@@ -33,6 +33,7 @@ typedef struct Pojection {
     fpmed::Vec3<float> _offsetRot;
     fpmed::Vec3<float> _projPos;
     fpmed::Vec3<float> _projRot;
+    fpmed::Vec4<int> _viewport;
     float fov;
 } Projection;
 

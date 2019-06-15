@@ -163,10 +163,15 @@ void MyCustomApplication::CreateScene() {
 
     Node* domeCamNode = CreateDomeCamera(projections.front());
 
+    int px, py, pdx, pdy;
+    px = config->GetProjections().front()._viewport.getP();
+    py = config->GetProjections().front()._viewport.getQ();
+    pdx = config->GetProjections().front()._viewport.getR();
+    pdy = config->GetProjections().front()._viewport.getS();
+    IntRect viewRect = IntRect(px, py, px + pdx, py + pdy);
+
     SharedPtr<Viewport> virtualDomeSceneViewport(new Viewport(
-        context_, sceneDome_, domeCamNode->GetComponent<Camera>(),
-        IntRect(graphics->GetWidth() * 2 / 3, 32, graphics->GetWidth() - 32,
-                graphics->GetHeight() / 3)));
+        context_, sceneDome_, domeCamNode->GetComponent<Camera>(), viewRect));
     renderer->SetViewport(1, virtualDomeSceneViewport);
 }
 #endif
