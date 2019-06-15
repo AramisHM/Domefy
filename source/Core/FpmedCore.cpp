@@ -10,7 +10,6 @@
 #include <windows.h>
 #endif
 
-#include <Forms/fpmed_forms.h>
 #include <Urho3D/Math/Random.h>
 #include <time.h>
 
@@ -236,20 +235,7 @@ void fpmedInit(int argc, char *argv[]) {
 
     Urho3D::SetRandomSeed(time(NULL));  // TODO : check randomness
 
-    if (argc <= 1)  // show profile window choice
-        window_profile_setup = desenha_janela_page_1();
-    else if (selected_serv == 0 && selected_proj == -1)  // its projector
-        selecionaProjectorIndexForm();  // define qual configuração de projetor
-                                        // usar
-
-    // Loop FLTK until user defines the primary application behavior/profile
-    // (server or projector).
-    while (Fl::check() &&         // atualiza a UI
-           (selected_serv < 0 ||  // While it's not a server
-            (selected_serv == 0 &&
-             selected_proj == -1)))  // While is not exclusively a projector
-    {
-    }
+    selected_serv = 1;  // removed FLTK, this is always a server now
 }
 
 // Tells if isntance is projector

@@ -31,7 +31,6 @@ set_target_properties(fpmed
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
-
 if(WIN32)
 	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/*.a")
 	
@@ -55,7 +54,7 @@ if(WIN32)
 		  Setupapi.lib
 		  shell32.lib
 		  shlwapi.lib)
-
+	
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)
 	add_definitions(-DURHO3D_FILEWATCHER)

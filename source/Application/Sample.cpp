@@ -215,9 +215,6 @@ int Sample::Prepare() {
 
         if (engine_->Initialize(engineParameters_) == false) {
             ErrorExit();
-            fl_alert(
-                "An error occurred right before trying to create 3D scene. Try "
-                "checking your video drivers for compatibility.");
 
             return exitCode_;
         }
