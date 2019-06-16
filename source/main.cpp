@@ -51,12 +51,6 @@ int main(int argc, char *argv[]) {
     Urho3D::ParseArguments(argc, argv);
     Urho3D::Context *context = new Urho3D::Context();
     application = new MyCustomApplication(context);
-    Urho3D::Input *input = application->GetSubsystem<Urho3D::Input>();
-
-    if (serverPropertiesFileDirectory[0] == 0)
-        machineMaster = new ServerMachine(defaultServerFileName);
-    else
-        machineMaster = new ServerMachine(serverPropertiesFileDirectory);
 
     if (application->isApplication()) {
         application->Prepare();

@@ -156,23 +156,34 @@ void MyCustomApplication::CreateScene() {
 
     Graphics* graphics = GetSubsystem<Graphics>();
 
-    renderer->SetNumViewports(2);
+    renderer->SetNumViewports(3);
+
+    Camera* mainCam = cameraNode_->GetComponent<Camera>();
+    // mainCam->SetEnabled(false);
+
     SharedPtr<Viewport> viewport(
-        new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
+        new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>(),
+                     IntRect(0, 0, 300, 200)));
     renderer->SetViewport(0, viewport);
 
-    Node* domeCamNode = CreateDomeCamera(projections.front());
-
+    Node* domeCamNode1 = CreateDomeCamera(projections.front());
     int px, py, pdx, pdy;
-    px = config->GetProjections().front()._viewport.getP();
-    py = config->GetProjections().front()._viewport.getQ();
-    pdx = config->GetProjections().front()._viewport.getR();
-    pdy = config->GetProjections().front()._viewport.getS();
+    px = projections.front()._viewport.getP();
+    py = projections.front()._viewport.getQ();
+    pdx = projections.front()._viewport.getR();
+    pdy = projections.front()._viewport.getS();
     IntRect viewRect = IntRect(px, py, px + pdx, py + pdy);
 
-    SharedPtr<Viewport> virtualDomeSceneViewport(new Viewport(
-        context_, sceneDome_, domeCamNode->GetComponent<Camera>(), viewRect));
-    renderer->SetViewport(1, virtualDomeSceneViewport);
+    SharedPtr<Viewport> viewport2(
+        new Viewport(context_, sceneDomeList_.front(),
+                     domeCamNode1->GetComponent<Camera>(), viewRect));
+    renderer->SetViewport(1, viewport2);
+
+    Node* domeCamNode2 = CreateDomeCamera(projections.back());
+    SharedPtr<Viewport> viewport3(new Viewport(
+        context_, sceneDomeList_.back(), domeCamNode2->GetComponent<Camera>(),
+        IntRect(0, 300, 200, 500)));
+    renderer->SetViewport(2, viewport3);
 }
 #endif
 

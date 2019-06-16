@@ -87,10 +87,13 @@ class Sample : public Application {
     SharedPtr<Sprite> logoSprite_;
     /// Scene.
     SharedPtr<Scene> scene_;
-    SharedPtr<Scene> sceneDome_;
     /// Camera scene node.
     SharedPtr<Node> cameraNode_;
-    SharedPtr<Node> cameraNodeDome_;
+
+    // Dome scenes, there are multiples
+    std::list<SharedPtr<Scene>> sceneDomeList_;
+    std::list<SharedPtr<Node>> cameraNodeDomeList_;
+
     /// Camera yaw angle.
     float yaw_;
     /// Camera pitch angle.
@@ -159,6 +162,6 @@ class Sample : public Application {
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
 
     /// Mapping from client connections to controllable objects.
-    HashMap<Connection*, WeakPtr<Node> > serverObjects_;
+    HashMap<Connection*, WeakPtr<Node>> serverObjects_;
     unsigned clientObjectID_;
 };
