@@ -13,6 +13,7 @@
 // we get the viewing's camera grabui compoenent at some point
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/VHP/VHP.h>
+#include <Core/ProgramConfig.h>
 #include <Core/auxiliarAppFuncs.h>  // very low level functions
 
 // constructor and destructor
@@ -72,11 +73,14 @@ void VHP::CreateModel() {
         _coronalSlicesNodes[h] = 0;
     }
 
+    fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
+    std::string rootPath = config->GetPathToCustomAssetsFolder();
+    Urho3D::String rootPathUrho = Urho3D::String(rootPath.c_str());
     //  Lowres Axial ------------------------------------------------
     axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
     for (int h = 0; h < axialSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            "/home/aramis/research/Materials/vhp/axial/lowres/" +
+            rootPathUrho + "/Materials/vhp/axial/lowres/" +
             Urho3D::String(1001 + h) + ".xml");
 
         if (!m) continue;
@@ -113,7 +117,7 @@ void VHP::CreateModel() {
     sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
     for (int h = 0; h < sagitalSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            "/home/aramis/research/Materials/vhp/sagital/lowres/" +
+            rootPathUrho + "/Materials/vhp/sagital/lowres/" +
             Urho3D::String(sagitalSliceQuantity - h) + ".xml");
 
         if (!m) continue;
@@ -148,7 +152,7 @@ void VHP::CreateModel() {
     coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
     for (int h = 0; h < coronalSliceQuantity; ++h) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            "/home/aramis/research/Materials/vhp/coronal/lowres/" +
+            rootPathUrho + "/Materials/vhp/coronal/lowres/" +
             Urho3D::String(h) + ".xml");
 
         if (!m) continue;

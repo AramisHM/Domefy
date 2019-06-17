@@ -64,6 +64,9 @@ class ProgramConfig {
     unsigned int GetLoadedProjectionsCount();
     unsigned int GetMonitor();
     fpmed::Vec2<int> GetWindowPosition();
+    // GetPathToCustomAssetsFolder - Includes path that leads to e.g the VHP
+    // images
+    std::string GetPathToCustomAssetsFolder();
 
    protected:
     std::list<Projection> _projections;
@@ -73,6 +76,10 @@ class ProgramConfig {
     Vec2<int> _resolution;
     Vec2<int> _windowPosition;
     unsigned int _monitor;
+
+    // misc
+    std::string
+        _pathToCustomResources;  // path that leads to e.g the VHP images
 
    private:
     static ProgramConfig *_instance;

@@ -87,6 +87,13 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     _windowPosition = Vec2<int>(myConfig["window_position"]["x"].get<int>(),
                                 myConfig["window_position"]["y"].get<int>());
     _monitor = myConfig["monitor"].get<int>();
+#ifdef _WIN32
+    _pathToCustomResources =
+        myConfig["custom_assets_path"]["win32"].get<std::string>();
+#else
+    _pathToCustomResources =
+        myConfig["custom_assets_path"]["linux"].get<std::string>();
+#endif  //_WIN32
 }
 
 std::list<Projection> ProgramConfig::GetProjections() { return _projections; }
@@ -100,5 +107,8 @@ unsigned int ProgramConfig::GetLoadedProjectionsCount() { return nProjections; }
 
 unsigned int ProgramConfig::GetMonitor() { return _monitor; }
 fpmed::Vec2<int> ProgramConfig::GetWindowPosition() { return _windowPosition; }
+std::string ProgramConfig::GetPathToCustomAssetsFolder() {
+    return _pathToCustomResources;
+}
 
 }  // namespace fpmed

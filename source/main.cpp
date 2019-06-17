@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     udp_listen("127.0.0.1:42871", &extChanel);
     fpmedInit(argc, argv);
 
-    p1->LoadConfigFile("./pucpr-arena-digital.json");
+    p1->LoadConfigFile("./config.json");
 
     Urho3D::ParseArguments(argc, argv);
     Urho3D::Context *context = new Urho3D::Context();
