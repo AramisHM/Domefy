@@ -59,6 +59,8 @@ class ProgramConfig {
     // WindowResolution - What is the resolution of the application window.
     Vec2<int> GetWindowResolution();
 
+    unsigned int GetLoadedProjectionsCount();
+
    protected:
     std::list<Projection> _projections;
     unsigned int nProjections;  // number of projections loaded

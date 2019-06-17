@@ -15,7 +15,7 @@
         "y": 200
       },
       "viewport_pos": {
-        "x": 600,
+        "x": 0,
         "y": 0
       },
       "offset_position": {
@@ -44,11 +44,11 @@
     {
       "name": "DS-2",
       "resolution": {
-        "x": 1920,
-        "y": 1080
+        "x": 200,
+        "y": 200
       },
       "viewport_pos": {
-        "x": 0,
+        "x": 200,
         "y": 0
       },
       "offset_position": {

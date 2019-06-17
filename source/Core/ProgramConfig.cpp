@@ -41,6 +41,8 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     // Get projection viewport configurations
     int presetsSize = myConfig["presets"].size();
     printf("Presets count: %d", presetsSize);
+
+    nProjections = 0;
     for (const auto& item : myConfig["presets"]) {
         // new projection reference
         Projection p;
@@ -85,6 +87,9 @@ std::list<Projection> ProgramConfig::GetProjections() { return _projections; }
 
 bool ProgramConfig::IsFullscreen() { return _fullscreen; }
 bool ProgramConfig::IsBorderless() { return _borderless; }
+
 Vec2<int> ProgramConfig::GetWindowResolution() { return _resolution; }
+
+unsigned int ProgramConfig::GetLoadedProjectionsCount() { return nProjections; }
 
 }  // namespace fpmed

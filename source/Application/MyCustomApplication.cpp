@@ -155,35 +155,32 @@ void MyCustomApplication::CreateScene() {
     std::list<Projection> projections = config->GetProjections();
 
     Graphics* graphics = GetSubsystem<Graphics>();
-
-    renderer->SetNumViewports(3);
+    renderer->SetNumViewports(config->GetLoadedProjectionsCount() + 1);
 
     Camera* mainCam = cameraNode_->GetComponent<Camera>();
     // mainCam->SetEnabled(false);
+    SharedPtr<Viewport> mainViewport(new Viewport(context_, scene_, mainCam));
+    renderer->SetViewport(0, mainViewport);
 
-    SharedPtr<Viewport> viewport(
-        new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>(),
-                     IntRect(0, 0, 300, 200)));
-    renderer->SetViewport(0, viewport);
-
-    Node* domeCamNode1 = CreateDomeCamera(projections.front());
-    int px, py, pdx, pdy;
-    px = projections.front()._viewport.getP();
-    py = projections.front()._viewport.getQ();
-    pdx = projections.front()._viewport.getR();
-    pdy = projections.front()._viewport.getS();
-    IntRect viewRect = IntRect(px, py, px + pdx, py + pdy);
-
-    SharedPtr<Viewport> viewport2(
-        new Viewport(context_, sceneDomeList_.front(),
-                     domeCamNode1->GetComponent<Camera>(), viewRect));
-    renderer->SetViewport(1, viewport2);
-
-    Node* domeCamNode2 = CreateDomeCamera(projections.back());
-    SharedPtr<Viewport> viewport3(new Viewport(
-        context_, sceneDomeList_.back(), domeCamNode2->GetComponent<Camera>(),
-        IntRect(0, 300, 200, 500)));
-    renderer->SetViewport(2, viewport3);
+    // the custom projections
+    int aux = 1;
+    for (auto const& proj : projections) {
+        Node* domeCamNode =
+            CreateDomeCamera(proj);  // last element from sceneDomeList_ is the
+                                     // scene for this camera
+        // TODO: make a function convert vec4 to Urho's rectangle
+        int px, py, pdx, pdy;
+        px = proj._viewport.getP();
+        py = proj._viewport.getQ();
+        pdx = proj._viewport.getR();
+        pdy = proj._viewport.getS();
+        IntRect viewRect = IntRect(px, py, px + pdx, py + pdy);
+        SharedPtr<Viewport> tempViewport(
+            new Viewport(context_, sceneDomeList_.back(),
+                         domeCamNode->GetComponent<Camera>(), viewRect));
+        renderer->SetViewport(aux, tempViewport);
+        ++aux;
+    }
 }
 #endif
 
