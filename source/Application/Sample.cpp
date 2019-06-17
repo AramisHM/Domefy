@@ -60,6 +60,9 @@ void Sample::Setup() {
     engineParameters_["Borderless"] = config->IsBorderless();
     engineParameters_["WindowWidth"] = config->GetWindowResolution().getX();
     engineParameters_["WindowHeight"] = config->GetWindowResolution().getY();
+    engineParameters_["WindowPositionX"] = config->GetWindowPosition().getX();
+    engineParameters_["WindowPositionY"] = config->GetWindowPosition().getY();
+    engineParameters_["Monitor"] = config->GetMonitor();
 }
 
 void Sample::CreateLogo() {
@@ -566,8 +569,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
 
         cameraNodeDome_ = sceneDome_->CreateChild("CameraDome", LOCAL);
         Camera* cameraDome = cameraNodeDome_->CreateComponent<Camera>();
-        cameraDome->SetFarClip(500.0f);
-        cameraDome->SetFov(35.900139f);
+        cameraDome->SetFarClip(p._farClip);
+        cameraDome->SetFov(p._fov);
         cameraNodeDome_->SetPosition(
             Vector3(p._projPos.getX(), p._projPos.getY(), p._projPos.getZ()));
         cameraNodeDome_->SetRotation(Quaternion(
@@ -580,7 +583,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // up
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+        domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
+                                   Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
         SharedPtr<Material> renderMaterial(new Material(context_));
@@ -606,7 +610,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // right
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+        domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
+                                   Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
         SharedPtr<Material> renderMaterial(new Material(context_));
@@ -632,7 +637,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // back
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+        domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
+                                   Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
         SharedPtr<Material> renderMaterial(new Material(context_));
@@ -658,7 +664,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // left
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+        domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
+                                   Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
         SharedPtr<Material> renderMaterial(new Material(context_));
@@ -684,7 +691,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // front
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
-        domeRenderTexture->SetSize(257, 257, Graphics::GetRGBFormat(),
+        domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
+                                   Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
         SharedPtr<Material> renderMaterial(new Material(context_));

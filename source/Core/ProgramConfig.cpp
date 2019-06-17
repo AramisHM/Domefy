@@ -70,7 +70,9 @@ int ProgramConfig::LoadConfigFile(std::string path) {
         p._offsetRot = offRot;
         p._projPos = projPos;
         p._projRot = projRot;
-        p.fov = item["fov"].get<float>();
+        p._fov = item["fov"].get<float>();
+        p._farClip = item["far_clip"].get<float>();
+        p._rttResolution = item["rtt_resolution"].get<int>();
 
         _projections.push_back(p);  // save for later referencing
         ++nProjections;
@@ -79,8 +81,12 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     _borderless = myConfig["borderless"].get<bool>();
     _fullscreen = myConfig["fullscreen"].get<bool>();
 
-    _resolution = Vec2<int>(myConfig["master-resolution"]["x"].get<int>(),
-                            myConfig["master-resolution"]["y"].get<int>());
+    _resolution = Vec2<int>(myConfig["master_resolution"]["x"].get<int>(),
+                            myConfig["master_resolution"]["y"].get<int>());
+
+    _windowPosition = Vec2<int>(myConfig["window_position"]["x"].get<int>(),
+                                myConfig["window_position"]["y"].get<int>());
+    _monitor = myConfig["monitor"].get<int>();
 }
 
 std::list<Projection> ProgramConfig::GetProjections() { return _projections; }
@@ -91,5 +97,8 @@ bool ProgramConfig::IsBorderless() { return _borderless; }
 Vec2<int> ProgramConfig::GetWindowResolution() { return _resolution; }
 
 unsigned int ProgramConfig::GetLoadedProjectionsCount() { return nProjections; }
+
+unsigned int ProgramConfig::GetMonitor() { return _monitor; }
+fpmed::Vec2<int> ProgramConfig::GetWindowPosition() { return _windowPosition; }
 
 }  // namespace fpmed

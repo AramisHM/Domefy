@@ -53,10 +53,22 @@
     },
     {
       "psi-header.variables": [
-        ["projectCreationYear", "2017"],
-        ["projectname", "fpmed"],
-        ["author", "Aramis Hornung"],
-        ["authoremail", "aramishm@gmail.com"]
+        [
+          "projectCreationYear",
+          "2017"
+        ],
+        [
+          "projectname",
+          "fpmed"
+        ],
+        [
+          "author",
+          "Aramis Hornung"
+        ],
+        [
+          "authoremail",
+          "aramishm@gmail.com"
+        ]
       ],
       "psi-header.templates": [
         {

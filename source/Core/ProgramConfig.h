@@ -34,7 +34,9 @@ typedef struct Pojection {
     fpmed::Vec3<float> _projPos;
     fpmed::Vec3<float> _projRot;
     fpmed::Vec4<int> _viewport;
-    float fov;
+    float _fov;
+    float _farClip;
+    unsigned int _rttResolution;
 } Projection;
 
 // Singleton class that holds all configurations for our software.
@@ -60,6 +62,8 @@ class ProgramConfig {
     Vec2<int> GetWindowResolution();
 
     unsigned int GetLoadedProjectionsCount();
+    unsigned int GetMonitor();
+    fpmed::Vec2<int> GetWindowPosition();
 
    protected:
     std::list<Projection> _projections;
@@ -67,6 +71,8 @@ class ProgramConfig {
     bool _fullscreen;
     bool _borderless;
     Vec2<int> _resolution;
+    Vec2<int> _windowPosition;
+    unsigned int _monitor;
 
    private:
     static ProgramConfig *_instance;

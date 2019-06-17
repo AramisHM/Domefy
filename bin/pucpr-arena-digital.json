@@ -1,18 +1,24 @@
 {
   "type": "projection-description",
   "name": "PUCPR Digital Arena",
-  "borderless": false,
+  "borderless": true,
   "fullscreen": false,
-  "master-resolution": {
-    "x": 800,
-    "y": 600
+  "monitor": 1,
+  "window_position": {
+    "x": 0,
+    "y": 0
+  },
+  "master_resolution": {
+    "x": 1920,
+    "y": 1848
   },
   "presets": [
     {
       "name": "DS-1",
+      "rtt_resolution": 1024,
       "resolution": {
-        "x": 200,
-        "y": 200
+        "x": 1920,
+        "y": 1080
       },
       "viewport_pos": {
         "x": 0,
@@ -43,13 +49,14 @@
     },
     {
       "name": "DS-2",
+      "rtt_resolution": 1024,
       "resolution": {
-        "x": 200,
-        "y": 200
+        "x": 1366,
+        "y": 768
       },
       "viewport_pos": {
-        "x": 200,
-        "y": 0
+        "x": 277,
+        "y": 1080
       },
       "offset_position": {
         "x": -0.15,
