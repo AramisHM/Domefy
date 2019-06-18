@@ -80,11 +80,18 @@ void VHP::CreateModel() {
     //  Lowres Axial ------------------------------------------------
     axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
     for (int h = 0; h < axialSliceQuantity; h += 10) {
-        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            rootPathUrho + "/Materials/vhp/axial/lowres/" +
-            Urho3D::String(1001 + h) + ".xml");
-
-        if (!m) continue;
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAlphaTranslucent.xml"));
+        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
+            rootPathUrho + "/Textures/vhp/axial/lowres/" +
+            Urho3D::String(1001 + h) + ".png");
+        if (!t) continue;
+        t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+        t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+        t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+        t->SetNumLevels(1);
+        m->SetTexture(TU_DIFFUSE, t);
 
         std::stringstream ss;
         ss << "VHP-LRA-";  // LRA means "low res axial"
@@ -117,11 +124,18 @@ void VHP::CreateModel() {
     //  Lowres Sagital ------------------------------------------------
     sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
     for (int h = 0; h < sagitalSliceQuantity; h += 5) {
-        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            rootPathUrho + "/Materials/vhp/sagital/lowres/" +
-            Urho3D::String(sagitalSliceQuantity - h) + ".xml");
-
-        if (!m) continue;
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAlphaTranslucent.xml"));
+        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
+            rootPathUrho + "/Textures/vhp/sagital/lowres/" +
+            Urho3D::String(sagitalSliceQuantity - h) + ".png");
+        if (!t) continue;
+        t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+        t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+        t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+        t->SetNumLevels(1);
+        m->SetTexture(TU_DIFFUSE, t);
 
         std::stringstream ss;
         ss << "VHP-LRS-";  // LRS means "low res sagital"
@@ -152,11 +166,18 @@ void VHP::CreateModel() {
     // Lowres Coronal ------------------------------------------------
     coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
     for (int h = 0; h < coronalSliceQuantity; h += 3) {
-        Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
-            rootPathUrho + "/Materials/vhp/coronal/lowres/" +
-            Urho3D::String(h) + ".xml");
-
-        if (!m) continue;
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAlphaTranslucent.xml"));
+        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
+            rootPathUrho + "/Textures/vhp/coronal/lowres/" + Urho3D::String(h) +
+            ".png");
+        if (!t) continue;
+        t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+        t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+        t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+        t->SetNumLevels(1);
+        m->SetTexture(TU_DIFFUSE, t);
 
         std::stringstream ss;
         ss << "VHP-LRC-";  // LRC means "low res coronal"
