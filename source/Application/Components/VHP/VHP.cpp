@@ -76,9 +76,10 @@ void VHP::CreateModel() {
     fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
     std::string rootPath = config->GetPathToCustomAssetsFolder();
     Urho3D::String rootPathUrho = Urho3D::String(rootPath.c_str());
+
     //  Lowres Axial ------------------------------------------------
     axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
-    for (int h = 0; h < axialSliceQuantity; ++h) {
+    for (int h = 0; h < axialSliceQuantity; h += 10) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             rootPathUrho + "/Materials/vhp/axial/lowres/" +
             Urho3D::String(1001 + h) + ".xml");
@@ -115,7 +116,7 @@ void VHP::CreateModel() {
 
     //  Lowres Sagital ------------------------------------------------
     sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
-    for (int h = 0; h < sagitalSliceQuantity; ++h) {
+    for (int h = 0; h < sagitalSliceQuantity; h += 5) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             rootPathUrho + "/Materials/vhp/sagital/lowres/" +
             Urho3D::String(sagitalSliceQuantity - h) + ".xml");
@@ -150,7 +151,7 @@ void VHP::CreateModel() {
 
     // Lowres Coronal ------------------------------------------------
     coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
-    for (int h = 0; h < coronalSliceQuantity; ++h) {
+    for (int h = 0; h < coronalSliceQuantity; h += 3) {
         Urho3D::Material* m = cache->GetResource<Urho3D::Material>(
             rootPathUrho + "/Materials/vhp/coronal/lowres/" +
             Urho3D::String(h) + ".xml");
