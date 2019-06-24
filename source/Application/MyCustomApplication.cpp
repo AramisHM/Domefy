@@ -136,7 +136,9 @@ void MyCustomApplication::CreateScene() {
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
     vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
     // for the coponent somewhere
-    vhp->CreateModel();
+    vhp->CreateModel(
+        "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
+        "systems/4.bones/04.bones_lowres.json");
     vhp->SetViewNodeReference(cameraNode_);
     vhpNode->SetScale(6.0f);
 
@@ -289,7 +291,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
         vhp->SetSagitalCut(0.5f, 0.2f);
         vhp->SetCoronalCut(0.2f, 0.5f);
         vhp->SetAxialCut(0.08f, 0.5f);
-        vhp->SetModelTransparency(0.05f);
+        // vhp->SetModelTransparency(0.05f);
     }
     if (input->GetKeyDown(KEY_O)) {
         // inverse logic for transparency onto VHP model

@@ -355,7 +355,7 @@
         var data = $(this).serializeFormJSON();
         var json = JSON.stringify(data);
         console.log(json);
-        $.post("http://10.97.246.187:9090/setExampleTextMessage", json);
+        $.post("http://192.168.15.5:9090/setExampleTextMessage", json);
       });
 
     });
@@ -365,7 +365,7 @@
         ({
           type: "POST",
           //the url where you want to sent the userName and password to
-          url: 'http://10.97.246.187:9090/setExampleTextMessage',
+          url: 'http://192.168.15.5:9090/setExampleTextMessage',
           dataType: 'json',
           async: false,
           //json object to sent to the authentication url

@@ -27,20 +27,6 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
 
     coronalBasedDatesed = sagitalBasedDatesed = axialBasedDatesed = 0;
 
-    // Data dimensions precalculations for the female set
-    // TODO: make a function to initialize these
-    axialSliceQuantity = 5189;
-    sagitalSliceQuantity = 1024;
-    coronalSliceQuantity = 525;
-
-    modelNormalWidth = 1.0f;
-    modelNormalHeight = 2.5662f;
-    modelNormalDepth = 0.5127f;
-
-    sliceAxialInterval = (modelNormalHeight / axialSliceQuantity);
-    sliceSagitalInterval = (modelNormalWidth / sagitalSliceQuantity);
-    sliceCoronalInterval = (modelNormalDepth / coronalSliceQuantity);
-
     _currentReferenceBase = invalid;
     _modelColor = Color(7.0f, 7.0f, 7.0f, 3.0f);
 
@@ -59,8 +45,10 @@ void VHP::Update(float timeStep) {
     UpdateAnatomicCuts();
 }
 
-void VHP::CreateModel() {
+void VHP::CreateModel(std::string filePath) {
+    this->LoadFromFile(filePath);
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
+    // fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
 
     // neutralize the pointers
     for (int h = 0; h < MAX_NUM_SLICES; ++h) {
@@ -73,18 +61,14 @@ void VHP::CreateModel() {
         _coronalSlicesNodes[h] = 0;
     }
 
-    fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
-    std::string rootPath = config->GetPathToCustomAssetsFolder();
-    Urho3D::String rootPathUrho = Urho3D::String(rootPath.c_str());
-
     //  Lowres Axial ------------------------------------------------
-    axialBasedDatesed = node_->CreateChild("lowresAxialSetBase");
-    for (int h = 0; h < axialSliceQuantity; h += 10) {
+    axialBasedDatesed = node_->CreateChild("axialSetBase");
+    for (int h = 0; h < axialSliceQuantity; h += 4) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
         Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
-            rootPathUrho + "/Textures/vhp/axial/lowres/" +
+            Urho3D::String(_axialTexturesPath.c_str()) + "/" +
             Urho3D::String(1001 + h) + ".png");
         if (!t) continue;
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
@@ -122,13 +106,13 @@ void VHP::CreateModel() {
     // 0.0f));
 
     //  Lowres Sagital ------------------------------------------------
-    sagitalBasedDatesed = node_->CreateChild("lowresSagitalSetBase");
-    for (int h = 0; h < sagitalSliceQuantity; h += 5) {
+    sagitalBasedDatesed = node_->CreateChild("sagitalSetBase");
+    for (int h = 0; h < sagitalSliceQuantity; h += 2) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
         Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
-            rootPathUrho + "/Textures/vhp/sagital/lowres/" +
+            Urho3D::String(_sagitalTexturesPath.c_str()) + "/" +
             Urho3D::String(sagitalSliceQuantity - h) + ".png");
         if (!t) continue;
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
@@ -164,14 +148,14 @@ void VHP::CreateModel() {
         Vector3(modelNormalWidth, 0.0f, modelNormalDepth));
 
     // Lowres Coronal ------------------------------------------------
-    coronalBasedDatesed = node_->CreateChild("lowresCoronalSetBase");
-    for (int h = 0; h < coronalSliceQuantity; h += 3) {
+    coronalBasedDatesed = node_->CreateChild("coronalSetBase");
+    for (int h = 0; h < coronalSliceQuantity; h += 2) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
         Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
-            rootPathUrho + "/Textures/vhp/coronal/lowres/" + Urho3D::String(h) +
-            ".png");
+            Urho3D::String(_coronalTexturesPath.c_str()) + "/" +
+            Urho3D::String(h) + ".png");
         if (!t) continue;
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
@@ -427,4 +411,43 @@ void VHP::UpdateAnatomicCuts() {
             }
         }
     }
+}
+
+void VHP::LoadFromFile(std::string filePath) {
+    // TODO: TO BE CODED
+
+    std::string rootPath;
+    rootPath = filePath.substr(0, filePath.find_last_of("\\/"));
+
+    std::ifstream filest(filePath);
+    json myConfig;
+    filest >> myConfig;
+
+    _dimensions = Vec3<float>(myConfig["dimensions"]["x"].get<float>(),
+                              myConfig["dimensions"]["y"].get<float>(),
+                              myConfig["dimensions"]["z"].get<float>());
+
+    _amount = Vec3<int>(myConfig["amount"]["x"].get<int>(),
+                        myConfig["amount"]["y"].get<int>(),
+                        myConfig["amount"]["z"].get<int>());
+
+    _axialTexturesPath =
+        rootPath + "/" + myConfig["textures"]["axial"].get<std::string>();
+    _coronalTexturesPath =
+        rootPath + "/" + myConfig["textures"]["coronal"].get<std::string>();
+    _sagitalTexturesPath =
+        rootPath + "/" + myConfig["textures"]["sagital"].get<std::string>();
+
+    // Data dimensions precalculations
+    axialSliceQuantity = _amount.getY();
+    sagitalSliceQuantity = _amount.getX();
+    coronalSliceQuantity = _amount.getZ();
+
+    modelNormalWidth = _dimensions.getX();
+    modelNormalHeight = _dimensions.getY();
+    modelNormalDepth = _dimensions.getZ();
+
+    sliceAxialInterval = (modelNormalHeight / axialSliceQuantity);
+    sliceSagitalInterval = (modelNormalWidth / sagitalSliceQuantity);
+    sliceCoronalInterval = (modelNormalDepth / coronalSliceQuantity);
 }

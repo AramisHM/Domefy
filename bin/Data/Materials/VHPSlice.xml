@@ -1,0 +1,7 @@
+
+<material>
+	<technique name="Techniques/DiffAlphaTranslucent.xml" />
+	<parameter name="MatDiffColor" value="1 1 1 0.05" />
+	<parameter name="name" value="Slice" />
+</material>
+		

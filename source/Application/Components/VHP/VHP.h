@@ -20,6 +20,7 @@
 #include <Urho3D/Scene/LogicComponent.h>
 #include <Urho3DAll.h>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
 #include <vector>  // c++ standar vector calss
@@ -93,6 +94,11 @@ class VHP : public LogicComponent {
     // 1 sagital, 2 coronal, 3 axial and 0 invalid
     VHPBaseType _currentReferenceBase;
 
+    // The variables loaded from the JSON file
+    Vec3<float> _dimensions;
+    Vec3<int> _amount;
+    std::string _axialTexturesPath, _coronalTexturesPath, _sagitalTexturesPath;
+
     // UpdateAnatomicCuts - Updates the anatomic cuts from all image datases
     void UpdateAnatomicCuts();
 
@@ -100,7 +106,9 @@ class VHP : public LogicComponent {
     VHP(Context* context);
     ~VHP();
     // Creates the model from Visible Human Project
-    void CreateModel();
+    // void CreateModel();
+    // Creates the model of Visible Human Project specified in a JSON file.
+    void CreateModel(std::string filePath);
 
     // Override
     virtual void Update(float timeStep) override;
@@ -146,6 +154,10 @@ class VHP : public LogicComponent {
 
     // SetModelTransparency - Sets the transparency of the model
     void SetModelTransparency(float level);
+
+    // LoadFromFile - Loads a JSON file that defines the dimensions, slice count
+    // and textures paths
+    void LoadFromFile(std::string filePath);
 };
 
 #endif
