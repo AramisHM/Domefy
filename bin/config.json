@@ -1,28 +1,28 @@
 {
   "type": "fpmed_config",
   "name": "Prototype prjection 20190617",
-  "borderless": true,
+  "borderless": false,
   "fullscreen": false,
   "monitor": 1,
   "custom_assets_path": {
-    "linux": "/home/aramis/research",
-    "win32": "/home/aramis/research"
+    "linux": "/media/aramis/108442EE8442D5BE/vhp-research/male-lowres.json",
+    "win32": "F:/vhp-research/male-lowres.json"
   },
   "window_position": {
-    "x": 0,
-    "y": 0
+    "x": 20,
+    "y": 20
   },
   "master_resolution": {
-    "x": 1920,
-    "y": 1848
+    "x": 1200,
+    "y": 700
   },
   "presets": [
     {
       "name": "DS-1",
-      "rtt_resolution": 1024,
+      "rtt_resolution": 200,
       "resolution": {
-        "x": 1920,
-        "y": 1080
+        "x": 250,
+        "y": 150
       },
       "viewport_pos": {
         "x": 0,
@@ -53,14 +53,14 @@
     },
     {
       "name": "DS-2",
-      "rtt_resolution": 1024,
+      "rtt_resolution": 200,
       "resolution": {
-        "x": 1366,
-        "y": 768
+        "x": 250,
+        "y": 150
       },
       "viewport_pos": {
-        "x": 277,
-        "y": 1080
+        "x": 250,
+        "y": 0
       },
       "offset_position": {
         "x": -0.15,

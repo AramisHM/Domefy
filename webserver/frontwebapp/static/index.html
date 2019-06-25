@@ -16,7 +16,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 <html>
 
 <script>
-  serviceIPPort = "192.168.1.245:9090";
+  serviceIPPort = "10.97.246.187:9090";
 </script>
 
 <head>
@@ -182,6 +182,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
               Coronal: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
                 oninput="sendCommand('cor-a;' + this.value)">
             </div>
+            <div class="w3-row-padding">
+              <br>
+              Transparency: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
+                oninput="sendCommand('trans;' + this.value)">
+            </div>
           </div>
 
           <br>
@@ -224,18 +229,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         <div class="w3-card w3-round w3-white w3-center">
           <div class="w3-container">
             <p>Friend Request</p>
-            <img src="./W3.CSS Template_files/noimage.png" alt="Avatar" style="width:50%"><br>
-            <span>Jane Doe</span>
-            <div class="w3-row w3-opacity">
-              <div class="w3-half">
-                <button class="w3-button w3-block w3-green w3-section" title="Accept"><i
-                    class="fa fa-check"></i></button>
-              </div>
-              <div class="w3-half">
-                <button class="w3-button w3-block w3-red w3-section" title="Decline"><i
-                    class="fa fa-remove"></i></button>
-              </div>
-            </div>
+
           </div>
         </div>
 

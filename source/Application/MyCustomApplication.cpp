@@ -132,14 +132,16 @@ void MyCustomApplication::CreateScene() {
     // orbitable object
     cameraGrab->SetRadiusAlterMoveSpeed(false);
 
+    // Singleton with configuration variables
+    ProgramConfig* config = ProgramConfig::GetInstance();
+    std::list<Projection> projections = config->GetProjections();
+
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
     vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
     // for the coponent somewhere
     //
-    vhp->CreateModel(
-        "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/systems/"
-        "4.bones/04.bones_lowres.json");
+    vhp->CreateModel(config->GetPathToCustomAssetsFolder());
     // vhp->CreateModel(
     //    "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
     //    "systems/4.bones/04.bones_lowres.json");
@@ -157,9 +159,6 @@ void MyCustomApplication::CreateScene() {
     cameraNearClipping = 0.01f;
 
     // viewports --------------------------------
-    ProgramConfig* config = ProgramConfig::GetInstance();
-    std::list<Projection> projections = config->GetProjections();
-
     Graphics* graphics = GetSubsystem<Graphics>();
     renderer->SetNumViewports(config->GetLoadedProjectionsCount() + 1);
 
@@ -233,6 +232,11 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                     int factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
+                }
+                if (!cmd.compare(std::string("trans"))) {  // external text
+                    int factor = std::atof(commandSplitted[1].c_str());
+                    printf("\nconta: %f\n", (float)(factor / 100.0f));
+                    vhp->SetModelTransparency((float)(factor / 100.0f));
                 }
             }
         }
