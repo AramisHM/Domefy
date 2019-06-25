@@ -61,9 +61,11 @@ void VHP::CreateModel(std::string filePath) {
         _coronalSlicesNodes[h] = 0;
     }
 
+_rootNode = node_->CreateChild("vhpRoot");
+
     //  Lowres Axial ------------------------------------------------
-    axialBasedDatesed = node_->CreateChild("axialSetBase");
-    for (int h = 0; h < axialSliceQuantity; h += 4) {
+    axialBasedDatesed = _rootNode->CreateChild("axialSetBase");
+    for (int h = 0; h < axialSliceQuantity; h++) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
@@ -106,8 +108,8 @@ void VHP::CreateModel(std::string filePath) {
     // 0.0f));
 
     //  Lowres Sagital ------------------------------------------------
-    sagitalBasedDatesed = node_->CreateChild("sagitalSetBase");
-    for (int h = 0; h < sagitalSliceQuantity; h += 2) {
+    sagitalBasedDatesed = _rootNode->CreateChild("sagitalSetBase");
+    for (int h = 0; h < sagitalSliceQuantity; h+=2) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
@@ -148,8 +150,8 @@ void VHP::CreateModel(std::string filePath) {
         Vector3(modelNormalWidth, 0.0f, modelNormalDepth));
 
     // Lowres Coronal ------------------------------------------------
-    coronalBasedDatesed = node_->CreateChild("coronalSetBase");
-    for (int h = 0; h < coronalSliceQuantity; h += 2) {
+    coronalBasedDatesed = _rootNode->CreateChild("coronalSetBase");
+    for (int h = 0; h < coronalSliceQuantity; h+=2) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
@@ -187,6 +189,8 @@ void VHP::CreateModel(std::string filePath) {
     }
     coronalBasedDatesed->SetRotation(Quaternion(-90.0f, 0.0f, 0.0f));
     coronalBasedDatesed->SetPosition(Vector3(0.0f, 0.0f, modelNormalDepth));
+
+    _rootNode->SetPosition(Vector3((float)(-modelNormalWidth/2), 0.0f, 0.0f)); // this way we shift the center to the middle of the model
 }
 
 void VHP::SetSagitalCut(float leftLevel, float rightLevel) {

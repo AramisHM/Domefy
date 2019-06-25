@@ -136,9 +136,13 @@ void MyCustomApplication::CreateScene() {
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
     vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
     // for the coponent somewhere
+    //
     vhp->CreateModel(
-        "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
-        "systems/4.bones/04.bones_lowres.json");
+        "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/systems/"
+        "4.bones/04.bones_lowres.json");
+    // vhp->CreateModel(
+    //    "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
+    //    "systems/4.bones/04.bones_lowres.json");
     vhp->SetViewNodeReference(cameraNode_);
     vhpNode->SetScale(6.0f);
 
@@ -220,6 +224,16 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f);
                 }
+                if (!cmd.compare(std::string("cor-a"))) {  // external text
+                    int factor = std::atof(commandSplitted[1].c_str());
+                    printf("\nconta: %f\n", (float)(factor / 100.0f));
+                    vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
+                }
+                if (!cmd.compare(std::string("axi-a"))) {  // external text
+                    int factor = std::atof(commandSplitted[1].c_str());
+                    printf("\nconta: %f\n", (float)(factor / 100.0f));
+                    vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
+                }
             }
         }
     }
@@ -235,7 +249,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     // Movement speed as world units per second
     const float MOVE_SPEED = 5.0f;
     // Mouse sensitivity as degrees per pixel
-    const float MOUSE_SENSITIVITY = 0.2f;
+    const float MOUSE_SENSITIVITY = 0.015f;
 
     IntVector2 mouseMove = input->GetMouseMove();
 
@@ -288,7 +302,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     }
 
     if (input->GetKeyDown(KEY_P)) {
-        vhp->SetSagitalCut(0.5f, 0.2f);
+        vhp->SetSagitalCut(0.2f, 0.5f);
         vhp->SetCoronalCut(0.2f, 0.5f);
         vhp->SetAxialCut(0.08f, 0.5f);
         // vhp->SetModelTransparency(0.05f);
@@ -321,7 +335,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     if (input->GetMouseMoveWheel())
         // mouse scroll
-        cameraGrab->SumRadius(input->GetMouseMoveWheel() * 1);
+        cameraGrab->SumRadius(input->GetMouseMoveWheel() * 0.02);
 
     if (input->GetKeyPress(KEY_RIGHT)) {
         slideComponent->NextSlide();

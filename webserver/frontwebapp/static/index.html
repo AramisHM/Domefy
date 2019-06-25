@@ -1,10 +1,27 @@
+<!--
+File: index.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Monday, 24th June 2019 10:02:03 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Monday, 24th June 2019 10:03:37 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+
 <!DOCTYPE html>
 <!-- saved from url=(0061)https://www.w3schools.com/w3css/tryw3css_templates_social.htm -->
 <html>
 
+<script>
+  serviceIPPort = "192.168.1.245:9090";
+</script>
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>W3.CSS Template</title>
+  <title>Domefy</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="./W3.CSS Template_files/w3.css">
@@ -37,11 +54,8 @@
       <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#"
         class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Domefy</a>
       <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#"
-        class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="News"><i
+        class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Page 1"><i
           class="fa fa-globe"></i></a>
-      <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#"
-        class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i
-          class="fa fa-user"></i></a>
       <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#"
         class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages"><i
           class="fa fa-envelope"></i></a>
@@ -49,11 +63,11 @@
         <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span
             class="w3-badge w3-right w3-small w3-green">3</span></button>
         <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-          <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#" class="w3-bar-item w3-button">One new
-            friend request</a>
-          <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#" class="w3-bar-item w3-button">John
+          <a href="#" class="w3-bar-item w3-button">One new
+            Option</a>
+          <a href="#" class="w3-bar-item w3-button">John
             Doe posted on your wall</a>
-          <a href="https://www.w3schools.com/w3css/tryw3css_templates_social.htm#" class="w3-bar-item w3-button">Jane
+          <a href="#" class="w3-bar-item w3-button">Jane
             likes your post</a>
         </div>
       </div>
@@ -99,64 +113,12 @@
         <!-- Accordion -->
         <div class="w3-card w3-round">
           <div class="w3-white">
-            <button onclick="myFunction(&#39;Demo1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
-                class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Groups</button>
-            <div id="Demo1" class="w3-hide w3-container">
-              <p>Some text..</p>
-            </div>
-            <button onclick="myFunction(&#39;Demo2&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
-                class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My Events</button>
-            <div id="Demo2" class="w3-hide w3-container">
-              <p>Some other text..</p>
-            </div>
-            <button onclick="myFunction(&#39;Demo3&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
-                class="fa fa-users fa-fw w3-margin-right"></i> Some more controls</button>
-            <div id="Demo3" class="w3-hide w3-container">
-              <div class="w3-row-padding">
-                <br>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-                <div class="w3-half">
-                  <img src="./W3.CSS Template_files/noimage.png" style="width:100%" class="w3-margin-bottom">
-                </div>
-              </div>
-            </div>
+
+
           </div>
         </div>
         <br>
 
-        <!-- Interests -->
-        <div class="w3-card w3-round w3-white w3-hide-small">
-          <div class="w3-container">
-            <p>Conected devices</p>
-            <p>
-              <span class="w3-tag w3-small w3-theme-d5">Motorola a1</span>
-              <span class="w3-tag w3-small w3-theme-d4">Samsung z3</span>
-              <span class="w3-tag w3-small w3-theme-d3">Some other phone</span>
-              <span class="w3-tag w3-small w3-theme-d2">Games</span>
-              <span class="w3-tag w3-small w3-theme-d1">Friends</span>
-              <span class="w3-tag w3-small w3-theme">Games</span>
-              <span class="w3-tag w3-small w3-theme-l1">Friends</span>
-              <span class="w3-tag w3-small w3-theme-l2">Food</span>
-              <span class="w3-tag w3-small w3-theme-l3">Design</span>
-              <span class="w3-tag w3-small w3-theme-l4">Art</span>
-              <span class="w3-tag w3-small w3-theme-l5">Photos</span>
-            </p>
-          </div>
-        </div>
         <br>
 
         <!-- Alert Box -->
@@ -176,38 +138,66 @@
       <!-- Middle Column -->
       <div class="w3-col m7">
 
-        <div class="w3-row-padding">
-          <div class="w3-col m12">
-            <div class="w3-card w3-round w3-white">
-              <div class="w3-container w3-padding">
-                <h6 class="w3-opacity">Control panel for the Visible Human Dome application.</h6>
-                <p contenteditable="true" class="w3-border w3-padding">Status: Feeling Blue</p>
-                <button type="button" class="w3-button w3-theme"><i class="fa fa-pencil"></i> &nbsp;Post</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="w3-container w3-card w3-beige1 w3-round w3-margin"><br>
 
           <img src="./W3.CSS Template_files/noimage.png" alt="Avatar" class="w3-left w3-circle w3-margin-right"
             style="width:60px">
           <span class="w3-right w3-opacity">now</span>
-          <h4>Anatomic Cuts</h4><br>
-          <hr class="w3-clear">
-          <p>Controls for Anatomic Cuts : </p>
-          <form id="contactForm">
-            Text to display in Domefy: <input type="text" name="command" />
-            <input type="submit" />
-          </form>
+          <h4>General Controls</h4><br>
 
-          <p>Default range slider:</p>
-          <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
-            oninput="sendData(this.value)">
+          <br>
 
-          <iframe src="./webgl_loader_amf.html" name="targetframe" allowTransparency="true" scrolling="no"
-            frameborder="1" height="390" width="100%">
-          </iframe>
+          <button onclick="myFunction(&#39;RawCommand&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
+              class="fa fa-users fa-fw w3-margin-right"></i>Advanced</button>
+          <div id="RawCommand" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+              <br>
+              <hr class="w3-clear">
+              <form id="contactForm">
+                Raw command: <input type="text" name="command" />
+                <input type="submit" />
+              </form>
+            </div>
+          </div>
+
+          <br>
+
+          <button onclick="myFunction(&#39;Demo3&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
+              class="fa fa-users fa-fw w3-margin-right"></i>Cut levels</button>
+          <div id="Demo3" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+              <br>
+              Sagital: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
+                oninput="sendCommand('sag-a;' + this.value)">
+            </div>
+
+            <div class="w3-row-padding">
+              <br>
+              Axial: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
+                oninput="sendCommand('axi-a;' + this.value)">
+            </div>
+
+            <div class="w3-row-padding">
+              <br>
+              Coronal: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
+                oninput="sendCommand('cor-a;' + this.value)">
+            </div>
+          </div>
+
+          <br>
+
+          <button onclick="myFunction(&#39;Demo4&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align"><i
+              class="fa fa-users fa-fw w3-margin-right"></i>Navigation</button>
+          <div id="Demo4" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+              <br>
+              <iframe src="./webgl_loader_amf.html" name="targetframe" allowTransparency="true" scrolling="no"
+                frameborder="1" height="390" width="100%">
+              </iframe>
+            </div>
+          </div>
+
+          <br>
 
           <!-- <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>
             &nbsp;Like</button> -->
@@ -283,11 +273,6 @@
   </footer>
 
 
-
-
-
-
-
   <script>
     // Accordion
     function myFunction(id) {
@@ -313,17 +298,6 @@
     }
   </script>
 
-
-
-
-
-
-
-
-
-
-
-
   <!-- Domefy API -->
   <script>
 
@@ -348,28 +322,16 @@
     })(jQuery);
 
 
-    $(document).ready(function () {
-
-      $("#contactForm").submit(function (event) {
-        event.preventDefault();
-        var data = $(this).serializeFormJSON();
-        var json = JSON.stringify(data);
-        console.log(json);
-        $.post("http://192.168.15.5:9090/setExampleTextMessage", json);
-      });
-
-    });
-
-    function sendData(data) {
+    function sendCommand(data) {
       $.ajax
         ({
           type: "POST",
           //the url where you want to sent the userName and password to
-          url: 'http://192.168.15.5:9090/setExampleTextMessage',
+          url: 'http://' + serviceIPPort + '/setExampleTextMessage',
           dataType: 'json',
           async: false,
           //json object to sent to the authentication url
-          data: '{"command": "' + "sag-a;" + data + '", "jata" : "' + "jata" + '"}',
+          data: '{"command": "' + data + '"}',
           success: function () {
 
             // alert("Thanks!");

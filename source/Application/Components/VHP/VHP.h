@@ -91,6 +91,8 @@ class VHP : public LogicComponent {
     // the node reference that has the camera componenet
     Node* _viewingReferenceNode;
 
+    Node * _rootNode; // Used to easely position the entire model in relation to a local origin
+
     // 1 sagital, 2 coronal, 3 axial and 0 invalid
     VHPBaseType _currentReferenceBase;
 
