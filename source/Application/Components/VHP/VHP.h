@@ -42,9 +42,6 @@ class VHP : public LogicComponent {
     URHO3D_OBJECT(VHP, LogicComponent);
 
    private:
-    unsigned int numberOfSlices;
-    unsigned int heightOffset = 5;
-
     // level of the anatomic cuts
     float sagitalLevel;
     float coronalLevel;
@@ -68,12 +65,30 @@ class VHP : public LogicComponent {
     float sliceCoronalInterval;
 
     // anatomic cuts levels
-    float _sagitalLeftLevel;
-    float _sagitalRightLevel;
-    float _coronalFrontLevel;
-    float _coronalBackLevel;
-    float _axialUpperLevel;
-    float _axialLowerLevel;
+    float _currentSagitalLeftLevel;
+    float _currentSagitalRightLevel;
+    float _currentCoronalFrontLevel;
+    float _currentCoronalBackLevel;
+    float _currentAxialUpperLevel;
+    float _currentAxialLowerLevel;
+
+    float _targetSagitalLeftLevel;
+    float _targetSagitalRightLevel;
+    float _targetCoronalFrontLevel;
+    float _targetCoronalBackLevel;
+    float _targetAxialUpperLevel;
+    float _targetAxialLowerLevel;
+
+    // ongoig cuts indicates if we are in the process of perform a graceful cut,
+    // a cut with a transition
+    bool _sagitalOngoingCut;
+    bool _axialOngoingCut;
+    bool _coronalOngoingCut;
+
+    // In case we make a transition, what would be the amount of transformation
+    // each time we update the scene. Value should be between 0 and 1
+    // (normalized)
+    float _transitionFactor;  // TODO: getter setter
 
     // the entire model transparency and colo
     // TODO: make own functions
@@ -91,7 +106,8 @@ class VHP : public LogicComponent {
     // the node reference that has the camera componenet
     Node* _viewingReferenceNode;
 
-    Node * _rootNode; // Used to easely position the entire model in relation to a local origin
+    Node* _rootNode;  // Used to easely position the entire model in relation to
+                      // a local origin
 
     // 1 sagital, 2 coronal, 3 axial and 0 invalid
     VHPBaseType _currentReferenceBase;
@@ -116,7 +132,9 @@ class VHP : public LogicComponent {
     virtual void Update(float timeStep) override;
 
     // SetSagitalCut - Sets the value from parameter to the sagital cut level
-    void SetSagitalCut(float leftLevel, float rightLevel);
+    // graceful does a transition from current level to the new desired value
+    void SetSagitalCut(float leftLevel, float rightLevel,
+                       bool graceful = false);
 
     // SetCoronalCut - Sets the value from parameter to the coronal cut level
     void SetCoronalCut(float frontLevel, float backLevel);

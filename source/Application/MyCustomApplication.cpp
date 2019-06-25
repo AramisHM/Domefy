@@ -221,7 +221,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 if (!cmd.compare(std::string("sag-a"))) {  // external text
                     int factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
-                    vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f);
+                    vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f, true);
                 }
                 if (!cmd.compare(std::string("cor-a"))) {  // external text
                     int factor = std::atof(commandSplitted[1].c_str());
