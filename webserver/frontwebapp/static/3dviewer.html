@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>three.js webgl - AMF</title>
+	<title>three.js Simple viewer</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link type="text/css" rel="stylesheet" href="main.css">
@@ -37,6 +37,9 @@
 
 		var camera, scene, renderer;
 
+		// coordinates from camera orbit controls
+		var polarX, polarY;
+		var controls;
 		init();
 
 		function init() {
@@ -74,7 +77,7 @@
 
 			});
 
-			var controls = new THREE.OrbitControls(camera, renderer.domElement);
+			controls = new THREE.OrbitControls(camera, renderer.domElement);
 			controls.addEventListener('change', render);
 			controls.target.set(0, 1.2, 2);
 			controls.update();
@@ -90,8 +93,16 @@
 
 		function render() {
 			renderer.render(scene, camera);
+			polarY = controls.getPolarAngle()
+			polarX = controls.getAzimuthalAngle()
+			console.log(getPolarCoords())
+
 		}
 
+
+		function getPolarCoords() {
+			return [polarX, polarY]; // array
+		}
 	</script>
 </body>
 
