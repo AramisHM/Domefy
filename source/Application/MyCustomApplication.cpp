@@ -219,24 +219,36 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                     auxiliarText = commandSplitted[1];
                 }
                 if (!cmd.compare(std::string("sag-a"))) {  // external text
-                    int factor = std::atof(commandSplitted[1].c_str());
+                    double factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f, true);
                 }
                 if (!cmd.compare(std::string("cor-a"))) {  // external text
-                    int factor = std::atof(commandSplitted[1].c_str());
+                    double factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("axi-a"))) {  // external text
-                    int factor = std::atof(commandSplitted[1].c_str());
+                    double factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("trans"))) {  // external text
-                    int factor = std::atof(commandSplitted[1].c_str());
+                    double factor = std::atof(commandSplitted[1].c_str());
                     printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetModelTransparency((float)(factor / 100.0f));
+                }
+                if (!cmd.compare(std::string("camera-pos"))) {  // external text
+                    double x = std::atof(commandSplitted[1].c_str());
+                    double y = std::atof(commandSplitted[2].c_str());
+                    cameraGrab->SetCoordinates(
+                        fpmed::Vec2<float>((float)(x), (float)(y)));
+                }
+                if (!cmd.compare(std::string("targ-pos"))) {  // external text
+                    double x = std::atof(commandSplitted[1].c_str()) * 5;
+                    double y = std::atof(commandSplitted[2].c_str()) * 5;
+                    double z = std::atof(commandSplitted[3].c_str()) * 5;
+                    hologramNode->SetPosition(Vector3(-y, z, x));
                 }
             }
         }
@@ -339,7 +351,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
 
     if (input->GetMouseMoveWheel())
         // mouse scroll
-        cameraGrab->SumRadius(input->GetMouseMoveWheel() * 0.02);
+        cameraGrab->SumRadius(input->GetMouseMoveWheel() * 0.1);
 
     if (input->GetKeyPress(KEY_RIGHT)) {
         slideComponent->NextSlide();

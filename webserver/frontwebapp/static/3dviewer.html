@@ -13,9 +13,13 @@
 	</style>
 </head>
 
+<!-- import scripts -->
+<script src="jquery.min.js"></script>
+<script src="config.js"></script>
+
 <body>
 	<div id="info">
-		<div>A<a href="https://github.com/tamarintech" target="_blank" rel="noopener">tamarintech</a>
+		<div><a href="#" id="debgt" target="_blank" rel="noopener"> debug</a>
 		</div>
 	</div>
 
@@ -71,10 +75,8 @@
 
 			var loader = new THREE.AMFLoader();
 			loader.load('./models/amf/rook.amf', function (amfobject) {
-
 				scene.add(amfobject);
 				render();
-
 			});
 
 			controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -91,17 +93,47 @@
 			render();
 		}
 
-		function render() {
-			renderer.render(scene, camera);
-			polarY = controls.getPolarAngle()
-			polarX = controls.getAzimuthalAngle()
-			console.log(getPolarCoords())
-
+		function sendCommand(data) {
+			$.ajax
+				({
+					type: "POST",
+					//the url where you want to sent the userName and password to
+					url: 'http://' + serviceIPPort + '/setExampleTextMessage',
+					dataType: 'json',
+					async: false,
+					//json object to sent to the authentication url
+					data: '{"command": "' + data + '"}',
+					success: function () {
+						// alert("Thanks!");
+					}
+				})
 		}
 
+		function render() {
+			renderer.render(scene, camera);
+
+			polarY = controls.getPolarAngle();
+			polarX = controls.getAzimuthalAngle();
+			// console.log(getPolarCoords());
+			coords = getPolarCoords();
+			camCoords = coords[0] + ';' + coords[1] + ';';
+			console.log(controls.getTarget().x);
+			target = controls.getTarget()
+			camTargPos = target.x + ';' + target.y + ';' + target.z + ';';
+
+			sendCommand('camera-pos;' + camCoords);
+			sendCommand('targ-pos;' + camTargPos);
+
+
+			var x = document.getElementById("debgt").textContent;
+		}
 
 		function getPolarCoords() {
-			return [polarX, polarY]; // array
+			// array
+			return [
+				-(polarX * (180 / Math.PI)),
+				(90 - (polarY * (180 / Math.PI)))
+			];
 		}
 	</script>
 </body>
