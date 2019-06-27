@@ -601,6 +601,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
         camera->SetFarClip(500.0f);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
+        cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
+
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);
@@ -628,6 +630,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
         camera->SetFarClip(500.0f);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
+        cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
+
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);
@@ -655,6 +659,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
         camera->SetFarClip(500.0f);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
+        cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
+
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);
@@ -682,6 +688,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
         camera->SetFarClip(500.0f);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
+        cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
+
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);
@@ -709,6 +717,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
         camera->SetFarClip(500.0f);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
+        cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
+
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, scene_, cameraRttDomeNode_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);

@@ -218,37 +218,52 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 if (!cmd.compare(std::string("extext"))) {  // external text
                     auxiliarText = commandSplitted[1];
                 }
-                if (!cmd.compare(std::string("sag-a"))) {  // external text
+                if (!cmd.compare(std::string("sag-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f, true);
                 }
-                if (!cmd.compare(std::string("cor-a"))) {  // external text
+                if (!cmd.compare(std::string("cor-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
                 }
-                if (!cmd.compare(std::string("axi-a"))) {  // external text
+                if (!cmd.compare(std::string("axi-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // intf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
                 }
-                if (!cmd.compare(std::string("trans"))) {  // external text
+                if (!cmd.compare(std::string("obliq-a"))) {
+                    double factor = std::atof(commandSplitted[1].c_str());
+                    // intf("\nconta: %f\n", (float)(factor / 100.0f));
+                    for (std::list<Node*>::iterator it =
+                             cameraNodeDomeAll_.begin();
+                         it != cameraNodeDomeAll_.end(); ++it) {
+                        Camera* camComp = (*it)->GetComponent<Camera>();
+
+                        float near = (float)((factor / 100.0f) * 10.0f);
+                        camComp->SetNearClip(near);
+                        Camera* mainCamComp =
+                            cameraNode_->GetComponent<Camera>();
+                        mainCamComp->SetNearClip(near);
+                    }
+                }
+                if (!cmd.compare(std::string("trans"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
                     vhp->SetModelTransparency((float)(factor / 100.0f));
                 }
-                if (!cmd.compare(std::string("camparams"))) {  // external text
+                if (!cmd.compare(std::string("camparams"))) {
                     double p = std::atof(commandSplitted[1].c_str());
                     double q = std::atof(commandSplitted[2].c_str());
-                    double x = std::atof(commandSplitted[3].c_str()) * 5;
-                    double y = std::atof(commandSplitted[4].c_str()) * 5;
-                    double z = std::atof(commandSplitted[5].c_str()) * 5;
+                    double x = std::atof(commandSplitted[3].c_str()) * 2;
+                    double y = std::atof(commandSplitted[4].c_str()) * 2;
+                    double z = std::atof(commandSplitted[5].c_str()) * 2;
                     double r = std::atof(commandSplitted[6].c_str());
                     cameraGrab->SetCoordinates(
                         fpmed::Vec2<float>((float)(p), (float)(q)));
                     hologramNode->SetPosition(Vector3(-y, z, x));
-                    if (r != 1) cameraGrab->SetRadius(r);
+                    cameraGrab->SetRadius(r);
                 }
             }
         }

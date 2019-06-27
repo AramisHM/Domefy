@@ -92,8 +92,13 @@ class Sample : public Application {
 
     // Dome scenes, there are multiples
     std::list<SharedPtr<Scene>> sceneDomeList_;
+    // the camera that has 5 more nodes each with a camera. This projection each
+    // composition of 5 cameras
     std::list<SharedPtr<Node>> cameraNodeDomeList_;
 
+    // This is similar as above, but, instead of a node with 5 more nodes, this
+    // is the camera with the component only.
+    std::list<Node*> cameraNodeDomeAll_;
     /// Camera yaw angle.
     float yaw_;
     /// Camera pitch angle.

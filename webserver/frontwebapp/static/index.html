@@ -39,7 +39,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
   <script src="jquery.min.js"></script>
   <script src="config.js"></script>
-
+  <link href="color-picker.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Color Picker</title>
+  <link href="color-picker.css" rel="stylesheet">
 </head>
 
 <body class="w3-theme-l5">
@@ -185,6 +190,13 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
               Transparency: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
                 oninput="sendCommand('trans;' + this.value)">
             </div>
+
+            <div class="w3-row-padding">
+              <br>
+              Oblique: <input type="range" id="testrange" min="1" max="100" value="100" style="width: 100%"
+                oninput="sendCommand('obliq-a;' + this.value)">
+            </div>
+
           </div>
 
           <br>
@@ -214,12 +226,20 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
         <div class="w3-card w3-round w3-white w3-center">
           <div class="w3-container">
-            <p>Upcoming Events:</p>
-            <img src="./W3.CSS Template_files/noimage.png" alt="Forest" style="width:100%;">
-            <p><strong>Holiday</strong></p>
-            <p>Friday 15:00</p>
-            <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+            <p>Background Color:</p>
+            <p><input type="text"></p>
+            <script src="color-picker.js"></script>
+            <script>
+
+              var picker = new CP(document.querySelector('input'));
+
+              picker.on("change", function (color) {
+                this.source.value = '#' + color;
+              });
+
+            </script>
           </div>
+
         </div>
         <br>
         <div class="w3-card w3-round w3-white w3-center">
