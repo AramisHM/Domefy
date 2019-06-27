@@ -250,6 +250,10 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                     double z = std::atof(commandSplitted[3].c_str()) * 5;
                     hologramNode->SetPosition(Vector3(-y, z, x));
                 }
+                if (!cmd.compare(std::string("radius"))) {  // external text
+                    double r = std::atof(commandSplitted[1].c_str());
+                    cameraGrab->SetRadius(r);
+                }
             }
         }
     }

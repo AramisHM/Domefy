@@ -117,12 +117,16 @@
 			// console.log(getPolarCoords());
 			coords = getPolarCoords();
 			camCoords = coords[0] + ';' + coords[1] + ';';
-			console.log(controls.getTarget().x);
+			// console.log(controls.getTarget().x);
 			target = controls.getTarget()
 			camTargPos = target.x + ';' + target.y + ';' + target.z + ';';
 
 			sendCommand('camera-pos;' + camCoords);
 			sendCommand('targ-pos;' + camTargPos);
+
+			zoom = controls.getZoom();
+			// console.log('zoom is: ' + zoom);
+			sendCommand('radius;' + zoom);
 
 
 			var x = document.getElementById("debgt").textContent;

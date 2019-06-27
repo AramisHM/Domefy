@@ -102,6 +102,12 @@ THREE.OrbitControls = function (object, domElement) {
 		return this.target
 	}
 
+	// returns the "zoom" onto the target
+	// author: Aramis Hornung
+	this.getZoom = function () {
+		return spherical.radius
+	}
+
 	this.saveState = function () {
 
 		scope.target0.copy(scope.target);
