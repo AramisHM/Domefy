@@ -149,7 +149,7 @@ GrabbableUI::GrabbableUI(Urho3D::Context* context)
     dynamicOrbitableReference = false;
     radiusAltersMoveSpace = true;
     minDistance = 0.01f;
-    maxDistance = 30.0f;
+    maxDistance = 200.0f;
 }
 GrabbableUI::~GrabbableUI() {}
 
