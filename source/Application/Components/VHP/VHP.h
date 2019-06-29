@@ -47,6 +47,9 @@ class VHP : public LogicComponent {
     float coronalLevel;
     float axialLevel;
 
+    // tells if model is laying of standing up
+    bool _legt;
+
     // Slices bases
     Node* coronalBasedDatesed;
     Node* sagitalBasedDatesed;

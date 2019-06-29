@@ -21,8 +21,8 @@
       "name": "DS-1",
       "rtt_resolution": 200,
       "resolution": {
-        "x": 250,
-        "y": 150
+        "x": 400,
+        "y": 200
       },
       "viewport_pos": {
         "x": 0,
@@ -55,11 +55,11 @@
       "name": "DS-2",
       "rtt_resolution": 200,
       "resolution": {
-        "x": 250,
-        "y": 150
+        "x": 400,
+        "y": 200
       },
       "viewport_pos": {
-        "x": 250,
+        "x": 400,
         "y": 0
       },
       "offset_position": {

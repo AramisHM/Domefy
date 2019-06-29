@@ -45,6 +45,8 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
     _coronalOngoingCut = false;
 
     _transitionFactor = 0.03f;
+
+    _legt = true;
 }
 VHP::~VHP() {}
 
@@ -74,7 +76,7 @@ void VHP::CreateModel(std::string filePath) {
 
     //  Lowres Axial ------------------------------------------------
     axialBasedDatesed = _rootNode->CreateChild("axialSetBase");
-    for (int h = 0; h < axialSliceQuantity; h += 11) {
+    for (int h = 0; h < axialSliceQuantity; h += 900) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
@@ -118,7 +120,7 @@ void VHP::CreateModel(std::string filePath) {
 
     //  Lowres Sagital ------------------------------------------------
     sagitalBasedDatesed = _rootNode->CreateChild("sagitalSetBase");
-    for (int h = 0; h < sagitalSliceQuantity; h += 3) {
+    for (int h = 0; h < sagitalSliceQuantity; h += 100) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
@@ -201,7 +203,8 @@ void VHP::CreateModel(std::string filePath) {
 
     _rootNode->SetPosition(Vector3(
         (float)(-modelNormalWidth / 2), 0.0f,
-        0.0f));  // this way we shift the center to the middle of the model
+        (float)(-modelNormalDepth / 2)));  // this way we shift the center to
+                                           // the middle of the model
 }
 
 void VHP::SetSagitalCut(float leftLevel, float rightLevel, bool graceful) {
@@ -249,22 +252,43 @@ void VHP::UpdateWhatBaseToShow() {
         Vec2<float> camCoords = camGrab->GetCoordinates();
         float camLat = abs(camCoords.getY());
 
-        if ((camLat > 45 && camLat < 91)) {
-            SetAxialBaseVisible(true);
-            SetSagitalBaseVisible(false);
-            SetCoronalBaseVisible(false);
-            _currentReferenceBase = axial;
+        if (_legt == false) {
+            if ((camLat > 45 && camLat < 91)) {
+                SetAxialBaseVisible(true);
+                SetSagitalBaseVisible(false);
+                SetCoronalBaseVisible(false);
+                _currentReferenceBase = axial;
+            } else {
+                SetAxialBaseVisible(false);
+                if ((yAngle > 45 && yAngle < 135) ||
+                    (yAngle > 225 && yAngle < 315)) {
+                    SetSagitalBaseVisible(false);
+                    SetCoronalBaseVisible(true);
+                    _currentReferenceBase = coronal;
+                } else {
+                    SetSagitalBaseVisible(true);
+                    SetCoronalBaseVisible(false);
+                    _currentReferenceBase = sagital;
+                }
+            }
         } else {
-            SetAxialBaseVisible(false);
-            if ((yAngle > 45 && yAngle < 135) ||
-                (yAngle > 225 && yAngle < 315)) {
+            if ((camLat > 15 && camLat < 91)) {
+                SetAxialBaseVisible(false);
                 SetSagitalBaseVisible(false);
                 SetCoronalBaseVisible(true);
                 _currentReferenceBase = coronal;
             } else {
-                SetSagitalBaseVisible(true);
                 SetCoronalBaseVisible(false);
-                _currentReferenceBase = sagital;
+                if ((yAngle > 45 && yAngle < 135) ||
+                    (yAngle > 225 && yAngle < 315)) {
+                    SetSagitalBaseVisible(false);
+                    SetAxialBaseVisible(true);
+                    _currentReferenceBase = axial;
+                } else {
+                    SetSagitalBaseVisible(true);
+                    SetAxialBaseVisible(false);
+                    _currentReferenceBase = sagital;
+                }
             }
         }
     }

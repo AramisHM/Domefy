@@ -146,7 +146,9 @@ void MyCustomApplication::CreateScene() {
     //    "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
     //    "systems/4.bones/04.bones_lowres.json");
     vhp->SetViewNodeReference(cameraNode_);
-    vhpNode->SetScale(6.0f);
+    vhpNode->SetScale(15.0f);
+    vhpNode->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
+    vhpNode->SetRotation(Quaternion(90.0f, 0.0f, 0.0f));
 
     // Howdy, slides goes here partner.
     this->slideComponent = cameraNode_->CreateComponent<Slide>();
@@ -236,16 +238,18 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 if (!cmd.compare(std::string("obliq-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // intf("\nconta: %f\n", (float)(factor / 100.0f));
+
+                    float nearClip;
                     for (std::list<Node*>::iterator it =
                              cameraNodeDomeAll_.begin();
                          it != cameraNodeDomeAll_.end(); ++it) {
                         Camera* camComp = (*it)->GetComponent<Camera>();
 
-                        float near = (float)((factor / 100.0f) * 10.0f);
-                        camComp->SetNearClip(near);
+                        nearClip = ((factor / 100.0f) * 10.0f);
+                        camComp->SetNearClip(nearClip);
                         Camera* mainCamComp =
                             cameraNode_->GetComponent<Camera>();
-                        mainCamComp->SetNearClip(near);
+                        mainCamComp->SetNearClip(nearClip);
                     }
                 }
                 if (!cmd.compare(std::string("trans"))) {

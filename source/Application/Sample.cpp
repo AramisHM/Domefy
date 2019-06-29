@@ -578,7 +578,12 @@ Node* Sample::CreateDomeCamera(Projection p) {
     }
 
     Node* cameraReferenceForDomeRender = 0;
-    cameraReferenceForDomeRender = cameraNode_;
+    cameraReferenceForDomeRender =
+        cameraNode_->CreateChild("DomeCamReference", LOCAL);
+    cameraReferenceForDomeRender->SetPosition(
+        Vector3(p._offsetPos.getX(), p._offsetPos.getY(), p._offsetPos.getZ()));
+    cameraReferenceForDomeRender->SetRotation(Quaternion(
+        p._offsetRot.getX(), p._offsetRot.getY(), p._offsetRot.getZ()));
 
     // up
     {
