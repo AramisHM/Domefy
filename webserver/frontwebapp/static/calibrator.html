@@ -1,0 +1,109 @@
+<!--
+File: calibrator.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Tuesday, 2nd July 2019 3:00:17 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Tuesday, 2nd July 2019 3:00:26 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Calibrator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            background-color: #ffe2e294;
+        }
+    </style>
+</head>
+
+
+<!-- This tool is used to set the deformation of the final projection, in a point-to-point basis. -->
+<script src="jquery.min.js"></script>
+<script src="jquery-ui.js"></script>
+<script>
+    indexCounter = 0;
+</script>
+
+
+<body onload="AddGridVertexes()">
+    <div class="col-sm-7 text">
+        <h1><strong>Calibrator prototype P01</strong></h1>
+        <div class="description">
+            <div id="myDiagramDiv" draggable="true" style="width:600px; height:400px; background-color: #DAE4E4;">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-5 text">
+        <div class="description">
+            <h1><strong>Text</strong></h1>
+        </div>
+        <button type="button" class="btn-primary" onclick="addimage();">Add marker</button>
+    </div>
+</body>
+
+
+<script>
+    function addimage() {
+        var img = document.createElement("img");
+        img.src = "./marker.png";
+        img.height = 40;
+        img.width = 40;
+
+
+        img.setAttribute('index', indexCounter); // ARAMIS: Uses this to know what vertex we are dealing with
+        indexCounter++;
+        document.getElementById("myDiagramDiv").appendChild(img);
+        $(img).draggable({
+            drag: function () {
+                var $this = $(this);
+                var thisPos = $this.position();
+                var parentPos = $this.parent().position();
+                var x = thisPos.left - parentPos.left;
+                var y = thisPos.top - parentPos.top;
+                console.log(img.getAttribute('index', indexCounter) + " " + x + ", " + y);
+            }
+        });
+    }
+
+    function AddimageSpec(x, y, id) {
+        var img = document.createElement("img");
+        img.src = "./marker.png";
+        img.height = 40;
+        img.width = 40;
+
+        img.style.top = y + "px";
+        img.style.left = x + "px";
+
+        img.setAttribute('index', id); // ARAMIS: Uses this to know what vertex we are dealing with
+        indexCounter++;
+        document.getElementById("myDiagramDiv").appendChild(img);
+        $(img).draggable({
+            drag: function () {
+                var $this = $(this);
+                var thisPos = $this.position();
+                var parentPos = $this.parent().position();
+                var x = thisPos.left - parentPos.left;
+                var y = thisPos.top - parentPos.top;
+                console.log(img.getAttribute('index', indexCounter) + " " + x + ", " + y);
+                // TODO call the psot function here
+            }
+        });
+
+    }
+
+    function AddGridVertexes() {
+        AddimageSpec(0, 0, 0);
+        AddimageSpec(50, 0, 1);
+        AddimageSpec(100, 0, 2);
+        console.log("hello");
+    }
+</script>
