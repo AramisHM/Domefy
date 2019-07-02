@@ -184,7 +184,7 @@ void MyCustomApplication::CreateScene() {
         pdy = proj._viewport.getS();
         IntRect viewRect = IntRect(px, py, px + pdx, py + pdy);
         SharedPtr<Viewport> tempViewport(
-            new Viewport(context_, sceneDomeList_.back(),
+            new Viewport(context_, sceneMorphcorrList_.back(),
                          domeCamNode->GetComponent<Camera>(), viewRect));
         renderer->SetViewport(aux, tempViewport);
         ++aux;
@@ -229,18 +229,14 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 }
                 if (!cmd.compare(std::string("cor-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
-                    // printf("\nconta: %f\n", (float)(factor / 100.0f));
                     this->vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("axi-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
-                    // intf("\nconta: %f\n", (float)(factor / 100.0f));
                     this->vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("obliq-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
-                    // intf("\nconta: %f\n", (float)(factor / 100.0f));
-
                     float nearClip;
                     for (std::list<Node*>::iterator it =
                              cameraNodeDomeAll_.begin();
@@ -259,6 +255,8 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
                     this->vhp->SetModelTransparency((float)(factor / 100.0f));
                 }
+
+                // Moves camera arround, given the custom js based viewer
                 if (!cmd.compare(std::string("camparams"))) {
                     double p = std::atof(commandSplitted[1].c_str());
                     double q = std::atof(commandSplitted[2].c_str());

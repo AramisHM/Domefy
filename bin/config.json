@@ -19,7 +19,7 @@
   "presets": [
     {
       "name": "DS-1",
-      "rtt_resolution": 200,
+      "rtt_resolution": 512,
       "resolution": {
         "x": 400,
         "y": 200

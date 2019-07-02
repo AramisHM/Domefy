@@ -110,13 +110,17 @@ void Sample::Start() {
             ScriptServ = 0;
         }
 
-        ScriptServ = new TNETServer(
-            defaultScriptBackDoorServerPort);  // this is used to send custom
-                                               // commands to scripts, its util
-                                               // to create, for example, a xbox
-                                               // control protocol, to remotly
-                                               // send the joystick data to the
-                                               // game running in the script
+        // ScriptServ = new TNETServer(
+        //     defaultScriptBackDoorServerPort);  // this is used to send custom
+        //                                        // commands to scripts, its
+        //                                        util
+        //                                        // to create, for example, a
+        //                                        xbox
+        //                                        // control protocol, to
+        //                                        remotly
+        //                                        // send the joystick data to
+        //                                        the
+        //                                        // game running in the script
     }
 #endif
 
@@ -473,17 +477,6 @@ void Sample::SetupViewport() {
 void Sample::SubscribeToEvents() {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Sample, HandleUpdate));
     SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Sample, HandlePostUpdate));
-    // SubscribeToEvent(connectButton_, E_RELEASED, URHO3D_HANDLER(Sample,
-    // HandleConnect));
-    //    SubscribeToEvent(disconnectButton_, E_RELEASED, URHO3D_HANDLER(Sample,
-    //    HandleDisconnect));
-    // SubscribeToEvent(startServerButton_, E_RELEASED, URHO3D_HANDLER(Sample,
-    // HandleStartServer)); SubscribeToEvent(E_SERVERCONNECTED,
-    // URHO3D_HANDLER(Sample, HandleConnectionStatus));
-    //  SubscribeToEvent(E_SERVERDISCONNECTED, URHO3D_HANDLER(Sample,
-    //  HandleConnectionStatus));
-    // SubscribeToEvent(E_CONNECTFAILED, URHO3D_HANDLER(Sample,
-    // HandleConnectionStatus));
     SubscribeToEvent(E_CLIENTCONNECTED,
                      URHO3D_HANDLER(Sample, HandleClientConnected));
     SubscribeToEvent(E_CLIENTDISCONNECTED,
@@ -544,13 +537,16 @@ void Sample::HandleClientObjectID(StringHash eventType, VariantMap& eventData) {
     clientObjectID_ = eventData[P_ID].GetUInt();
 }
 
-// TODO: this code is redundant, remove the old one that is based in the network
-// replication.
-// Returns the node with the dome camera node
+// Creates the camera that should be used byt the fulldome viewports.
+// It creates the scene the virtual dome, and on top of that, it creates another
+// scene that holds a special mesh that we use to do a morphologic
+// point-to-point geometry correction. Returns the node with the camera that
+// view the final geometry compositions
 Node* Sample::CreateDomeCamera(Projection p) {
     SharedPtr<Scene> sceneDome_;
     SharedPtr<Node> cameraNodeDome_;
 
+    // create the scene that will hold the virtual dome
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     sceneDome_ = new Scene(context_);
     sceneDome_->Clear();
@@ -564,9 +560,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
     StaticModel* domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
 
+    // Create the camera that will se the vitual dome
     {
-        fpmed::Vec3<float> projPos, projRot;
-
         cameraNodeDome_ = sceneDome_->CreateChild("CameraDome", LOCAL);
         Camera* cameraDome = cameraNodeDome_->CreateComponent<Camera>();
         cameraDome->SetFarClip(p._farClip);
@@ -577,6 +572,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
             p._projRot.getX(), p._projRot.getY(), p._projRot.getZ()));
     }
 
+    // creates the camera that lie within the real "application/game" scene,
+    // with its position-offset and rotation-offset to simulate the stereoscopy.
     Node* cameraReferenceForDomeRender = 0;
     cameraReferenceForDomeRender =
         cameraNode_->CreateChild("DomeCamReference", LOCAL);
@@ -585,6 +582,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
     cameraReferenceForDomeRender->SetRotation(Quaternion(
         p._offsetRot.getX(), p._offsetRot.getY(), p._offsetRot.getZ()));
 
+    // here we create the RTTs that we will place on the virtual dome mesh
     // up
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
@@ -730,7 +728,82 @@ Node* Sample::CreateDomeCamera(Projection p) {
 
         domeMesh->SetMaterial(4, renderMaterial);
     }
+
+    // save the fome scene and camera-node references for later usage
     sceneDomeList_.push_back(sceneDome_);
     cameraNodeDomeList_.push_back(cameraNodeDome_);
-    return cameraNodeDome_;
+
+    // ----------------------------------------------------------------------
+    // We create another scene with the morphologic point-to-point geometry
+    // correction
+
+    // Create the scene that will hold the deformable mesh for point-to-point
+    // geometry correction
+    // TODO: this block repeats alot, we should write a function for it.
+    Node* retCam;  // the camera node we are going to return
+    {
+        Scene* geometryCorrectionScene_ = new Scene(context_);
+        geometryCorrectionScene_->Clear();
+        geometryCorrectionScene_->CreateComponent<Octree>(LOCAL);
+        Node* zoneNode = geometryCorrectionScene_->CreateChild("Zone", LOCAL);
+        Zone* zone = zoneNode->CreateComponent<Zone>();
+        zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
+        zone->SetAmbientColor(Color(255.0f, 0.0f, 0.0f));
+        zone->SetFogColor(Color(255.0f, 0.08f, 0.08f));
+        zone->SetFogStart(250 / 4);
+        zone->SetFogEnd(500);
+
+        sceneMorphcorrList_.push_back(geometryCorrectionScene_);
+
+        Node* geometryCorrectionNode = geometryCorrectionScene_->CreateChild(
+            "GEOMETRY_CORRECTION_NODE", LOCAL);
+        StaticModel* geometryCorrectionMesh =
+            geometryCorrectionNode->CreateComponent<StaticModel>();
+        geometryCorrectionMesh->SetModel(
+            cache->GetResource<Model>("Models/geometryCorrection.mdl"));
+        geometryCorrectionNode->SetRotation(Quaternion(180.0f, -90.0f, 0.0f));
+
+        // create rtt onto geometry correction mesh
+        SharedPtr<Texture2D> geometryCorrectionRenderTexture(
+            new Texture2D(context_));
+
+        // TODO: this size shoulbe have its own config value on the
+        // config.JSON
+        geometryCorrectionRenderTexture->SetSize(
+            p._rttResolution, p._rttResolution, Graphics::GetRGBFormat(),
+            TEXTURE_RENDERTARGET);
+
+        geometryCorrectionRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        SharedPtr<Material> renderMaterial(new Material(context_));
+        renderMaterial->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
+        renderMaterial->SetTexture(TU_DIFFUSE, geometryCorrectionRenderTexture);
+        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+        RenderSurface* surface =
+            geometryCorrectionRenderTexture->GetRenderSurface();
+        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+
+        SharedPtr<Viewport> rttViewport(new Viewport(
+            context_, sceneDome_, cameraNodeDome_->GetComponent<Camera>()));
+        surface->SetViewport(0, rttViewport);
+
+        geometryCorrectionMesh->SetMaterial(0, renderMaterial);
+        {
+            Node* geometryCorrCameraNode =
+                geometryCorrectionScene_->CreateChild();
+            Camera* geometryCorrCamera =
+                geometryCorrCameraNode->CreateComponent<Camera>();
+            geometryCorrCameraNode->SetPosition(
+                Vector3(0, 0, -1.1f));  // TODO: soud be parametrized and
+                                        // configurable on the new calibrator
+            geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
+            geometryCorrCamera->SetFarClip(500.0f);
+            geometryCorrCamera->SetAspectRatio(1.0f);
+            geometryCorrCamera->SetFov(90.0f);
+            cameraNodeMorphcorrList_.push_back(geometryCorrCameraNode);
+            retCam = geometryCorrCameraNode;
+        }
+    }
+
+    return retCam;
 }
