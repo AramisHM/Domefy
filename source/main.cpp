@@ -29,10 +29,11 @@ std::string commandString;
 
 void ListenForExternalCommands() {
     if (sock_read(&extChanel, 1) > 0) {
-        printf(
-            "\nReceived a command via AHMNet from %s, with the following data: "
-            "%s\n\n",
-            sender_ip(&extChanel), extChanel.buf);
+        // printf(
+        //     "\nReceived a command via AHMNet from %s, with the following
+        //     data: "
+        //     "%s\n\n",
+        //     sender_ip(&extChanel), extChanel.buf);
         commandString = std::string(extChanel.buf);
     } else {
         commandString = "";

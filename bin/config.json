@@ -6,7 +6,7 @@
   "monitor": 1,
   "custom_assets_path": {
     "linux": "/media/aramis/108442EE8442D5BE/vhp-research/male-lowres.json",
-    "win32": "F:/vhp-research/male-lowres.json"
+    "win32": "./Data/FakeVHD/test-set.json"
   },
   "window_position": {
     "x": 20,

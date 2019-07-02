@@ -1,2 +1,2 @@
 // server host and port that contains the backend
-serviceIPPort = "192.168.15.5:9090";
+serviceIPPort = "192.168.0.3:9090";

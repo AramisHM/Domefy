@@ -98,7 +98,8 @@ void MyCustomApplication::CreateScene() {
     Node* skyNode = scene_->CreateChild("Sky");
     Skybox* skybox = skyNode->CreateComponent<Skybox>();
     skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
+    skybox->SetMaterial(
+        cache->GetResource<Material>("Materials/CustomSkybox.xml"));
 
     // Some random mesh for testing custom componenets
     {
@@ -138,13 +139,13 @@ void MyCustomApplication::CreateScene() {
 
     // Howdy, VHP
     Urho3D::Node* vhpNode = scene_->CreateChild("VHP");
-    vhp = vhpNode->CreateComponent<VHP>();  // TODO: store the pointer
-    // for the coponent somewhere
-    //
-    vhp->CreateModel(config->GetPathToCustomAssetsFolder());
-    // vhp->CreateModel(
-    //    "/media/aramis/108442EE8442D5BE/vhp-research/Textures/vhp/male/"
-    //    "systems/4.bones/04.bones_lowres.json");
+    vhp = vhpNode->CreateComponent<VHP>();
+    try {
+        vhp->CreateModel(config->GetPathToCustomAssetsFolder());
+    } catch (const std::exception& e) {
+        printf("Could not correctly load the VHP model");
+    }
+
     vhp->SetViewNodeReference(cameraNode_);
     vhpNode->SetScale(15.0f);
     vhpNode->SetPosition(Vector3(0.0f, 0.0f, -10.0f));
@@ -223,17 +224,18 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 if (!cmd.compare(std::string("sag-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
-                    vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f, true);
+                    this->vhp->SetSagitalCut((float)(factor / 100.0f), 0.0f,
+                                             true);
                 }
                 if (!cmd.compare(std::string("cor-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
-                    vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
+                    this->vhp->SetCoronalCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("axi-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // intf("\nconta: %f\n", (float)(factor / 100.0f));
-                    vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
+                    this->vhp->SetAxialCut((float)(factor / 100.0f), 0.0f);
                 }
                 if (!cmd.compare(std::string("obliq-a"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
@@ -255,7 +257,7 @@ void MyCustomApplication::MoveCamera(float timeStep) {
                 if (!cmd.compare(std::string("trans"))) {
                     double factor = std::atof(commandSplitted[1].c_str());
                     // printf("\nconta: %f\n", (float)(factor / 100.0f));
-                    vhp->SetModelTransparency((float)(factor / 100.0f));
+                    this->vhp->SetModelTransparency((float)(factor / 100.0f));
                 }
                 if (!cmd.compare(std::string("camparams"))) {
                     double p = std::atof(commandSplitted[1].c_str());
@@ -441,55 +443,49 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     // Take the frame time step, which is stored as a float
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
-    if (isServer())            // is it server?
-        MoveCamera(timeStep);  // only server dictates the position of camera
+    MoveCamera(timeStep);  // only server dictates the position of camera
 
-    // code to change the hologram image
-    if (isServer()) {
-        Vector3 posCam, posHolo;
-        if (selected_serv == 0 && hologramNode == 0) {
-            hologramNode = scene_->GetChild("Hologram");
-            hologramPlane = hologramNode->GetComponent<StaticModel>();
-            hologramMaterial = hologramPlane->GetMaterial();
-        }
-        posHolo = hologramNode->GetPosition();
-        posCam = cameraNode_->GetPosition();
-        Urho3D::Camera* camComp = cameraNode_->GetComponent<Urho3D::Camera>();
-        double angle_Z_axis =
-            triangulateTarget(posHolo.x_, posHolo.y_, posHolo.z_, posCam.x_,
-                              posCam.y_, posCam.z_);
-        int sector = angle_Z_axis / 0.9f;
+    Vector3 posCam, posHolo;
+    if (selected_serv == 0 && hologramNode == 0) {
+        hologramNode = scene_->GetChild("Hologram");
+        hologramPlane = hologramNode->GetComponent<StaticModel>();
+        hologramMaterial = hologramPlane->GetMaterial();
+    }
+    posHolo = hologramNode->GetPosition();
+    posCam = cameraNode_->GetPosition();
+    Urho3D::Camera* camComp = cameraNode_->GetComponent<Urho3D::Camera>();
+    double angle_Z_axis = triangulateTarget(posHolo.x_, posHolo.y_, posHolo.z_,
+                                            posCam.x_, posCam.y_, posCam.z_);
+    int sector = angle_Z_axis / 0.9f;
 
-        if (sector <= 398) {
-            // hologramPlane->SetMaterial(holoTextArray[sector]);
-        }
-        if (selected_serv == 1) {
-            using namespace std;
-            Quaternion q = camComp->GetFaceCameraRotation(
-                hologramNode->GetWorldPosition(),
-                hologramNode->GetWorldRotation() +
-                    Quaternion(0.0f, 90.0f, 0.0f),
-                FC_ROTATE_XYZ);
-            Vector3 v = q.EulerAngles();
-            hologramNode->SetRotation(q);
-            hologramNode->Rotate(Quaternion(-90.0f, 0.0f, 0.0f));
-            // hologramNode->SetWorldRotation(Quaternion(20.0f, 0.0f, 0.0f));
-            char text[512];
+    if (sector <= 398) {
+        // hologramPlane->SetMaterial(holoTextArray[sector]);
+    }
+    if (selected_serv == 1) {
+        using namespace std;
+        Quaternion q = camComp->GetFaceCameraRotation(
+            hologramNode->GetWorldPosition(),
+            hologramNode->GetWorldRotation() + Quaternion(0.0f, 90.0f, 0.0f),
+            FC_ROTATE_XYZ);
+        Vector3 v = q.EulerAngles();
+        hologramNode->SetRotation(q);
+        hologramNode->Rotate(Quaternion(-90.0f, 0.0f, 0.0f));
+        // hologramNode->SetWorldRotation(Quaternion(20.0f, 0.0f, 0.0f));
+        char text[512];
 
-            fpmed::Vec2<float> camCoords = cameraGrab->GetCoordinates();
+        fpmed::Vec2<float> camCoords = cameraGrab->GetCoordinates();
 
-            // make a class for debug text compnent
-            sprintf(text,
-                    "SECTOR: %d\nCAM: %f, %f, %f\nZ AXIS ANGLE: %f\nyaw: %f "
-                    "pitch: %f\nFface cam: %f, %f, %f \nExt command %s",
-                    sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis,
-                    camCoords.getX(), camCoords.getY(), v.x_, v.y_, v.z_,
-                    commandString.c_str());
+        // make a class for debug text compnent
+        sprintf(text,
+                "SECTOR: %d\nCAM: %f, %f, %f\nZ AXIS ANGLE: %f\nyaw: %f "
+                "pitch: %f\nFface cam: %f, %f, %f \nExt command %s",
+                sector, posCam.x_, posCam.y_, posCam.z_, angle_Z_axis,
+                camCoords.getX(), camCoords.getY(), v.x_, v.y_, v.z_,
+                commandString.c_str());
 
-            String txt = String(text);
-            debTex->SetText(txt);
-            debTex->SetColor(Color(255, 0, 0));
-        }
+        String txt = String(text);
+        debTex->SetText(txt);
+        debTex->SetColor(Color(255, 0, 0));
     }
 }
 

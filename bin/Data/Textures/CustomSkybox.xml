@@ -1,0 +1,9 @@
+<cubemap>
+    <face name="Textures/sb_graveyard/rt.tga" />
+    <face name="Textures/sb_graveyard/lf.tga" />
+    <face name="Textures/sb_graveyard/up.tga" />
+    <face name="Textures/sb_graveyard/dn.tga" />
+    <face name="Textures/sb_graveyard/ft.tga" />
+    <face name="Textures/sb_graveyard/bk.tga" />
+    <quality low="0" />
+</cubemap>
