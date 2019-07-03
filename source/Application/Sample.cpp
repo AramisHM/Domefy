@@ -30,10 +30,6 @@ static const unsigned CTRL_RIGHT = 8;
 
 #include <Core/ProjectorMachine.h>
 #include <Core/ServerMachine.h>
-ServerMachine* machineMaster = 0;
-ProjectorMachine* projectorMachine = 0;
-TNETServer* ScriptServ =
-    0;  // setup a simple udp server for receiving commands to script api
 
 Sample::Sample(Context* context)
     : Application(context),
@@ -91,44 +87,18 @@ void Sample::Start() {
         // parse scripts if any
 
 #ifdef fpmed_allow_scripted_application
-    if (selected_serv > 0 &&
-        run_scripts == 1)  // somente servidor carrega o script
-    {
-        // LOAD THE SCRIPTS - IF ANY
-        ResourceCache* cache = GetSubsystem<ResourceCache>();
-        Sample::frameworkScriptInstance =
-            scene_->CreateComponent<ScriptInstance>(LOCAL);
 
-        Sample::frameworkScriptInstance->CreateObject(
-            cache->GetResource<ScriptFile>(applicationScriptFileDirectory),
-            "Fpmed");
-        // Call the script object's "SetRotationSpeed" function. Function
-        // arguments need to be passed in a VariantVector
-        Sample::frameworkScriptInstance->Execute("void FpmedStart(int)");
-        if (ScriptServ) {
-            delete ScriptServ;
-            ScriptServ = 0;
-        }
+    // LOAD THE SCRIPTS - IF ANY
+    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    Sample::frameworkScriptInstance =
+        scene_->CreateComponent<ScriptInstance>(LOCAL);
 
-        // ScriptServ = new TNETServer(
-        //     defaultScriptBackDoorServerPort);  // this is used to send custom
-        //                                        // commands to scripts, its
-        //                                        util
-        //                                        // to create, for example, a
-        //                                        xbox
-        //                                        // control protocol, to
-        //                                        remotly
-        //                                        // send the joystick data to
-        //                                        the
-        //                                        // game running in the script
-    }
+    Sample::frameworkScriptInstance->CreateObject(
+        cache->GetResource<ScriptFile>("Scripts/01_HelloWorld.as"), "Fpmed");
+
 #endif
 
-    if (selected_serv == 1)  // only draw logo in server instance
-        CreateLogo();
-
-    if (selected_serv == 0)  // se for um projetor
-        calibrationServ = new TNETServer(calibrationServerPort);
+    CreateLogo();
 
     // Set custom window Title & Icon
     SetWindowTitleAndIcon();
@@ -148,23 +118,13 @@ void Sample::Stop() { engine_->DumpResources(true); }
 
 void Sample::handleIncomingNetworkScriptCommands() {
 #ifdef fpmed_allow_scripted_application
-    if (selected_serv > 0 &&
-        run_scripts == 1)  // somente o master atenderá a comandos vindos para
-                           // servidor de script
-    {
-        /* If we receive data into the script server, lets execute the proper
-         * function that will process it*/
-        if (ScriptServ->update(1) == TEE_MESSAGE) {
-            VariantVector parameters;
-            parameters.Push(
-                Variant(ScriptServ->getMessage()));  // Add an int parameter
-            printf("=====[%s]>: %s\n", ScriptServ->getPacket().getSenderIP(),
-                   ScriptServ->getMessage());
 
-            frameworkScriptInstance->Execute("void FpmedServerBus(String)",
-                                             parameters);
-        }
-    }
+    // receive server commands to pipe it to script logics
+    // if (received message) {
+    //     // frameworkScriptInstance->Execute("void FpmedServerBus(String)",
+    //     //                                  the message);
+    // }
+
 #endif
 }
 

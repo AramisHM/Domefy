@@ -18,7 +18,7 @@ MyCustomApplication* application;
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 // ENABLE SCRIPTS
 #ifdef fpmed_allow_scripted_application
-    context_->RegisterSubskkystem(new Script(context_));
+    context_->RegisterSubsystem(new Script(context_));
 #endif
 
 #ifdef fpmed_allow_cpp_application
@@ -378,10 +378,6 @@ void MyCustomApplication::MoveCamera(float timeStep) {
     if (input->GetKeyPress(KEY_LEFT)) {
         slideComponent->PreviousSlide();
     }
-    if (input->GetKeyPress(KEY_F3)) {
-        if (selected_serv > 0)  // Servidor
-            machineMaster->ToggleDomeGrid();
-    }
 
     isholding = input->GetMouseButtonDown(MOUSEB_RIGHT);
 
@@ -431,7 +427,13 @@ void MyCustomApplication::Start() {
     // create C++ app
     CreateScene();
 #endif
+
     Sample::Start();
+
+#ifdef fpmed_allow_scripted_application
+    frameworkScriptInstance->Execute("void FpmedStart()");
+
+#endif
 }
 
 #ifdef fpmed_allow_cpp_application

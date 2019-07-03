@@ -6,7 +6,6 @@
 #pragma once
 
 #include "Urho3D/Engine/Application.h"
-#include "tnet/TNet.h"
 
 // scripts include
 #include <Core/ProgramConfig.h>
@@ -98,10 +97,12 @@ class Sample : public Application {
     std::list<Scene*> sceneMorphcorrList_;
     // The morphologic correction camera node list.
     std::list<Node*> cameraNodeMorphcorrList_;
-
     // This is similar as above, but, instead of a node with 5 more nodes, this
     // is the camera with the component only.
     std::list<Node*> cameraNodeDomeAll_;
+    // This vector holds the nodes that have the mesh for geometric correction
+    std::vector<SharedPtr<VertexBuffer>> animatingBuffers_;
+
     /// Camera yaw angle.
     float yaw_;
     /// Camera pitch angle.
@@ -140,14 +141,6 @@ class Sample : public Application {
     unsigned screenJoystickSettingsIndex_;
     /// Pause flag.
     bool paused_;
-
-    // setup a simple udp server
-    TNETServer*
-        calibrationServ;  // backdoor server used to remotely configurate a
-                          // fulldome-only projector TODO: fazer logica para
-                          // inicializar somente quando uam flag assim informar,
-                          // essa falg por usa vez seria informada no arquivo de
-                          // configuração
 
     /// Handle the logic post-update event.
     void HandlePostUpdate(StringHash eventType, VariantMap& eventData);
