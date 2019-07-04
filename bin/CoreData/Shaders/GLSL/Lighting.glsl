@@ -104,7 +104,7 @@ vec4 GetShadowPos(int index, vec3 normal, vec4 projWorldPos)
 #endif
 
 #ifdef COMPILEPS
-float GetDiffuse(vec3 normal, vec3 worldPos, out vec3 lightDir)
+float GetDiffuse(vec3 normal, vec3 worldPos, out vec3 lightDir, float ao, out float lightDist, vec3 bent_normal)
 {
     #ifdef DIRLIGHT
         lightDir = cLightDirPS;
@@ -114,13 +114,39 @@ float GetDiffuse(vec3 normal, vec3 worldPos, out vec3 lightDir)
             return max(dot(normal, lightDir), 0.0);
         #endif
     #else
-        vec3 lightVec = (cLightPosPS.xyz - worldPos) * cLightPosPS.w;
-        float lightDist = length(lightVec);
+        vec3 lightVec = (cLightPosPS.xyz - worldPos);
+        float ndist = length(lightVec);
+        lightVec *= cLightPosPS.w;
+        lightDist = ndist * cLightPosPS.w;
         lightDir = lightVec / lightDist;
         #ifdef TRANSLUCENT
             return abs(dot(normal, lightDir)) * texture2D(sLightRampMap, vec2(lightDist, 0.0)).r;
         #else
-            return max(dot(normal, lightDir), 0.0) * texture2D(sLightRampMap, vec2(lightDist, 0.0)).r;
+
+            float dist = max(1-lightDist,0);
+            float hd = 0.5 * dist;
+            float hl = pow(dot(normal, lightDir)*0.5+0.5,2.);
+            float lamb = max(dot(normal, lightDir),0.);
+            float bentDot = dot(bent_normal,lightDir)*0.8+0.2;
+            float shadow_cut = 2.9;
+            float ao2 = max((ao-(1.-1./shadow_cut))*shadow_cut , 0.);
+            ao = min(pow(ao,0.2),1.);
+           ndist = clamp(pow(1.-ndist*0.05,2.2),0,1.);
+           //ao += mix(ao,1.0,ndist);
+            //bentDot
+            //ao =clamp( ao * (bentDot*0.5+0.5) ,0.,1.);
+            bentDot = mix(bentDot,1.0,min(ao2+ndist,1.));
+            hl *= bentDot;
+            lamb *= bentDot;
+
+            //lamb = hl;
+            
+            float diff = max(mix(lamb,hl,min(dist *1.15,1.)) * pow(dist,3.6-1.6*ao), 0.0);
+            diff *= 0.7 +0.4*ao;// * clamp((bentDot-lamb)*0.01,0.,1.);
+            //diff *= clamp((lamb-bentDot),0.,1.);
+            //float halfdiff = max(pow(dot(normal, lightDir)*0.5+0.5,2.) * pow(max(1-lightDist,0),12.), 0.0);
+            //return diff;
+            return diff;
         #endif
     #endif
 }
@@ -153,7 +179,7 @@ float GetDiffuseVolumetric(vec3 worldPos)
 
 float GetSpecular(vec3 normal, vec3 eyeVec, vec3 lightDir, float specularPower)
 {
-    vec3 halfVec = normalize(normalize(eyeVec) + lightDir);  
+    vec3 halfVec = normalize(normalize(eyeVec) + lightDir);
     return pow(max(dot(normal, halfVec), 0.0), specularPower);
 }
 
@@ -171,23 +197,23 @@ float GetIntensity(vec3 color)
 #endif
 
 #ifdef VSM_SHADOW
-float ReduceLightBleeding(float min, float p_max)  
-{  
-    return clamp((p_max - min) / (1.0 - min), 0.0, 1.0);  
+float ReduceLightBleeding(float min, float p_max)
+{
+    return clamp((p_max - min) / (1.0 - min), 0.0, 1.0);
 }
 
-float Chebyshev(vec2 Moments, float depth)  
-{  
-    //One-tailed inequality valid if depth > Moments.x  
-    float p = float(depth <= Moments.x);  
-    //Compute variance.  
-    float Variance = Moments.y - (Moments.x * Moments.x); 
+float Chebyshev(vec2 Moments, float depth)
+{
+    //One-tailed inequality valid if depth > Moments.x
+    float p = float(depth <= Moments.x);
+    //Compute variance.
+    float Variance = Moments.y - (Moments.x * Moments.x);
 
     float minVariance = cVSMShadowParams.x;
     Variance = max(Variance, minVariance);
-    //Compute probabilistic upper bound.  
-    float d = depth - Moments.x;  
-    float p_max = Variance / (Variance + d*d); 
+    //Compute probabilistic upper bound.
+    float d = depth - Moments.x;
+    float p_max = Variance / (Variance + d*d);
     // Prevent light bleeding
     p_max = ReduceLightBleeding(cVSMShadowParams.y, p_max);
 
@@ -226,7 +252,7 @@ float GetShadow(vec4 shadowPos)
                 textureProj(sShadowMap, vec4(shadowPos.xy + offsets.xy, shadowPos.zw)));
         #endif
     #elif defined(VSM_SHADOW)
-        vec2 samples = texture2D(sShadowMap, shadowPos.xy / shadowPos.w).rg; 
+        vec2 samples = texture2D(sShadowMap, shadowPos.xy / shadowPos.w).rg;
         return cShadowIntensity.y + cShadowIntensity.x * Chebyshev(samples, shadowPos.z / shadowPos.w);
     #endif
 }
@@ -247,7 +273,7 @@ float GetShadow(highp vec4 shadowPos)
         );
         return cShadowIntensity.y + dot(inLight, vec4(cShadowIntensity.x));
     #elif defined(VSM_SHADOW)
-        vec2 samples = texture2D(sShadowMap, shadowPos.xy / shadowPos.w).rg; 
+        vec2 samples = texture2D(sShadowMap, shadowPos.xy / shadowPos.w).rg;
         return cShadowIntensity.y + cShadowIntensity.x * Chebyshev(samples, shadowPos.z / shadowPos.w);
     #endif
 }
@@ -294,7 +320,7 @@ float GetDirShadow(const vec4 iShadowPos[NUMCASCADES], float depth)
         shadowPos = iShadowPos[2];
     else
         shadowPos = iShadowPos[3];
-        
+
     return GetDirShadowFade(GetShadow(shadowPos), depth);
 }
 #else

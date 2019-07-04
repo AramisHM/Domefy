@@ -1,0 +1,1197 @@
+<?xml version="1.0"?>
+<scene id="1">
+	<attribute name="Name" value="" />
+	<attribute name="Time Scale" value="1" />
+	<attribute name="Smoothing Constant" value="50" />
+	<attribute name="Snap Threshold" value="5" />
+	<attribute name="Elapsed Time" value="144.402" />
+	<attribute name="Next Replicated Node ID" value="28" />
+	<attribute name="Next Replicated Component ID" value="64" />
+	<attribute name="Next Local Node ID" value="16777418" />
+	<attribute name="Next Local Component ID" value="16778442" />
+	<attribute name="Variables" />
+	<attribute name="Variable Names" value="" />
+	<component type="Octree" id="1" />
+	<component type="DebugRenderer" id="2" />
+	<component type="sdfManager" id="4" />
+	<component type="fractalWorld" id="5">
+		<attribute name="Fractal name" value="FCTYP_5" />
+		<attribute name="Myst" value="0.12" />
+		<attribute name="Far clip" value="500" />
+		<attribute name="Sky cubemap" value="TextureCube;Textures/cubemaps/bluecloud01.xml" />
+		<attribute name="Additional sky color" value="0.08 0.04 0.01" />
+		<attribute name="Sky luminocity" value="10" />
+		<attribute name="Sky light intencity" value="30" />
+		<attribute name="Texture pattern" value="Texture2D;Textures/patterns/ptrn1.png" />
+		<attribute name="Texture colormap" value="Texture2D;Textures/colormaps/smokefire.png" />
+		<attribute name="Pattern scale" value="22.62" />
+		<attribute name="Colmap y-scale" value="26.99" />
+		<attribute name="pattern influence" value="-17.6" />
+		<attribute name="fractal influence" value="0.5832" />
+	</component>
+	<component type="PhysicsWorld" id="11" />
+	<node id="16777219">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-75.0235 63.3802 -101.468" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16777240">
+			<attribute name="Color" value="4 3.2 2 1" />
+			<attribute name="Range" value="110.57" />
+			<attribute name="Spot FOV" value="41.69" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+	</node>
+	<node id="16777233">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-12.4868 -17.3665 -7.43242" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16777397">
+			<attribute name="Color" value="1 0.75 0.54 1" />
+			<attribute name="Range" value="50" />
+			<attribute name="Spot FOV" value="41.69" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+	</node>
+	<node id="16777234">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="48.6058 -155.26 -206.853" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16777398">
+			<attribute name="Color" value="0.68 0.96 0.72 1" />
+			<attribute name="Range" value="50" />
+			<attribute name="Spot FOV" value="41.69" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+	</node>
+	<node id="16777236">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-83.5606 -22.6344 -285.776" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16777411">
+			<attribute name="Color" value="0.68 0.42 0.99 1" />
+			<attribute name="Range" value="50" />
+			<attribute name="Spot FOV" value="41.69" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+	</node>
+	<node id="16777237">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="-56.8292 21.7079 21.5102" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16777412">
+			<attribute name="Color" value="0.73 0.78 0.99 1" />
+			<attribute name="Range" value="50" />
+			<attribute name="Spot FOV" value="41.69" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+	</node>
+	<node id="16777253">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="51.8581 17.8229 -33.9003" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<node id="13">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-11.4907 -15.1845 -5.29046" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="19">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="20">
+				<attribute name="Physics Position" value="40.3674 2.63835 -39.1907" />
+			</component>
+			<component type="CollisionShape" id="21" />
+			<node id="16777257">
+				<attribute name="Is Enabled" value="true" />
+				<attribute name="Name" value="" />
+				<attribute name="Tags" />
+				<attribute name="Position" value="0 2.04933 0" />
+				<attribute name="Rotation" value="1 0 0 0" />
+				<attribute name="Scale" value="1 1 1" />
+				<attribute name="Variables" />
+				<component type="Light" id="16777576">
+					<attribute name="Color" value="1 0.72 0.7 1" />
+					<attribute name="Brightness Multiplier" value="0.24" />
+					<attribute name="Light Shape Texture" value="TextureCube;" />
+				</component>
+			</node>
+		</node>
+		<node id="14">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-2.80885 -11.7438 -7.73464" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="5.57515 3.29609 5.12588" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="22">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="23">
+				<attribute name="Physics Position" value="49.0492 6.07908 -41.6349" />
+			</component>
+			<component type="CollisionShape" id="24" />
+		</node>
+		<node id="16">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="2.89454 -9.13917 -6.28178" />
+			<attribute name="Rotation" value="0.693976 -0.135637 0.693976 0.135637" />
+			<attribute name="Scale" value="1.56325 0.555467 6.6937" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="28">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="29">
+				<attribute name="Physics Rotation" value="0.693976 -0.135637 0.693976 0.135637" />
+				<attribute name="Physics Position" value="54.7526 8.68371 -40.182" />
+			</component>
+			<component type="CollisionShape" id="30" />
+		</node>
+		<node id="19">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-33.5301 -6.15282 2.24688" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="160.247 0.623862 9.57775" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="37">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="38">
+				<attribute name="Physics Position" value="18.328 11.6701 -31.6534" />
+			</component>
+			<component type="CollisionShape" id="39" />
+		</node>
+		<node id="20">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="8.17248 -7.13276 -4.97405" />
+			<attribute name="Rotation" value="0.98143 -0.19182 0 0" />
+			<attribute name="Scale" value="1.56325 0.555467 5.55715" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="40">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="41">
+				<attribute name="Physics Rotation" value="0.98143 -0.19182 0 0" />
+				<attribute name="Physics Position" value="60.0305 10.6901 -38.8743" />
+			</component>
+			<component type="CollisionShape" id="42" />
+		</node>
+		<node id="16777258">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="10.0137 -6.39837 -10.8142" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777577">
+				<attribute name="Color" value="0.2 0.145 0.04 1" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+			</component>
+		</node>
+		<node id="16777259">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-12.6659 -3.58581 11.4349" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777578">
+				<attribute name="Color" value="0.2 0.145 0.04 1" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+			</component>
+		</node>
+		<node id="16777260">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-61.6779 -3.5076 5.3944" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777579">
+				<attribute name="Color" value="0.2 0.145 0.04 1" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+			</component>
+		</node>
+		<node id="16777261">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-19.356 -4.79417 -16.2571" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777580">
+				<attribute name="Color" value="0.9 0.365 0.3 1" />
+				<attribute name="Brightness Multiplier" value="0.45" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+			</component>
+		</node>
+		<node id="16777262">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="8.46761 10.7613 -26.2632" />
+			<attribute name="Rotation" value="0.966612 -0.247494 -0.0554336 0.0365335" />
+			<attribute name="Scale" value="0.999999 1 0.999999" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777581">
+				<attribute name="Light Type" value="Spot" />
+				<attribute name="Color" value="0.49 0.835 1 1" />
+				<attribute name="Range" value="50" />
+			</component>
+		</node>
+		<node id="16777263">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-13.692 0.297928 -46.9157" />
+			<attribute name="Rotation" value="0.988326 0.0173748 -0.151351 0.00113105" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777582">
+				<attribute name="Light Type" value="Spot" />
+				<attribute name="Color" value="0.49 0.835 1 1" />
+				<attribute name="Range" value="31.91" />
+			</component>
+		</node>
+		<node id="16777264">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="5.126 -5.60807 -2.59108" />
+			<attribute name="Rotation" value="0.147678 0.236477 -0.189974 -0.941371" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777583">
+				<attribute name="Light Type" value="Spot" />
+				<attribute name="Color" value="0.49 0.835 1 1" />
+				<attribute name="Range" value="50" />
+			</component>
+		</node>
+		<node id="21">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="12.0239 -7.92438 -7.73464" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="12.5738 0.623862 9.57775" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="43">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="44">
+				<attribute name="Physics Position" value="63.882 9.8985 -41.6349" />
+			</component>
+			<component type="CollisionShape" id="45" />
+		</node>
+		<node id="23">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-92.2479 -12.9997 7.06218" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="12.5738 0.623862 9.57775" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="49">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="50">
+				<attribute name="Physics Position" value="-40.3899 4.82318 -26.8381" />
+			</component>
+			<component type="CollisionShape" id="51" />
+		</node>
+		<node id="22">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-14.7949 -14.2333 -6.08315" />
+			<attribute name="Rotation" value="-4.3671e-008 1.23312e-008 -0.98143 -0.19182" />
+			<attribute name="Scale" value="1.56325 0.555467 6.6937" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="46">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="47">
+				<attribute name="Physics Rotation" value="4.3671e-008 -1.23312e-008 0.98143 0.19182" />
+				<attribute name="Physics Position" value="37.0632 3.58958 -39.9834" />
+			</component>
+			<component type="CollisionShape" id="48" />
+		</node>
+		<node id="17">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-9.33847 -12.9997 -13.8354" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="12.5738 0.623862 9.57775" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="31">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="32">
+				<attribute name="Physics Position" value="42.5196 4.82318 -47.7357" />
+			</component>
+			<component type="CollisionShape" id="33" />
+		</node>
+		<node id="15">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-4.28101 -11.6844 -13.2552" />
+			<attribute name="Rotation" value="0.98143 -0.19182 0 0" />
+			<attribute name="Scale" value="1.56325 0.555467 6.6937" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="25">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="26">
+				<attribute name="Physics Rotation" value="0.98143 -0.19182 0 0" />
+				<attribute name="Physics Position" value="47.5771 6.13848 -47.1555" />
+			</component>
+			<component type="CollisionShape" id="27" />
+		</node>
+		<node id="24">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-87.948 -7.35228 -5.51692" />
+			<attribute name="Rotation" value="0.98143 -0.19182 0 0" />
+			<attribute name="Scale" value="1.56325 0.555467 6.6937" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="52">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="53">
+				<attribute name="Physics Rotation" value="0.98143 -0.19182 0 0" />
+				<attribute name="Physics Position" value="-36.09 10.4706 -39.4172" />
+			</component>
+			<component type="CollisionShape" id="54" />
+		</node>
+		<node id="25">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-89.6967 -8.66045 -8.49045" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="8.00609 0.623862 9.57775" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="55">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="56">
+				<attribute name="Physics Position" value="-37.8387 9.16243 -42.3907" />
+			</component>
+			<component type="CollisionShape" id="57" />
+		</node>
+		<node id="26">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-92.6741 -10.7851 1.45003" />
+			<attribute name="Rotation" value="-4.28997e-008 8.38472e-009 0.98143 0.19182" />
+			<attribute name="Scale" value="1.56325 0.555467 11.3578" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="58">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="59">
+				<attribute name="Physics Rotation" value="-4.28997e-008 8.38472e-009 0.98143 0.19182" />
+				<attribute name="Physics Position" value="-40.8161 7.03778 -32.4502" />
+			</component>
+			<component type="CollisionShape" id="60" />
+		</node>
+		<node id="27">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Box" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-9.26624 -14.7596 -5.29046" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="61">
+				<attribute name="Model" value="Model;Models/Box.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="RigidBody" id="62">
+				<attribute name="Physics Position" value="42.5918 3.06327 -39.1907" />
+			</component>
+			<component type="CollisionShape" id="63" />
+			<node id="16777307">
+				<attribute name="Is Enabled" value="true" />
+				<attribute name="Name" value="" />
+				<attribute name="Tags" />
+				<attribute name="Position" value="0 2.04933 0" />
+				<attribute name="Rotation" value="1 0 0 0" />
+				<attribute name="Scale" value="1 1 1" />
+				<attribute name="Variables" />
+				<component type="Light" id="16777894">
+					<attribute name="Color" value="1 0.72 0.7 1" />
+					<attribute name="Brightness Multiplier" value="0.24" />
+					<attribute name="Light Shape Texture" value="TextureCube;" />
+				</component>
+			</node>
+		</node>
+		<node id="16777335">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-13.6743 0.297928 -46.9157" />
+			<attribute name="Rotation" value="0.988326 0.0173748 -0.151351 0.00113105" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16778062">
+				<attribute name="Color" value="0.49 0.835 1 1" />
+				<attribute name="Brightness Multiplier" value="0.09" />
+				<attribute name="Range" value="8.41" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+			</component>
+		</node>
+	</node>
+	<node id="16777405">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="PlayerStart" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="63.947 13.4816 -31.7299" />
+		<attribute name="Rotation" value="0.707107 0 -0.707107 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+	</node>
+	<node id="16777415">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="Portal" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="25.0565 2.89734 -51.3875" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<component type="Light" id="16778432">
+			<attribute name="Color" value="0.52 0.21 1 1" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+		<component type="Light" id="16778433">
+			<attribute name="Color" value="1 0.07 1 1" />
+			<attribute name="Brightness Multiplier" value="16" />
+			<attribute name="Range" value="2.19" />
+			<attribute name="Light Shape Texture" value="TextureCube;" />
+		</component>
+		<component type="ParticleEmitter" id="16778434">
+			<attribute name="Effect" value="ParticleEffect;Particle/Portal.xml" />
+			<attribute name="Animation LOD Bias" value="0" />
+			<attribute name="Particles">
+				<variant type="Int" value="40" />
+				<variant type="Vector3" value="0 0 -1.59409e-019" />
+				<variant type="Vector2" value="8.51989e-043 9.80909e-045" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23304e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="1.96182e-044" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="-1590167668" />
+				<variant type="Vector3" value="8.51989e-043 2.94273e-044 0" />
+				<variant type="Vector2" value="-6.23255e-019 8.51989e-043" />
+				<variant type="Float" value="3.92364e-044" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23285e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Int" value="35" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="-6.23308e-019 8.51989e-043 5.88545e-044" />
+				<variant type="Vector2" value="0 -6.23242e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="6.86636e-044" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23304e-019" />
+				<variant type="Int" value="608" />
+				<variant type="Int" value="56" />
+				<variant type="Vector3" value="0 -6.23268e-019 8.51989e-043" />
+				<variant type="Vector2" value="8.82818e-044 0" />
+				<variant type="Float" value="-6.23288e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="9.80909e-044" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="-1590168052" />
+				<variant type="Int" value="608" />
+				<variant type="Vector3" value="1.079e-043 0 -6.18273e-019" />
+				<variant type="Vector2" value="8.51989e-043 1.17709e-043" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23197e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="1.27518e-043" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="-1590168628" />
+				<variant type="Vector3" value="8.51989e-043 1.37327e-043 0" />
+				<variant type="Vector2" value="-6.23318e-019 8.51989e-043" />
+				<variant type="Float" value="1.47136e-043" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23304e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Int" value="112" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="-6.23308e-019 8.51989e-043 1.66755e-043" />
+				<variant type="Vector2" value="0 -6.23298e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="1.76564e-043" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-6.23255e-019" />
+				<variant type="Int" value="608" />
+				<variant type="Int" value="133" />
+				<variant type="Vector3" value="0 -6.23255e-019 8.51989e-043" />
+				<variant type="Vector2" value="1.96182e-043 0" />
+				<variant type="Float" value="-6.23298e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="2.57839e-043" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="-1594161572" />
+				<variant type="Int" value="608" />
+				<variant type="Vector3" value="2.69049e-043 0 -4.25251e-019" />
+				<variant type="Vector2" value="8.51989e-043 2.8026e-043" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-4.28322e-019" />
+				<variant type="Float" value="8.51989e-043" />
+				<variant type="Float" value="6.7422e+022" />
+				<variant type="Int" value="8250" />
+				<variant type="Int" value="-1181864226" />
+				<variant type="Vector3" value="-1.48291e-040 6.7422e+022 1.15607e-041" />
+				<variant type="Vector2" value="-0.000269285 -1.4865e-040" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="-0.000267378" />
+				<variant type="Float" value="-1.48874e-040" />
+				<variant type="Int" value="1701080909" />
+				<variant type="Int" value="8250" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="0 0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Float" value="0" />
+				<variant type="Int" value="0" />
+				<variant type="Int" value="0" />
+			</attribute>
+			<attribute name="Billboards">
+				<variant type="Int" value="40" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+				<variant type="Vector3" value="0 0 0" />
+				<variant type="Vector2" value="1 1" />
+				<variant type="Vector4" value="0 0 1 1" />
+				<variant type="Color" value="1 1 1 1" />
+				<variant type="Float" value="0" />
+				<variant type="Vector3" value="0 1 0" />
+				<variant type="Bool" value="false" />
+			</attribute>
+		</component>
+		<component type="CollisionShape" id="16778435">
+			<attribute name="Shape Type" value="Sphere" />
+			<attribute name="Size" value="2.15 1 1" />
+		</component>
+		<component type="RigidBody" id="16778436">
+			<attribute name="Physics Position" value="25.0565 2.89734 -51.3875" />
+			<attribute name="Is Trigger" value="true" />
+		</component>
+		<component type="ScriptInstance" id="16778437">
+			<attribute name="Delayed Method Calls" value="0" />
+			<attribute name="Script File" value="ScriptFile;Scripts/portal.as" />
+			<attribute name="Class Name" value="portal" />
+			<attribute name="sceneName" value="d_mezgine" />
+		</component>
+		<node id="16777416">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="Torus" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="0 0 0" />
+			<attribute name="Rotation" value="0.707107 0.707107 0 0" />
+			<attribute name="Scale" value="4 4 4" />
+			<attribute name="Variables" />
+			<component type="StaticModel" id="16778438">
+				<attribute name="Model" value="Model;Models/Torus.mdl" />
+				<attribute name="Material" value="Material;" />
+			</component>
+			<component type="CollisionShape" id="16778439">
+				<attribute name="Shape Type" value="TriangleMesh" />
+				<attribute name="Model" value="Model;Models/Torus.mdl" />
+			</component>
+			<component type="RigidBody" id="16778440">
+				<attribute name="Physics Rotation" value="0.707107 0.707107 0 0" />
+				<attribute name="Physics Position" value="25.0565 2.89734 -51.3875" />
+			</component>
+		</node>
+		<node id="16777417">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="0 2.5 0" />
+			<attribute name="Rotation" value="-4.37114e-008 0 1 -0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Text3D" id="16778441">
+				<attribute name="Font" value="Font;Fonts/BlueHighway.ttf" />
+				<attribute name="Font Size" value="64" />
+				<attribute name="Text" value="Mezgine" />
+				<attribute name="Text Alignment" value="Center" />
+				<attribute name="Row Spacing" value="1.32" />
+				<attribute name="Draw Distance" value="35" />
+				<attribute name="Width" value="301" />
+				<attribute name="Horiz Alignment" value="Center" />
+				<attribute name="Vert Alignment" value="Bottom" />
+				<attribute name="Bottom Left Color" value="0 -1 1 1" />
+				<attribute name="Bottom Right Color" value="0 -1 1 1" />
+				<attribute name="Shadow Offset" value="5 4" />
+				<attribute name="Stroke Thickness" value="3" />
+				<attribute name="Effect Depth Bias" value="0.01" />
+			</component>
+		</node>
+	</node>
+</scene>

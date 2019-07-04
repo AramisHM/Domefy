@@ -29,6 +29,7 @@ uniform mat4 cViewProj;
 uniform vec4 cUOffset;
 uniform vec4 cVOffset;
 uniform mat4 cZone;
+uniform mat4 cSpotMatrix;
 #if !defined(GL_ES) || defined(WEBGL)
     uniform mat4 cLightMatrices[4];
 #else
@@ -79,6 +80,7 @@ uniform vec4 cShadowDepthFade;
 uniform vec2 cShadowIntensity;
 uniform vec2 cShadowMapInvSize;
 uniform vec4 cShadowSplits;
+uniform float cSpotFovPS;
 uniform mat4 cLightMatricesPS[4];
 #ifdef VSM_SHADOW
 uniform vec2 cVSMShadowParams;
@@ -126,6 +128,8 @@ uniform LightVS
 #ifdef NUMVERTEXLIGHTS
     vec4 cVertexLights[4 * 3];
 #else
+    mat4 cSpotMatrix;
+    float cSpotFovPS;
     mat4 cLightMatrices[4];
 #endif
 };

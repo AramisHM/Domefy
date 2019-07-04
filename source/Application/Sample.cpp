@@ -89,7 +89,7 @@ void Sample::Start() {
         scene_->CreateComponent<ScriptInstance>(LOCAL);
 
     Sample::frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>("Scripts/01_HelloWorld.as"), "Fpmed");
+        cache->GetResource<ScriptFile>("Scripts/game.as"), "Fpmed");
 
 #endif
 
@@ -248,70 +248,70 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
 
     // Common rendering quality controls, only when UI has no focused element
     else if (!GetSubsystem<UI>()->GetFocusElement()) {
-        Renderer* renderer = GetSubsystem<Renderer>();
+        // Renderer* renderer = GetSubsystem<Renderer>();
 
-        // Texture quality
-        if (key == '1') {
-            int quality = renderer->GetTextureQuality();
-            ++quality;
-            if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
-            renderer->SetTextureQuality(quality);
-        }
+        // // Texture quality
+        // if (key == '1') {
+        //     int quality = renderer->GetTextureQuality();
+        //     ++quality;
+        //     if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
+        //     renderer->SetTextureQuality(quality);
+        // }
 
-        // Material quality
-        else if (key == '2') {
-            int quality = renderer->GetMaterialQuality();
-            ++quality;
-            if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
-            renderer->SetMaterialQuality(quality);
-        }
+        // // Material quality
+        // else if (key == '2') {
+        //     int quality = renderer->GetMaterialQuality();
+        //     ++quality;
+        //     if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
+        //     renderer->SetMaterialQuality(quality);
+        // }
 
-        // Specular lighting
-        else if (key == '3')
-            renderer->SetSpecularLighting(!renderer->GetSpecularLighting());
+        // // Specular lighting
+        // else if (key == '3')
+        //     renderer->SetSpecularLighting(!renderer->GetSpecularLighting());
 
-        // Shadow rendering
-        else if (key == '4')
-            renderer->SetDrawShadows(!renderer->GetDrawShadows());
+        // // Shadow rendering
+        // else if (key == '4')
+        //     renderer->SetDrawShadows(!renderer->GetDrawShadows());
 
-        // Shadow map resolution
-        else if (key == '5') {
-            int shadowMapSize = renderer->GetShadowMapSize();
-            shadowMapSize *= 2;
-            if (shadowMapSize > 2048) shadowMapSize = 512;
-            renderer->SetShadowMapSize(shadowMapSize);
-        }
+        // // Shadow map resolution
+        // else if (key == '5') {
+        //     int shadowMapSize = renderer->GetShadowMapSize();
+        //     shadowMapSize *= 2;
+        //     if (shadowMapSize > 2048) shadowMapSize = 512;
+        //     renderer->SetShadowMapSize(shadowMapSize);
+        // }
 
-        // Shadow depth and filtering quality
-        else if (key == '6') {
-            ShadowQuality quality = renderer->GetShadowQuality();
-            quality = (ShadowQuality)(quality + 1);
-            if (quality > SHADOWQUALITY_BLUR_VSM)
-                quality = SHADOWQUALITY_SIMPLE_16BIT;
-            renderer->SetShadowQuality(quality);
-        }
+        // // Shadow depth and filtering quality
+        // else if (key == '6') {
+        //     ShadowQuality quality = renderer->GetShadowQuality();
+        //     quality = (ShadowQuality)(quality + 1);
+        //     if (quality > SHADOWQUALITY_BLUR_VSM)
+        //         quality = SHADOWQUALITY_SIMPLE_16BIT;
+        //     renderer->SetShadowQuality(quality);
+        // }
 
-        // Occlusion culling
-        else if (key == '7') {
-            bool occlusion = renderer->GetMaxOccluderTriangles() > 0;
-            occlusion = !occlusion;
-            renderer->SetMaxOccluderTriangles(occlusion ? 5000 : 0);
-        }
+        // // Occlusion culling
+        // else if (key == '7') {
+        //     bool occlusion = renderer->GetMaxOccluderTriangles() > 0;
+        //     occlusion = !occlusion;
+        //     renderer->SetMaxOccluderTriangles(occlusion ? 5000 : 0);
+        // }
 
-        // Instancing
-        else if (key == '8')
-            renderer->SetDynamicInstancing(!renderer->GetDynamicInstancing());
+        // // Instancing
+        // else if (key == '8')
+        //     renderer->SetDynamicInstancing(!renderer->GetDynamicInstancing());
 
-        // Take screenshot
-        else if (key == '9') {
-            Graphics* graphics = GetSubsystem<Graphics>();
-            Image screenshot(context_);
-            graphics->TakeScreenShot(screenshot);
-            // Here we save in the Data folder with date and time appended
-            // screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir() +
-            // "Data/Screenshot_" + Time::GetTimeStamp().Replaced(':',
-            // '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
-        }
+        // // Take screenshot
+        // else if (key == '9') {
+        //     Graphics* graphics = GetSubsystem<Graphics>();
+        //     Image screenshot(context_);
+        //     graphics->TakeScreenShot(screenshot);
+        //     // Here we save in the Data folder with date and time appended
+        //     // screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir() +
+        //     // "Data/Screenshot_" + Time::GetTimeStamp().Replaced(':',
+        //     // '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
+        // }
     }
 }
 

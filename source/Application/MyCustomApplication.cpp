@@ -59,9 +59,9 @@ void MyCustomApplication::CreateScene() {
 
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     Renderer* renderer = GetSubsystem<Renderer>();
-    renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
-    renderer->SetTextureAnisotropy(16);
-    renderer->SetTextureQuality(QUALITY_MAX);
+    // renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
+    // renderer->SetTextureAnisotropy(16);
+    // renderer->SetTextureQuality(QUALITY_MAX);
 
     // Zone + lighting + fog
     Node* zoneNode = scene_->CreateChild("Zone");
@@ -95,11 +95,11 @@ void MyCustomApplication::CreateScene() {
     }
 
     // skyboxskybox
-    Node* skyNode = scene_->CreateChild("Sky");
-    Skybox* skybox = skyNode->CreateComponent<Skybox>();
-    skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    skybox->SetMaterial(
-        cache->GetResource<Material>("Materials/CustomSkybox.xml"));
+    // Node* skyNode = scene_->CreateChild("Sky");
+    // Skybox* skybox = skyNode->CreateComponent<Skybox>();
+    // skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    // skybox->SetMaterial(
+    //     cache->GetResource<Material>("Materials/CustomSkybox.xml"));
 
     // Some random mesh for testing custom componenets
     {
@@ -399,29 +399,29 @@ void MyCustomApplication::Start() {
     Sample::CreateScene();  // create fulldome's scene
 
 #ifdef fpmed_allow_cpp_application
-    if (selected_serv == 1) {
-        // debug text specific.
-        {
-            ResourceCache* cache = GetSubsystem<ResourceCache>();
-            UI* ui = GetSubsystem<UI>();
 
-            debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
-            debTex->SetText("Loading images, please wait a moment.");
-            debTex->SetFont(
-                cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
-                15);
-            debTex->SetTextAlignment(HA_CENTER);
-            debTex->SetHorizontalAlignment(HA_CENTER);
-            debTex->SetVerticalAlignment(VA_CENTER);
-            debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
-        }
+    // debug text specific.
+    {
+        ResourceCache* cache = GetSubsystem<ResourceCache>();
+        UI* ui = GetSubsystem<UI>();
 
-        // load hologram textures
-        {
-            ResourceCache* cache = GetSubsystem<ResourceCache>();
-            int seq = 8650;
-        }
+        debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
+        debTex->SetText("Loading images, please wait a moment.");
+        debTex->SetFont(
+            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
+            15);
+        debTex->SetTextAlignment(HA_CENTER);
+        debTex->SetHorizontalAlignment(HA_CENTER);
+        debTex->SetVerticalAlignment(VA_CENTER);
+        debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
     }
+
+    // load hologram textures
+    {
+        ResourceCache* cache = GetSubsystem<ResourceCache>();
+        int seq = 8650;
+    }
+
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
     // create C++ app
@@ -440,17 +440,12 @@ void MyCustomApplication::Start() {
 void MyCustomApplication::HandleUpdates(StringHash eventType,
                                         VariantMap& eventData) {
     using namespace Update;
-    // Take the frame time step, which is stored as a float
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
-    MoveCamera(timeStep);  // only server dictates the position of camera
+    MoveCamera(timeStep);
 
     Vector3 posCam, posHolo;
-    if (selected_serv == 0 && hologramNode == 0) {
-        hologramNode = scene_->GetChild("Hologram");
-        hologramPlane = hologramNode->GetComponent<StaticModel>();
-        hologramMaterial = hologramPlane->GetMaterial();
-    }
+
     posHolo = hologramNode->GetPosition();
     posCam = cameraNode_->GetPosition();
     Urho3D::Camera* camComp = cameraNode_->GetComponent<Urho3D::Camera>();

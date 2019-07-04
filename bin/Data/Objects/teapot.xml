@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<node id="16777217">
+	<attribute name="Is Enabled" value="true" />
+	<attribute name="Name" value="" />
+	<attribute name="Tags" />
+	<attribute name="Position" value="-0.146218 -3.04427 7.88854" />
+	<attribute name="Rotation" value="1 0 0 0" />
+	<attribute name="Scale" value="1 1 1" />
+	<attribute name="Variables" />
+	<component type="RigidBody" id="16777228">
+		<attribute name="Physics Position" value="-0.146218 -3.04427 7.88854" />
+		<attribute name="Mass" value="2" />
+	</component>
+	<component type="CollisionShape" id="16777229">
+		<attribute name="Shape Type" value="Sphere" />
+		<attribute name="Size" value="2.5 1 1" />
+	</component>
+	<component type="sdfCollider" id="16777230">
+		<attribute name="Radius" value="2.5" />
+	</component>
+	<component type="ScriptInstance" id="16777232">
+		<attribute name="Delayed Method Calls" value="0" />
+		<attribute name="Script File" value="ScriptFile;Scripts/sdfBody.as" />
+		<attribute name="Class Name" value="sdfBody" />
+	</component>
+	<node id="16777218">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="TeaPot" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 -0.9 0" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="4 4 4" />
+		<attribute name="Variables" />
+		<component type="StaticModel" id="16777231">
+			<attribute name="Model" value="Model;Models/TeaPot.mdl" />
+			<attribute name="Material" value="Material;;" />
+		</component>
+	</node>
+</node>

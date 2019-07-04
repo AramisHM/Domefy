@@ -1,9 +1,12 @@
 #include "Uniforms.glsl"
 #include "Samplers.glsl"
 #include "Transform.glsl"
+#include "ScreenPos.glsl"
 
 varying vec2 vTexCoord;
 varying vec4 vColor;
+varying vec4 vWorldPos;
+varying vec2 vScreenPos;
 
 #ifdef TEXT_EFFECT_SHADOW
 uniform vec2 cShadowOffset;
@@ -22,10 +25,16 @@ void VS()
     
     vTexCoord = iTexCoord;
     vColor = iColor;
+
+     vWorldPos = vec4(worldPos, GetDepth(gl_Position));
+    vScreenPos = GetScreenPosPreDiv(gl_Position);
 }
 
 void PS()
 {
+    float depth = DecodeDepth(texture2D(sDepthBuffer, vScreenPos).rgb);
+    if (vWorldPos.w>depth) discard;
+    
     gl_FragColor.rgb = vColor.rgb;
 
 #ifdef SIGNED_DISTANCE_FIELD

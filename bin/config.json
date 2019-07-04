@@ -2,7 +2,7 @@
   "type": "fpmed_config",
   "name": "Prototype prjection 20190617",
   "borderless": false,
-  "fullscreen": false,
+  "fullscreen": true,
   "monitor": 1,
   "custom_assets_path": {
     "linux": "/media/aramis/108442EE8442D5BE/vhp-research/male-lowres.json",
@@ -13,8 +13,8 @@
     "y": 20
   },
   "master_resolution": {
-    "x": 1200,
-    "y": 700
+    "x": 2560,
+    "y": 1080
   },
   "presets": [
     {

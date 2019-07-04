@@ -1,0 +1,7 @@
+<cubemap>
+    <image name="sandstorm02.dds" layout="horizontalnvidia" />
+    
+    <filter mode="trilinear" />
+    <mipmap enable="true" />
+    <srgb enable="true" />
+</cubemap>

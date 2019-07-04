@@ -1,23 +1,218 @@
 <renderpath>
     <rendertarget name="albedo" sizedivisor="1 1" format="rgba" />
     <rendertarget name="normal" sizedivisor="1 1" format="rgba" />
+    <rendertarget name="bent_normal" sizedivisor="1 1" format="rgba" />
     <rendertarget name="depth" sizedivisor="1 1" format="lineardepth" />
-    <command type="clear" color="fog" depth="1.0" stencil="0" />
+
+    <rendertarget name="depth4" sizedivisor="64 64" format="lineardepth" filter="false" />
+    <rendertarget name="depth3" sizedivisor="32 32" format="lineardepth" filter="false" />
+    <rendertarget name="depth2" sizedivisor="8 8" format="lineardepth" filter="false" />
+    <rendertarget name="depth1" sizedivisor="2 2" format="lineardepth" filter="false" />
+
+    <command type="clear" color="fog" depth="1.0" stencil="255" />
+    <command type="clear" color="12000 0 0 0" output="depth" />
+
     <command type="scenepass" pass="deferred" marktostencil="true" vertexlights="true" metadata="gbuffer">
         <output index="0" name="viewport" />
         <output index="1" name="albedo" />
         <output index="2" name="normal" />
         <output index="3" name="depth" />
     </command>
-    <command type="lightvolumes" vs="DeferredLight" ps="DeferredLight">
+
+    <command type="quad" tag="premarch" vs="raymarch" ps="raymarch" psdefines="PREMARCH" output="depth4">
+      <parameter name="RAY_STEPS" value="96" />
+      <texture unit="diffuse" name="Textures/sdf/sdf01.png"/>
+    </command>
+
+    <command type="quad" tag="premarch" vs="raymarch" ps="raymarch" psdefines="PREMARCH" output="depth3">
+      <texture unit="specular" name="depth4" />
+      <texture unit="environment" name="Textures/sdf/sdf01.png"/>
+      <parameter name="RAY_STEPS" value="96" />
+    </command>
+
+    <command type="quad" tag="premarch" vs="raymarch" ps="raymarch" psdefines="PREMARCH" output="depth2">
+      <texture unit="specular" name="depth3" />
+      <texture unit="environment" name="Textures/sdf/sdf01.png"/>
+      <parameter name="RAY_STEPS" value="192" />
+    </command>
+
+    <command type="quad" tag="premarch" vs="raymarch" ps="raymarch" psdefines="PREMARCH" output="depth1">
+      <texture unit="specular" name="depth2" />
+      <texture unit="environment" name="Textures/sdf/sdf01.png"/>
+      <parameter name="RAY_STEPS" value="96" />
+    </command>
+
+    <command type="quad" tag="raymarch" vs="raymarch" ps="raymarch" psdefines="DEFERRED">
+      <texture unit="depth" name="depth" />
+      <texture unit="specular" name="depth1" />
+      <texture unit="diff" name="Textures/colormaps/redrock.png" />
+      <texture unit="emissive" name="Textures/patterns/ptrn1.png" />
+      <!--output index="0" name="viewport" /-->
+      <output index="0" name="albedo" />
+      <output index="1" name="normal" />
+      <output index="2" name="depth" />
+      <parameter name="RAY_STEPS" value="32" />
+      <parameter name="TexParam" value="0.1f 0.1f 0.1f 0.1f" />
+    </command>
+
+
+<!--##################################################################################################-->
+<!--##################################################################################################-->
+<!--##################################################################################################-->
+
+    <command type="quad" vs="ambient" ps="ambient" psdefines="DEFERRED FOG">
+      <texture unit="depth" name="depth" />
+      <texture unit="normal" name="normal" />
+      <texture unit="albedo" name="albedo" />
+      <texture unit="environment" name="Textures/cubemaps/dawnhaze01.xml"/>
+      <output index="0" name="viewport" />
+      <output index="1" name="bent_normal" />
+      <parameter name="SkyLum" value="100.0" />
+      <parameter name="AmbLight" value="100.0" />
+      <parameter name="AddSkyColor" value="0.01 0.02 0.1" />
+      <parameter name="DebugPlane" value="0" />
+    </command>
+
+    <command type="lightvolumes" vs="DeferredLight" ps="DeferredLight" >
         <texture unit="albedo" name="albedo" />
         <texture unit="normal" name="normal" />
+        <texture unit="light" name="bent_normal" />
         <texture unit="depth" name="depth" />
     </command>
     <command type="scenepass" pass="postopaque" />
     <command type="scenepass" pass="refract">
         <texture unit="environment" name="viewport" />
     </command>
-    <command type="scenepass" pass="alpha" vertexlights="true" sort="backtofront" metadata="alpha" />
+    <command type="scenepass" pass="alpha" vertexlights="true" sort="backtofront" metadata="alpha" >
+        <texture unit="depth" name="depth" />
+    </command>
     <command type="scenepass" pass="postalpha" sort="backtofront" />
+
+
+<!-- AUTOEXPOSURE -->
+    <rendertarget name="hdr128" tag="AutoExposure" size="128 128" format="rgba16f" filter="true" />
+    <rendertarget name="lum64" tag="AutoExposure" size="64 64" format="rg16f" filter="true" />
+    <rendertarget name="lum16" tag="AutoExposure" size="16 16" format="rg16f" filter="true" />
+    <rendertarget name="lum4" tag="AutoExposure" size="4 4" format="rg16f" filter="true" />
+    <rendertarget name="lum1" tag="AutoExposure" size="1 1" format="rg16f" filter="false" />
+    <rendertarget name="adaptedLum" tag="AutoExposure" size="1 1" format="rg16f" filter="false" persistent="true" />
+    <rendertarget name="prevAdaptedLum" tag="AutoExposure" size="1 1" format="rg16f" filter="false" />
+    <command type="quad" tag="AutoExposure" vs="CopyFramebuffer" ps="CopyFramebuffer" output="hdr128">
+        <texture unit="diffuse" name="viewport" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="LUMINANCE64" psdefines="LUMINANCE64" output="lum64">
+        <texture unit="diffuse" name="hdr128" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="LUMINANCE16" psdefines="LUMINANCE16" output="lum16">
+        <texture unit="diffuse" name="lum64" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="LUMINANCE4" psdefines="LUMINANCE4" output="lum4">
+        <texture unit="diffuse" name="lum16" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="LUMINANCE1" psdefines="LUMINANCE1" output="lum1">
+        <texture unit="diffuse" name="lum4" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="CopyFramebuffer" ps="CopyFramebuffer" output="prevAdaptedLum">
+        <texture unit="diffuse" name="adaptedLum" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="ADAPTLUMINANCE" psdefines="ADAPTLUMINANCE" output="adaptedLum">
+        <parameter name="AutoExposureAdaptRate" value="0.6" />
+        <parameter name="AutoExposureLumRange" value="0.01 8.0" />
+        <texture unit="diffuse" name="prevAdaptedLum" />
+        <texture unit="normal" name="lum1" />
+    </command>
+    <command type="quad" tag="AutoExposure" vs="AutoExposure" ps="AutoExposure" vsdefines="EXPOSE" psdefines="EXPOSE" output="viewport">
+        <parameter name="AutoExposureMiddleGrey" value="0.6" />
+        <texture unit="diffuse" name="viewport" />
+        <texture unit="normal" name="adaptedLum" />
+    </command>
+
+<!-- BLOOM -->
+
+    <rendertarget name="bright2" tag="BloomHDR" sizedivisor="2 2" format="rgba16f" filter="true" />
+    <rendertarget name="bright4" tag="BloomHDR" sizedivisor="4 4" format="rgba16f" filter="true" />
+    <rendertarget name="bright8" tag="BloomHDR" sizedivisor="8 8" format="rgba16f" filter="true" />
+    <rendertarget name="bright16" tag="BloomHDR" sizedivisor="16 16" format="rgba16f" filter="true" />
+    <rendertarget name="blur2" tag="BloomHDR" sizedivisor="2 2" format="rgba16f" filter="true" />
+    <rendertarget name="blur4" tag="BloomHDR" sizedivisor="4 4" format="rgba16f" filter="true" />
+    <rendertarget name="blur8" tag="BloomHDR" sizedivisor="8 8" format="rgba16f" filter="true" />
+    <rendertarget name="blur16" tag="BloomHDR" sizedivisor="16 16" format="rgba16f" filter="true" />
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BRIGHT" psdefines="BRIGHT" output="bright2">
+        <parameter name="BloomHDRThreshold" value="1.0" />
+        <texture unit="diffuse" name="viewport" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="CopyFramebuffer" ps="CopyFramebuffer" output="bright4">
+        <texture unit="diffuse" name="bright2" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="CopyFramebuffer" ps="CopyFramebuffer" output="bright8">
+        <texture unit="diffuse" name="bright4" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="CopyFramebuffer" ps="CopyFramebuffer" output="bright16">
+        <texture unit="diffuse" name="bright8" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR16" psdefines="BLUR16" output="blur16">
+        <parameter name="BloomHDRBlurDir" value="1.0 0.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="bright16" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR16" psdefines="BLUR16" output="bright16">
+        <parameter name="BloomHDRBlurDir" value="0.0 1.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blur16" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="COMBINE16" psdefines="COMBINE16" output="blur8">
+        <texture unit="diffuse" name="bright8" />
+        <texture unit="normal" name="bright16" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR8" psdefines="BLUR8" output="bright8">
+        <parameter name="BloomHDRBlurDir" value="1.0 0.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blur8" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR8" psdefines="BLUR8" output="blur8">
+        <parameter name="BloomHDRBlurDir" value="0.0 1.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="bright8" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="COMBINE8" psdefines="COMBINE8" output="blur4">
+        <texture unit="diffuse" name="bright4" />
+        <texture unit="normal" name="blur8" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR4" psdefines="BLUR4" output="bright4">
+        <parameter name="BloomHDRBlurDir" value="1.0 0.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blur4" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR4" psdefines="BLUR4" output="blur4">
+        <parameter name="BloomHDRBlurDir" value="0.0 1.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="bright4" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="COMBINE4" psdefines="COMBINE4" output="blur2">
+        <texture unit="diffuse" name="bright2" />
+        <texture unit="normal" name="blur4" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR2" psdefines="BLUR2" output="bright2">
+        <parameter name="BloomHDRBlurDir" value="1.0 0.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blur2" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR2" psdefines="BLUR2" output="blur2">
+        <parameter name="BloomHDRBlurDir" value="0.0 1.0" />
+        <parameter name="BloomHDRBlurRadius" value="1.0" />
+        <parameter name="BloomHDRBlurSigma" value="2.0" />
+        <texture unit="diffuse" name="bright2" />
+    </command>
+    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="COMBINE2" psdefines="COMBINE2" output="viewport">
+        <parameter name="BloomHDRMix" value="1.0 0.4" />
+        <texture unit="diffuse" name="viewport" />
+        <texture unit="normal" name="blur2" />
+    </command>
 </renderpath>

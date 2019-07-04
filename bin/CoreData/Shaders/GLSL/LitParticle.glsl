@@ -1,11 +1,13 @@
 #include "Uniforms.glsl"
 #include "Samplers.glsl"
 #include "Transform.glsl"
+#include "ScreenPos.glsl"
 #include "Lighting.glsl"
 #include "Fog.glsl"
 
 varying vec2 vTexCoord;
 varying vec4 vWorldPos;
+varying vec2 vScreenPos;
 #ifdef VERTEXCOLOR
     varying vec4 vColor;
 #endif
@@ -34,7 +36,7 @@ void VS()
     gl_Position = GetClipPos(worldPos);
     vTexCoord = GetTexCoord(iTexCoord);
     vWorldPos = vec4(worldPos, GetDepth(gl_Position));
-
+    vScreenPos = GetScreenPosPreDiv(gl_Position);
     #ifdef VERTEXCOLOR
         vColor = iColor;
     #endif
@@ -70,6 +72,8 @@ void VS()
 
 void PS()
 {
+    float depth = DecodeDepth(texture2D(sDepthBuffer, vScreenPos).rgb);
+    if (vWorldPos.w>depth) discard;
     // Get material diffuse albedo
     #ifdef DIFFMAP
         vec4 diffInput = texture2D(sDiffMap, vTexCoord);
