@@ -47,12 +47,12 @@ set_target_properties(fpmed
 )
 
 if(MINGW)
-FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/common*.a")
-if (FRACTALS)
-FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho-frac/*.a")
-else ()
-FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho3d-latest/*.a")
-endif ()
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/common*.a")
+	if (FRACTALS)
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho-frac/*.a")
+	else ()
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho3d-latest/*.a")
+	endif ()
 	
 	
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
@@ -93,7 +93,12 @@ endif ()
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 else()
 		
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/*.a")
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/common*.a")
+	if (FRACTALS)
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/urho-frac/*.a")
+	else ()
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/urho3d-latest/*.a")
+	endif ()
 
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)
@@ -110,7 +115,7 @@ else()
 	add_definitions(-DURHO3D_URHO2D)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 
-	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} "${CMAKE_SOURCE_DIR}/lib/GCC/windows/libAHMNet.a" pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
+	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
 endif()
 
 
