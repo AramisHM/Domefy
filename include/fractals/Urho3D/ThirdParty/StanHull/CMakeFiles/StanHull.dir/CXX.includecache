@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Aramis/Desktop/bananaft/Urho3D/Source/ThirdParty/StanHull/hull.cpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+assert.h
+-
+math.h
+-
+float.h
+-
+hull.h
+C:/Users/Aramis/Desktop/bananaft/Urho3D/Source/ThirdParty/StanHull/hull.h
+
+C:/Users/Aramis/Desktop/bananaft/Urho3D/Source/ThirdParty/StanHull/hull.h
+

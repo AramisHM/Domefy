@@ -20,8 +20,6 @@ class Text;
 class UIElement;
 }  // namespace Urho3D
 
-extern ServerMachine* machineMaster;
-
 /*
         Custom application class definition, in this
         case, the framework for slide presentation in
@@ -45,7 +43,7 @@ class MyCustomApplication : public Sample {
 #endif
    protected:
 #ifdef fpmed_allow_cpp_application
-    Urho3D::Text* debTex; /* this will be used to show the debug info of this
+    Urho3D::Text* debTex;        /* this will be used to show the debug info of this
                      prototype app */
     Material* hologramMaterial;  // this is a pointer to the billboard material
                                  // that we will change the texture.

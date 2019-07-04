@@ -1,0 +1,2 @@
+C:\MinGW\bin\ar.exe qc libJO.a  CMakeFiles/JO.dir/jo_jpeg.cpp.obj
+C:\MinGW\bin\ranlib.exe libJO.a

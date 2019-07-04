@@ -1,0 +1,2 @@
+C:\MinGW\bin\ar.exe qc libStanHull.a  CMakeFiles/StanHull.dir/hull.cpp.obj
+C:\MinGW\bin\ranlib.exe libStanHull.a

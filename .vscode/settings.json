@@ -105,5 +105,8 @@
                 "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
             ]
         }
-    ]
+    ],
+    "git.ignoreLimitWarning": true,
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "C_Cpp.configurationWarnings": "Disabled"
 }

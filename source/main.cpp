@@ -27,24 +27,24 @@ extern MyCustomApplication *application;
 conn extChanel;
 std::string commandString;
 
-void ListenForExternalCommands() {
-    if (sock_read(&extChanel, 1) > 0) {
-        // printf(
-        //     "\nReceived a command via AHMNet from %s, with the following
-        //     data: "
-        //     "%s\n\n",
-        //     sender_ip(&extChanel), extChanel.buf);
-        commandString = std::string(extChanel.buf);
-    } else {
-        commandString = "";
-    }
-}
+// void ListenForExternalCommands() {
+//     if (sock_read(&extChanel, 1) > 0) {
+//         // printf(
+//         //     "\nReceived a command via AHMNet from %s, with the following
+//         //     data: "
+//         //     "%s\n\n",
+//         //     sender_ip(&extChanel), extChanel.buf);
+//         commandString = std::string(extChanel.buf);
+//     } else {
+//         commandString = "";
+//     }
+// }
 
 int main(int argc, char *argv[]) {
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
-    ahmnet_init();
-    udp_listen("127.0.0.1:42871", &extChanel);
+    // ahmnet_init();
+    // udp_listen("127.0.0.1:42871", &extChanel);
     fpmedInit(argc, argv);
 
     p1->LoadConfigFile("./config.json");
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
         application->Start();
 
         while (application->isApplication()) {
-            ListenForExternalCommands();
+            // ListenForExternalCommands();
             application->RunFrameC();
         }
         application->Stop();
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     application->Stop();
     delete application;
     delete context;
-    ahmnet_clean();
+    // ahmnet_clean();
 
     return 0;
 }

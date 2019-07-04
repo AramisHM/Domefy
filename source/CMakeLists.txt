@@ -1,9 +1,6 @@
 FILE(GLOB_RECURSE Fpmed_Sources2 "./*.cpp" "./*.inl" "./*.h" "./*.rc")
-FILE(GLOB_RECURSE Fpmed_Includes "./*.h" "../include/*.h" "../include/Urho3D/*.h")
+# FILE(GLOB_RECURSE Fpmed_Includes "./*.h" "../include/*.h" "../include/Urho3D/*.h")
 
-if(NOT WIN32)
-FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_BINARY_DIR}/lib/*.a")
-endif(NOT WIN32)
 
 #Compile resource on Windows
 # Reference: https://stackoverflow.com/questions/3526794/how-do-i-build-a-win32-app-with-a-resource-file-using-cmake-and-mingw
@@ -15,24 +12,48 @@ if(MINGW)
 endif(MINGW)
 
 
-include_directories (./)
-# include_directories(${CMAKE_SOURCE_DIR}/source/) ## same as above
-include_directories (../include)
-include_directories (../include/Urho3D)
-include_directories (../include/Urho3D/ThirdParty)
-include_directories (../include/enet)
-include_directories (../include/tnet)
-include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 
-add_executable (fpmed ${Fpmed_Sources2} ${Fpmed_Includes})
+# include_directories(${CMAKE_SOURCE_DIR}/source/) ## same as above
+# include_directories (../include/regular)
+
+
+
+# Add macro definition to help some code adapt to old Urho3D version
+if (FRACTALS)
+else ()
+add_definitions(-DFPMED_LATEST_URHO3D)
+endif ()
+
+
+include_directories (./)
+include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
+include_directories (../include/common)
+if (FRACTALS)
+include_directories (../include/fractals)
+include_directories (../include/fractals/Urho3D)
+include_directories (../include/fractals/Urho3D/ThirdParty)
+else ()
+include_directories (../include/regular)
+include_directories (../include/regular/Urho3D)
+include_directories (../include/regular/Urho3D/ThirdParty)
+endif ()
+
+
+add_executable (fpmed ${Fpmed_Sources2})
 
 set_target_properties(fpmed
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
-if(WIN32)
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/*.a")
+if(MINGW)
+FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/common*.a")
+if (FRACTALS)
+FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho-frac/*.a")
+else ()
+FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/urho3d-latest/*.a")
+endif ()
+	
 	
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
   	target_link_libraries (

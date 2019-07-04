@@ -1,7 +1,5 @@
 // TODO: PARA CADA UMA DAS VARIAVEIS GLOBAIS ABAIXO MOVER ELAS PARA A CLASSE
 // SAMPLE E CRIAR UMA MÉTODO
-#include <Core/Environment.h>
-#include <Core/Projector.h>
 #include <FPMED.H>
 #include <Urho3DAll.h>
 
@@ -27,9 +25,6 @@ static const unsigned CTRL_LEFT = 4;
 static const unsigned CTRL_RIGHT = 8;
 
 // DEFINE_APPLICATION_MAIN(Sample) // instead of it use the main(){}
-
-#include <Core/ProjectorMachine.h>
-#include <Core/ServerMachine.h>
 
 Sample::Sample(Context* context)
     : Application(context),
@@ -128,20 +123,6 @@ void Sample::handleIncomingNetworkScriptCommands() {
 #endif
 }
 
-// auxiliar functions --------------------------
-// indicates if the projector have offset data from the original camera position
-// or rotation
-int haveOffsetCamera(fpmed::Projector proj) {
-    fpmed::Vec3<float> offsetRot, offsetPos;
-    offsetPos = proj.getOffsetPosition();
-    offsetRot = proj.getOffsetRotation();
-
-    if ((offsetPos.getX() || offsetPos.getY() || offsetPos.getZ()) ||
-        (offsetRot.getX() || offsetRot.getY() || offsetRot.getZ()))
-        return 1;
-    else
-        return 0;
-}
 int Sample::IsConnectedToServer() {
     Network* network = GetSubsystem<Network>();
     Connection* serverConnection = network->GetServerConnection();

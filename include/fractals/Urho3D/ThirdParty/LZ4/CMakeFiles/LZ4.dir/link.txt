@@ -1,0 +1,2 @@
+C:\MinGW\bin\ar.exe qc libLZ4.a  CMakeFiles/LZ4.dir/lz4.c.obj CMakeFiles/LZ4.dir/lz4hc.c.obj
+C:\MinGW\bin\ranlib.exe libLZ4.a

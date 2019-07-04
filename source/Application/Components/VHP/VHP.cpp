@@ -84,7 +84,11 @@ void VHP::CreateModel(std::string filePath) {
             Urho3D::String(_axialTexturesPath.c_str()) + "/" +
             Urho3D::String(1001 + h) + ".png");
         if (!t) continue;
+#ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+#else
+        t->SetFilterMode(FILTER_NEAREST);
+#endif
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
         t->SetNumLevels(1);
@@ -128,7 +132,11 @@ void VHP::CreateModel(std::string filePath) {
             Urho3D::String(_sagitalTexturesPath.c_str()) + "/" +
             Urho3D::String(sagitalSliceQuantity - h) + ".png");
         if (!t) continue;
+#ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+#else
+        t->SetFilterMode(FILTER_NEAREST);
+#endif
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
         t->SetNumLevels(1);
@@ -170,7 +178,11 @@ void VHP::CreateModel(std::string filePath) {
             Urho3D::String(_coronalTexturesPath.c_str()) + "/" +
             Urho3D::String(h) + ".png");
         if (!t) continue;
+#ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+#else
+        t->SetFilterMode(FILTER_NEAREST);
+#endif
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
         t->SetNumLevels(1);

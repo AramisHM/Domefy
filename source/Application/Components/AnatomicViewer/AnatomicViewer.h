@@ -16,7 +16,7 @@
 #include <Core/CoreParameters.h>
 #include <Math/vector2.h>
 #include <Math/vector3.h>
-#include <Urho3D.h>
+// #include <Urho3D.h>
 #include <Urho3D/Scene/LogicComponent.h>
 #include <Urho3DAll.h>
 #include <iostream>
@@ -39,7 +39,7 @@ class AnatomicViewer : public LogicComponent {
     URHO3D_OBJECT(AnatomicViewer, LogicComponent);
 
    private:
-    Node* viewerNode;  // The reference node that orbits arround the root node
+    Node* viewerNode;         // The reference node that orbits arround the root node
     Node* viewerModelNode;    // the reference to the model node
     GrabbableUI* viewerGrab;  // the grabbable ui componenet to move the viewer
                               // arround the camera
