@@ -24,6 +24,7 @@ static const unsigned CTRL_BACK = 2;
 static const unsigned CTRL_LEFT = 4;
 static const unsigned CTRL_RIGHT = 8;
 
+Viewport* specialVP;
 // DEFINE_APPLICATION_MAIN(Sample) // instead of it use the main(){}
 
 Sample::Sample(Context* context)
@@ -308,7 +309,8 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
         //     Image screenshot(context_);
         //     graphics->TakeScreenShot(screenshot);
         //     // Here we save in the Data folder with date and time appended
-        //     // screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir() +
+        //     // screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir()
+        //     +
         //     // "Data/Screenshot_" + Time::GetTimeStamp().Replaced(':',
         //     // '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
         // }
@@ -552,6 +554,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         surface->SetViewport(0, rttViewport);
 
         domeMesh->SetMaterial(0, renderMaterial);
+        specialVP = rttViewport;
     }
     // right
     {

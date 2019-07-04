@@ -15,6 +15,8 @@ std::string auxiliarText;
 
 MyCustomApplication* application;
 
+extern Viewport* specialVP;
+
 MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
 // ENABLE SCRIPTS
 #ifdef fpmed_allow_scripted_application
@@ -72,27 +74,27 @@ void MyCustomApplication::CreateScene() {
     zone->SetFogStart(100.0f);
     zone->SetFogEnd(300.0f);
 
-    // north plane
-    {
-        Node* floorNode = scene_->CreateChild("FloorTile");
-        floorNode->SetPosition(Vector3(0.0f, 0.0f, 30.0f));
-        floorNode->SetScale(Vector3(15.0f, 1.0f, 15.0f));
-        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
-        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-        floorObject->SetMaterial(
-            cache->GetResource<Material>("Materials/Stone.xml"));
-    }
+    // // north plane
+    // {
+    //     Node* floorNode = scene_->CreateChild("FloorTile");
+    //     floorNode->SetPosition(Vector3(0.0f, 0.0f, 30.0f));
+    //     floorNode->SetScale(Vector3(15.0f, 1.0f, 15.0f));
+    //     StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
+    //     floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    //     floorObject->SetMaterial(
+    //         cache->GetResource<Material>("Materials/Stone.xml"));
+    // }
 
-    // west plane
-    {
-        Node* floorNode = scene_->CreateChild("FloorTile");
-        floorNode->SetPosition(Vector3(30.0f, 0.0f, 0.0f));
-        floorNode->SetScale(Vector3(4.0f, 1.0f, 4.f));
-        StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
-        floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-        floorObject->SetMaterial(
-            cache->GetResource<Material>("Materials/Stone.xml"));
-    }
+    // // west plane
+    // {
+    //     Node* floorNode = scene_->CreateChild("FloorTile");
+    //     floorNode->SetPosition(Vector3(30.0f, 0.0f, 0.0f));
+    //     floorNode->SetScale(Vector3(4.0f, 1.0f, 4.f));
+    //     StaticModel* floorObject = floorNode->CreateComponent<StaticModel>();
+    //     floorObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    //     floorObject->SetMaterial(
+    //         cache->GetResource<Material>("Materials/Stone.xml"));
+    // }
 
     // skyboxskybox
     // Node* skyNode = scene_->CreateChild("Sky");
@@ -408,8 +410,7 @@ void MyCustomApplication::Start() {
         debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
         debTex->SetText("Loading images, please wait a moment.");
         debTex->SetFont(
-            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
-            15);
+            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"), 15);
         debTex->SetTextAlignment(HA_CENTER);
         debTex->SetHorizontalAlignment(HA_CENTER);
         debTex->SetVerticalAlignment(VA_CENTER);
@@ -431,7 +432,11 @@ void MyCustomApplication::Start() {
     Sample::Start();
 
 #ifdef fpmed_allow_scripted_application
-    frameworkScriptInstance->Execute("void FpmedStart()");
+    VariantVector parameters;
+    parameters.Push(Variant(specialVP));  // Add an int parameter
+    // parameters.Push(Variant(specialCamera));
+    frameworkScriptInstance->Execute("void FpmedStart(Viewport@ specialVP)",
+                                     parameters);
 
 #endif
 }
