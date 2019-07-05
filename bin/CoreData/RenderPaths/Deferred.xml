@@ -68,9 +68,9 @@
       <output index="0" name="viewport" />
       <output index="1" name="bent_normal" />
       <parameter name="SkyLum" value="100.0" />
-      <parameter name="AmbLight" value="100.0" />
-      <parameter name="AddSkyColor" value="0.01 0.02 0.1" />
-      <parameter name="DebugPlane" value="0" />
+      <parameter name="AmbLight" value="20.0" />
+      <!-- <parameter name="AddSkyColor" value="0.01 0.02 0.1" />
+      <parameter name="DebugPlane" value="0" /> -->
     </command>
 
     <command type="lightvolumes" vs="DeferredLight" ps="DeferredLight" >
@@ -90,7 +90,7 @@
 
 
 <!-- AUTOEXPOSURE -->
-    <rendertarget name="hdr128" tag="AutoExposure" size="128 128" format="rgba16f" filter="true" />
+    <!-- <rendertarget name="hdr128" tag="AutoExposure" size="128 128" format="rgba16f" filter="true" />
     <rendertarget name="lum64" tag="AutoExposure" size="64 64" format="rg16f" filter="true" />
     <rendertarget name="lum16" tag="AutoExposure" size="16 16" format="rg16f" filter="true" />
     <rendertarget name="lum4" tag="AutoExposure" size="4 4" format="rg16f" filter="true" />
@@ -125,10 +125,10 @@
         <parameter name="AutoExposureMiddleGrey" value="0.6" />
         <texture unit="diffuse" name="viewport" />
         <texture unit="normal" name="adaptedLum" />
-    </command>
+    </command> -->
 
 <!-- BLOOM -->
-
+<!-- 
     <rendertarget name="bright2" tag="BloomHDR" sizedivisor="2 2" format="rgba16f" filter="true" />
     <rendertarget name="bright4" tag="BloomHDR" sizedivisor="4 4" format="rgba16f" filter="true" />
     <rendertarget name="bright8" tag="BloomHDR" sizedivisor="8 8" format="rgba16f" filter="true" />
@@ -171,8 +171,8 @@
         <parameter name="BloomHDRBlurRadius" value="1.0" />
         <parameter name="BloomHDRBlurSigma" value="2.0" />
         <texture unit="diffuse" name="blur8" />
-    </command>
-    <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR8" psdefines="BLUR8" output="blur8">
+    </command> -->
+    <!-- <command type="quad" tag="BloomHDR" vs="BloomHDR" ps="BloomHDR" vsdefines="BLUR8" psdefines="BLUR8" output="blur8">
         <parameter name="BloomHDRBlurDir" value="0.0 1.0" />
         <parameter name="BloomHDRBlurRadius" value="1.0" />
         <parameter name="BloomHDRBlurSigma" value="2.0" />
@@ -214,5 +214,5 @@
         <parameter name="BloomHDRMix" value="1.0 0.4" />
         <texture unit="diffuse" name="viewport" />
         <texture unit="normal" name="blur2" />
-    </command>
+    </command> -->
 </renderpath>

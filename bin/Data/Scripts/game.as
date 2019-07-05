@@ -3,6 +3,7 @@ Scene@ scene_;
 String  fractaltyp = " ";
 RenderPath@ renderpath;
 Node@ cameraNode;
+Viewport@ sv;
 
 //sdfManager@ sdfMng;
 class Fpmed : ScriptObject {
@@ -10,24 +11,39 @@ class Fpmed : ScriptObject {
 		cache.autoReloadResources = true;
 		scene_ = node;
 		SubscribeToEvent("KeyDown", "HandleKeyDown");
-		renderer.hdrRendering = true;		
+		renderer.hdrRendering = true;
+
+		sv = specialVP;
 		SetupScene();
-		spawnlights(cameraNode.position, 26);	
+		
+		spawnlights(cameraNode.position, 26);
+	}
+
+	void SetupViewport(Viewport@ v) {
+		renderpath = v.renderPath.Clone();
+		renderpath.Load(cache.GetResource("XMLFile","RenderPaths/Deferred.xml"));
+		v.renderPath = renderpath;
 	}
 
 	void SetupScene() {
 		cameraNode = scene_.GetChild("CameRef");
 		cameraNode.position = Vector3(0.0f , 14.0f , -20.0f);
 		Camera@ camera = cameraNode.GetComponent("Camera");
-		Viewport@ mainVP = Viewport(scene_, camera);
-		renderer.viewports[0] = mainVP;
-		renderpath = mainVP.renderPath.Clone();
-		renderpath.Load(cache.GetResource("XMLFile","RenderPaths/Deferred.xml"));
-		renderer.viewports[0].renderPath = renderpath;
+		
 		// freelookCam@ flcam = cast<freelookCam>(cameraNode.CreateScriptObject(scriptFile, "freelookCam"));
 		// flcam.Init();
+
 		fractaltyp = "FCTYP_6";
-		setRndCommandParam(fractaltyp);
+
+		SetupViewport(renderer.viewports[0]);
+		setRndCommandParam(renderer.viewports[0], fractaltyp);
+
+
+		SetupViewport(sv);
+		setRndCommandParam(sv, fractaltyp);
+		
+		
+		
 	}
 
 	void HandleKeyDown(StringHash eventType, VariantMap& eventData) {	
@@ -41,15 +57,17 @@ class Fpmed : ScriptObject {
 			spawnlights(cameraNode.position, 6);
 		} else if (key == KEY_3) {
 			fractaltyp = "FCTYP_3";
-			setRndCommandParam(fractaltyp);
+			setRndCommandParam(renderer.viewports[0], fractaltyp);
+			//setRndCommandParam(sv, fractaltyp);
 		} else if (key == KEY_6) {
 			fractaltyp = "FCTYP_6";
-			setRndCommandParam(fractaltyp);
+			setRndCommandParam(renderer.viewports[0], fractaltyp);
+			//setRndCommandParam(sv, fractaltyp);
 		} 
 	}
 
-	void setRndCommandParam(String param) {
-		renderpath = renderer.viewports[0].renderPath.Clone();
+	void setRndCommandParam(Viewport@ v, String param) {
+		v.renderPath.Clone();
 		RenderPathCommand rpc;
 		for (int i=3; i<7; i++) {
 			rpc = renderpath.commands[i];
@@ -64,7 +82,7 @@ class Fpmed : ScriptObject {
 		rpc = renderpath.commands[8];
 		rpc.pixelShaderDefines = "DEFERRED "  + param;
 		renderpath.commands[8] = rpc;
-		renderer.viewports[0].renderPath = renderpath;
+		v.renderPath = renderpath;
 	}
 
 	void spawnlights (Vector3 pos, int numLights) {
