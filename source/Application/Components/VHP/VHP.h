@@ -18,7 +18,7 @@
 #include <Math/vector3.h>
 #include <Urho3D.h>
 #include <Urho3D/Scene/LogicComponent.h>
-#include <Urho3DAll.h>
+// #include <Urho3DAll.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -34,7 +34,10 @@ using namespace fpmed;
 
 #define MAX_NUM_SLICES 7000
 
-enum VHPBaseType { sagital = 1, coronal = 2, axial = 3, invalid = 0 };
+enum VHPBaseType { sagital = 1,
+                   coronal = 2,
+                   axial = 3,
+                   invalid = 0 };
 
 /// Custom logic component: Used to create the Visible Human
 class VHP : public LogicComponent {

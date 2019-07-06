@@ -8,7 +8,6 @@
 #include <Core/CoreParameters.h>
 #include <Core/FpmedCore.h>
 #include <Math/vector2.h>
-#include <TNet.h>
 #include "string.h"
 
 #include "irrXML.h"
@@ -29,8 +28,6 @@ typedef struct ServerProperties  // A struct that stores our list of servers
 
 class ServerMachine {
    private:
-    TNETServer *serv;
-    TNETServer *beaconServ;  // used to any-server discovery for the projectors.
     ServerProperties properties;
 
    public:

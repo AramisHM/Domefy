@@ -11,17 +11,13 @@
 #endif
 
 #include <Core/CoreParameters.h>
-#include <Core/Environment.h>
 #include <Core/FpmedCore.h>
-#include <Core/ProjectorMachine.h>
-#include <Core/ServerMachine.h>
 #include <stdio.h>
 #include <string.h>
 
 //#include "Splash.h"
 
 //#include "Urho3DAll.h"
-#include <Core/AutoDetectServer.h>
 
 // major, year+month, version, minor
 #define fpmed_version "0.195.0.1"

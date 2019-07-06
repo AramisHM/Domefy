@@ -1,9 +1,6 @@
 FILE(GLOB_RECURSE Fpmed_Sources2 "./*.cpp" "./*.inl" "./*.h" "./*.rc")
-FILE(GLOB_RECURSE Fpmed_Includes "./*.h" "../include/*.h" "../include/Urho3D/*.h")
+# FILE(GLOB_RECURSE Fpmed_Includes "./*.h" "../include/*.h" "../include/Urho3D/*.h")
 
-if(NOT WIN32)
-FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_BINARY_DIR}/lib/*.a")
-endif(NOT WIN32)
 
 #Compile resource on Windows
 # Reference: https://stackoverflow.com/questions/3526794/how-do-i-build-a-win32-app-with-a-resource-file-using-cmake-and-mingw
@@ -15,24 +12,25 @@ if(MINGW)
 endif(MINGW)
 
 
-include_directories (./)
+
 # include_directories(${CMAKE_SOURCE_DIR}/source/) ## same as above
+# include_directories (../include/regular)
+
+include_directories (./)
+include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
-include_directories (../include/enet)
-include_directories (../include/tnet)
-include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 
-add_executable (fpmed ${Fpmed_Sources2} ${Fpmed_Includes})
+add_executable (fpmed ${Fpmed_Sources2})
 
 set_target_properties(fpmed
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
-if(WIN32)
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/windows/*.a")
+if(MINGW)
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
 	
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
   	target_link_libraries (
@@ -72,7 +70,7 @@ if(WIN32)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 else()
 		
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/GCC/linux/*.a")
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/linux/*.a")
 
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)
@@ -89,7 +87,7 @@ else()
 	add_definitions(-DURHO3D_URHO2D)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 
-	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} "${CMAKE_SOURCE_DIR}/lib/GCC/windows/libAHMNet.a" pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
+	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
 endif()
 
 

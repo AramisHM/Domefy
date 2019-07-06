@@ -1,6 +1,5 @@
 
 #include "FpmedCore.h"
-#include <Core/Environment.h>
 #include <stdlib.h>
 #include <string.h>
 #include "FpmedCore.h"
@@ -31,7 +30,6 @@ char applicationScriptFileDirectory[MaxFilePathNameSize] = {0};
 int isProjectorFileReachable = -1;
 int isApplicationScriptFileReachable = -1;
 
-fpmed::Environment globalEnv;
 int selected_proj = -1;
 int selected_serv = -1;
 

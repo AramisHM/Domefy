@@ -6,7 +6,6 @@
 #include <Application/SlideReader/Slideshow.h>
 
 #include <Core/CoreParameters.h>
-#include <Core/Environment.h>
 #include <irrXML.h>
 #include <algorithm>
 #include <string>

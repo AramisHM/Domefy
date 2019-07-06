@@ -13,7 +13,6 @@
 #ifndef PROGRAMCONFIG_H
 #define PROGRAMCONFIG_H
 #include <Core/CoreParameters.h>
-#include <Core/Projector.h>
 #include <Math/vector2.h>
 #include <Math/vector3.h>
 #include <Math/vector4.h>

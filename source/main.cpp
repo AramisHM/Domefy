@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
         application->Start();
 
         while (application->isApplication()) {
-            ListenForExternalCommands();
+            // ListenForExternalCommands();
             application->RunFrameC();
         }
         application->Stop();
