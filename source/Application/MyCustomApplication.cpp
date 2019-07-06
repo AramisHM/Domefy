@@ -424,21 +424,20 @@ void MyCustomApplication::Start() {
 
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
-    // create C++ app
-    CreateScene();
-#endif
-
-    Sample::Start();
 
     level = new CLevelData(context_);
 
-    if (level->InitScene()) {
-        level->InitCameraFromSceneData();
+    if (level->InitScene(scene_)) {
         level->InitTVComponentForSceneNode("TV");
-
     } else {
         engine_->Exit();
     }
+    // create C++ app
+    CreateScene();
+
+#endif
+
+    Sample::Start();
 
 #ifdef fpmed_allow_scripted_application
     frameworkScriptInstance->Execute("void FpmedStart()");

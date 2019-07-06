@@ -2,34 +2,22 @@
 
 class TVComponent;
 
-class CLevelData : public Object
-{
-	URHO3D_OBJECT(CLevelData, Object);
-public:
-	CLevelData(Context* context);
+class CLevelData : public Object {
+    URHO3D_OBJECT(CLevelData, Object);
 
-	SharedPtr<Scene> scene;
-	SharedPtr<Camera> camera;
-	SharedPtr<Node> cameraNode;
-	SharedPtr<Node> playerNode;
-	SharedPtr<TVComponent> tvc;
+   public:
+    CLevelData(Context* context);
 
-	float yaw_;
-	float pitch_;
+    SharedPtr<Scene> scene_;
+    SharedPtr<TVComponent> tvc;
 
+    bool InitScene(Scene* scene);
+    bool InitCameraFromSceneData(String camName = "Camera");
+    bool InitTVComponentForSceneNode(String nodeName = "TV");
 
-	bool InitScene(String sceneName = "Scene.xml");
-	bool InitCameraFromSceneData(String camName = "Camera");
-	bool InitTVComponentForSceneNode(String nodeName = "TV");
-	
+    virtual ~CLevelData();
 
-	virtual ~CLevelData();
-
-
-private:
-	bool LoadSceneFromXMLFile(String sceneFileName);
-	void ViewRotate(float timeStep);
-	void ViewMove(float timeStep);
-	void HandleUpdate(StringHash eventType, VariantMap& eventData);
-
+   private:
+    bool LoadSceneFromXMLFile();
+    void HandleUpdate(StringHash eventType, VariantMap& eventData);
 };
