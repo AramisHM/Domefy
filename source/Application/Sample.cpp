@@ -89,7 +89,7 @@ void Sample::Start() {
         scene_->CreateComponent<ScriptInstance>(LOCAL);
 
     Sample::frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>("Scripts/game.as"), "Fpmed");
+        cache->GetResource<ScriptFile>("Scripts/01_HelloWorld.as"), "Fpmed");
 
 #endif
 

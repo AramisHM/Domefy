@@ -5,6 +5,7 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
+#include <Application/Components/TVComponent/LevelData.h>
 #include <Application/Components/VHP/VHP.h>
 #include <Application/Sample.h>
 #include <Core/auxiliarAppFuncs.h>
@@ -33,6 +34,7 @@ class MyCustomApplication : public Sample {
    public:
     MyCustomApplication(Context* context);
     void Start();
+    void Stop();
 
 #ifdef fpmed_allow_cpp_application
     void CreateScene();
@@ -99,6 +101,9 @@ class MyCustomApplication : public Sample {
     // float loTransparency;
     float cameraNearClipping;
     // int accelDecayIteration;
+
+    CLevelData* level;  // experimental, used for OGV videos feature
+
 #define accelDecayVar 25;
     bool isholding;  // holding mouse?
 #endif               // fpmed_allow_cpp_application

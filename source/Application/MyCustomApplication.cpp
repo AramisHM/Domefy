@@ -430,10 +430,26 @@ void MyCustomApplication::Start() {
 
     Sample::Start();
 
+    level = new CLevelData(context_);
+
+    if (level->InitScene()) {
+        level->InitCameraFromSceneData();
+        level->InitTVComponentForSceneNode("TV");
+
+    } else {
+        engine_->Exit();
+    }
+
 #ifdef fpmed_allow_scripted_application
     frameworkScriptInstance->Execute("void FpmedStart()");
 
 #endif
+}
+
+void MyCustomApplication::Stop() {
+    if (level) delete level;
+
+    // Perform optional cleanup after main loop has terminated
 }
 
 #ifdef fpmed_allow_cpp_application

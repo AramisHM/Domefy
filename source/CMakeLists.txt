@@ -30,7 +30,7 @@ set_target_properties(fpmed
 )
 
 if(MINGW)
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
+	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/windows/*.lib" "${CMAKE_SOURCE_DIR}/lib/windows/*.a" )
 	
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
   	target_link_libraries (
