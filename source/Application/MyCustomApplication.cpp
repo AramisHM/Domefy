@@ -139,26 +139,24 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         std::vector<std::string> commandSplitted;
         commandSplitted = split(commandString, ';');
         int cmdLen = commandSplitted.size();
-        if (cmdLen > 0) {
-            if (cmdLen > 1) {
-                std::string cmd;  // cmd and parameters
-                cmd = commandSplitted[0];
+        if (cmdLen > 1) {
+            std::string cmd;  // cmd and parameters
+            cmd = commandSplitted[0];
 
-                if (!cmd.compare(std::string("extext"))) {  // external text
-                    //auxiliarText = commandSplitted[1]; // do something
-                    // Get the command from network, redirect to script, execute it, and print the scrip's response.
-                    VariantVector parameters;
-                    VariantMap vm;
-                    VariantMap vm2;
-                    vm["TEXT"] = Urho3D::String(commandSplitted[1].c_str());
-                    parameters.Push(vm);
-                    parameters.Push(vm2);                                                                    // parameter
-                                                                                                             // parameters.Push(VariantMap());                                              // return
-                    frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
-                    VariantMap retVM = parameters.Back().GetVariantMap();
-                    printf("C++: %s", retVM["RET"].GetString().CString());
-                }
+            if (!cmd.compare(std::string("extext"))) {  // external text
+                // Get the command from network, redirect to script, execute it, and print the scrip's response.
+                VariantVector parameters;
+                VariantMap vm;
+                VariantMap vm2;
+                vm["TEXT"] = Urho3D::String(commandSplitted[1].c_str());
+                parameters.Push(vm);
+                parameters.Push(vm2);                                                                    // parameter
+                                                                                                         // parameters.Push(VariantMap());                                              // return
+                frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
+                VariantMap retVM = parameters.Back().GetVariantMap();
+                printf("C++: %s", retVM["RET"].GetString().CString());
             }
         }
+        commandString = "";
     }
 }
