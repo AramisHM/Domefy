@@ -99,6 +99,8 @@ void MyCustomApplication::Start() {
     asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
     RegisterComponent<VHP>(engine, "VHP");
     engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetSagitalCut(float, float, bool)", asMETHOD(VHP, SetSagitalCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetViewNodeReference(Node@+)", asMETHOD(VHP, SetViewNodeReference), asCALL_THISCALL);
 
     // register custom C++ class in AngelScript and pass a class instance
     engine->RegisterObjectType("ProgramConfig", 0, asOBJ_REF);  // asOBJ_REF because you wanted a reference call
@@ -159,21 +161,21 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             std::string cmd;  // cmd and parameters
             cmd = commandSplitted[0];
 
-            if (!cmd.compare(std::string("SCRIPT"))) {  // external text
-                // Get the command from network, redirect to script, execute it, and print the scrip's response.
-                VariantVector parameters;
-                VariantMap vm;
-                VariantMap vm2;
-                vm["CMD"] = Urho3D::String(commandSplitted[1].c_str());
-                parameters.Push(vm);   // function arguments
-                parameters.Push(vm2);  // return
+            //if (!cmd.compare(std::string("SCRIPT"))) {  // external text
+            // Get the command from network, redirect to script, execute it, and print the scrip's response.
+            VariantVector parameters;
+            VariantMap vm;
+            VariantMap vm2;
+            vm["CMD"] = Urho3D::String(commandString.c_str());  // let .as split the command string.
+            parameters.Push(vm);                                // function arguments
+            parameters.Push(vm2);                               // return
 
-                frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
+            frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
 
-                // extract and print return from angelscript
-                VariantMap retVM = parameters.Back().GetVariantMap();
-                printf("C++: %s", retVM["RET"].GetString().CString());
-            }
+            // extract and print return from angelscript
+            VariantMap retVM = parameters.Back().GetVariantMap();
+            //printf("C++: %s", retVM["RET"].GetString().CString());
+            //}
         }
         commandString = "";
     }

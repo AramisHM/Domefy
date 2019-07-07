@@ -19,6 +19,8 @@ const float CAMERA_MIN_DIST = 1.0f;
 const float CAMERA_MAX_DIST = 20.0f;
 float cameraDistance = 5.0;
 
+VHP @vhpComp;
+
 Node @characterNode;
 // Character script object class
 //
@@ -182,11 +184,13 @@ class Fpmed : ScriptObject {
 
         //VHP
         Node @vhpNode = scene_.CreateChild("VHP");
-        VHP @vhpComp = vhpNode.CreateComponent("VHP");
+        vhpComp = vhpNode.CreateComponent("VHP");
         String path = progConf.GetVHPFile();
         log.Info("Loading VHP model" + path);
         //vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
         vhpComp.CreateModel(path);
+        vhpComp.SetViewNodeReference(cameraNode);
+        vhpNode.Rotate(Quaternion(90, 0, 0));
 
         // Create a directional light to the world. Enable cascaded shadows on it
         Node @lightNode = scene_.CreateChild("DirectionalLight");
@@ -309,10 +313,18 @@ class Fpmed : ScriptObject {
     }
 
     void DataGate(VariantMap vin, VariantMap& vout) {
-        String str = vin["TEXT"].GetString();
-        log.Info(str);
+        String str = vin["CMD"].GetString();
+        //log.Info("angelscript received: " + str);
+
+        String[] @cmds = str.Split(';');
+
         vout["RET"] = "Hello from Angelscript! :D";
-        characterNode.position += Vector3(0.1f, 0.0f, 0.0f);
+
+        if (cmds[0] == "sag-a") {
+            float factor = cmds[1].ToFloat() / 100.0f;
+            //log.Info("Making cut of " + factor);
+            vhpComp.SetSagitalCut(factor, 0.0f, true);
+        }
     }
 
     void SubscribeToEvents() {

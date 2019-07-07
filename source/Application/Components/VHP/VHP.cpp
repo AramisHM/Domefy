@@ -53,7 +53,8 @@ VHP::~VHP() {}
 
 // Update
 void VHP::Update(float timeStep) {
-    UpdateWhatBaseToShow();
+    //UpdateWhatBaseToShow();
+    _currentReferenceBase = coronal;
     UpdateAnatomicCuts();
 }
 
@@ -221,9 +222,9 @@ void VHP::CreateModel(String filePath) {
 }
 
 void VHP::SetSagitalCut(float leftLevel, float rightLevel, bool graceful) {
-    _targetSagitalLeftLevel = leftLevel;
-    _targetSagitalRightLevel = rightLevel;
-    _sagitalOngoingCut = graceful;  // prototype only in sagital level
+    this->_targetSagitalLeftLevel = leftLevel;
+    this->_targetSagitalRightLevel = rightLevel;
+    this->_sagitalOngoingCut = graceful;  // prototype only in sagital level
 }
 
 void VHP::SetCoronalCut(float frontLevel, float backLevel) {
