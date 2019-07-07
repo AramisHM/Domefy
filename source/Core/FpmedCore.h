@@ -17,8 +17,6 @@
 
 #define fpmed_allow_scripted_application  // comment this out to remove script \
                                           // support
-#define fpmed_allow_cpp_application       // comment this out to remove the custom \
-                                          // cpp code
 
 extern int flag_run_script;   // should we run the script?
 extern int flag_edit_script;  // should we edit the script?

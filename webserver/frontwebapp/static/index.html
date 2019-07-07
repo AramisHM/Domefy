@@ -156,10 +156,10 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             <div class="w3-row-padding">
               <br>
               <hr class="w3-clear">
-              <form id="contactForm">
-                Raw command: <input type="text" name="command" />
-                <input type="submit" />
-              </form>
+              <div id="contactForm">
+                Raw command: <input id="advcmd" type="text" name="command" />
+                <input type="submit" onclick="sendCommand('extext;' + document.getElementById('advcmd').value, false)"/>
+              </div>
             </div>
           </div>
 
@@ -206,9 +206,9 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           <div id="Demo4" class="w3-hide w3-container">
             <div class="w3-row-padding">
               <br>
-              <iframe src="./3dviewer.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="1"
+              <!-- <iframe src="./3dviewer.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="1"
                 height="300" width="400">
-              </iframe>
+              </iframe> -->
             </div>
           </div>
 
@@ -325,14 +325,14 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     })(jQuery);
 
 
-    function sendCommand(data) {
+    function sendCommand(data, sync = true) {
       $.ajax
         ({
           type: "POST",
           //the url where you want to sent the userName and password to
           url: 'http://' + serviceIPPort + '/setExampleTextMessage',
           dataType: 'json',
-          async: false,
+          async: sync,
           //json object to sent to the authentication url
           data: '{"command": "' + data + '"}',
           success: function () {

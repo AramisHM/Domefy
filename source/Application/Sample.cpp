@@ -88,9 +88,6 @@ void Sample::Start() {
     Sample::frameworkScriptInstance =
         scene_->CreateComponent<ScriptInstance>(LOCAL);
 
-    Sample::frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>("Scripts/game.as"), "Fpmed");
-
 #endif
 
     CreateLogo();
@@ -232,19 +229,12 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
     }
 
     // Toggle console with F1
-    else if (key == KEY_F1)
-        GetSubsystem<Console>()->Toggle();
+    //else if (key == KEY_F1)
+    //GetSubsystem<Console>()->Toggle();
 
     // Toggle debug HUD with F2
     else if (key == KEY_F2)
         GetSubsystem<DebugHud>()->ToggleAll();
-
-    // Toggle on/off domegrid
-    // else if (key == KEY_F3) {
-    //     if (selected_serv > 0)  // Servidor
-    //         machineMaster->ToggleDomeGrid();
-
-    // }
 
     // Common rendering quality controls, only when UI has no focused element
     else if (!GetSubsystem<UI>()->GetFocusElement()) {
