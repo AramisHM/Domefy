@@ -183,7 +183,10 @@ class Fpmed : ScriptObject {
         //VHP
         Node @vhpNode = scene_.CreateChild("VHP");
         VHP @vhpComp = vhpNode.CreateComponent("VHP");
-        vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
+        String path = progConf.GetVHPFile();
+        log.Info("Loading VHP model" + path);
+        //vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
+        vhpComp.CreateModel(path);
 
         // Create a directional light to the world. Enable cascaded shadows on it
         Node @lightNode = scene_.CreateChild("DirectionalLight");

@@ -20,6 +20,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include <Urho3DAll.h>  // urho3d types
+
 #include <fstream>
 #include <streambuf>
 
@@ -66,6 +68,13 @@ class ProgramConfig {
     // GetPathToCustomAssetsFolder - Includes path that leads to e.g the VHP
     // images
     std::string GetPathToCustomAssetsFolder();
+    Urho3D::String GetPathToCustomAssetsFolderURHO3D();
+
+    // These are required by AngelScript
+    void AddRef() { /* do nothing */
+    }
+    void ReleaseRef() { /* do nothing */
+    }
 
    protected:
     std::list<Projection> _projections;

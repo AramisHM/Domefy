@@ -111,4 +111,8 @@ std::string ProgramConfig::GetPathToCustomAssetsFolder() {
     return _pathToCustomResources;
 }
 
+Urho3D::String ProgramConfig::GetPathToCustomAssetsFolderURHO3D() {
+    return Urho3D::String(this->GetPathToCustomAssetsFolder().c_str());
+}
+
 }  // namespace fpmed

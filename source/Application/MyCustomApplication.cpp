@@ -93,10 +93,19 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 void MyCustomApplication::Start() {
+    ProgramConfig* config = ProgramConfig::GetInstance();
+
     //register custom componenets
     asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
     RegisterComponent<VHP>(engine, "VHP");
     engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
+
+    // register custom C++ class in AngelScript and pass a class instance
+    engine->RegisterObjectType("ProgramConfig", 0, asOBJ_REF);  // asOBJ_REF because you wanted a reference call
+    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF, "void f()", asMETHOD(ProgramConfig, AddRef), asCALL_THISCALL);
+    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_RELEASE, "void f()", asMETHOD(ProgramConfig, ReleaseRef), asCALL_THISCALL);
+    engine->RegisterObjectMethod("ProgramConfig", "String GetVHPFile()", asMETHOD(ProgramConfig, GetPathToCustomAssetsFolderURHO3D), asCALL_THISCALL);
+    engine->RegisterGlobalProperty("ProgramConfig progConf", config);  // the class instance must be a pointer reference.
 
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
