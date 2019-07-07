@@ -300,9 +300,10 @@ class Fpmed : ScriptObject {
         instructionText.SetPosition(0, ui.root.height / 4);
     }
 
-    void DataGate(VariantMap vin) {
+    void DataGate(VariantMap vin, VariantMap& vout) {
         String str = vin["TEXT"].GetString();
         log.Info(str);
+        vout["RET"] = "Hello from Angelscript! :D";
         characterNode.position += Vector3(0.1f, 0.0f, 0.0f);
     }
 
@@ -330,6 +331,11 @@ class Fpmed : ScriptObject {
 
         // Update controls using keys (desktop)
         if (ui.focusElement is null) {
+            character.controls.Set(CTRL_FORWARD, input.keyDown[KEY_W]);
+            character.controls.Set(CTRL_BACK, input.keyDown[KEY_S]);
+            character.controls.Set(CTRL_LEFT, input.keyDown[KEY_A]);
+            character.controls.Set(CTRL_RIGHT, input.keyDown[KEY_D]);
+
             character.controls.Set(CTRL_JUMP, input.keyDown[KEY_SPACE]);
 
             // Add character yaw & pitch from the mouse motion or touch input

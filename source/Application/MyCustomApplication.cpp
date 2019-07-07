@@ -149,12 +149,14 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     // Get the command from network, redirect to script, execute it, and print the scrip's response.
                     VariantVector parameters;
                     VariantMap vm;
+                    VariantMap vm2;
                     vm["TEXT"] = Urho3D::String(commandSplitted[1].c_str());
-                    parameters.Push(vm);                                                        // parameter
-                                                                                                // parameters.Push(VariantMap());                                              // return
-                    frameworkScriptInstance->Execute("void DataGate(VariantMap)", parameters);  // Execute, second parameters is return value
+                    parameters.Push(vm);
+                    parameters.Push(vm2);                                                                    // parameter
+                                                                                                             // parameters.Push(VariantMap());                                              // return
+                    frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
                     VariantMap retVM = parameters.Back().GetVariantMap();
-                    printf("C++: %s", retVM["ret"].GetString().CString());
+                    printf("C++: %s", retVM["RET"].GetString().CString());
                 }
             }
         }
