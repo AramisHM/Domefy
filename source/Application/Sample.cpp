@@ -229,8 +229,8 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
     }
 
     // Toggle console with F1
-    //else if (key == KEY_F1)
-    //GetSubsystem<Console>()->Toggle();
+    else if (key == KEY_F1)
+        GetSubsystem<Console>()->Toggle();
 
     // Toggle debug HUD with F2
     else if (key == KEY_F2)

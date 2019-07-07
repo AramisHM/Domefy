@@ -47,6 +47,7 @@ VHP::VHP(Urho3D::Context* context) : Urho3D::LogicComponent(context) {
     _transitionFactor = 0.03f;
 
     _legt = true;
+    _viewingReferenceNode = 0;
 }
 VHP::~VHP() {}
 
@@ -56,8 +57,8 @@ void VHP::Update(float timeStep) {
     UpdateAnatomicCuts();
 }
 
-void VHP::CreateModel(std::string filePath) {
-    this->LoadFromFile(filePath);
+void VHP::CreateModel(String filePath) {
+    this->LoadFromFile(std::string(filePath.CString()));
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     // fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
 

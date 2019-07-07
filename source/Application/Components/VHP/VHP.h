@@ -129,10 +129,11 @@ class VHP : public LogicComponent {
    public:
     VHP(Context* context);
     ~VHP();
+
     // Creates the model from Visible Human Project
     // void CreateModel();
     // Creates the model of Visible Human Project specified in a JSON file.
-    void CreateModel(std::string filePath);
+    void CreateModel(String filePath);
 
     // Override
     virtual void Update(float timeStep) override;

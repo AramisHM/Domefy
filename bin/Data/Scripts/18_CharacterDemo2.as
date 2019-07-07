@@ -180,6 +180,11 @@ class Fpmed : ScriptObject {
         zone.fogStart = 100.0f;
         zone.fogEnd = 300.0f;
 
+        //VHP
+        Node @vhpNode = scene_.CreateChild("VHP");
+        VHP @vhpComp = vhpNode.CreateComponent("VHP");
+        vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
+
         // Create a directional light to the world. Enable cascaded shadows on it
         Node @lightNode = scene_.CreateChild("DirectionalLight");
         lightNode.direction = Vector3(0.6f, -1.0f, 0.8f);

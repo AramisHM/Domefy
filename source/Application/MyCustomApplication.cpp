@@ -10,6 +10,8 @@
 #include <Application/Components/VHP/VHP.h>
 #include <Core/ProgramConfig.h>
 
+#include <Urho3D/AngelScript/APITemplates.h>
+
 extern std::string commandString;  // main.cpp
 MyCustomApplication* application;
 
@@ -91,6 +93,11 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 void MyCustomApplication::Start() {
+    //register custom componenets
+    asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+    RegisterComponent<VHP>(engine, "VHP");
+    engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
+
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
     ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -143,16 +150,18 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             std::string cmd;  // cmd and parameters
             cmd = commandSplitted[0];
 
-            if (!cmd.compare(std::string("extext"))) {  // external text
+            if (!cmd.compare(std::string("SCRIPT"))) {  // external text
                 // Get the command from network, redirect to script, execute it, and print the scrip's response.
                 VariantVector parameters;
                 VariantMap vm;
                 VariantMap vm2;
-                vm["TEXT"] = Urho3D::String(commandSplitted[1].c_str());
-                parameters.Push(vm);
-                parameters.Push(vm2);                                                                    // parameter
-                                                                                                         // parameters.Push(VariantMap());                                              // return
+                vm["CMD"] = Urho3D::String(commandSplitted[1].c_str());
+                parameters.Push(vm);   // function arguments
+                parameters.Push(vm2);  // return
+
                 frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
+
+                // extract and print return from angelscript
                 VariantMap retVM = parameters.Back().GetVariantMap();
                 printf("C++: %s", retVM["RET"].GetString().CString());
             }

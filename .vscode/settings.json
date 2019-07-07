@@ -88,5 +88,6 @@
         "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
       ]
     }
-  ]
+  ],
+  "C_Cpp.configurationWarnings": "Disabled"
 }
