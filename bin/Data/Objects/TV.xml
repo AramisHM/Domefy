@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<node id="16777221">
+	<attribute name="Is Enabled" value="true" />
+	<attribute name="Name" value="TV" />
+	<attribute name="Tags" />
+	<attribute name="Position" value="0 1 0.908011" />
+	<attribute name="Rotation" value="0.5 0.499999 -0.5 -0.5" />
+	<attribute name="Scale" value="1 1 1" />
+	<attribute name="Variables" />
+	<component type="StaticModel" id="16777233">
+		<attribute name="Model" value="Model;Dome/Models/domeMesh.mdl" />
+		<attribute name="Material" value="Material;Materials/TVmaterialGPUYUV.xml;Materials/Skybox.xml;Materials/Skybox.xml;Materials/Skybox.xml;Materials/Skybox.xml" />
+		<attribute name="Cast Shadows" value="true" />
+	</component>
+</node>

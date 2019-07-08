@@ -122,6 +122,16 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 void MyCustomApplication::Start() {
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
+
+    level = new CLevelData(context_);
+
+    if (level->InitScene(scene_)) {
+        level->InitTVComponentForSceneNode("TV");
+
+    } else {
+        engine_->Exit();
+    }
+
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     // debug text specific.
     {
@@ -156,6 +166,12 @@ void MyCustomApplication::Start() {
         cache->GetResource<ScriptFile>("Scripts/18_CharacterDemo2.as"), "Fpmed");
     frameworkScriptInstance->Execute("void FpmedStart()");
 #endif
+}
+
+void MyCustomApplication::Stop() {
+    if (level) delete level;
+
+    // Perform optional cleanup after main loop has terminated
 }
 
 void MyCustomApplication::HandleUpdates(StringHash eventType,

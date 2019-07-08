@@ -5,6 +5,7 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
+#include <Application/Components/TVComponent/LevelData.h>
 #include <Application/Components/VHP/VHP.h>
 #include <Application/Sample.h>
 #include <Core/auxiliarAppFuncs.h>
@@ -26,7 +27,7 @@ class MyCustomApplication : public Sample {
    public:
     MyCustomApplication(Context* context);
     void Start();
-
+    void Stop();
     void CreateScene();
     void MoveCamera(float timeStep);
     void HandleUpdates(StringHash eventType, VariantMap& eventData);
@@ -51,5 +52,7 @@ class MyCustomApplication : public Sample {
     // Visible Human Project Component - The actual model
     VHP* vhp;
     GrabbableUI* slideGrab;
+// experimental, used for OGV videos feature
+    CLevelData* level;  
 };
 #endif
