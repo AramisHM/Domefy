@@ -87,7 +87,7 @@ else()
 	add_definitions(-DURHO3D_URHO2D)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 
-	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
+	target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor ogg vorbis theora)
 endif()
 
 

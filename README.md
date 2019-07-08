@@ -12,7 +12,7 @@ Before we begin, make sure to have the following packages installed on your syst
 ```sh
 sudo apt-get install cmake
 sudo apt-get install build-essential
-sudo apt-get install libx11-dev libxrandr-dev libasound2-dev git cmake make libglu1-mesa-dev freeglut3-dev
+sudo apt-get install libx11-dev libxrandr-dev libasound2-dev git cmake make libglu1-mesa-dev freeglut3-dev libtheora-dev libogg-dev libvorbis-dev libogg-dev
 ```
 ![N|Solid](https://xubuntu.org/wp-content/themes/xubuntu-theme/xubuntu-eighteen/images/xubuntu-logo-45-dark.png)
 
