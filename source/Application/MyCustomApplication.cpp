@@ -15,15 +15,42 @@
 extern std::string commandString;  // main.cpp
 MyCustomApplication* application;
 
-MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
+void MyCustomApplication::RegisterCustomScriptAPI() {
 #ifdef fpmed_allow_scripted_application
+    // Enable the script subsystem;
     context_->RegisterSubsystem(new Script(context_));
-#endif
-    context_->RegisterFactory<SlideTransitionAnimatior>();
-    context_->RegisterFactory<GrabbableUI>();
+
+    // Register the Componenets to be usable on C++ level
+    // Some of those componenets are not needed on script side.
     context_->RegisterFactory<VHP>();
+    context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
+    context_->RegisterFactory<SlideTransitionAnimatior>();
+
+    // Register custom Urho3D componenets
+
+    asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+    // VHP
+    RegisterComponent<VHP>(engine, "VHP");
+    engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetViewNodeReference(Node@+)", asMETHOD(VHP, SetViewNodeReference), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetSagitalCut(float, float, bool)", asMETHOD(VHP, SetSagitalCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetCoronalCut(float, float)", asMETHOD(VHP, SetCoronalCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetAxialCut(float, float)", asMETHOD(VHP, SetAxialCut), asCALL_THISCALL);
+
+    // Registers custom C++ class in AngelScript and pass a class instance (singleton)
+    ProgramConfig* config = ProgramConfig::GetInstance();
+    engine->RegisterObjectType("ProgramConfig", 0, asOBJ_REF);  // asOBJ_REF because you wanted a reference call
+    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF, "void f()", asMETHOD(ProgramConfig, AddRef), asCALL_THISCALL);
+    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_RELEASE, "void f()", asMETHOD(ProgramConfig, ReleaseRef), asCALL_THISCALL);
+    engine->RegisterObjectMethod("ProgramConfig", "String GetVHPFile()", asMETHOD(ProgramConfig, GetPathToCustomAssetsFolderURHO3D), asCALL_THISCALL);
+    engine->RegisterGlobalProperty("ProgramConfig progConf", config);  // the class instance must be a pointer reference.
+#endif
+}
+
+MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
+    this->RegisterCustomScriptAPI();
 }
 
 void MyCustomApplication::CreateScene() {
@@ -32,9 +59,9 @@ void MyCustomApplication::CreateScene() {
 
     Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
     Renderer* renderer = GetSubsystem<Renderer>();
-    // renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
-    // renderer->SetTextureAnisotropy(16);
-    // renderer->SetTextureQuality(QUALITY_MAX);
+    renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
+    renderer->SetTextureAnisotropy(16);
+    renderer->SetTextureQuality(QUALITY_MAX);
 
     // Hologram node - The actual custom code TODO: make componenet
     Node* orbitableNode = scene_->CreateChild("orbitableNode");
@@ -93,22 +120,6 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 void MyCustomApplication::Start() {
-    ProgramConfig* config = ProgramConfig::GetInstance();
-
-    //register custom componenets
-    asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
-    RegisterComponent<VHP>(engine, "VHP");
-    engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetSagitalCut(float, float, bool)", asMETHOD(VHP, SetSagitalCut), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetViewNodeReference(Node@+)", asMETHOD(VHP, SetViewNodeReference), asCALL_THISCALL);
-
-    // register custom C++ class in AngelScript and pass a class instance
-    engine->RegisterObjectType("ProgramConfig", 0, asOBJ_REF);  // asOBJ_REF because you wanted a reference call
-    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF, "void f()", asMETHOD(ProgramConfig, AddRef), asCALL_THISCALL);
-    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_RELEASE, "void f()", asMETHOD(ProgramConfig, ReleaseRef), asCALL_THISCALL);
-    engine->RegisterObjectMethod("ProgramConfig", "String GetVHPFile()", asMETHOD(ProgramConfig, GetPathToCustomAssetsFolderURHO3D), asCALL_THISCALL);
-    engine->RegisterGlobalProperty("ProgramConfig progConf", config);  // the class instance must be a pointer reference.
-
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
     ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -177,6 +188,6 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             //printf("C++: %s", retVM["RET"].GetString().CString());
             //}
         }
-        commandString = "";
+        commandString = "";  // Must clean it.
     }
 }

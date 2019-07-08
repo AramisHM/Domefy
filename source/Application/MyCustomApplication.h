@@ -33,9 +33,12 @@ class MyCustomApplication : public Sample {
     void updateCameraPosition();
     void updateRemoteControls();
 
+    // Registers the custom componenets and other functions taht are not natively distributed with Urho3D.
+    void RegisterCustomScriptAPI();
+
    protected:
-   /* this will be used to show the debug info of this prototype app */
-    Urho3D::Text* debTex; 
+    /* this will be used to show the debug info of this prototype app */
+    Urho3D::Text* debTex;
 
     // The viewer node itself, contains a sub-node named "ViewerModel" with the
     // model
