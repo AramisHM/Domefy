@@ -27,14 +27,7 @@ static const unsigned CTRL_RIGHT = 8;
 // DEFINE_APPLICATION_MAIN(Sample) // instead of it use the main(){}
 
 Sample::Sample(Context* context)
-    : Application(context),
-      yaw_(0.0f),
-      pitch_(0.0f),
-      touchEnabled_(false),
-      screenJoystickIndex_(M_MAX_UNSIGNED),
-      screenJoystickSettingsIndex_(M_MAX_UNSIGNED),
-      paused_(false) {
-    appHasStarted = false;
+    : Application(context) {
     scene_ = 0;
 }
 
@@ -78,9 +71,6 @@ void Sample::CreateLogo() {
 }
 
 void Sample::Start() {
-    if (appHasStarted == true) return;
-        // parse scripts if any
-
 #ifdef fpmed_allow_scripted_application
 
     // LOAD THE SCRIPTS - IF ANY
@@ -103,42 +93,9 @@ void Sample::Start() {
 
     // SetupViewport();
     SubscribeToEvents();
-
-    appHasStarted = true;  // lets make sure it starts only once
 }
 void Sample::Stop() { engine_->DumpResources(true); }
 
-void Sample::handleIncomingNetworkScriptCommands() {
-#ifdef fpmed_allow_scripted_application
-
-    // receive server commands to pipe it to script logics
-    // if (received message) {
-    //     // frameworkScriptInstance->Execute("void FpmedServerBus(String)",
-    //     //                                  the message);
-    // }
-
-#endif
-}
-
-int Sample::IsConnectedToServer() {
-    Network* network = GetSubsystem<Network>();
-    Connection* serverConnection = network->GetServerConnection();
-
-    if (serverConnection)
-        return 1;
-    else
-        return 0;
-}
-void Sample::ConnectToSceneServer(int port, char* ip) {
-    Network* network = GetSubsystem<Network>();
-
-    clientObjectID_ = 0;
-    network->Connect(ip, port, scene_);
-}
-void Sample::StartSceneServer(int port) {
-    Network* network = GetSubsystem<Network>();
-    network->StartServer(port);
-}
 void Sample::CloseApplication() { engine_->Exit(); }
 int Sample::isApplication() {
     // printf("isapplication %d\n", (!engine_->IsExiting()) );
@@ -189,8 +146,6 @@ int Sample::RunFrameC() {
         return EXIT_FAILURE;
     }
 }
-void Sample::loopCalibrateCamera() {}
-// extra functions --------------------------
 
 void Sample::SetWindowTitleAndIcon() {
     ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -235,74 +190,6 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
     // Toggle debug HUD with F2
     else if (key == KEY_F2)
         GetSubsystem<DebugHud>()->ToggleAll();
-
-    // Common rendering quality controls, only when UI has no focused element
-    else if (!GetSubsystem<UI>()->GetFocusElement()) {
-        // Renderer* renderer = GetSubsystem<Renderer>();
-
-        // // Texture quality
-        // if (key == '1') {
-        //     int quality = renderer->GetTextureQuality();
-        //     ++quality;
-        //     if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
-        //     renderer->SetTextureQuality(quality);
-        // }
-
-        // // Material quality
-        // else if (key == '2') {
-        //     int quality = renderer->GetMaterialQuality();
-        //     ++quality;
-        //     if (quality > QUALITY_HIGH) quality = QUALITY_LOW;
-        //     renderer->SetMaterialQuality(quality);
-        // }
-
-        // // Specular lighting
-        // else if (key == '3')
-        //     renderer->SetSpecularLighting(!renderer->GetSpecularLighting());
-
-        // // Shadow rendering
-        // else if (key == '4')
-        //     renderer->SetDrawShadows(!renderer->GetDrawShadows());
-
-        // // Shadow map resolution
-        // else if (key == '5') {
-        //     int shadowMapSize = renderer->GetShadowMapSize();
-        //     shadowMapSize *= 2;
-        //     if (shadowMapSize > 2048) shadowMapSize = 512;
-        //     renderer->SetShadowMapSize(shadowMapSize);
-        // }
-
-        // // Shadow depth and filtering quality
-        // else if (key == '6') {
-        //     ShadowQuality quality = renderer->GetShadowQuality();
-        //     quality = (ShadowQuality)(quality + 1);
-        //     if (quality > SHADOWQUALITY_BLUR_VSM)
-        //         quality = SHADOWQUALITY_SIMPLE_16BIT;
-        //     renderer->SetShadowQuality(quality);
-        // }
-
-        // // Occlusion culling
-        // else if (key == '7') {
-        //     bool occlusion = renderer->GetMaxOccluderTriangles() > 0;
-        //     occlusion = !occlusion;
-        //     renderer->SetMaxOccluderTriangles(occlusion ? 5000 : 0);
-        // }
-
-        // // Instancing
-        // else if (key == '8')
-        //     renderer->SetDynamicInstancing(!renderer->GetDynamicInstancing());
-
-        // // Take screenshot
-        // else if (key == '9') {
-        //     Graphics* graphics = GetSubsystem<Graphics>();
-        //     Image screenshot(context_);
-        //     graphics->TakeScreenShot(screenshot);
-        //     // Here we save in the Data folder with date and time appended
-        //     // screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir() +
-        //     // "Data/Screenshot_" + Time::GetTimeStamp().Replaced(':',
-        //     // '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
-        // }
-    }
 }
 
 // Create the main scene and camera, tjis scene is special because we simualte
@@ -332,70 +219,6 @@ void Sample::CreateScene() {
     cameraNode_->SetPosition(Vector3(0.0f, 0.0f, 0.0f));  // reset position
 }
 
-// create a standby scene for when we are with the projectors waiting for a
-// server connection, at least display something for projection.
-void Sample::createStandbyScene() {
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
-
-    Zone* zone = scene_->CreateComponent<Zone>();
-    zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
-    zone->SetAmbientColor(Color(0.5f, 0.5f, 0.5f));
-    zone->SetFogColor(Color(0.18f, 0.08f, 0.08f));
-    zone->SetFogStart(1.0f);
-    zone->SetFogEnd(100.0f);
-
-    Node* planeNode = scene_->CreateChild("Plane");
-    planeNode->SetScale(Vector3(300.0f, 1.0f, 300.0f));
-    StaticModel* planeObject = planeNode->CreateComponent<StaticModel>();
-    planeObject->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-    planeObject->SetMaterial(
-        cache->GetResource<Urho3D::Material>("Materials/BlackGrid.xml"));
-
-    Node* lightNode = scene_->CreateChild("DirectionalLight");
-    lightNode->SetDirection(Vector3(0.6f, -1.0f, 0.8f));
-    Light* light = lightNode->CreateComponent<Light>();
-    light->SetLightType(LIGHT_DIRECTIONAL);
-    light->SetColor(Color(0.8f, 0.8f, 0.8f));
-
-    cameraNode_ = scene_->GetChild("Camera");
-    // cameraNode_->CreateComponent<Camera>();
-    cameraNode_->SetPosition(Vector3(0.0f, 10.0f, -30.0f));
-
-    Node* text3DNode = scene_->CreateChild("Text3D");
-    text3DNode->SetPosition(Vector3(0.0f, 9.0f, 30.0f));
-    Text3D* text3D = text3DNode->CreateComponent<Text3D>();
-
-    // Manually set text in the current language.
-    text3D->SetText(
-        "\
-       WELCOME TO FTD Digital Arena\n \
-DOMEFY - Framework for Multi-Projection Systems\n \
-            PROTOTYPE " +
-        Urho3D::String(fpmed_version));
-
-    text3D->SetFont(cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
-                    30);
-    text3D->SetColor(Color::WHITE);
-    text3D->SetAlignment(HA_CENTER, VA_CENTER);
-    text3DNode->SetScale(18);
-}
-
-void Sample::SyncCameraPosRot() {
-    Network* network = GetSubsystem<Network>();
-    Connection* serverConnection = network->GetServerConnection();
-
-    if (serverConnection)  // IM A CLIENT
-    {
-        // aside the scene, just copy the servers camera
-        Node* serverCameraNode = 0;
-        serverCameraNode = scene_->GetChild("CameRef");
-        if (serverCameraNode) {
-            cameraNode_->SetPosition(serverCameraNode->GetPosition());
-            cameraNode_->SetRotation(serverCameraNode->GetRotation());
-        }
-    }
-}
-
 void Sample::SetupViewport() {
     // Renderer* renderer = GetSubsystem<Renderer>();
 
@@ -408,64 +231,12 @@ void Sample::SetupViewport() {
 void Sample::SubscribeToEvents() {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Sample, HandleUpdate));
     SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Sample, HandlePostUpdate));
-    SubscribeToEvent(E_CLIENTCONNECTED,
-                     URHO3D_HANDLER(Sample, HandleClientConnected));
-    SubscribeToEvent(E_CLIENTDISCONNECTED,
-                     URHO3D_HANDLER(Sample, HandleClientDisconnected));
-    SubscribeToEvent(E_CLIENTOBJECTID,
-                     URHO3D_HANDLER(Sample, HandleClientObjectID));
     GetSubsystem<Network>()->RegisterRemoteEvent(E_CLIENTOBJECTID);
 }
 
 void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {
-    SyncCameraPosRot();
 }
 void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {
-    handleIncomingNetworkScriptCommands();
-}
-
-void Sample::HandleDisconnect(StringHash eventType, VariantMap& eventData) {
-    Network* network = GetSubsystem<Network>();
-    Connection* serverConnection = network->GetServerConnection();
-
-    if (serverConnection) {
-        serverConnection->Disconnect();
-        scene_->Clear(true, false);
-        clientObjectID_ = 0;
-    } else if (network->IsServerRunning()) {
-        network->StopServer();
-        scene_->Clear(true, false);
-    }
-}
-void Sample::HandleStartServer(StringHash eventType, VariantMap& eventData) {
-    Network* network = GetSubsystem<Network>();
-    network->StartServer(SERVER_PORT);
-}
-void Sample::HandleConnectionStatus(StringHash eventType,
-                                    VariantMap& eventData) {
-    // UpdateButtons();
-}
-void Sample::HandleClientConnected(StringHash eventType,
-                                   VariantMap& eventData) {
-    using namespace ClientConnected;
-
-    Connection* newConnection =
-        static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-    newConnection->SetScene(scene_);
-}
-void Sample::HandleClientDisconnected(StringHash eventType,
-                                      VariantMap& eventData) {
-    using namespace ClientConnected;
-
-    Connection* connection =
-        static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-    Node* object = serverObjects_[connection];
-    if (object) object->Remove();
-
-    serverObjects_.Erase(connection);
-}
-void Sample::HandleClientObjectID(StringHash eventType, VariantMap& eventData) {
-    clientObjectID_ = eventData[P_ID].GetUInt();
 }
 
 // Creates the camera that should be used byt the fulldome viewports.
