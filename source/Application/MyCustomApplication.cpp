@@ -13,7 +13,7 @@
 #include <Urho3D/AngelScript/APITemplates.h>
 
 extern std::string commandString;  // main.cpp
-MyCustomApplication* application;
+MyCustomApplication *application;
 
 void MyCustomApplication::RegisterCustomScriptAPI() {
 #ifdef fpmed_allow_scripted_application
@@ -30,68 +30,75 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
 
     // Register custom Urho3D componenets
 
-    asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+    asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
     // VHP
     RegisterComponent<VHP>(engine, "VHP");
-    engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)", asMETHOD(VHP, CreateModel), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetViewNodeReference(Node@+)", asMETHOD(VHP, SetViewNodeReference), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetSagitalCut(float, float, bool)", asMETHOD(VHP, SetSagitalCut), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetCoronalCut(float, float)", asMETHOD(VHP, SetCoronalCut), asCALL_THISCALL);
-    engine->RegisterObjectMethod("VHP", "void SetAxialCut(float, float)", asMETHOD(VHP, SetAxialCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)",
+                                 asMETHOD(VHP, CreateModel), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetViewNodeReference(Node@+)",
+                                 asMETHOD(VHP, SetViewNodeReference),
+                                 asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP",
+                                 "void SetSagitalCut(float, float, bool)",
+                                 asMETHOD(VHP, SetSagitalCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetCoronalCut(float, float)",
+                                 asMETHOD(VHP, SetCoronalCut), asCALL_THISCALL);
+    engine->RegisterObjectMethod("VHP", "void SetAxialCut(float, float)",
+                                 asMETHOD(VHP, SetAxialCut), asCALL_THISCALL);
 
-    // Registers custom C++ class in AngelScript and pass a class instance (singleton)
-    ProgramConfig* config = ProgramConfig::GetInstance();
-    engine->RegisterObjectType("ProgramConfig", 0, asOBJ_REF);  // asOBJ_REF because you wanted a reference call
-    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF, "void f()", asMETHOD(ProgramConfig, AddRef), asCALL_THISCALL);
-    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_RELEASE, "void f()", asMETHOD(ProgramConfig, ReleaseRef), asCALL_THISCALL);
-    engine->RegisterObjectMethod("ProgramConfig", "String GetVHPFile()", asMETHOD(ProgramConfig, GetPathToCustomAssetsFolderURHO3D), asCALL_THISCALL);
-    engine->RegisterGlobalProperty("ProgramConfig progConf", config);  // the class instance must be a pointer reference.
+    // Registers custom C++ class in AngelScript and pass a class instance
+    // (singleton)
+    ProgramConfig *config = ProgramConfig::GetInstance();
+    engine->RegisterObjectType(
+        "ProgramConfig", 0,
+        asOBJ_REF);  // asOBJ_REF because you wanted a reference call
+    engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF,
+                                    "void f()", asMETHOD(ProgramConfig, AddRef),
+                                    asCALL_THISCALL);
+    engine->RegisterObjectBehaviour(
+        "ProgramConfig", asBEHAVE_RELEASE, "void f()",
+        asMETHOD(ProgramConfig, ReleaseRef), asCALL_THISCALL);
+    engine->RegisterObjectMethod(
+        "ProgramConfig", "String GetVHPFile()",
+        asMETHOD(ProgramConfig, GetPathToCustomAssetsFolderURHO3D),
+        asCALL_THISCALL);
+    engine->RegisterGlobalProperty(
+        "ProgramConfig progConf",
+        config);  // the class instance must be a pointer reference.
 #endif
 }
 
-MyCustomApplication::MyCustomApplication(Context* context) : Sample(context) {
+MyCustomApplication::MyCustomApplication(Context *context) : Sample(context) {
     this->RegisterCustomScriptAPI();
 }
 
 void MyCustomApplication::CreateScene() {
-    Camera* cameraComp = cameraNode_->GetComponent<Camera>();
+    Camera *cameraComp = cameraNode_->GetComponent<Camera>();
     cameraComp->SetFov(85.0f);
 
-    Urho3D::ResourceCache* cache = GetSubsystem<ResourceCache>();
-    Renderer* renderer = GetSubsystem<Renderer>();
+    Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
+    Renderer *renderer = GetSubsystem<Renderer>();
     renderer->SetTextureFilterMode(FILTER_ANISOTROPIC);
     renderer->SetTextureAnisotropy(16);
     renderer->SetTextureQuality(QUALITY_MAX);
 
-    // Hologram node - The actual custom code TODO: make componenet
-    Node* orbitableNode = scene_->CreateChild("orbitableNode");
-    orbitableNode->SetPosition(Vector3(0, 0, 0));
-    cameraGrab = cameraNode_->CreateComponent<GrabbableUI>();
-    cameraGrab->SetRotationOffset(Vector3(0.0f, -90.0f, 0));
-    cameraGrab->SetOrbitableReference(orbitableNode);
-    cameraGrab->SetRadiusAlterMoveSpeed(true);
-
     // Singleton with configuration variables
-    ProgramConfig* config = ProgramConfig::GetInstance();
+    ProgramConfig *config = ProgramConfig::GetInstance();
     std::list<Projection> projections = config->GetProjections();
 
-    // TODO: Howdy, anatomic viewer
-    anatomicViewer = cameraNode_->CreateComponent<AnatomicViewer>();
-    anatomicViewer->CreateViewer();  // must be called
-
     // viewports --------------------------------
-    Graphics* graphics = GetSubsystem<Graphics>();
+    Graphics *graphics = GetSubsystem<Graphics>();
     renderer->SetNumViewports(config->GetLoadedProjectionsCount() + 1);
 
-    Camera* mainCam = cameraNode_->GetComponent<Camera>();
+    Camera *mainCam = cameraNode_->GetComponent<Camera>();
     // mainCam->SetEnabled(false);
     SharedPtr<Viewport> mainViewport(new Viewport(context_, scene_, mainCam));
     renderer->SetViewport(0, mainViewport);
 
     // the custom projections
     int aux = 1;
-    for (auto const& proj : projections) {
-        Node* domeCamNode =
+    for (auto const &proj : projections) {
+        Node *domeCamNode =
             CreateDomeCamera(proj);  // last element from sceneDomeList_ is the
                                      // scene for this camera
         // TODO: make a function convert vec4 to Urho's rectangle
@@ -127,31 +134,23 @@ void MyCustomApplication::Start() {
 
     if (level->InitScene(scene_)) {
         level->InitTVComponentForSceneNode("TV");
-
     } else {
         engine_->Exit();
     }
 
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache *cache = GetSubsystem<ResourceCache>();
     // debug text specific.
     {
-        UI* ui = GetSubsystem<UI>();
+        UI *ui = GetSubsystem<UI>();
 
         debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
         debTex->SetText("Loading images, please wait a moment.");
         debTex->SetFont(
-            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"),
-            15);
+            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"), 15);
         debTex->SetTextAlignment(HA_CENTER);
         debTex->SetHorizontalAlignment(HA_CENTER);
         debTex->SetVerticalAlignment(VA_CENTER);
         debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
-    }
-
-    // load hologram textures
-    {
-        ResourceCache* cache = GetSubsystem<ResourceCache>();
-        int seq = 8650;
     }
 
     SubscribeToEvent(E_SCENEUPDATE,
@@ -163,19 +162,20 @@ void MyCustomApplication::Start() {
 
 #ifdef fpmed_allow_scripted_application
     frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>("Scripts/18_CharacterDemo2.as"), "Fpmed");
+        cache->GetResource<ScriptFile>("Scripts/18_CharacterDemo2.as"),
+        "Fpmed");
     frameworkScriptInstance->Execute("void FpmedStart()");
 #endif
 }
 
 void MyCustomApplication::Stop() {
-    if (level) delete level;
-
-    // Perform optional cleanup after main loop has terminated
+    if (level)
+        delete level;  // Perform optional cleanup after main loop has
+                       // terminated
 }
 
 void MyCustomApplication::HandleUpdates(StringHash eventType,
-                                        VariantMap& eventData) {
+                                        VariantMap &eventData) {
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
@@ -188,20 +188,24 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             std::string cmd;  // cmd and parameters
             cmd = commandSplitted[0];
 
-            //if (!cmd.compare(std::string("SCRIPT"))) {  // external text
-            // Get the command from network, redirect to script, execute it, and print the scrip's response.
+            // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
+            // Get the command from network, redirect to script, execute it, and
+            // print the scrip's response.
             VariantVector parameters;
             VariantMap vm;
             VariantMap vm2;
-            vm["CMD"] = Urho3D::String(commandString.c_str());  // let .as split the command string.
-            parameters.Push(vm);                                // function arguments
-            parameters.Push(vm2);                               // return
+            vm["CMD"] = Urho3D::String(
+                commandString.c_str());  // let .as split the command string.
+            parameters.Push(vm);         // function arguments
+            parameters.Push(vm2);        // return
 
-            frameworkScriptInstance->Execute("void DataGate(VariantMap, VariantMap&)", parameters);  // Execute, second parameters is return value
+            frameworkScriptInstance->Execute(
+                "void DataGate(VariantMap, VariantMap&)",
+                parameters);  // Execute, second parameters is return value
 
             // extract and print return from angelscript
             VariantMap retVM = parameters.Back().GetVariantMap();
-            //printf("C++: %s", retVM["RET"].GetString().CString());
+            // printf("C++: %s", retVM["RET"].GetString().CString());
             //}
         }
         commandString = "";  // Must clean it.

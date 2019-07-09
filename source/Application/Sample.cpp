@@ -26,10 +26,7 @@ static const unsigned CTRL_RIGHT = 8;
 
 // DEFINE_APPLICATION_MAIN(Sample) // instead of it use the main(){}
 
-Sample::Sample(Context* context)
-    : Application(context) {
-    scene_ = 0;
-}
+Sample::Sample(Context* context) : Application(context) { scene_ = 0; }
 
 void Sample::Setup() {
     fpmed::ProgramConfig* config = fpmed::ProgramConfig::GetInstance();
@@ -116,7 +113,6 @@ int Sample::Prepare() {
 
         if (engine_->Initialize(engineParameters_) == false) {
             ErrorExit();
-
             return exitCode_;
         }
 
@@ -219,31 +215,20 @@ void Sample::CreateScene() {
     cameraNode_->SetPosition(Vector3(0.0f, 0.0f, 0.0f));  // reset position
 }
 
-void Sample::SetupViewport() {
-    // Renderer* renderer = GetSubsystem<Renderer>();
-
-    // SharedPtr<Viewport> viewport(new Viewport(
-    //     context_, scene_,
-    //     cameraNode_->GetComponent<Camera>()));  // cameraNode_ camera
-    //     component
-    // renderer->SetViewport(0, viewport);
-}
 void Sample::SubscribeToEvents() {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Sample, HandleUpdate));
     SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Sample, HandlePostUpdate));
     GetSubsystem<Network>()->RegisterRemoteEvent(E_CLIENTOBJECTID);
 }
 
-void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {
-}
-void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {
-}
+void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {}
+void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {}
 
 // Creates the camera that should be used byt the fulldome viewports.
 // It creates the scene the virtual dome, and on top of that, it creates another
 // scene that holds a special mesh that we use to do a morphologic
 // point-to-point geometry correction. Returns the node with the camera that
-// view the final geometry compositions
+// view the final geometry compositions0
 Node* Sample::CreateDomeCamera(Projection p) {
     SharedPtr<Scene> sceneDome_;
     SharedPtr<Node> cameraNodeDome_;
@@ -436,13 +421,18 @@ Node* Sample::CreateDomeCamera(Projection p) {
     cameraNodeDomeList_.push_back(cameraNodeDome_);
 
     // ----------------------------------------------------------------------
-    // We create another scene with the morphologic point-to-point geometry
-    // correction
 
     // Create the scene that will hold the deformable mesh for point-to-point
     // geometry correction
-    // TODO: this block repeats alot, we should write a function for it.
+    // TODO: this block repeats too much, we should write a function for it.
     Node* retCam;  // the camera node we are going to return
+    /// Cloned models' vertex buffers that we will animate.
+    Vector<SharedPtr<VertexBuffer> > animatingBuffers_;
+    /// Original vertex positions for the sphere model.
+    PODVector<Vector3> originalVertices_;
+    /// If the vertices are duplicates, indices to the original vertices (to
+    /// allow seamless animation.)
+    PODVector<unsigned> vertexDuplicates_;
     {
         Scene* geometryCorrectionScene_ = new Scene(context_);
         geometryCorrectionScene_->Clear();
@@ -454,16 +444,68 @@ Node* Sample::CreateDomeCamera(Projection p) {
         zone->SetFogColor(Color(255.0f, 0.08f, 0.08f));
         zone->SetFogStart(250 / 4);
         zone->SetFogEnd(500);
-
         sceneMorphcorrList_.push_back(geometryCorrectionScene_);
 
         Node* geometryCorrectionNode = geometryCorrectionScene_->CreateChild(
             "GEOMETRY_CORRECTION_NODE", LOCAL);
-        StaticModel* geometryCorrectionMesh =
+        StaticModel* geometryCorrectionMesh;
+
+        // Get the original model and its unmodified vertices, which are used as
+        // source data for the animation
+        auto* originalModel =
+            cache->GetResource<Model>("Models/geometryCorrection.mdl");
+        if (!originalModel) {
+            URHO3D_LOGERROR("Model not found, cannot initialize example scene");
+            return NULL;
+        }
+
+        // Get the vertex buffer from the first geometry's first LOD level
+        VertexBuffer* buffer =
+            originalModel->GetGeometry(0, 0)->GetVertexBuffer(0);
+
+        const auto* vertexData =
+            (const unsigned char*)buffer->Lock(0, buffer->GetVertexCount());
+
+        if (vertexData) {
+            unsigned numVertices = buffer->GetVertexCount();
+            unsigned vertexSize = buffer->GetVertexSize();
+            // Copy the original vertex positions
+            for (unsigned i = 0; i < numVertices; ++i) {
+                const Vector3& src = *reinterpret_cast<const Vector3*>(
+                    vertexData + i * vertexSize);
+                originalVertices_.Push(src);
+            }
+            buffer->Unlock();
+
+            // Detect duplicate vertices to allow seamless animation
+            vertexDuplicates_.Resize(originalVertices_.Size());
+            for (unsigned i = 0; i < originalVertices_.Size(); ++i) {
+                vertexDuplicates_[i] = i;  // Assume not a duplicate
+                for (unsigned j = 0; j < i; ++j) {
+                    if (originalVertices_[i].Equals(originalVertices_[j])) {
+                        vertexDuplicates_[i] = j;
+                        break;
+                    }
+                }
+            }
+        } else {
+            URHO3D_LOGERROR(
+                "Failed to lock the model vertex buffer to get original "
+                "vertices");
+            return NULL;
+        }
+
+        // Create StaticModel in the scene. Clone the model so we
+        // can modify the vertex data individually
+        geometryCorrectionMesh =
             geometryCorrectionNode->CreateComponent<StaticModel>();
-        geometryCorrectionMesh->SetModel(
-            cache->GetResource<Model>("Models/geometryCorrection.mdl"));
-        geometryCorrectionNode->SetRotation(Quaternion(180.0f, -90.0f, 0.0f));
+        SharedPtr<Model> cloneModel = originalModel->Clone();
+        geometryCorrectionMesh->SetModel(cloneModel);
+
+        // Store the cloned vertex buffer that we will modify when
+        // animating
+        animatingBuffers_.Push(SharedPtr<VertexBuffer>(
+            cloneModel->GetGeometry(0, 0)->GetVertexBuffer(0)));
 
         // create rtt onto geometry correction mesh
         SharedPtr<Texture2D> geometryCorrectionRenderTexture(
