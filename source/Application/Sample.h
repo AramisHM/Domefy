@@ -71,12 +71,6 @@ class Sample : public Application {
     // A list of "fisheye" cameras.
     std::vector<SharedPtr<Node>> cameraNodeDomeList_;
 
-    // Dome morphologic correction scenes.
-    std::vector<Scene*> sceneMorphcorrList_;
-
-    // The morphologic correction camera node list.
-    std::vector<Node*> cameraNodeMorphcorrList_;
-
     // This is similar as above, but, instead of a node with 5 more nodes, this
     // is the camera with the component only.
     std::vector<Node*> cameraNodeDomeAll_;
@@ -85,6 +79,27 @@ class Sample : public Application {
 
     // CreateDomeCamera - Creates the dome camera node.
     Node* CreateDomeCamera(Projection p);
+
+    // Vertex animation variables and functions -------------------------------------------
+    float time_;
+
+    // Dome morphologic correction scenes.
+    std::vector<Scene*> sceneMorphcorrList_;
+
+    // The morphologic correction camera node list.
+    std::vector<Node*> cameraNodeMorphcorrList_;
+
+    /// Cloned models' vertex buffers that we will animate.
+    Vector<SharedPtr<VertexBuffer>> animatingBuffers_;
+
+    /// Original vertex positions for the sphere model.
+    PODVector<Vector3> originalVertices_;
+
+    /// If the vertices are duplicates, indices to the original vertices (to
+    /// allow seamless animation.)
+    PODVector<unsigned> vertexDuplicates_;
+
+    void AnimateVertex(int v, float x, float y);
 
    private:
     /// Create logo.
@@ -108,16 +123,4 @@ class Sample : public Application {
 
     /// Handle pressing the connect button.
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
-
-    void AnimateVertex(float timeStep);
-
-    // Vertex animation variables -------------------------------------------
-    float time_;
-    /// Cloned models' vertex buffers that we will animate.
-    Vector<SharedPtr<VertexBuffer>> animatingBuffers_;
-    /// Original vertex positions for the sphere model.
-    PODVector<Vector3> originalVertices_;
-    /// If the vertices are duplicates, indices to the original vertices (to
-    /// allow seamless animation.)
-    PODVector<unsigned> vertexDuplicates_;
 };

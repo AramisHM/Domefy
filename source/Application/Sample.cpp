@@ -223,9 +223,7 @@ void Sample::SubscribeToEvents() {
 
 void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {}
 
-void Sample::AnimateVertex(float timeStep) {
-    time_ += timeStep * 100.0f;
-
+void Sample::AnimateVertex(int v, float x, float y) {
     // Repeat for each of the cloned vertex buffers
     for (unsigned i = 0; i < animatingBuffers_.Size(); ++i) {
         float startPhase = time_ + i * 30.0f;
@@ -238,18 +236,16 @@ void Sample::AnimateVertex(float timeStep) {
             (unsigned char*)buffer->Lock(0, buffer->GetVertexCount());
         if (vertexData) {
             unsigned vertexSize = buffer->GetVertexSize();
-            unsigned numVertices = buffer->GetVertexCount();
-            for (unsigned j = 0; j < numVertices; ++j) {
-                // If there are duplicate vertices, animate them in phase of
-                // the original
-                float phase = startPhase + vertexDuplicates_[j] * 10.0f;
-                Vector3& src = originalVertices_[j];
-                Vector3& dest =
-                    *reinterpret_cast<Vector3*>(vertexData + j * vertexSize);
-                dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
-                dest.y_ = src.y_ * (1.0f + 0.1f * Sin(phase + 60.0f));
-                dest.z_ = src.z_ * (1.0f + 0.1f * Sin(phase + 120.0f));
-            }
+            // unsigned numVertices = buffer->GetVertexCount();
+
+            // If there are duplicate vertices, animate them in phase of
+            // the original
+            Vector3& src = originalVertices_[v];
+            Vector3& dest =
+                *reinterpret_cast<Vector3*>(vertexData + v * vertexSize);
+            //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
+            dest.y_ = src.y_ * (1.0f + 0.01f * -y);
+            dest.z_ = src.z_ * (1.0f + 0.01f * x);
 
             buffer->Unlock();
         }
@@ -260,10 +256,10 @@ void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {
     // Take the frame time step, which is stored as a float
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
-    AnimateVertex(timeStep);
+    //AnimateVertex(timeStep);
 }
 
-// Creates the camera that should be used byt the fulldome viewports.
+// Creates the camera that should be used by the fulldome viewports.
 // It creates the scene the virtual dome, and on top of that, it creates another
 // scene that holds a special mesh that we use to do a morphologic
 // point-to-point geometry correction. Returns the node with the camera that
@@ -308,7 +304,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
     cameraReferenceForDomeRender->SetRotation(Quaternion(
         p._offsetRot.getX(), p._offsetRot.getY(), p._offsetRot.getZ()));
 
-    // here we create the RTTs that we will place on the virtual dome mesh
+    // Create the RTT's that we will place on the virtual dome mesh
     // up
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
@@ -465,7 +461,6 @@ Node* Sample::CreateDomeCamera(Projection p) {
     // geometry correction
     // TODO: this block repeats too much, we should write a function for it.
     Node* retCam;  // the camera node we are going to return
-
     {
         Scene* geometryCorrectionScene_ = new Scene(context_);
         geometryCorrectionScene_->Clear();

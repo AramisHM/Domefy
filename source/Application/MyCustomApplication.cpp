@@ -184,30 +184,37 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         std::vector<std::string> commandSplitted;
         commandSplitted = split(commandString, ';');
         int cmdLen = commandSplitted.size();
+
         if (cmdLen > 1) {
-            std::string cmd;  // cmd and parameters
-            cmd = commandSplitted[0];
+            if (!commandSplitted[0].compare(std::string("CPP"))) {  // C++ exclusively
+                if (!commandSplitted[1].compare(std::string("VRTX"))) {
+                    float x, y;
+                    x = std::stof(commandSplitted[2]);
+                    y = std::stof(commandSplitted[3]);
+                    AnimateVertex(0, x, y);
+                }
+            } else {  // foreward to script instance
+                // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
+                // Get the command from network, redirect to script, execute it, and
+                // print the scrip's response.
+                VariantVector parameters;
+                VariantMap vm;
+                VariantMap vm2;
+                vm["CMD"] = Urho3D::String(
+                    commandString.c_str());  // let .as split the command string.
+                parameters.Push(vm);         // function arguments
+                parameters.Push(vm2);        // return
 
-            // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
-            // Get the command from network, redirect to script, execute it, and
-            // print the scrip's response.
-            VariantVector parameters;
-            VariantMap vm;
-            VariantMap vm2;
-            vm["CMD"] = Urho3D::String(
-                commandString.c_str());  // let .as split the command string.
-            parameters.Push(vm);         // function arguments
-            parameters.Push(vm2);        // return
+                frameworkScriptInstance->Execute(
+                    "void DataGate(VariantMap, VariantMap&)",
+                    parameters);  // Execute, second parameters is return value
 
-            frameworkScriptInstance->Execute(
-                "void DataGate(VariantMap, VariantMap&)",
-                parameters);  // Execute, second parameters is return value
-
-            // extract and print return from angelscript
-            VariantMap retVM = parameters.Back().GetVariantMap();
-            // printf("C++: %s", retVM["RET"].GetString().CString());
-            //}
+                // extract and print return from angelscript
+                VariantMap retVM = parameters.Back().GetVariantMap();
+                // printf("C++: %s", retVM["RET"].GetString().CString());
+                //}
+            }
         }
-        commandString = "";  // Must clean it.
     }
+    commandString = "";  // Must clean it.
 }
