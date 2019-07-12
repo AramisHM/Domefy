@@ -468,7 +468,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         Node* zoneNode = geometryCorrectionScene_->CreateChild("Zone", LOCAL);
         Zone* zone = zoneNode->CreateComponent<Zone>();
         zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
-        zone->SetAmbientColor(Color(255.0f, 0.0f, 0.0f));
+        zone->SetAmbientColor(Color(255.0f, 0.0f, 255.0f));
         zone->SetFogColor(Color(255.0f, 0.08f, 0.08f));
         zone->SetFogStart(250 / 4);
         zone->SetFogEnd(500);
@@ -543,7 +543,9 @@ Node* Sample::CreateDomeCamera(Projection p) {
         // TODO: this size shoulbe have its own config value on the
         // config.JSON
         geometryCorrectionRenderTexture->SetSize(
-            p._rttResolution, p._rttResolution, Graphics::GetRGBFormat(),
+            p._viewport.getR(),
+            p._viewport.getS(),
+            Graphics::GetRGBFormat(),
             TEXTURE_RENDERTARGET);
 
         geometryCorrectionRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
@@ -567,8 +569,8 @@ Node* Sample::CreateDomeCamera(Projection p) {
             Camera* geometryCorrCamera =
                 geometryCorrCameraNode->CreateComponent<Camera>();
             geometryCorrCameraNode->SetPosition(
-                Vector3(0, 0, -1.1f));  // TODO: soud be parametrized and
-                                        // configurable on the new calibrator
+                Vector3(0, 0, -1.005f));  // Back off a bit, just to show the outline created by the scene ambient color TODO: should be parametrized and
+                                          // configurable on the new calibrator
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(500.0f);
             geometryCorrCamera->SetAspectRatio(1.0f);
