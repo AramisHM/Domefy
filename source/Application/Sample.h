@@ -98,8 +98,9 @@ class Sample : public Application {
     /// If the vertices are duplicates, indices to the original vertices (to
     /// allow seamless animation.)
     PODVector<unsigned> vertexDuplicates_;
+    // END Vertex animation variables and functions -------------------------------------------
 
-    void AnimateVertex(int v, float x, float y);
+    void AnimateVertex(int mesh, int vertex, float x, float y);
 
    private:
     /// Create logo.

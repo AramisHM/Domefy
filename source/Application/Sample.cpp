@@ -1,5 +1,3 @@
-// TODO: PARA CADA UMA DAS VARIAVEIS GLOBAIS ABAIXO MOVER ELAS PARA A CLASSE
-// SAMPLE E CRIAR UMA MÉTODO
 #include <FPMED.H>
 #include <Urho3DAll.h>
 
@@ -223,7 +221,7 @@ void Sample::SubscribeToEvents() {
 
 void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {}
 
-void Sample::AnimateVertex(int v, float x, float y) {
+void Sample::AnimateVertex(int mesh, int vertex, float x, float y) {
     // Repeat for each of the cloned vertex buffers
     for (unsigned i = 0; i < animatingBuffers_.Size(); ++i) {
         float startPhase = time_ + i * 30.0f;
@@ -240,12 +238,12 @@ void Sample::AnimateVertex(int v, float x, float y) {
 
             // If there are duplicate vertices, animate them in phase of
             // the original
-            Vector3& src = originalVertices_[v];
+            Vector3& src = originalVertices_[vertex];
             Vector3& dest =
-                *reinterpret_cast<Vector3*>(vertexData + v * vertexSize);
+                *reinterpret_cast<Vector3*>(vertexData + vertex * vertexSize);
             //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
             dest.y_ = src.y_ * (1.0f + 0.01f * -y);
-            dest.z_ = src.z_ * (1.0f + 0.01f * x);
+            dest.z_ = src.z_ * (1.0f + 0.005f * x);
 
             buffer->Unlock();
         }
@@ -497,6 +495,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         if (vertexData) {
             unsigned numVertices = buffer->GetVertexCount();
             unsigned vertexSize = buffer->GetVertexSize();
+
             // Copy the original vertex positions
             for (unsigned i = 0; i < numVertices; ++i) {
                 const Vector3& src = *reinterpret_cast<const Vector3*>(
@@ -579,6 +578,5 @@ Node* Sample::CreateDomeCamera(Projection p) {
             retCam = geometryCorrCameraNode;
         }
     }
-
     return retCam;
 }

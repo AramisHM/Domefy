@@ -103,7 +103,14 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           //   console.log(
           //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
           //   );
-          cmd2Send = "CPP;VRTX;" + x + ";" + y + ";";
+          cmd2Send =
+            "CPP;VRTX;" +
+            img.getAttribute("index", indexCounter) +
+            ";" +
+            x +
+            ";" +
+            y +
+            ";";
           //console.log(cmd2Send);
           sendCommand(cmd2Send, false);
           // TODO call the psot function here

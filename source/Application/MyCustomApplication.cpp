@@ -189,9 +189,10 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             if (!commandSplitted[0].compare(std::string("CPP"))) {  // C++ exclusively
                 if (!commandSplitted[1].compare(std::string("VRTX"))) {
                     float x, y;
-                    x = std::stof(commandSplitted[2]);
-                    y = std::stof(commandSplitted[3]);
-                    AnimateVertex(0, x, y);
+                    int v = std::stoi(commandSplitted[2]);
+                    x = std::stof(commandSplitted[3]);
+                    y = std::stof(commandSplitted[4]);
+                    AnimateVertex(0, v, x, y);
                 }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
