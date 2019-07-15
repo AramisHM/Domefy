@@ -242,8 +242,8 @@ void Sample::AnimateVertex(int mesh, int vertex, float x, float y) {
             Vector3& dest =
                 *reinterpret_cast<Vector3*>(vertexData + vertex * vertexSize);
             //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
-            dest.y_ = src.y_ * (1.0f + 0.01f * -y);
-            dest.z_ = src.z_ * (1.0f + 0.005f * x);
+            dest.y_ = src.y_ + (.00314f * y);
+            dest.z_ = src.z_ + (.00314f * x);
 
             buffer->Unlock();
         }
