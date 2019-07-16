@@ -12,148 +12,163 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Calibrator</title>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
-    <style>
-      body {
-        background-color: #ffe2e294;
-      }
-    </style>
 
-    <script src="config.js"></script>
-  </head>
+<head>
+  <title>Calibrator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <style>
+    body {
+      background-color: #ffe2e294;
+    }
+  </style>
 
-  <!-- This tool is used to set the deformation of the final projection, in a point-to-point basis. -->
-  <script src="jquery.min.js"></script>
-  <script src="jquery-ui.js"></script>
-  <script>
-    indexCounter = 0;
-  </script>
+  <script src="config.js"></script>
+</head>
 
-  <body onload="AddGridVertexes()">
-    <div class="col-sm-7 text">
-      <h1><strong>Calibrator prototype P01</strong></h1>
-      <div class="description">
-        <div
-          id="myDiagramDiv"
-          draggable="true"
-          style="width:600px; height:400px; background-color: #DAE4E4;"
-        ></div>
-      </div>
+<!-- This tool is used to set the deformation of the final projection, in a point-to-point basis. -->
+<script src="jquery.min.js"></script>
+<script src="jquery-ui.js"></script>
+<script>
+  var indexCounter = 0;
+</script>
+
+<body onload="AddGridVertexes()">
+  <div class="col-sm-7 text">
+    <h1><strong>Calibrator prototype P01</strong></h1>
+    <div class="description">
+      <div id="myDiagramDiv" draggable="true" style="width:600px; height:400px; background-color: #DAE4E4;"></div>
     </div>
+  </div>
 
-    <div class="col-sm-5 text">
-      <div class="description">
-        <h1><strong>Text</strong></h1>
-      </div>
-      <button type="button" class="btn-primary" onclick="addimage();">
-        Add marker
-      </button>
+  <div class="col-sm-5 text">
+    <div class="description">
+      <h1><strong>Text</strong></h1>
     </div>
-  </body>
+    <button type="button" class="btn-primary" onclick="addimage();">
+      Add marker
+    </button>
+  </div>
+</body>
 
-  <script>
-    // matrix to translate the visible mesh vertex to actual index on buffer
-    var transMatrix = [
-      [68, 43, 42, 7, 6, 55, 54, 3, 2],
-      [67, 40, 41, 4, 5, 52, 53, 0, 1],
-      [65, 47, 46, 51, 50, 59, 58, 63, 62],
-      [64, 44, 45, 48, 49, 56, 57, 60, 61],
-      [66, 31, 30, 11, 10, 19, 18, 15, 14],
-      [76, 28, 29, 8, 9, 16, 17, 12, 13],
-      [73, 35, 34, 39, 38, 23, 22, 27, 26],
-      [72, 32, 33, 36, 37, 20, 21, 24, 25],
-      [74, 75, 69, 70, 71, 80, 77, 78, 79]
-    ];
+<script>
+  // matrix to translate the visible mesh vertex to actual index on buffer
+  var transMatrix = [
+    [68, 43, 42, 7, 6, 55, 54, 3, 2],
+    [67, 40, 41, 4, 5, 52, 53, 0, 1],
+    [65, 47, 46, 51, 50, 59, 58, 63, 62],
+    [64, 44, 45, 48, 49, 56, 57, 60, 61],
+    [66, 31, 30, 11, 10, 19, 18, 15, 14],
+    [76, 28, 29, 8, 9, 16, 17, 12, 13],
+    [73, 35, 34, 39, 38, 23, 22, 27, 26],
+    [72, 32, 33, 36, 37, 20, 21, 24, 25],
+    [74, 75, 69, 70, 71, 80, 77, 78, 79]
+  ];
 
-    affecRadius = 2;
+  var vertices = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ];
 
-    function clamp(num, min, max) {
-      return num <= min ? min : num >= max ? max : num;
-    }
+  affecRadius = 2;
 
-    // add image to control vertex,
-    // X, Y = calibrator coordinates
-    // id, vertex index
-    function AddimageSpec(x, y, id) {
-      var img = document.createElement("img");
-      img.src = "./marker.png";
-      img.height = 7;
-      img.width = 7;
+  function clamp(num, min, max) {
+    return num <= min ? min : num >= max ? max : num;
+  }
 
-      // It needs the following normalization
-      img.style.top = y + "px";
-      img.style.left = x - (1 + indexCounter * img.width) + "px";
+  // add image to control vertex,
+  // X, Y = calibrator coordinates
+  // id, vertex index
+  function AddimageSpec(x, y, id) {
+    var img = document.createElement("img");
+    img.src = "./marker.png";
+    img.height = 7;
+    img.width = 7;
 
-      img.setAttribute("index", Number(id)); // ARAMIS: Uses this to know what vertex we are dealing with
-      img.setAttribute("orgigX", x); // original position X
-      img.setAttribute("orgigY", y); // original position Y
-      indexCounter++;
-      document.getElementById("myDiagramDiv").appendChild(img);
+    // It needs the following normalization
+    img.style.top = y - (img.height) + "px"; // magic equation to normalize visual position with the image parameter
+    img.style.left = x - (1 + indexCounter * img.width) + "px"; // another magic normalization to align the visual element with its parameters
 
-      $(img).draggable({
-        drag: function() {
-          var $this = $(this);
-          var thisPos = $this.position();
-          var parentPos = $this.parent().position();
-          var x = thisPos.left - parentPos.left;
-          var y = thisPos.top - parentPos.top;
-          //   console.log(
-          //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
-          //   );
+    var i = Math.floor(indexCounter / 9);
+    var j = Math.floor(indexCounter % 9);
+    img.setAttribute("index", Number(id)); // ARAMIS: Uses this to know what vertex we are dealing with
+    img.setAttribute("orgigX", x); // original position X
+    img.setAttribute("orgigY", y); // original position Y
+    img.setAttribute("currPosX", 0);
+    img.setAttribute("currPosY", 0);
+    img.setAttribute("i", i);
+    img.setAttribute("j", j);
+    vertices[i][j] = img;
+    indexCounter++;
+    document.getElementById("myDiagramDiv").appendChild(img);
 
-          var selecIndex = Number(img.getAttribute("index"));
+    $(img).draggable({
+      drag: function () {
+        var $this = $(this);
+        var thisPos = $this.position();
+        var parentPos = $this.parent().position();
+        var x = thisPos.left - parentPos.left;
+        var y = thisPos.top - parentPos.top;
+        //   console.log(
+        //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
+        //   );
 
-          cmd2Send =
-            "CPP;VRTX;" +
-            transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
-              Math.floor(selecIndex / 9)
-            ] +
-            ";" +
-            (x - img.getAttribute("orgigX")) +
-            ";" +
-            (y - img.getAttribute("orgigY")) +
-            ";";
-          console.log(cmd2Send); // debug
-          sendCommand(cmd2Send, false);
-          // TODO call the psot function here
-        }
-      });
-    }
+        var selecIndex = Number(img.getAttribute("index"));
 
-    // Populate the initial grid
+        img.setAttribute("currPosX", (x - img.getAttribute("orgigX")));
+        img.setAttribute("currPosY", (y - img.getAttribute("orgigY")));
 
-    function AddGridVertexes() {
-      var spacing = 45; // pixels
-      for (i = 0; i < 9; ++i) {
-        for (j = 0; j < 9; ++j) {
-          var id = 0;
-          id = i * 9 + j;
-          AddimageSpec(i * spacing, j * spacing, id);
-        }
+        cmd2Send =
+          "CPP;VRTX;" +
+          transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
+          Math.floor(selecIndex / 9)
+          ] +
+          ";" + img.getAttribute("currPosX") +
+          ";" + img.getAttribute("currPosY") +
+          ";";
+        console.log(cmd2Send); // debug
+        sendCommand(cmd2Send, false);
+        // TODO call the psot function here
       }
+    });
+  }
 
-      console.log("grid loaded ");
+  // Populate the initial grid
+
+  function AddGridVertexes() {
+    var spacing = 45; // pixels
+    for (i = 0; i < 9; ++i) {
+      for (j = 0; j < 9; ++j) {
+        var id = 0;
+        id = i * 9 + j;
+        AddimageSpec(i * spacing, j * spacing, id);
+      }
     }
 
-    function sendCommand(data, sync = true) {
-      $.ajax({
-        type: "POST",
-        //the url where you want to sent the userName and password to
-        url: "http://" + serviceIPPort + "/setExampleTextMessage",
-        dataType: "json",
-        async: sync,
-        //json object to sent to the authentication url
-        data: '{"command": "' + data + '"}',
-        success: function() {
-          // alert("Thanks!");
-        }
-      });
-    }
-  </script>
+    console.log("grid loaded ");
+  }
+
+  function sendCommand(data, sync = true) {
+    $.ajax({
+      type: "POST",
+      //the url where you want to sent the userName and password to
+      url: "http://" + serviceIPPort + "/setExampleTextMessage",
+      dataType: "json",
+      async: sync,
+      //json object to sent to the authentication url
+      data: '{"command": "' + data + '"}',
+      success: function () {
+        // alert("Thanks!");
+      }
+    });
+  }
+</script>
+
 </html>
