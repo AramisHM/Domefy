@@ -12,163 +12,299 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <title>Calibrator</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-  <style>
-    body {
-      background-color: #ffe2e294;
-    }
-  </style>
-
-  <script src="config.js"></script>
-</head>
-
-<!-- This tool is used to set the deformation of the final projection, in a point-to-point basis. -->
-<script src="jquery.min.js"></script>
-<script src="jquery-ui.js"></script>
-<script>
-  var indexCounter = 0;
-</script>
-
-<body onload="AddGridVertexes()">
-  <div class="col-sm-7 text">
-    <h1><strong>Calibrator prototype P01</strong></h1>
-    <div class="description">
-      <div id="myDiagramDiv" draggable="true" style="width:600px; height:400px; background-color: #DAE4E4;"></div>
-    </div>
-  </div>
-
-  <div class="col-sm-5 text">
-    <div class="description">
-      <h1><strong>Text</strong></h1>
-    </div>
-    <button type="button" class="btn-primary" onclick="addimage();">
-      Add marker
-    </button>
-  </div>
-</body>
-
-<script>
-  // matrix to translate the visible mesh vertex to actual index on buffer
-  var transMatrix = [
-    [68, 43, 42, 7, 6, 55, 54, 3, 2],
-    [67, 40, 41, 4, 5, 52, 53, 0, 1],
-    [65, 47, 46, 51, 50, 59, 58, 63, 62],
-    [64, 44, 45, 48, 49, 56, 57, 60, 61],
-    [66, 31, 30, 11, 10, 19, 18, 15, 14],
-    [76, 28, 29, 8, 9, 16, 17, 12, 13],
-    [73, 35, 34, 39, 38, 23, 22, 27, 26],
-    [72, 32, 33, 36, 37, 20, 21, 24, 25],
-    [74, 75, 69, 70, 71, 80, 77, 78, 79]
-  ];
-
-  var vertices = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ];
-
-  affecRadius = 2;
-
-  function clamp(num, min, max) {
-    return num <= min ? min : num >= max ? max : num;
-  }
-
-  // add image to control vertex,
-  // X, Y = calibrator coordinates
-  // id, vertex index
-  function AddimageSpec(x, y, id) {
-    var img = document.createElement("img");
-    img.src = "./marker.png";
-    img.height = 7;
-    img.width = 7;
-
-    // It needs the following normalization
-    img.style.top = y - (img.height) + "px"; // magic equation to normalize visual position with the image parameter
-    img.style.left = x - (1 + indexCounter * img.width) + "px"; // another magic normalization to align the visual element with its parameters
-
-    var i = Math.floor(indexCounter / 9);
-    var j = Math.floor(indexCounter % 9);
-    img.setAttribute("index", Number(id)); // ARAMIS: Uses this to know what vertex we are dealing with
-    img.setAttribute("orgigX", x); // original position X
-    img.setAttribute("orgigY", y); // original position Y
-    img.setAttribute("currPosX", 0);
-    img.setAttribute("currPosY", 0);
-    img.setAttribute("i", i);
-    img.setAttribute("j", j);
-    vertices[i][j] = img;
-    indexCounter++;
-    document.getElementById("myDiagramDiv").appendChild(img);
-
-    $(img).draggable({
-      drag: function () {
-        var $this = $(this);
-        var thisPos = $this.position();
-        var parentPos = $this.parent().position();
-        var x = thisPos.left - parentPos.left;
-        var y = thisPos.top - parentPos.top;
-        //   console.log(
-        //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
-        //   );
-
-        var selecIndex = Number(img.getAttribute("index"));
-
-        img.setAttribute("currPosX", (x - img.getAttribute("orgigX")));
-        img.setAttribute("currPosY", (y - img.getAttribute("orgigY")));
-
-        cmd2Send =
-          "CPP;VRTX;" +
-          transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
-          Math.floor(selecIndex / 9)
-          ] +
-          ";" + img.getAttribute("currPosX") +
-          ";" + img.getAttribute("currPosY") +
-          ";";
-        console.log(cmd2Send); // debug
-        sendCommand(cmd2Send, false);
-        // TODO call the psot function here
+  <head>
+    <title>Calibrator</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      body {
+        background-color: #ffe2e294;
       }
-    });
-  }
+    </style>
 
-  // Populate the initial grid
+    <script src="config.js"></script>
+  </head>
 
-  function AddGridVertexes() {
-    var spacing = 45; // pixels
-    for (i = 0; i < 9; ++i) {
-      for (j = 0; j < 9; ++j) {
-        var id = 0;
-        id = i * 9 + j;
-        AddimageSpec(i * spacing, j * spacing, id);
-      }
+  <!-- This tool is used to set the deformation of the final projection, in a point-to-point basis. -->
+  <script src="jquery.min.js"></script>
+  <script src="jquery-ui.js"></script>
+  <script>
+    var indexCounter = 0;
+  </script>
+
+  <body onload="AddGridVertexes()">
+    <div class="col-sm-7 text">
+      <h1><strong>Calibrator prototype P01</strong></h1>
+      <div class="description">
+        <div
+          id="myDiagramDiv"
+          draggable="true"
+          style="width:600px; height:400px; background-color: #DAE4E4;"
+        ></div>
+      </div>
+    </div>
+
+    <div class="col-sm-5 text">
+      <div class="description">
+        <h1><strong>Text</strong></h1>
+      </div>
+      <button type="button" class="btn-primary" onclick="addimage();">
+        Add marker
+      </button>
+    </div>
+  </body>
+
+  <script>
+    // class with transformations
+    function Vert(idx) {
+      this.index = idx;
+      this.x = 0;
+      this.y = 0;
     }
 
-    console.log("grid loaded ");
-  }
+    // matrix to translate the visible mesh vertex to actual index on buffer
+    var transMatrix = [
+      [68, 43, 42, 7, 6, 55, 54, 3, 2],
+      [67, 40, 41, 4, 5, 52, 53, 0, 1],
+      [65, 47, 46, 51, 50, 59, 58, 63, 62],
+      [64, 44, 45, 48, 49, 56, 57, 60, 61],
+      [66, 31, 30, 11, 10, 19, 18, 15, 14],
+      [76, 28, 29, 8, 9, 16, 17, 12, 13],
+      [73, 35, 34, 39, 38, 23, 22, 27, 26],
+      [72, 32, 33, 36, 37, 20, 21, 24, 25],
+      [74, 75, 69, 70, 71, 80, 77, 78, 79]
+    ];
 
-  function sendCommand(data, sync = true) {
-    $.ajax({
-      type: "POST",
-      //the url where you want to sent the userName and password to
-      url: "http://" + serviceIPPort + "/setExampleTextMessage",
-      dataType: "json",
-      async: sync,
-      //json object to sent to the authentication url
-      data: '{"command": "' + data + '"}',
-      success: function () {
-        // alert("Thanks!");
+    var vertices = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+
+    affecRadius = 2; // radius of neigbours affected
+    moveNeighbours = true;
+
+    function clamp(num, min, max) {
+      return num <= min ? min : num >= max ? max : num;
+    }
+
+    // add image to control vertex,
+    // X, Y = calibrator coordinates
+    // id, vertex index
+    function AddimageSpec(x, y, id) {
+      var img = document.createElement("img");
+      img.src = "./marker.png";
+      img.height = 7;
+      img.width = 7;
+
+      // It needs the following normalization
+      img.style.top = y - img.height + "px"; // magic equation to normalize visual position with the image parameter
+      img.style.left = x - (1 + indexCounter * img.width) + "px"; // another magic normalization to align the visual element with its parameters
+
+      var i = Math.floor(indexCounter / 9);
+      var j = Math.floor(indexCounter % 9);
+      img.setAttribute("index", Number(id)); // ARAMIS: Uses this to know what vertex we are dealing with
+
+      // value that  indicates the original position relative to parent element
+      img.setAttribute("orgigX", x); // original position X
+      img.setAttribute("orgigY", y); // original position Y
+
+      // current position relative to its origin
+      img.setAttribute("currPosX", 0);
+      img.setAttribute("currPosY", 0);
+
+      // current position subtracted by last interation of position
+      img.setAttribute("lastPosX", 0);
+      img.setAttribute("lastPosY", 0);
+
+      // the matrix index, to help localize adjacent elements
+      // yes it is flipped, because, visually, it is builted flipped.
+      img.setAttribute("i", j);
+      img.setAttribute("j", i);
+
+      vertices[j][i] = img; // also visually flipped
+      indexCounter++;
+      document.getElementById("myDiagramDiv").appendChild(img);
+
+      $(img).draggable({
+        drag: function() {
+          var $this = $(this);
+          var thisPos = $this.position();
+          var parentPos = $this.parent().position();
+          var x = thisPos.left - parentPos.left;
+          var y = thisPos.top - parentPos.top;
+          //   console.log(
+          //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
+          //   );
+
+          var selecIndex = Number(img.getAttribute("index"));
+
+          // current position
+          var cpx = 0;
+          var cpy = 0;
+
+          // the movement relative to last iteration
+          var dpx = 0;
+          var dpy = 0;
+
+          cpx = x - img.getAttribute("orgigX");
+          cpy = y - img.getAttribute("orgigY");
+
+          dpx = cpx - img.getAttribute("lastPosX");
+          dpy = cpy - img.getAttribute("lastPosY");
+
+          img.setAttribute("lastPosX", img.getAttribute("currPosX"));
+          img.setAttribute("lastPosY", img.getAttribute("currPosY"));
+
+          img.setAttribute("currPosX", cpx);
+          img.setAttribute("currPosY", cpy);
+
+          var cmd2Send = ""; // the command we will send on the network
+          var affectedAdjs = [];
+
+          if (moveNeighbours) {
+            var i0, j0;
+            i0 = img.getAttribute("i");
+            j0 = img.getAttribute("j");
+            var affectFactor = 8; // just guessing
+
+            var nAffecAjs = 1; // the center one counts as a node
+            v = new Vert(transMatrix[i0][j0]);
+            v.x = cpx;
+            v.y = cpy;
+            affectedAdjs.push(v);
+            // affect all nodes arround the selected one
+            for (i = i0 - affecRadius; i <= Number(i0) + affecRadius; ++i) {
+              for (j = j0 - affecRadius; j <= Number(j0) + affecRadius; ++j) {
+                // normalize indexes
+                var ni = clamp(i, 0, 8);
+                var nj = clamp(j, 0, 8);
+
+                // only affect adjacent nodes.
+                if (ni != i0 || nj != j0) {
+                  // calulate how much it will affect
+                  var xscore, yscore;
+                  xscore = Math.abs(ni - i0);
+                  yscore = Math.abs(nj - j0);
+                  var faktor = xscore + yscore;
+
+                  // alter node position and store for sending
+                  var imag = vertices[ni][nj];
+
+                  var pcXimag, pcYimag;
+                  pcXimag = Number(imag.getAttribute("currPosX"));
+                  pcYimag = Number(imag.getAttribute("currPosY"));
+                  faktor += 2; // i dont know why 2, if only 2 it moves the same speed the selected node
+                  clamp(faktor, 2, faktor);
+                  pcXimag = pcXimag + dpx / faktor;
+                  pcYimag = pcYimag + dpy / faktor;
+                  imag.setAttribute("currPosX", pcXimag);
+                  imag.setAttribute("currPosY", pcYimag);
+                  var idx = imag.getAttribute("index");
+                  var origX, origY;
+                  origX = imag.getAttribute("orgigX");
+                  origY = imag.getAttribute("orgigY");
+
+                  imag.style.left =
+                    Math.floor(origX) +
+                    pcXimag +
+                    -(1 + idx * img.width) + // normalization
+                    "px";
+                  imag.style.top =
+                    Math.floor(origY) +
+                    pcYimag +
+                    -img.height + // normalization
+                    "px";
+
+                  // store in a vector, that later we will send to the C++ app
+                  ++nAffecAjs;
+                  v = new Vert(transMatrix[ni][nj]);
+                  v.x = pcXimag;
+                  v.y = pcYimag;
+                  affectedAdjs.push(v);
+                }
+              }
+            }
+          }
+
+          // single vertex
+          cmd2Send += "CPP;";
+          if (!moveNeighbours) {
+            cmd2Send +=
+              "VRTX;" + // single vertex transformation
+              transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
+                Math.floor(selecIndex / 9)
+              ] +
+              ";" +
+              img.getAttribute("currPosX") +
+              ";" +
+              img.getAttribute("currPosY") +
+              ";";
+          } else {
+            cmd2Send += "VRTXBATCH;" + affectedAdjs.length + ";"; // self-explanatory
+
+            for (vi = 0; vi < affectedAdjs.length; ++vi) {
+              cmd2Send +=
+                affectedAdjs[vi].index +
+                ";" +
+                affectedAdjs[vi].x +
+                ";" +
+                affectedAdjs[vi].y +
+                ";";
+            }
+            transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
+              Math.floor(selecIndex / 9)
+            ] +
+              ";" +
+              img.getAttribute("currPosX") +
+              ";" +
+              img.getAttribute("currPosY") +
+              ";";
+          }
+
+          //console.log(cmd2Send); // debug
+          sendCommand(cmd2Send, false);
+        }
+      });
+    }
+
+    // Populate the initial grid
+
+    function AddGridVertexes() {
+      var spacing = 45; // pixels
+      for (i = 0; i < 9; ++i) {
+        for (j = 0; j < 9; ++j) {
+          var id = 0;
+          id = i * 9 + j;
+          AddimageSpec(i * spacing, j * spacing, id);
+        }
       }
-    });
-  }
-</script>
 
+      console.log("grid loaded ");
+    }
+
+    function sendCommand(data, sync = true) {
+      $.ajax({
+        type: "POST",
+        //the url where you want to sent the userName and password to
+        url: "http://" + serviceIPPort + "/setExampleTextMessage",
+        dataType: "json",
+        async: sync,
+        //json object to sent to the authentication url
+        data: '{"command": "' + data + '"}',
+        success: function() {
+          // alert("Thanks!");
+        }
+      });
+    }
+  </script>
 </html>

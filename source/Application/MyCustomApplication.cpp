@@ -194,6 +194,17 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     y = std::stof(commandSplitted[4]);
                     AnimateVertex(0, v, x, y);
                 }
+                if (!commandSplitted[1].compare(std::string("VRTXBATCH"))) {
+                    int qtty = std::stoi(commandSplitted[2]);
+
+                    for (int i = 3; i < 3 + (qtty * 3); i += 3) {
+                        float x, y;
+                        int v = std::stoi(commandSplitted[i]);
+                        x = std::stof(commandSplitted[i + 1]);
+                        y = std::stof(commandSplitted[i + 2]);
+                        AnimateVertex(0, v, x, y);
+                    }
+                }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
                 // Get the command from network, redirect to script, execute it, and
