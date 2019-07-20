@@ -186,7 +186,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         int cmdLen = commandSplitted.size();
 
         if (cmdLen > 1) {
-            if (!commandSplitted[0].compare(std::string("CPP"))) {  // C++ exclusively
+            if (!commandSplitted[0].compare(
+                    std::string("CPP"))) {  // C++ exclusively
                 if (!commandSplitted[1].compare(std::string("VRTX"))) {
                     float x, y;
                     int v = std::stoi(commandSplitted[2]);
@@ -205,17 +206,26 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         AnimateVertex(0, v, x, y);
                     }
                 }
+                if (!commandSplitted[1].compare(std::string("ProjPosXZ"))) {
+                    int projector = std::stoi(commandSplitted[2]);
+                    float x = std::stof(commandSplitted[3]);
+                    float y = std::stof(commandSplitted[4]);
+
+                    Vector3 originalPos = cameraNodeDomeList_[projector]->GetPosition();
+                    cameraNodeDomeList_[projector]->SetPosition(Vector3(y, originalPos.y_, x));
+                }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
-                // Get the command from network, redirect to script, execute it, and
-                // print the scrip's response.
+                // Get the command from network, redirect to script, execute it,
+                // and print the scrip's response.
                 VariantVector parameters;
                 VariantMap vm;
                 VariantMap vm2;
                 vm["CMD"] = Urho3D::String(
-                    commandString.c_str());  // let .as split the command string.
-                parameters.Push(vm);         // function arguments
-                parameters.Push(vm2);        // return
+                    commandString
+                        .c_str());     // let .as split the command string.
+                parameters.Push(vm);   // function arguments
+                parameters.Push(vm2);  // return
 
                 frameworkScriptInstance->Execute(
                     "void DataGate(VariantMap, VariantMap&)",

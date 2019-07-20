@@ -37,14 +37,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     }
   </style>
 
-  <script src="jquery.min.js"></script>
+  <script src="./jquery/jquery.min.js"></script>
   <script src="config.js"></script>
-  <link href="color-picker.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Color Picker</title>
-  <link href="color-picker.css" rel="stylesheet">
 </head>
 
 <body class="w3-theme-l5">
@@ -207,8 +204,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           <div id="Demo4" class="w3-hide w3-container">
             <div class="w3-row-padding">
               <br>
-              <iframe src="./3dviewer.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="1"
-                height="300" width="400">
+              <iframe src="./misc/3dviewer.html" name="targetframe" allowTransparency="true" scrolling="no"
+                frameborder="1" height="300" width="400">
               </iframe>
             </div>
           </div>
@@ -220,8 +217,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           <div id="Demo5" class="w3-hide w3-container">
             <div class="w3-row-padding">
               <br>
-              <iframe src="./calibrator.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="1"
-              width="600" height="1200" >
+              <iframe src="./calibrator/calibrator.html" name="targetframe" allowTransparency="true" scrolling="no"
+                frameborder="1" width="600" height="1200">
               </iframe>
             </div>
           </div>
@@ -240,18 +237,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
         <div class="w3-card w3-round w3-white w3-center">
           <div class="w3-container">
-            <p>Background Color:</p>
-            <p><input type="text"></p>
-            <script src="color-picker.js"></script>
-            <script>
 
-              var picker = new CP(document.querySelector('input'));
-
-              picker.on("change", function (color) {
-                this.source.value = '#' + color;
-              });
-
-            </script>
           </div>
 
         </div>

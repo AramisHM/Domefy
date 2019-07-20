@@ -68,7 +68,7 @@ class Sample : public Application {
     // Dome scenes, one for each viewport of fulldome projection we create.
     std::vector<SharedPtr<Scene>> sceneDomeList_;
 
-    // A list of "fisheye" cameras.
+    // The nodes with the camera that views the virtual dome.
     std::vector<SharedPtr<Node>> cameraNodeDomeList_;
 
     // This is similar as above, but, instead of a node with 5 more nodes, this

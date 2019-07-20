@@ -449,7 +449,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         domeMesh->SetMaterial(4, renderMaterial);
     }
 
-    // save the fome scene and camera-node references for later usage
+    // save the dome scene and camera-node references for later usage
     sceneDomeList_.push_back(sceneDome_);
     cameraNodeDomeList_.push_back(cameraNodeDome_);
 
