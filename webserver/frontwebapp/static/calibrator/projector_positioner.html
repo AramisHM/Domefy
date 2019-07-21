@@ -43,309 +43,551 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             z-index: 1;
             /* TODO Solve this in HTML */
         }
+
+        #mydiv {
+            position: absolute;
+            z-index: 9;
+            background-color: #f1f1f1;
+            border: 1px solid #d3d3d3;
+            text-align: center;
+        }
+
+        #mydivheader {
+            padding: 10px;
+            cursor: move;
+            z-index: 10;
+            background-color: #2196F3;
+            color: #fff;
+        }
     </style>
+    <link rel="stylesheet" href="../W3.CSS Template_files/w3.css">
+    <link rel="stylesheet" href="../W3.CSS Template_files/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="../W3.CSS Template_files/css">
+    <link rel="stylesheet" href="../W3.CSS Template_files/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../W3.CSS Template_files/slider94.css" />
 </head>
 
 <body>
-    <div id="container"></div>
-    <img id="logo" src="../watermark_small.png"></img>
-    <div id="info">
-        <h2> Projector positioner v0.1 </h2>
-
-        <script>
-            // SaveParameters - sends all the mapping data to the backend server
-            function SaveParameters() {
-                console.log("TODO: needs implementation")
-            }
-
-            function degrees_to_radians(degrees) {
-                var pi = Math.PI;
-                return degrees * (pi / 180);
-            }
-
-            var SelectedObject;
-            function changeSelRotation() {
-                SelectedObject.rotation.x = degrees_to_radians(document.getElementById("rotz").value);
-                SelectedObject.rotation.y = degrees_to_radians(document.getElementById("roty").value);
-                SelectedObject.rotation.z = degrees_to_radians(document.getElementById("rotx").value);
-            }
-
-            function UpdateProjectorRotation() {
-                var index = SelectedObject.userData.index - 1;
-                changeSelRotation();
-                var command = "CPP;PROJROT;";
-                command += index + ";";
-                command += document.getElementById("rotx").value + ";";
-                command += document.getElementById("roty").value + ";";
-                command += document.getElementById("rotz").value + ";";
-                //console.log(command);
-                ajaxPost(command, false, "/setExampleTextMessage")
-            }
-
-            function UpdateProjectorFOV() {
-                var index = SelectedObject.userData.index - 1;
-                var command = "CPP;PROJFOV;";
-                command += index + ";";
-                command += document.getElementById("fov").value + ";";
-                //console.log(command);
-                ajaxPost(command, false, "/setExampleTextMessage")
-            }
-        </script>
-
-        <script type="module">
-            var container, stats;
-            var camera, scene, renderer;
-            var cubes = [];
-            var geometry = new THREE.BoxBufferGeometry(3, 3, 3);
-            var transformControl;
-            var Objects = {};
-            // the object beeinge edited at the moment
-
-            init();
-            animate();
-
-            function UpdateRanges() {
-                document.getElementById("rotx").value = SelectedObject.rotation.z * (180 / Math.PI);
-                document.getElementById("roty").value = SelectedObject.rotation.y * (180 / Math.PI);
-                document.getElementById("rotz").value = SelectedObject.rotation.x * (180 / Math.PI);
-                document.getElementById("fov").value = SelectedObject.userData.fov;
-            }
-
-            // UpdateProjectorPosition - Sends commands to the Domefy server to update the projectors position
-            function UpdateProjectorPosition() {
-                var index = SelectedObject.userData.index - 1;
-                var command = "CPP;PROJPOS;";
-                command += index + ";";
-                command += SelectedObject.position.z + ";";
-                command += SelectedObject.position.y + ";";
-                command += SelectedObject.position.x + ";";
-                console.log(command);
-                ajaxPost(command, false, "/setExampleTextMessage")
-            }
-
-
-            function init() {
-                container = document.getElementById('container');
-                scene = new THREE.Scene();
-                scene.background = new THREE.Color(0xf0f0f0);
-                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-                camera.position.set(0, 250, 1000);
-                scene.add(camera);
-
-                scene.add(new THREE.AmbientLight(0xf0f0f0));
-                var light = new THREE.SpotLight(0xffffff, 1.5);
-                light.position.set(0, 1500, 200);
-                light.castShadow = true;
-                light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(70, 1, 200, 2000));
-                light.shadow.bias = - 0.000222;
-                light.shadow.mapSize.width = 1024;
-                light.shadow.mapSize.height = 1024;
-                scene.add(light);
-
-                var planeGeometry = new THREE.PlaneBufferGeometry(2000, 2000);
-                planeGeometry.rotateX(- Math.PI / 2);
-                var planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
-                var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-                plane.position.y = - 200;
-                plane.receiveShadow = true;
-                scene.add(plane);
-
-                var helper = new THREE.GridHelper(2000, 100);
-                helper.position.y = - 199;
-                helper.material.opacity = 0.25;
-                helper.material.transparent = true;
-                scene.add(helper);
-
-                renderer = new THREE.WebGLRenderer({ antialias: true });
-                renderer.setPixelRatio(window.devicePixelRatio);
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.shadowMap.enabled = true;
-                container.appendChild(renderer.domElement);
-                stats = new Stats();
-                container.appendChild(stats.dom);
-
-                // Controls
-                var controls = new THREE.OrbitControls(camera, renderer.domElement);
-                controls.damping = 0.2;
-                controls.addEventListener('change', render);
-                controls.addEventListener('start', function () {
-                    cancelHideTransform();
-                });
-
-                controls.addEventListener('end', function () {
-                    delayHideTransform();
-                });
-
-                transformControl = new THREE.TransformControls(camera, renderer.domElement);
-                transformControl.addEventListener('change', render);
-                transformControl.addEventListener('dragging-changed', function (event) {
-                    controls.enabled = !event.value;
-                });
-
-                scene.add(transformControl);
-                // Hiding transform situation is a little in a mess :()
-                transformControl.addEventListener('change', function () {
-                    cancelHideTransform();
-                    UpdateProjectorPosition();
-                });
-
-                transformControl.addEventListener('mouseDown', function () {
-                    cancelHideTransform();
-                });
-
-                transformControl.addEventListener('mouseUp', function () {
-                    delayHideTransform();
-                });
-
-                var dragcontrols = new THREE.DragControls(cubes, camera, renderer.domElement);
-                dragcontrols.enabled = false;
-                dragcontrols.addEventListener('hoveron', function (event) {
-                    transformControl.attach(event.object);
-                    SelectedObject = event.object;
-                    UpdateRanges();
-                    cancelHideTransform();
-                });
-                dragcontrols.addEventListener('hoveroff', function () {
-                    delayHideTransform();
-                });
-
-                window.addEventListener('resize', onWindowResize, false);
-
-
-
-                window.addEventListener('keydown', function (event) {
-                    switch (event.keyCode) {
-                        case 81: // Q
-                            transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
-                            break;
-                        case 17: // Ctrl
-                            transformControl.setTranslationSnap(50);
-                            transformControl.setRotationSnap(degrees_to_radians(15));
-                            break;
-                        case 87: // W
-                            transformControl.setMode("translate");
-                            break;
-                        case 69: // E
-                            transformControl.setMode("rotate");
-                            break;
-                        case 82: // R
-                            transformControl.setMode("scale");
-                            break;
-                    }
-                });
-                window.addEventListener('keyup', function (event) {
-                    switch (event.keyCode) {
-                        case 17: // Ctrl
-                            transformControl.setTranslationSnap(null);
-                            transformControl.setRotationSnap(null);
-                            break;
-                    }
-                });
-
-                var hiding;
-
-                function delayHideTransform() {
-                    cancelHideTransform();
-                    hideTransform();
-                }
-                function hideTransform() {
-                    hiding = setTimeout(function () {
-                        transformControl.detach(transformControl.object);
-                    }, 2500);
-                }
-
-                function cancelHideTransform() {
-                    if (hiding) clearTimeout(hiding);
-                }
-
-
-                // Get projector info from backend server
-                var projConfs = GetConfigurationJSON();
-
-
-                var geometry = new THREE.BufferGeometry();
-                for (var i = 0; i < projConfs.presets.length; i++) {
-                    var obj = addObjectObject(projConfs.presets[i].proj_position,
-                        projConfs.presets[i].proj_rotation,
-                        i + 1);
-
-                    obj.userData.fov = projConfs.presets[i].fov;
-                }
-
-            }
-            function addObjectObject(position, rotation, index) {
-                var material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
-                var object = new THREE.Mesh(geometry, material);
-                if (position && rotation) {
-                    object.position.x = position.z;
-                    object.position.y = position.y;
-                    object.position.z = position.x;
-
-                    object.set
-                    object.rotation.x = degrees_to_radians(rotation.z);
-                    object.rotation.y = degrees_to_radians(rotation.y);
-                    object.rotation.z = degrees_to_radians(rotation.x);
-                } else {
-                    object.position.x = Math.random() * 1000 - 500;
-                    object.position.y = Math.random() * 600;
-                    object.position.z = Math.random() * 800 - 400;
-
-                }
-
-                // helps us identify what projector we are modifying when sending commands to Domefy
-                if (Number(index)) {
-                    object.userData.index = Number(index);
-                }
-
-                object.castShadow = true;
-                object.receiveShadow = true;
-                scene.add(object);
-                cubes.push(object);
-                return object;
-            }
-
-            function animate() {
-                requestAnimationFrame(animate);
-                render();
-                stats.update();
-            }
-
-            function render() {
-                renderer.render(scene, camera);
-            }
-
-            function onWindowResize() {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                render();
-            }
-        </script>
-
-        <div>
-            <p>Rotation Contols</p>
-            X: <input style="width: 140 px" type="range" id="rotx" min="0" max="360" step="0.01"
-                oninput="UpdateProjectorRotation()">
-            Y: <input style="width: 140 px" type="range" id="roty" min="0" max="360" step="0.01"
-                oninput="UpdateProjectorRotation()">
-            Z: <input style="width: 140 px" type="range" id="rotz" min="0" max="360" step="0.01"
-                oninput="UpdateProjectorRotation()">
-            FOV: <input style="width: 140 px" type="range" id="fov" min="0" max="360" step="0.01"
-                oninput="UpdateProjectorFOV()">
+    <!-- Draggable DIV -->
+    <div id="mydiv">
+        <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+        <div id="mydivheader">Toolbox (Use with Desktop ONLY)</div>
+        <button onclick="myFunction(&#39;BP1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Rotation and
+            FOV</button>
+        <div id="BP1" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+                <p>
+                    <div>
+                        <p>X: <input style="width: 140 px" type="range" id="rotx" min="0" max="360" step="0.01"
+                                oninput="WriteRotToObj()"></p>
+                        <p>Y: <input style="width: 140 px" type="range" id="roty" min="0" max="360" step="0.01"
+                                oninput="WriteRotToObj()"></p>
+                        <p>Z: <input style="width: 140 px" type="range" id="rotz" min="0" max="360" step="0.01"
+                                oninput="WriteRotToObj()"></p>
+                        <p>FOV: <input style="width: 140 px" type="range" id="fov" min="0" max="360" step="0.01"
+                                oninput="UpdateProjectorFOV()"></p>
+                    </div>
+                </p>
+            </div>
         </div>
-        <input type="text" id="fileName" required minlength="4" maxlength="40"><button type="button"
-            onclick="SaveParameters()">Save parameters</button>
 
-        <script src="../threejs/three.js"></script>
-        <script src="../threejs/js/libs/stats.min.js"></script>
-        <script src="../threejs/js/libs/dat.gui.min.js"></script>
-        <script src="../threejs/js/controls/DragControls.js"></script>
-        <script src="../threejs/js/controls/OrbitControls.js"></script>
-        <script src="../threejs/js/controls/TransformControls.js"></script>
-        <script src="../config.js"></script>
-        <script src="../jquery/jquery.min.js"></script>
-        <script src="../domefy/utils.js"></script>
+        <button onclick="myFunction(&#39;BP2&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Point-to-point
+            calibration</button>
+        <div id="BP2" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+                <p>
+                    <div>
+                        <iframe src="../calibrator/calibrator.html" name="targetframe" id="meshCalibFrame"
+                            allowTransparency="true" scrolling="no" frameborder="1" width="400" height="600">
+                        </iframe>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <p href="#">
+            Calibration name: <input type="text" id="calibName" required minlength="4" maxlength="40">
+            <a href="#" class="w3-bar-item w3-button" onclick="SaveParameters()">
+                Save parameters
+            </a>
+        </p>
+    </div>
+
+    <!-- top bar -->
+    <div class="w3-top">
+
+        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+            <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+                href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i
+                    class="fa fa-home w3-margin-right"></i>Domefy</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Page 1"><i
+                    class="fa fa-globe"></i></a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages"><i
+                    class="fa fa-envelope"></i></a>
+            <div class="w3-dropdown-hover w3-hide-small">
+                <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span
+                        class="w3-badge w3-right w3-small w3-green">3</span></button>
+                <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+                    <a href="#" class="w3-bar-item w3-button">One new
+                        Option</a>
+                </div>
+            </div>
+
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
+                title="My Account">
+                <img src="./W3.CSS Template_files/noimage.png" class="w3-circle" style="height:23px;width:23px"
+                    alt="Avatar">
+            </a>
+        </div>
+
+    </div>
+
+    <!-- this is where Threejs draw its contents -->
+    <div id="container">
+
+    </div>
+    <!-- own custom html on top of container -->
+    <div id="info">
     </div>
 </body>
+
+<!-- application logic -->
+<script>
+    var cubes = []; // list of objects on the calibrator
+    // matrix to translate the visible mesh vertex to actual index on buffer
+    var transMatrix = [
+        [68, 43, 42, 7, 6, 55, 54, 3, 2],
+        [67, 40, 41, 4, 5, 52, 53, 0, 1],
+        [65, 47, 46, 51, 50, 59, 58, 63, 62],
+        [64, 44, 45, 48, 49, 56, 57, 60, 61],
+        [66, 31, 30, 11, 10, 19, 18, 15, 14],
+        [76, 28, 29, 8, 9, 16, 17, 12, 13],
+        [73, 35, 34, 39, 38, 23, 22, 27, 26],
+        [72, 32, 33, 36, 37, 20, 21, 24, 25],
+        [74, 75, 69, 70, 71, 80, 77, 78, 79]
+    ];
+    // class with transformations for a single vertex in the mesh calibration
+    function Vert(idx) {
+        this.index = idx;
+        this.x = 0;
+        this.y = 0;
+    }
+
+    var SelectedObject;
+
+    // SaveParameters - sends all the mapping data to the backend server
+    function SaveParameters() {
+        console.log("TODO: needs implementation")
+        var calName = "dummyText";
+        var calibrationData = {
+            "calibration_name": document.getElementById("calibName").value,
+            "presets": []
+        };
+        cubes.forEach(function (cube, index) {
+            var projectorData = {
+                "name": cube.userData.name,
+                "rtt_resolution": cube.userData.rtt_resolution,
+                "resolution": cube.userData.resolution,
+                "viewport_pos": cube.userData.viewport_pos,
+                "offset_position": cube.userData.offset_position,
+                "offset_rotation": cube.userData.offset_rotation,
+                "proj_position": {
+                    "x": cube.position.z,
+                    "y": cube.position.y,
+                    "z": cube.position.x
+                },
+                "proj_rotation": {
+                    "x": cube.userData.rotx,
+                    "y": cube.userData.roty,
+                    "z": cube.userData.rotz
+                },
+                "far_clip": cube.userData.far_clip,
+                "fov": cube.userData.fov
+            };
+            calibrationData.presets.push(projectorData);
+        });
+
+        ajaxPostRaw(JSON.stringify(calibrationData), false, "/saveCalibrationParameters")
+    }
+
+    function degrees_to_radians(degrees) {
+        var pi = Math.PI;
+        return degrees * (pi / 180);
+    }
+
+
+    function changeSelRotation() {
+        SelectedObject.rotation.x = degrees_to_radians(SelectedObject.userData.rotz);
+        SelectedObject.rotation.y = degrees_to_radians(SelectedObject.userData.roty);
+        SelectedObject.rotation.z = degrees_to_radians(SelectedObject.userData.rotx);
+    }
+
+    // WriteRotToObj - Gets the rotation ranges values and write them into selected objec's userData
+    function WriteRotToObj() {
+        // save data onto object
+        SelectedObject.userData.rotx = document.getElementById("rotx").value;
+        SelectedObject.userData.roty = document.getElementById("roty").value;
+        SelectedObject.userData.rotz = document.getElementById("rotz").value;
+        UpdateProjectorRotation();
+
+        // update display rotation
+        changeSelRotation();
+    }
+
+    function UpdateProjectorRotation() {
+        var index = SelectedObject.userData.index;
+
+        // compose and send command to backend
+        var command = "CPP;PROJROT;";
+        command += index + ";";
+        command += SelectedObject.userData.rotx + ";";
+        command += SelectedObject.userData.roty + ";";
+        command += SelectedObject.userData.rotz + ";";
+        //console.log(command);
+        ajaxPost(command, false, "/setExampleTextMessage")
+    }
+
+    function UpdateProjectorFOV() {
+        var fovVal = document.getElementById("fov").value;
+        var index = SelectedObject.userData.index;
+        var command = "CPP;PROJFOV;";
+        command += index + ";";
+        command += fovVal + ";";
+        SelectedObject.userData.fov = fovVal; // save new fov onto the object selected
+        //console.log(command);
+        ajaxPost(command, false, "/setExampleTextMessage")
+    }
+</script>
+<!-- threejs app -->
+<script type="module">
+    var container, stats;
+    var camera, scene, renderer;
+    var geometry = new THREE.BoxBufferGeometry(3, 3, 3);
+    var transformControl;
+    var Objects = {};
+    // the object beeinge edited at the moment
+
+    init();
+    animate();
+
+    function UpdateRanges() {
+        document.getElementById("rotx").value = SelectedObject.rotation.x * (180 / Math.PI);
+        document.getElementById("roty").value = SelectedObject.rotation.y * (180 / Math.PI);
+        document.getElementById("rotz").value = SelectedObject.rotation.z * (180 / Math.PI);
+        document.getElementById("fov").value = SelectedObject.userData.fov;
+    }
+
+    // UpdateProjectorPosition - Sends commands to the Domefy server to update the projectors position
+    function UpdateProjectorPosition() {
+        var index = SelectedObject.userData.index;
+        var command = "CPP;PROJPOS;";
+        command += index + ";";
+        command += SelectedObject.position.z + ";";
+        command += SelectedObject.position.y + ";";
+        command += SelectedObject.position.x + ";";
+        console.log(command);
+        ajaxPost(command, false, "/setExampleTextMessage")
+    }
+
+
+    function init() {
+        container = document.getElementById('container');
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf0f0f0);
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.set(0, 250, 1000);
+        scene.add(camera);
+
+        scene.add(new THREE.AmbientLight(0xf0f0f0));
+        var light = new THREE.SpotLight(0xffffff, 1.5);
+        light.position.set(0, 1500, 200);
+        light.castShadow = true;
+        light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(70, 1, 200, 2000));
+        light.shadow.bias = - 0.000222;
+        light.shadow.mapSize.width = 1024;
+        light.shadow.mapSize.height = 1024;
+        scene.add(light);
+
+        var planeGeometry = new THREE.PlaneBufferGeometry(2000, 2000);
+        planeGeometry.rotateX(- Math.PI / 2);
+        var planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.position.y = - 200;
+        plane.receiveShadow = true;
+        scene.add(plane);
+
+        var helper = new THREE.GridHelper(2000, 100);
+        helper.position.y = - 199;
+        helper.material.opacity = 0.25;
+        helper.material.transparent = true;
+        scene.add(helper);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+        stats = new Stats();
+        container.appendChild(stats.dom);
+
+        // Controls
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.damping = 0.2;
+        controls.addEventListener('change', render);
+        controls.addEventListener('start', function () {
+            cancelHideTransform();
+        });
+
+        controls.addEventListener('end', function () {
+            delayHideTransform();
+        });
+
+        transformControl = new THREE.TransformControls(camera, renderer.domElement);
+        transformControl.addEventListener('change', render);
+        transformControl.addEventListener('dragging-changed', function (event) {
+            controls.enabled = !event.value;
+        });
+
+        scene.add(transformControl);
+        // Hiding transform situation is a little in a mess :()
+        transformControl.addEventListener('change', function () {
+            cancelHideTransform();
+            UpdateProjectorPosition();
+
+            var meshCalib = document.getElementById("meshCalibFrame");
+
+            // if we have the iframe for mesh calibration, update the mesh selected
+            if (meshCalib) {
+                meshCalib.contentWindow.SetMorphGrid();
+            }
+        });
+
+        transformControl.addEventListener('mouseDown', function () {
+            cancelHideTransform();
+        });
+
+        transformControl.addEventListener('mouseUp', function () {
+            delayHideTransform();
+        });
+
+        var dragcontrols = new THREE.DragControls(cubes, camera, renderer.domElement);
+        dragcontrols.enabled = false;
+        dragcontrols.addEventListener('hoveron', function (event) {
+            transformControl.attach(event.object);
+            SelectedObject = event.object;
+            UpdateRanges();
+            cancelHideTransform();
+        });
+        dragcontrols.addEventListener('hoveroff', function () {
+            delayHideTransform();
+        });
+
+        window.addEventListener('resize', onWindowResize, false);
+
+
+
+        window.addEventListener('keydown', function (event) {
+            switch (event.keyCode) {
+                case 81: // Q
+                    transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
+                    break;
+                case 17: // Ctrl
+                    transformControl.setTranslationSnap(1);
+                    break;
+            }
+        });
+        window.addEventListener('keyup', function (event) {
+            switch (event.keyCode) {
+                case 17: // Ctrl
+                    transformControl.setTranslationSnap(null);
+                    break;
+            }
+        });
+
+        var hiding;
+
+        function delayHideTransform() {
+            cancelHideTransform();
+            hideTransform();
+        }
+        function hideTransform() {
+            hiding = setTimeout(function () {
+                transformControl.detach(transformControl.object);
+            }, 2500);
+        }
+
+        function cancelHideTransform() {
+            if (hiding) clearTimeout(hiding);
+        }
+
+
+        // Get projector info from backend server
+        var projConfs = GetConfigurationJSON();
+
+
+        var geometry = new THREE.BufferGeometry();
+
+        projConfs.presets.forEach(function (item, index) {
+            var obj = addObjectObject(item, index);
+        });
+
+    }
+    function addObjectObject(preset, index) {
+        var material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
+        var object = new THREE.Mesh(geometry, material);
+        if (preset) {
+            var pos = preset.proj_position;
+            var rot = preset.proj_rotation;
+
+            object.position.x = pos.z;
+            object.position.y = pos.y;
+            object.position.z = pos.x;
+
+            // actual rotation
+            object.userData.rotx = rot.x;
+            object.userData.roty = rot.y;
+            object.userData.rotz = rot.z;
+
+            // visible rotation
+            object.rotation.x = degrees_to_radians(rot.z);
+            object.rotation.y = degrees_to_radians(rot.y);
+            object.rotation.z = degrees_to_radians(rot.x);
+
+            // copy all the other data onto the object itself
+            object.userData.fov = preset.fov;
+            object.userData.name = preset.name;
+            object.userData.far_clip = preset.far_clip;
+            object.userData.rtt_resolution = preset.rtt_resolution;
+            object.userData.resolution = preset.resolution;
+            object.userData.viewport_pos = preset.viewport_pos;
+            object.userData.offset_position = preset.offset_position;
+            object.userData.offset_rotation = preset.offset_rotation;
+
+            var vertices = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+
+            // initialize vertices above
+            for (var i = 0; i < 9; ++i) {
+                for (var j = 0; j < 9; ++j) {
+                    var v = new Vert(transMatrix[i][j]);
+                    v.x = 0.0;
+                    v.y = 0.0;
+                    vertices[i][j] = v;
+                }
+            }
+            object.userData.morphMesh = vertices; // save it onto the object
+
+        } else { // generic creation of meshes
+            object.position.x = Math.random() * 1000 - 500;
+            object.position.y = Math.random() * 600;
+            object.position.z = Math.random() * 800 - 400;
+
+        }
+
+        // helps us identify what projector we are modifying when sending commands to Domefy
+
+        object.userData.index = Number(index);
+
+
+        object.castShadow = true;
+        object.receiveShadow = true;
+        scene.add(object);
+        cubes.push(object);
+        return object;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        render();
+        stats.update();
+    }
+
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        render();
+    }
+</script>
+<!-- UI functions (draggable div and accordion) script -->
+<script>// Make the DIV element draggable:
+    dragElement(document.getElementById("mydiv"));
+
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+            // if present, the header is where you move the DIV from:
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV: 
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+    // Accordion
+    function myFunction(id) {
+        var x = document.getElementById(id);
+        if (x.className.indexOf("w3-show") == -1) {
+            x.className += " w3-show";
+            x.previousElementSibling.className += " w3-theme-d1";
+        } else {
+            x.className = x.className.replace("w3-show", "");
+            x.previousElementSibling.className =
+                x.previousElementSibling.className.replace(" w3-theme-d1", "");
+        }
+    }
+</script>
+<script src="../threejs/three.js"></script>
+<script src="../threejs/js/libs/stats.min.js"></script>
+<script src="../threejs/js/libs/dat.gui.min.js"></script>
+<script src="../threejs/js/controls/DragControls.js"></script>
+<script src="../threejs/js/controls/OrbitControls.js"></script>
+<script src="../threejs/js/controls/TransformControls.js"></script>
+<script src="../config.js"></script>
+<script src="../jquery/jquery.min.js"></script>
+<script src="../domefy/utils.js"></script>
 
 </html>

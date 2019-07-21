@@ -193,20 +193,22 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                 // of point-to-point calibration on projector view
                 if (!commandSplitted[1].compare(std::string("VRTX"))) {
                     float x, y;
-                    int v = std::stoi(commandSplitted[2]);
-                    x = std::stof(commandSplitted[3]);
-                    y = std::stof(commandSplitted[4]);
-                    AnimateVertex(0, v, x, y);
+                    int viewport = std::stoi(commandSplitted[2]);
+                    int v = std::stoi(commandSplitted[3]);
+                    x = std::stof(commandSplitted[4]);
+                    y = std::stof(commandSplitted[5]);
+                    AnimateVertex(viewport, v, x, y);
                 }
                 if (!commandSplitted[1].compare(std::string("VRTXBATCH"))) {
-                    int qtty = std::stoi(commandSplitted[2]);
+                    int viewport = std::stoi(commandSplitted[2]);
+                    int qtty = std::stoi(commandSplitted[3]);
 
-                    for (int i = 3; i < 3 + (qtty * 3); i += 3) {
+                    for (int i = 4; i < 4 + (qtty * 3); i += 3) {
                         float x, y;
                         int v = std::stoi(commandSplitted[i]);
                         x = std::stof(commandSplitted[i + 1]);
                         y = std::stof(commandSplitted[i + 2]);
-                        AnimateVertex(0, v, x, y);
+                        AnimateVertex(viewport, v, x, y);
                     }
                 }
                 // General projector parameters

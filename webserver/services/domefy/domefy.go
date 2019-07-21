@@ -11,8 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SendExample - Sends a single dummy POST to own API.
 func SendExample() {
-
 	// Very rigorous stress test to send data via REST protocol
 	url := "http://localhost:9090/stress"
 
@@ -31,6 +31,7 @@ func SendExample() {
 func RegisterDomefy(router *gin.Engine) {
 	router.POST("/setExampleTextMessage", func(c *gin.Context) { SetExampleTextMessage(c) })
 	router.POST("/getConfigJSON", func(c *gin.Context) { GetConfigJSON(c) })
+	router.POST("/saveCalibrationParameters", func(c *gin.Context) { SaveCalibrationParameters(c) })
 }
 
 // SetExampleTextMessage - Sets the debug text auxiliar message
@@ -43,11 +44,10 @@ func SetExampleTextMessage(c *gin.Context) {
 		fmt.Printf("Some error %v", err)
 		return
 	}
+	// send package to domefy c++ application
 	fmt.Fprintf(conn, cmdStr)
 
 	c.JSON(http.StatusOK, "done")
-
-	// actually send package to domefy c++ application
 }
 
 // GetConfigJSON - Returns the JSON with the configuration parameters
@@ -56,6 +56,16 @@ func GetConfigJSON(c *gin.Context) {
 	fmt.Print(string(dat))
 
 	c.JSON(http.StatusOK, string(dat))
+}
 
-	// actually send package to domefy c++ application
+// SaveCalibrationParameters - Receives a JSON parametrization of the calibration
+func SaveCalibrationParameters(c *gin.Context) {
+	paramObj := rest.GetPostParameters(c)
+	// calibrationName := paramObj["name"].(string)
+
+	fmt.Println(paramObj)
+
+	// save the parameters in a local file
+
+	c.JSON(http.StatusOK, "done")
 }

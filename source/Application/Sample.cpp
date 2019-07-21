@@ -222,31 +222,28 @@ void Sample::SubscribeToEvents() {
 void Sample::HandlePostUpdate(StringHash eventType, VariantMap& eventData) {}
 
 void Sample::AnimateVertex(int mesh, int vertex, float x, float y) {
-    // Repeat for each of the cloned vertex buffers
-    for (unsigned i = 0; i < animatingBuffers_.Size(); ++i) {
-        float startPhase = time_ + i * 30.0f;
-        VertexBuffer* buffer = animatingBuffers_[i];
+    float startPhase = time_ + mesh * 30.0f;
+    VertexBuffer* buffer = animatingBuffers_[mesh];
 
-        // Lock the vertex buffer for update and rewrite positions with sine
-        // wave modulated ones Cannot use discard lock as there is other
-        // data (normals, UVs) that we are not overwriting
-        unsigned char* vertexData =
-            (unsigned char*)buffer->Lock(0, buffer->GetVertexCount());
-        if (vertexData) {
-            unsigned vertexSize = buffer->GetVertexSize();
-            // unsigned numVertices = buffer->GetVertexCount();
+    // Lock the vertex buffer for update and rewrite positions with sine
+    // wave modulated ones Cannot use discard lock as there is other
+    // data (normals, UVs) that we are not overwriting
+    unsigned char* vertexData =
+        (unsigned char*)buffer->Lock(0, buffer->GetVertexCount());
+    if (vertexData) {
+        unsigned vertexSize = buffer->GetVertexSize();
+        // unsigned numVertices = buffer->GetVertexCount();
 
-            // If there are duplicate vertices, animate them in phase of
-            // the original
-            Vector3& src = originalVertices_[vertex];
-            Vector3& dest =
-                *reinterpret_cast<Vector3*>(vertexData + vertex * vertexSize);
-            //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
-            dest.y_ = src.y_ + (.00314f * y);
-            dest.z_ = src.z_ + (.00314f * x);
+        // If there are duplicate vertices, animate them in phase of
+        // the original
+        Vector3& src = originalVertices_[vertex];
+        Vector3& dest =
+            *reinterpret_cast<Vector3*>(vertexData + vertex * vertexSize);
+        //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
+        dest.y_ = src.y_ + (.00314f * y);
+        dest.z_ = src.z_ + (.00314f * x);
 
-            buffer->Unlock();
-        }
+        buffer->Unlock();
     }
 }
 

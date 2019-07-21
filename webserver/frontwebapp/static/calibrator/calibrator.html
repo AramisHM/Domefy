@@ -32,70 +32,71 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 <script>
   var indexCounter = 0;
 </script>
-<P>These controls wehre designed ONLY for desktop browsers. The touch event
-  DOES NOT work with the following tools!</P>
 
 <body onload="AddGridVertexes()">
-  <table style="width:100%">
-    <tr>
-      <th>Calibrator</th>
-    </tr>
+  <P>
+    <table>
+      <tr>
+        <th>Mesh Calibrator</th>
+      </tr>
 
-    <tr>
-      <td>
-        <table style="width:100%">
-          <tr>
-            <th>Projector to adjust</th>
-            <th>Vertex grab mode</th>
-          </tr>
-          <tr>
-            <td>
-              <br />
-              Projector:
-              <select>
-                <!-- TODO: load from file or a handle -->
-                <option value="1">DS 1</option>
-                <option value="2">DS 2</option>
-                <option value="3">DS 3</option>
-                <option value="4">DS 4</option>
-              </select>
-            </td>
-            <td>
-              <br />
-              Picking type:
-              <select onchange="pickingChanged(this.value)">
-                <option value="NEIGHBOURS">Neighbours</option>
-                <option value="SINGLE">Single</option>
-              </select>
-              <br />
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
+      <tr>
+        <td>
+          <table>
+            <tr>
+              <th>Projector to adjust</th>
+              <th>Vertex grab mode</th>
+            </tr>
+            <tr>
+              <td>
+                <br />
+                Projector:
+                <select>
+                  <!-- TODO: load from file or a handle -->
+                  <option value="1">DS 1</option>
+                  <option value="2">DS 2</option>
+                  <option value="3">DS 3</option>
+                  <option value="4">DS 4</option>
+                </select>
+              </td>
+              <td>
+                <br />
+                Picking type:
+                <select onchange="pickingChanged(this.value)">
+                  <option value="NEIGHBOURS">Neighbours</option>
+                  <option value="SINGLE">Single</option>
+                </select>
+                <br />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
 
-    <tr>
-      <td>
-        <br />
-        <br />
+      <tr>
+        <td>
+          <br />
+          <br />
+          <div class="col-sm-7 text">
+            <div class="description">
+              <div id="myDiagramDiv" class="bgimg" draggable="true"
+                style="width:600px; height:400px; background-color: #DAE4E4;"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <!-- <td>
         <div class="col-sm-7 text">
-          <div class="description">
-            <div id="myDiagramDiv" class="bgimg" draggable="true"
+          <h3>Vision position - XZ plane</h3>
+          <div>
+            <div id="DragXZgrid" class="bgimg" draggable="true"
               style="width:600px; height:400px; background-color: #DAE4E4;"></div>
           </div>
         </div>
-      </td>
-    </tr>
-    <td>
-      <div class="col-sm-7 text">
-        <h3>Vision position - XZ plane</h3>
-        <div>
-          <div id="DragXZgrid" class="bgimg" draggable="true"
-            style="width:600px; height:400px; background-color: #DAE4E4;"></div>
-        </div>
-      </div>
-    </td>
-  </table>
+      </td> -->
+    </table>
+  </P>
+
 </body>
 
 <style type="text/css">
@@ -114,7 +115,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
   affecRadius = 2; // radius of neigbours affected
   moveNeighbours = true;
-
+  var spacing = 45; // pixels
   // matrix to translate the visible mesh vertex to actual index on buffer
   var transMatrix = [
     [68, 43, 42, 7, 6, 55, 54, 3, 2],
@@ -226,6 +227,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         var cmd2Send = ""; // the command we will send on the network
         var affectedAdjs = [];
 
+        // multiple vertexes
         if (moveNeighbours) {
           var i0, j0;
           i0 = img.getAttribute("i");
@@ -291,21 +293,43 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           }
         }
 
+        // command composition
+
+        // get the selected object, with all those sweet parameters inside userData
+        var SelectedObject = parent.SelectedObject;
         // single vertex
         cmd2Send += "CPP;";
         if (!moveNeighbours) {
           cmd2Send +=
-            "VRTX;" + // single vertex transformation
-            transMatrix[Math.floor(selecIndex % 9)][ // line and column are inverted
-            Math.floor(selecIndex / 9)
-            ] +
+            "VRTX;"; // single vertex transformation
+
+          // check parent window if have the information of selected projector object
+          if (SelectedObject) {
+            cmd2Send += SelectedObject.userData.index + ";";
+          } else {
+            cmd2Send += "0;";
+          }
+
+          // line and column are inverted
+          var vertIndex = transMatrix[Math.floor(selecIndex % 9)][Math.floor(selecIndex / 9)];
+
+          cmd2Send += vertIndex +
             ";" +
             img.getAttribute("currPosX") +
             ";" +
             img.getAttribute("currPosY") +
             ";";
         } else {
-          cmd2Send += "VRTXBATCH;" + affectedAdjs.length + ";"; // self-explanatory
+          cmd2Send += "VRTXBATCH;";
+
+          // check parent window if have the information of selected projector object
+          if (SelectedObject) {
+            cmd2Send += SelectedObject.userData.index + ";";
+          } else {
+            cmd2Send += "0;";
+          }
+
+          cmd2Send += + affectedAdjs.length + ";";
 
           for (vi = 0; vi < affectedAdjs.length; ++vi) {
             cmd2Send +=
@@ -326,49 +350,63 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             ";";
         }
 
+        // save mesh to selected object
+        if (SelectedObject) {
+          for (var i = 0; i < 9; ++i) {
+            for (var j = 0; j < 9; ++j) {
+              var xx = vertices[j][i].getAttribute("currPosX");
+              var yy = vertices[j][i].getAttribute("currPosY");
+              SelectedObject.userData.morphMesh[i][j].x = xx;
+              SelectedObject.userData.morphMesh[i][j].y = yy;
+            }
+          }
+        }
+
+
         //console.log(cmd2Send); // debug
         sendCommand(cmd2Send, false);
       }
     });
   }
 
-  // AddXZTranslation - Adds a picker that moves the observation along a XZ plane
-  function AddXZTranslation() {
-    var offsetX = 150;
-    var offsetY = 150;
-    var img = document.createElement("img");
-    img.src = "../assets/images/projector-top2.png";
-    img.width = 100;
-    img.height = 83;
+  // SetMorphGrid - Parent calls this function to reset the morph grid according to the selected projector
+  function SetMorphGrid() {
+    var SelectedObject = parent.SelectedObject;
 
-    img.style.left += offsetX + img.width / 2 + "px";
-    img.style.top += offsetY + img.height / 2 + "px";
+    if (SelectedObject) {
+      for (var i = 0; i < 9; ++i) {
+        for (var j = 0; j < 9; ++j) {
+          var newx = SelectedObject.userData.morphMesh[i][j].x;
+          var newy = SelectedObject.userData.morphMesh[i][j].y;
 
-    // It needs the following normalization
-    //img.style.top = y - img.height + "px"; // magic equation to normalize visual position with the image parameter
-    //img.style.left = x - (1 * img.width) + "px"; // another magic normalization to align the visual element with its parameters
-    document.getElementById("DragXZgrid").appendChild(img);
+          var img = vertices[i][j];
+          img.setAttribute("currPosX", newx);
+          img.setAttribute("currPosY", newy);
+          img.setAttribute("lastPosX", newx);
+          img.setAttribute("lastPosY", newy);
 
-    $(img).draggable({
-      drag: function () {
-        var $this = $(this);
-        var thisPos = $this.position();
-        var parentPos = $this.parent().position();
-        var x = thisPos.left - parentPos.left - offsetX;
-        var y = thisPos.top - parentPos.top - offsetY;
+          // It needs the following normalization
+          var idxCount = (i * 9 + j);
 
-        var command = "CPP;ProjPosXZ;" + 0 + ";" + -x / 500 + ";" + -y / 500;
-        console.log(command);
-        sendCommand(command);
+          // It needs the following normalization
+          img.style.top = img.style.top =
+            Math.floor(img.getAttribute("orgigY")) +
+            newy +
+            -img.height + // normalization
+            "px";
+          img.style.left = Math.floor(img.getAttribute("orgigX")) + spacing
+          newx +
+            "px";
+        }
       }
-    });
+    }
+
   }
 
   // Populate the initial grid
-
   function AddGridVertexes() {
     // add baground
-    var spacing = 45; // pixels
+
     for (i = 0; i < 9; ++i) {
       for (j = 0; j < 9; ++j) {
         var id = 0;
@@ -377,7 +415,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
       }
     }
 
-    AddXZTranslation();
+    //AddXZTranslation();
     //  console.log("grid loaded ");
   }
 

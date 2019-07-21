@@ -24,3 +24,25 @@ function ajaxPost(data, sync = SVGComponentTransferFunctionElement, url) {
   });
   return tmp;
 }
+
+// ajaxPost - Perform a POST methode, no template on data parameter
+function ajaxPostRaw(
+  data_raw,
+  sync = SVGComponentTransferFunctionElement,
+  url
+) {
+  var tmp = null;
+  $.ajax({
+    type: "POST",
+    url: "http://" + serviceIPPort + url,
+    async: sync,
+    data: data_raw,
+    success: function(response) {
+      if (response == "done") {
+        console.log(data_raw);
+      }
+    },
+    dataType: "json"
+  });
+  return tmp;
+}
