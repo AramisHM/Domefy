@@ -1,58 +1,128 @@
+<!--
+File: projector_positioner.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Friday, 19th July 2019 11:25:26 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Saturday, 20th July 2019 12:36:04 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+<!-- Projector calibrator module -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>three.js webgl - geometry - catmull Object editor</title>
+    <title>Domefy - Projector positioner</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <link type="text/css" rel="stylesheet" href="main.css">
     <style>
-        body {
-            background-color: #f0f0f0;
-            color: #444;
+        #info {
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            z-index: 1;
+            /* TODO Solve this in HTML */
         }
 
-        a {
-            color: #08f;
+        #logo {
+            position: absolute;
+            top: 50px;
+            width: 5%;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: left;
+            z-index: 1;
+            /* TODO Solve this in HTML */
         }
     </style>
 </head>
 
 <body>
     <div id="container"></div>
+    <img id="logo" src="../watermark_small.png"></img>
     <div id="info">
+        <h2> Projector positioner v0.1 </h2>
+
+        <script>
+            // SaveParameters - sends all the mapping data to the backend server
+            function SaveParameters() {
+                console.log("TODO: needs implementation")
+            }
+
+            function degrees_to_radians(degrees) {
+                var pi = Math.PI;
+                return degrees * (pi / 180);
+            }
+
+            var SelectedObject;
+            function changeSelRotation() {
+                SelectedObject.rotation.x = degrees_to_radians(document.getElementById("rotz").value);
+                SelectedObject.rotation.y = degrees_to_radians(document.getElementById("roty").value);
+                SelectedObject.rotation.z = degrees_to_radians(document.getElementById("rotx").value);
+            }
+
+            function UpdateProjectorRotation() {
+                var index = SelectedObject.userData.index - 1;
+                changeSelRotation();
+                var command = "CPP;PROJROT;";
+                command += index + ";";
+                command += document.getElementById("rotx").value + ";";
+                command += document.getElementById("roty").value + ";";
+                command += document.getElementById("rotz").value + ";";
+                //console.log(command);
+                ajaxPost(command, false, "/setExampleTextMessage")
+            }
+
+            function UpdateProjectorFOV() {
+                var index = SelectedObject.userData.index - 1;
+                var command = "CPP;PROJFOV;";
+                command += index + ";";
+                command += document.getElementById("fov").value + ";";
+                //console.log(command);
+                ajaxPost(command, false, "/setExampleTextMessage")
+            }
+        </script>
 
         <script type="module">
-
-            String.prototype.format = function () {
-                var str = this;
-                for (var i = 0; i < arguments.length; i++) {
-                    str = str.replace('{' + i + '}', arguments[i]);
-                }
-                return str;
-            };
             var container, stats;
             var camera, scene, renderer;
-            var ObjectHelperObjects = [];
-            var ObjectPointsLength = 4;
-            var positions = [];
-            var point = new THREE.Vector3();
-            var geometry = new THREE.BoxBufferGeometry(20, 20, 20);
+            var cubes = [];
+            var geometry = new THREE.BoxBufferGeometry(3, 3, 3);
             var transformControl;
-            var ARC_SEGMENTS = 200;
             var Objects = {};
-            var params = {
-                uniform: true,
-                tension: 0.5,
-                centripetal: true,
-                chordal: true,
-                addPoint: addPoint,
-                removePoint: removePoint
-            };
+            // the object beeinge edited at the moment
 
             init();
-
             animate();
+
+            function UpdateRanges() {
+                document.getElementById("rotx").value = SelectedObject.rotation.z * (180 / Math.PI);
+                document.getElementById("roty").value = SelectedObject.rotation.y * (180 / Math.PI);
+                document.getElementById("rotz").value = SelectedObject.rotation.x * (180 / Math.PI);
+                document.getElementById("fov").value = SelectedObject.userData.fov;
+            }
+
+            // UpdateProjectorPosition - Sends commands to the Domefy server to update the projectors position
+            function UpdateProjectorPosition() {
+                var index = SelectedObject.userData.index - 1;
+                var command = "CPP;PROJPOS;";
+                command += index + ";";
+                command += SelectedObject.position.z + ";";
+                command += SelectedObject.position.y + ";";
+                command += SelectedObject.position.x + ";";
+                console.log(command);
+                ajaxPost(command, false, "/setExampleTextMessage")
+            }
+
 
             function init() {
                 container = document.getElementById('container');
@@ -116,6 +186,7 @@
                 // Hiding transform situation is a little in a mess :()
                 transformControl.addEventListener('change', function () {
                     cancelHideTransform();
+                    UpdateProjectorPosition();
                 });
 
                 transformControl.addEventListener('mouseDown', function () {
@@ -126,20 +197,53 @@
                     delayHideTransform();
                 });
 
-                transformControl.addEventListener('objectChange', function () {
-                    updateObjectOutline();
-                });
-
-                var dragcontrols = new THREE.DragControls(ObjectHelperObjects, camera, renderer.domElement); //
+                var dragcontrols = new THREE.DragControls(cubes, camera, renderer.domElement);
                 dragcontrols.enabled = false;
                 dragcontrols.addEventListener('hoveron', function (event) {
                     transformControl.attach(event.object);
+                    SelectedObject = event.object;
+                    UpdateRanges();
                     cancelHideTransform();
                 });
                 dragcontrols.addEventListener('hoveroff', function () {
                     delayHideTransform();
                 });
+
+                window.addEventListener('resize', onWindowResize, false);
+
+
+
+                window.addEventListener('keydown', function (event) {
+                    switch (event.keyCode) {
+                        case 81: // Q
+                            transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
+                            break;
+                        case 17: // Ctrl
+                            transformControl.setTranslationSnap(50);
+                            transformControl.setRotationSnap(degrees_to_radians(15));
+                            break;
+                        case 87: // W
+                            transformControl.setMode("translate");
+                            break;
+                        case 69: // E
+                            transformControl.setMode("rotate");
+                            break;
+                        case 82: // R
+                            transformControl.setMode("scale");
+                            break;
+                    }
+                });
+                window.addEventListener('keyup', function (event) {
+                    switch (event.keyCode) {
+                        case 17: // Ctrl
+                            transformControl.setTranslationSnap(null);
+                            transformControl.setRotationSnap(null);
+                            break;
+                    }
+                });
+
                 var hiding;
+
                 function delayHideTransform() {
                     cancelHideTransform();
                     hideTransform();
@@ -149,83 +253,55 @@
                         transformControl.detach(transformControl.object);
                     }, 2500);
                 }
+
                 function cancelHideTransform() {
                     if (hiding) clearTimeout(hiding);
                 }
-				/*******
-				 * Curves
-				 *********/
-                for (var i = 0; i < ObjectPointsLength; i++) {
-                    addObjectObject(positions[i]);
-                }
-                positions = [];
-                for (var i = 0; i < ObjectPointsLength; i++) {
-                    positions.push(ObjectHelperObjects[i].position);
-                }
+
+
+                // Get projector info from backend server
+                var projConfs = GetConfigurationJSON();
+
+
                 var geometry = new THREE.BufferGeometry();
-                geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(ARC_SEGMENTS * 3), 3));
+                for (var i = 0; i < projConfs.presets.length; i++) {
+                    var obj = addObjectObject(projConfs.presets[i].proj_position,
+                        projConfs.presets[i].proj_rotation,
+                        i + 1);
 
+                    obj.userData.fov = projConfs.presets[i].fov;
+                }
 
-                load([new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(- 53.56300074753207, 171.49711742836848, - 14.495472686253045),
-                new THREE.Vector3(- 91.40118730204415, 176.4306956436485, - 6.958271935582161),
-                new THREE.Vector3(- 383.785318791128, 491.1365363371675, 47.869296953772746)]);
             }
-            function addObjectObject(position) {
+            function addObjectObject(position, rotation, index) {
                 var material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
                 var object = new THREE.Mesh(geometry, material);
-                if (position) {
-                    object.position.copy(position);
+                if (position && rotation) {
+                    object.position.x = position.z;
+                    object.position.y = position.y;
+                    object.position.z = position.x;
+
+                    object.set
+                    object.rotation.x = degrees_to_radians(rotation.z);
+                    object.rotation.y = degrees_to_radians(rotation.y);
+                    object.rotation.z = degrees_to_radians(rotation.x);
                 } else {
                     object.position.x = Math.random() * 1000 - 500;
                     object.position.y = Math.random() * 600;
                     object.position.z = Math.random() * 800 - 400;
+
                 }
+
+                // helps us identify what projector we are modifying when sending commands to Domefy
+                if (Number(index)) {
+                    object.userData.index = Number(index);
+                }
+
                 object.castShadow = true;
                 object.receiveShadow = true;
                 scene.add(object);
-                ObjectHelperObjects.push(object);
+                cubes.push(object);
                 return object;
-            }
-            function addPoint() {
-                ObjectPointsLength++;
-                positions.push(addObjectObject().position);
-                updateObjectOutline();
-            }
-            function removePoint() {
-                if (ObjectPointsLength <= 4) {
-                    return;
-                }
-                ObjectPointsLength--;
-                positions.pop();
-                scene.remove(ObjectHelperObjects.pop());
-                updateObjectOutline();
-            }
-            function updateObjectOutline() {
-                for (var k in Objects) {
-                    var Object = Objects[k];
-                    var ObjectMesh = Object.mesh;
-                    var position = ObjectMesh.geometry.attributes.position;
-                    for (var i = 0; i < ARC_SEGMENTS; i++) {
-                        var t = i / (ARC_SEGMENTS - 1);
-                        Object.getPoint(t, point);
-                        position.setXYZ(i, point.x, point.y, point.z);
-                    }
-                    position.needsUpdate = true;
-                }
-            }
-
-            function load(new_positions) {
-                while (new_positions.length > positions.length) {
-                    addPoint();
-                }
-                while (new_positions.length < positions.length) {
-                    removePoint();
-                }
-                for (var i = 0; i < positions.length; i++) {
-                    positions[i].copy(new_positions[i]);
-                }
-                updateObjectOutline();
             }
 
             function animate() {
@@ -237,7 +313,28 @@
             function render() {
                 renderer.render(scene, camera);
             }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                render();
+            }
         </script>
+
+        <div>
+            <p>Rotation Contols</p>
+            X: <input style="width: 140 px" type="range" id="rotx" min="0" max="360" step="0.01"
+                oninput="UpdateProjectorRotation()">
+            Y: <input style="width: 140 px" type="range" id="roty" min="0" max="360" step="0.01"
+                oninput="UpdateProjectorRotation()">
+            Z: <input style="width: 140 px" type="range" id="rotz" min="0" max="360" step="0.01"
+                oninput="UpdateProjectorRotation()">
+            FOV: <input style="width: 140 px" type="range" id="fov" min="0" max="360" step="0.01"
+                oninput="UpdateProjectorFOV()">
+        </div>
+        <input type="text" id="fileName" required minlength="4" maxlength="40"><button type="button"
+            onclick="SaveParameters()">Save parameters</button>
 
         <script src="../threejs/three.js"></script>
         <script src="../threejs/js/libs/stats.min.js"></script>
@@ -245,6 +342,10 @@
         <script src="../threejs/js/controls/DragControls.js"></script>
         <script src="../threejs/js/controls/OrbitControls.js"></script>
         <script src="../threejs/js/controls/TransformControls.js"></script>
+        <script src="../config.js"></script>
+        <script src="../jquery/jquery.min.js"></script>
+        <script src="../domefy/utils.js"></script>
+    </div>
 </body>
 
 </html>

@@ -2,6 +2,7 @@ package domefy
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 
@@ -29,6 +30,7 @@ func SendExample() {
 // RegisterDomefy -
 func RegisterDomefy(router *gin.Engine) {
 	router.POST("/setExampleTextMessage", func(c *gin.Context) { SetExampleTextMessage(c) })
+	router.POST("/getConfigJSON", func(c *gin.Context) { GetConfigJSON(c) })
 }
 
 // SetExampleTextMessage - Sets the debug text auxiliar message
@@ -44,6 +46,16 @@ func SetExampleTextMessage(c *gin.Context) {
 	fmt.Fprintf(conn, cmdStr)
 
 	c.JSON(http.StatusOK, "done")
+
+	// actually send package to domefy c++ application
+}
+
+// GetConfigJSON - Returns the JSON with the configuration parameters
+func GetConfigJSON(c *gin.Context) {
+	dat, _ := ioutil.ReadFile("../bin/config.json")
+	fmt.Print(string(dat))
+
+	c.JSON(http.StatusOK, string(dat))
 
 	// actually send package to domefy c++ application
 }

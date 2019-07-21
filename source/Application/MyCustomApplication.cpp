@@ -188,6 +188,9 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         if (cmdLen > 1) {
             if (!commandSplitted[0].compare(
                     std::string("CPP"))) {  // C++ exclusively
+
+                // The following VRTX and VRTXBATCH regards the manipulation
+                // of point-to-point calibration on projector view
                 if (!commandSplitted[1].compare(std::string("VRTX"))) {
                     float x, y;
                     int v = std::stoi(commandSplitted[2]);
@@ -206,13 +209,29 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         AnimateVertex(0, v, x, y);
                     }
                 }
-                if (!commandSplitted[1].compare(std::string("ProjPosXZ"))) {
+                // General projector parameters
+                if (!commandSplitted[1].compare(std::string("PROJPOS"))) {
                     int projector = std::stoi(commandSplitted[2]);
-                    float x = std::stof(commandSplitted[3]);
-                    float y = std::stof(commandSplitted[4]);
 
-                    Vector3 originalPos = cameraNodeDomeList_[projector]->GetPosition();
-                    cameraNodeDomeList_[projector]->SetPosition(Vector3(y, originalPos.y_, x));
+                    Vector3 postion(std::stof(commandSplitted[3]),
+                                    std::stof(commandSplitted[4]),
+                                    std::stof(commandSplitted[5]));
+
+                    cameraNodeDomeList_[projector]->SetPosition(postion);
+                }
+                if (!commandSplitted[1].compare(std::string("PROJROT"))) {
+                    int projector = std::stoi(commandSplitted[2]);
+
+                    Quaternion rotation(std::stof(commandSplitted[3]),
+                                        std::stof(commandSplitted[4]),
+                                        std::stof(commandSplitted[5]));
+
+                    cameraNodeDomeList_[projector]->SetWorldRotation(rotation);
+                }
+                if (!commandSplitted[1].compare(std::string("PROJFOV"))) {
+                    int projector = std::stoi(commandSplitted[2]);
+                    Camera *c = cameraNodeDomeList_[projector]->GetComponent<Camera>();
+                    c->SetFov(std::stof(commandSplitted[3]));
                 }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
