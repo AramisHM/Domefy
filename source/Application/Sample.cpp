@@ -239,7 +239,7 @@ void Sample::AnimateVertex(int mesh, int vertex, float x, float y) {
         Vector3& src = originalVertices_[vertex];
         Vector3& dest =
             *reinterpret_cast<Vector3*>(vertexData + vertex * vertexSize);
-        //dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
+        // dest.x_ = src.x_ * (1.0f + 0.1f * Sin(phase));
         dest.y_ = src.y_ + (.00314f * y);
         dest.z_ = src.z_ + (.00314f * x);
 
@@ -251,7 +251,7 @@ void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {
     // Take the frame time step, which is stored as a float
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
-    //AnimateVertex(timeStep);
+    // AnimateVertex(timeStep);
 }
 
 // Creates the camera that should be used by the fulldome viewports.
@@ -273,11 +273,26 @@ Node* Sample::CreateDomeCamera(Projection p) {
     zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
     zone->SetFogStart(250 / 4);
     zone->SetFogEnd(500);
+
+    // create the virtual dome
     Node* domeNode = sceneDome_->CreateChild("VIRTUAL_DOME", LOCAL);
     StaticModel* domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
 
-    // Create the camera that will se the vitual dome
+    // create the grid for the virtual dome
+    Node* domeGridNode = domeNode->CreateChild("DOME_GRID", LOCAL);
+    StaticModel* domeGridMesh = domeGridNode->CreateComponent<StaticModel>();
+    domeGridMesh->SetModel(
+        cache->GetResource<Model>("Dome/Models/domeRuler.mdl"));
+    domeGridMesh->SetMaterial(
+        cache->GetResource<Material>("Dome/Materials/domegrid.xml"));
+    // Invert the mesh
+    domeGridNode->SetScale(
+        Vector3(1.27f, -1.27f, 1.27f));  // this size is a magic number.
+                                         // don't boder trying to understand.
+    domeGridNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));
+
+    // Create the camera that will see the vitual dome
     {
         cameraNodeDome_ = sceneDome_->CreateChild("CameraDome", LOCAL);
         Camera* cameraDome = cameraNodeDome_->CreateComponent<Camera>();
@@ -539,9 +554,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         // TODO: this size shoulbe have its own config value on the
         // config.JSON
         geometryCorrectionRenderTexture->SetSize(
-            p._viewport.getR(),
-            p._viewport.getS(),
-            Graphics::GetRGBFormat(),
+            p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
             TEXTURE_RENDERTARGET);
 
         geometryCorrectionRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
@@ -564,9 +577,11 @@ Node* Sample::CreateDomeCamera(Projection p) {
                 geometryCorrectionScene_->CreateChild();
             Camera* geometryCorrCamera =
                 geometryCorrCameraNode->CreateComponent<Camera>();
-            geometryCorrCameraNode->SetPosition(
-                Vector3(0, 0, -1.005f));  // Back off a bit, just to show the outline created by the scene ambient color TODO: should be parametrized and
-                                          // configurable on the new calibrator
+            geometryCorrCameraNode->SetPosition(Vector3(
+                0, 0, -1.005f));  // Back off a bit, just to show the outline
+                                  // created by the scene ambient color TODO:
+                                  // should be parametrized and configurable on
+                                  // the new calibrator
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(500.0f);
             geometryCorrCamera->SetAspectRatio(1.0f);
