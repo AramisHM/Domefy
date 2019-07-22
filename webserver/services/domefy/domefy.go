@@ -1,10 +1,14 @@
 package domefy
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/AramisHM/Domefy/webserver/rest"
 
@@ -53,9 +57,14 @@ func SetExampleTextMessage(c *gin.Context) {
 // GetConfigJSON - Returns the JSON with the configuration parameters
 func GetConfigJSON(c *gin.Context) {
 	dat, _ := ioutil.ReadFile("../bin/config.json")
-	fmt.Print(string(dat))
+	//fmt.Print(string(dat))
+	var obj map[string]interface{}
 
-	c.JSON(http.StatusOK, string(dat))
+	json.Unmarshal(dat, &obj)
+
+	presetFilePath := obj["presets_file"].(string)
+	presetsDat, _ := ioutil.ReadFile("../bin/" + presetFilePath)
+	c.JSON(http.StatusOK, string(presetsDat))
 }
 
 // SaveCalibrationParameters - Receives a JSON parametrization of the calibration
@@ -63,9 +72,24 @@ func SaveCalibrationParameters(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	// calibrationName := paramObj["name"].(string)
 
-	fmt.Println(paramObj)
+	// fmt.Println(paramObj) // debug
+
+	// convert go-map to json
+	jsonByteArray, _ := json.Marshal(paramObj)
+	fmt.Println(string(jsonByteArray))
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := os.Create(dir + "/presets/" + paramObj["calibration_name"].(string) + ".json")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer f.Close()
+	f.Write(jsonByteArray)
 
 	// save the parameters in a local file
-
 	c.JSON(http.StatusOK, "done")
 }

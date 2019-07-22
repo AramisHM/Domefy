@@ -39,43 +39,63 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     _projections;
 
     // Get projection viewport configurations
-    int presetsSize = myConfig["presets"].size();
-    printf("Presets count: %d", presetsSize);
+    std::string presetFile = myConfig["presets_file"];
 
-    nProjections = 0;
-    for (const auto& item : myConfig["presets"]) {
-        // new projection reference
-        Projection p;
+    // If any preset file, load it
+    if (presetFile.length() > 0) {  // TODO: is there another propper way to check if any data has been suplied?
+        std::ifstream presetsStream(presetFile);
+        json presetsJ;
+        presetsStream >> presetsJ;
 
-        p.name = item["name"].get<std::string>().c_str();
+        if (presetsJ["presets"].size() > 0) {
+            nProjections = 0;
+            for (const auto& item : presetsJ["presets"]) {
+                // new projection reference
+                Projection p;
 
-        Vec3<float> offPos(item["offset_position"]["x"].get<float>(),
-                           item["offset_position"]["y"].get<float>(),
-                           item["offset_position"]["z"].get<float>());
-        Vec3<float> offRot(item["offset_rotation"]["x"].get<float>(),
-                           item["offset_rotation"]["y"].get<float>(),
-                           item["offset_rotation"]["z"].get<float>());
-        Vec3<float> projPos(item["proj_position"]["x"].get<float>(),
-                            item["proj_position"]["y"].get<float>(),
-                            item["proj_position"]["z"].get<float>());
-        Vec3<float> projRot(item["proj_rotation"]["x"].get<float>(),
-                            item["proj_rotation"]["y"].get<float>(),
-                            item["proj_rotation"]["z"].get<float>());
+                p.name = item["name"].get<std::string>().c_str();
 
-        p._viewport = Vec4<int>(item["viewport_pos"]["x"].get<int>(),
-                                item["viewport_pos"]["y"].get<int>(),
-                                item["resolution"]["x"].get<int>(),
-                                item["resolution"]["y"].get<int>());
-        p._offsetPos = offPos;
-        p._offsetRot = offRot;
-        p._projPos = projPos;
-        p._projRot = projRot;
-        p._fov = item["fov"].get<float>();
-        p._farClip = item["far_clip"].get<float>();
-        p._rttResolution = item["rtt_resolution"].get<int>();
+                Vec3<float> offPos(item["offset_position"]["x"].get<float>(),
+                                   item["offset_position"]["y"].get<float>(),
+                                   item["offset_position"]["z"].get<float>());
+                Vec3<float> offRot(item["offset_rotation"]["x"].get<float>(),
+                                   item["offset_rotation"]["y"].get<float>(),
+                                   item["offset_rotation"]["z"].get<float>());
+                Vec3<float> projPos(item["proj_position"]["x"].get<float>(),
+                                    item["proj_position"]["y"].get<float>(),
+                                    item["proj_position"]["z"].get<float>());
+                Vec3<float> projRot(item["proj_rotation"]["x"].get<float>(),
+                                    item["proj_rotation"]["y"].get<float>(),
+                                    item["proj_rotation"]["z"].get<float>());
 
-        _projections.push_back(p);  // save for later referencing
-        ++nProjections;
+                p._viewport = Vec4<int>(item["viewport_pos"]["x"].get<int>(),
+                                        item["viewport_pos"]["y"].get<int>(),
+                                        item["resolution"]["x"].get<int>(),
+                                        item["resolution"]["y"].get<int>());
+                p._offsetPos = offPos;
+                p._offsetRot = offRot;
+                p._projPos = projPos;
+                p._projRot = projRot;
+                p._fov = item["fov"].get<float>();
+                p._farClip = item["far_clip"].get<float>();
+                p._rttResolution = item["rtt_resolution"].get<int>();
+
+                // load morph mesh for this projection mesh
+                for (const auto& line : item["morph_mesh"]) {  // for each line
+                    for (const auto& vertex : line) {          // for each column, that happens to be the actual vertex itself too
+                        MorphVertex mv;
+                        mv.index = vertex["index"].get<int>();
+                        mv.x = vertex["x"].get<float>();
+                        mv.y = vertex["y"].get<float>();
+                        p._morphMesh.push_back(mv);  // push vertex into the morphmesh structure array
+                    }
+                }
+                p._index = nProjections;
+                _projections.push_back(p);  // save for later referencing
+
+                ++nProjections;
+            }
+        }
     }
 
     _borderless = myConfig["borderless"].get<bool>();

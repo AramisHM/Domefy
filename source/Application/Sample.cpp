@@ -574,6 +574,11 @@ Node* Sample::CreateDomeCamera(Projection p) {
             cameraNodeMorphcorrList_.push_back(geometryCorrCameraNode);
             retCam = geometryCorrCameraNode;
         }
+
+        // apply the morph correction loaded from config file
+        for (auto v : p._morphMesh) {
+            AnimateVertex(p._index, v.index, v.x, v.y);
+        }
     }
     return retCam;
 }

@@ -27,6 +27,12 @@
 
 using json = nlohmann::json;
 
+typedef struct MorphVertex {
+    int index;
+    float x;
+    float y;
+} MorphVertex;
+
 // Pojection structure that holds the projection viewpoerts
 typedef struct Pojection {
     std::string name;
@@ -38,6 +44,10 @@ typedef struct Pojection {
     float _fov;
     float _farClip;
     unsigned int _rttResolution;
+    unsigned int _index;  // internal numeration for each projection loaded
+
+    // the mesh that holds the mesh transformation for point-to-point calibration
+    std::vector<MorphVertex> _morphMesh;
 } Projection;
 
 // Singleton class that holds all configurations for our software.

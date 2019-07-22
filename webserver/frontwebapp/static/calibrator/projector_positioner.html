@@ -67,11 +67,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     <link rel="stylesheet" type="text/css" href="../W3.CSS Template_files/slider94.css" />
 </head>
 
-<body>
+<body onload="CreateMeshCals()">
     <!-- Draggable DIV -->
     <div id="mydiv">
         <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
-        <div id="mydivheader">Toolbox (Use with Desktop ONLY)</div>
+        <div id="mydivheader">Toolbox (Use with Desktop browsers ONLY)</div>
         <button onclick="myFunction(&#39;BP1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Rotation and
             FOV</button>
         <div id="BP1" class="w3-hide w3-container">
@@ -96,10 +96,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         <div id="BP2" class="w3-hide w3-container">
             <div class="w3-row-padding">
                 <p>
-                    <div>
-                        <iframe src="../calibrator/calibrator.html" name="targetframe" id="meshCalibFrame"
+                    <!-- the multiple mesh calibrators, one for each projector -->
+                    <div id="meshcals">
+                        <!-- <iframe src="../calibrator/calibrator.html" name="targetframe" id="meshCalibFrame"
                             allowTransparency="true" scrolling="no" frameborder="1" width="400" height="600">
-                        </iframe>
+                        </iframe> -->
                     </div>
                 </p>
             </div>
@@ -154,6 +155,9 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!-- application logic -->
 <script>
+
+
+
     var cubes = []; // list of objects on the calibrator
     // matrix to translate the visible mesh vertex to actual index on buffer
     var transMatrix = [
@@ -174,11 +178,40 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         this.y = 0;
     }
 
+    // CreateMeshCals - hide all mesh calls loaded
+    function HideAllMeshCals() {
+        for (var i = 0; i < cubes.length; ++i) {
+            var elem = cubes[i].userData.meshcalElement;
+
+            if (elem) {
+                elem.style.display = "none";
+            }
+        }
+    }
+
+    // CreateMeshCals - create the calibrators for each projector
+    function CreateMeshCals() {
+        for (var i = 0; i < cubes.length; ++i) {
+            var iframe = document.createElement("iframe");
+            iframe.src = "../calibrator/calibrator.html";
+            iframe.name = "meshcal" + i;
+
+            var whereToAppend = document.getElementById("meshcals");
+            whereToAppend.appendChild(iframe);
+            iframe.style.left = 0 + "px";
+            iframe.style.top = 0 + "px";
+            iframe.style.width = 600 + "px";
+            iframe.style.height = 600 + "px";
+            cubes[i].userData.meshcalElement = iframe; // save for later referencing
+            iframe.style.display = "none"; // by default hide it
+            //return frames["frame"].location.host;
+        }
+    }
+
     var SelectedObject;
 
     // SaveParameters - sends all the mapping data to the backend server
     function SaveParameters() {
-        console.log("TODO: needs implementation")
         var calName = "dummyText";
         var calibrationData = {
             "calibration_name": document.getElementById("calibName").value,
@@ -203,7 +236,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                     "z": cube.userData.rotz
                 },
                 "far_clip": cube.userData.far_clip,
-                "fov": cube.userData.fov
+                "fov": cube.userData.fov,
+                "morph_mesh": cube.userData.morphMesh
             };
             calibrationData.presets.push(projectorData);
         });
@@ -354,13 +388,6 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         transformControl.addEventListener('change', function () {
             cancelHideTransform();
             UpdateProjectorPosition();
-
-            var meshCalib = document.getElementById("meshCalibFrame");
-
-            // if we have the iframe for mesh calibration, update the mesh selected
-            if (meshCalib) {
-                meshCalib.contentWindow.SetMorphGrid();
-            }
         });
 
         transformControl.addEventListener('mouseDown', function () {
@@ -378,6 +405,10 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             SelectedObject = event.object;
             UpdateRanges();
             cancelHideTransform();
+
+            // unhide the meshcal for this node
+            HideAllMeshCals();
+            SelectedObject.userData.meshcalElement.style.display = "block";
         });
         dragcontrols.addEventListener('hoveroff', function () {
             delayHideTransform();
@@ -480,8 +511,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             for (var i = 0; i < 9; ++i) {
                 for (var j = 0; j < 9; ++j) {
                     var v = new Vert(transMatrix[i][j]);
-                    v.x = 0.0;
-                    v.y = 0.0;
+                    v.x = Number(0.0);
+                    v.y = Number(0.0);
                     vertices[i][j] = v;
                 }
             }

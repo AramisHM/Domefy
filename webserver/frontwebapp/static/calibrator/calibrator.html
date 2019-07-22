@@ -80,7 +80,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           <div class="col-sm-7 text">
             <div class="description">
               <div id="myDiagramDiv" class="bgimg" draggable="true"
-                style="width:600px; height:400px; background-color: #DAE4E4;"></div>
+                style="width:800px; height:800px; background-color: #DAE4E4;"></div>
             </div>
           </div>
         </td>
@@ -356,8 +356,9 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             for (var j = 0; j < 9; ++j) {
               var xx = vertices[j][i].getAttribute("currPosX");
               var yy = vertices[j][i].getAttribute("currPosY");
-              SelectedObject.userData.morphMesh[i][j].x = xx;
-              SelectedObject.userData.morphMesh[i][j].y = yy;
+              // by experimenting, I had to invert it.
+              SelectedObject.userData.morphMesh[j][i].x = Number(xx);
+              SelectedObject.userData.morphMesh[j][i].y = Number(yy);
             }
           }
         }
@@ -370,38 +371,36 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
   }
 
   // SetMorphGrid - Parent calls this function to reset the morph grid according to the selected projector
-  function SetMorphGrid() {
-    var SelectedObject = parent.SelectedObject;
+  // function SetMorphGrid() {
+  //   var SelectedObject = parent.SelectedObject;
 
-    if (SelectedObject) {
-      for (var i = 0; i < 9; ++i) {
-        for (var j = 0; j < 9; ++j) {
-          var newx = SelectedObject.userData.morphMesh[i][j].x;
-          var newy = SelectedObject.userData.morphMesh[i][j].y;
+  //   if (SelectedObject) {
+  //     for (var i = 0; i < 9; ++i) {
+  //       for (var j = 0; j < 9; ++j) {
+  //         var newx = SelectedObject.userData.morphMesh[i][j].x;
+  //         var newy = SelectedObject.userData.morphMesh[i][j].y;
 
-          var img = vertices[i][j];
-          img.setAttribute("currPosX", newx);
-          img.setAttribute("currPosY", newy);
-          img.setAttribute("lastPosX", newx);
-          img.setAttribute("lastPosY", newy);
+  //         var img = vertices[i][j];
+  //         img.setAttribute("currPosX", newx);
+  //         img.setAttribute("currPosY", newy);
+  //         img.setAttribute("lastPosX", newx);
+  //         img.setAttribute("lastPosY", newy);
 
-          // It needs the following normalization
-          var idxCount = (i * 9 + j);
+  //         // It needs the following normalization
+  //         var idxCount = (i * 9 + j);
 
-          // It needs the following normalization
-          img.style.top = img.style.top =
-            Math.floor(img.getAttribute("orgigY")) +
-            newy +
-            -img.height + // normalization
-            "px";
-          img.style.left = Math.floor(img.getAttribute("orgigX")) + spacing
-          newx +
-            "px";
-        }
-      }
-    }
+  //         // It needs the following normalization
+  //         img.style.top =
+  //           Math.floor(img.getAttribute("orgigY")) +
+  //           newy +
+  //           -img.height +
+  //           "px";
 
-  }
+  //         //img.style.left = newx - (1 + indexCounter * img.width) + "px";
+  //       }
+  //     }
+  //   }
+  // }
 
   // Populate the initial grid
   function AddGridVertexes() {
