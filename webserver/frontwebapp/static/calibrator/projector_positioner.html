@@ -72,20 +72,58 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     <div id="mydiv">
         <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
         <div id="mydivheader">Toolbox (Use with Desktop browsers ONLY)</div>
+
+        <p><input type="checkbox" name="vehicle1" value="Bike"> Dome Grid <br></p>
+
         <button onclick="myFunction(&#39;BP1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Rotation and
             FOV</button>
         <div id="BP1" class="w3-hide w3-container">
             <div class="w3-row-padding">
                 <p>
                     <div>
-                        <p>X: <input style="width: 140 px" type="range" id="rotx" min="0" max="360" step="0.01"
-                                oninput="WriteRotToObj()"></p>
-                        <p>Y: <input style="width: 140 px" type="range" id="roty" min="0" max="360" step="0.01"
-                                oninput="WriteRotToObj()"></p>
-                        <p>Z: <input style="width: 140 px" type="range" id="rotz" min="0" max="360" step="0.01"
-                                oninput="WriteRotToObj()"></p>
-                        <p>FOV: <input style="width: 140 px" type="range" id="fov" min="0" max="360" step="0.01"
-                                oninput="UpdateProjectorFOV()"></p>
+                        <script>
+                            function updateToolsRanges() {
+                                document.getElementById("rotx").value = document.getElementById("numInputRotX").value;
+                                document.getElementById("roty").value = document.getElementById("numInputRotY").value;
+                                document.getElementById("rotz").value = document.getElementById("numInputRotZ").value;
+                                document.getElementById("fov").value = document.getElementById("numInputFOV").value;
+                                WriteRotToObj();
+                                UpdateProjectorFOV();
+                            }
+                            function updateToolsNumericInput() {
+                                document.getElementById("numInputRotX").value = document.getElementById("rotx").value;
+                                document.getElementById("numInputRotY").value = document.getElementById("roty").value;
+                                document.getElementById("numInputRotZ").value = document.getElementById("rotz").value;
+                                document.getElementById("numInputFOV").value = document.getElementById("fov").value;
+                                WriteRotToObj();
+                                UpdateProjectorFOV();
+                            }
+                        </script>
+                        <p>X:
+                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotX"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="rotx" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+                        <p>Y:
+                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotY"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="roty" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+
+                        <p>Z:
+                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotZ"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="rotz" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+                        <p>FOV:
+                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputFOV"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="fov" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
                     </div>
                 </p>
             </div>
@@ -106,12 +144,17 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             </div>
         </div>
 
-        <p href="#">
-            Calibration name: <input type="text" id="calibName" required minlength="4" maxlength="40">
-            <a href="#" class="w3-bar-item w3-button" onclick="SaveParameters()">
-                Save parameters
-            </a>
-        </p>
+        <button onclick="myFunction(&#39;BP3&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Misc</button>
+        <div id="BP3" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+                <p href="#">
+                    Calibration name: <input type="text" id="calibName" required minlength="4" maxlength="40">
+                    <a href="#" class="w3-bar-item w3-button" onclick="SaveParameters()">
+                        Save parameters
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- top bar -->
@@ -155,9 +198,6 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!-- application logic -->
 <script>
-
-
-
     var cubes = []; // list of objects on the calibrator
     // matrix to translate the visible mesh vertex to actual index on buffer
     var transMatrix = [
@@ -252,21 +292,27 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 
     function changeSelRotation() {
-        SelectedObject.rotation.x = degrees_to_radians(SelectedObject.userData.rotz);
-        SelectedObject.rotation.y = degrees_to_radians(SelectedObject.userData.roty);
-        SelectedObject.rotation.z = degrees_to_radians(SelectedObject.userData.rotx);
+        if (SelectedObject) {
+            SelectedObject.rotation.x = degrees_to_radians(SelectedObject.userData.rotz);
+            SelectedObject.rotation.y = degrees_to_radians(SelectedObject.userData.roty);
+            SelectedObject.rotation.z = degrees_to_radians(SelectedObject.userData.rotx);
+        }
+
     }
 
     // WriteRotToObj - Gets the rotation ranges values and write them into selected objec's userData
     function WriteRotToObj() {
         // save data onto object
-        SelectedObject.userData.rotx = document.getElementById("rotx").value;
-        SelectedObject.userData.roty = document.getElementById("roty").value;
-        SelectedObject.userData.rotz = document.getElementById("rotz").value;
-        UpdateProjectorRotation();
+        if (SelectedObject) {
+            SelectedObject.userData.rotx = document.getElementById("rotx").value;
+            SelectedObject.userData.roty = document.getElementById("roty").value;
+            SelectedObject.userData.rotz = document.getElementById("rotz").value;
 
-        // update display rotation
-        changeSelRotation();
+            UpdateProjectorRotation();
+
+            // update display rotation
+            changeSelRotation();
+        }
     }
 
     function UpdateProjectorRotation() {
@@ -314,14 +360,17 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
     // UpdateProjectorPosition - Sends commands to the Domefy server to update the projectors position
     function UpdateProjectorPosition() {
-        var index = SelectedObject.userData.index;
-        var command = "CPP;PROJPOS;";
-        command += index + ";";
-        command += SelectedObject.position.z + ";";
-        command += SelectedObject.position.y + ";";
-        command += SelectedObject.position.x + ";";
-        console.log(command);
-        ajaxPost(command, false, "/setExampleTextMessage")
+        if (SelectedObject) {
+            var index = SelectedObject.userData.index;
+            var command = "CPP;PROJPOS;";
+            command += index + ";";
+            command += SelectedObject.position.z + ";";
+            command += SelectedObject.position.y + ";";
+            command += SelectedObject.position.x + ";";
+            console.log(command);
+            ajaxPost(command, false, "/setExampleTextMessage")
+        }
+
     }
 
 
