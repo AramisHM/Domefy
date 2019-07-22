@@ -226,17 +226,17 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                 "offset_position": cube.userData.offset_position,
                 "offset_rotation": cube.userData.offset_rotation,
                 "proj_position": {
-                    "x": cube.position.z,
-                    "y": cube.position.y,
-                    "z": cube.position.x
+                    "x": Number(cube.position.z),
+                    "y": Number(cube.position.y),
+                    "z": Number(cube.position.x)
                 },
                 "proj_rotation": {
-                    "x": cube.userData.rotx,
-                    "y": cube.userData.roty,
-                    "z": cube.userData.rotz
+                    "x": Number(cube.userData.rotx),
+                    "y": Number(cube.userData.roty),
+                    "z": Number(cube.userData.rotz)
                 },
-                "far_clip": cube.userData.far_clip,
-                "fov": cube.userData.fov,
+                "far_clip": Number(cube.userData.far_clip),
+                "fov": Number(cube.userData.fov),
                 "morph_mesh": cube.userData.morphMesh
             };
             calibrationData.presets.push(projectorData);
