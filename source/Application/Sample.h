@@ -75,12 +75,16 @@ class Sample : public Application {
     // is the camera with the component only.
     std::vector<Node*> cameraNodeDomeAll_;
 
+    // _virtualDomes - All the virtualdomes from viewports
+    std::vector<Node*> _virtualDomes;
+
     SharedPtr<ScriptInstance> frameworkScriptInstance;
 
     // CreateDomeCamera - Creates the dome camera node.
     Node* CreateDomeCamera(Projection p);
 
-    // Vertex animation variables and functions -------------------------------------------
+    // Vertex animation variables and functions
+    // -------------------------------------------
     float time_;
 
     // Dome morphologic correction scenes.
@@ -98,9 +102,12 @@ class Sample : public Application {
     /// If the vertices are duplicates, indices to the original vertices (to
     /// allow seamless animation.)
     PODVector<unsigned> vertexDuplicates_;
-    // END Vertex animation variables and functions -------------------------------------------
 
+    // AnimateVertex - Move individual vertices from the morph mesh
     void AnimateVertex(int mesh, int vertex, float x, float y);
+
+    // END Vertex animation variables and functions
+    // -------------------------------------------
 
    private:
     /// Create logo.

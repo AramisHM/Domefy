@@ -73,7 +73,14 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
         <div id="mydivheader">Toolbox (Use with Desktop browsers ONLY)</div>
 
-        <p><input type="checkbox" name="vehicle1" value="Bike"> Dome Grid <br></p>
+        <script>
+            function setDomegrid() {
+                var cmd = "CPP;DOMEGRID;" + (document.getElementById("domegrid").checked ? 1 : 0) + ";";
+                //console.log(cmd);
+                ajaxPost(cmd, false, "/setExampleTextMessage");
+            }
+        </script>
+        <p><input type="checkbox" id="domegrid" onchange="setDomegrid()" value="0"> Dome Grid</p>
 
         <button onclick="myFunction(&#39;BP1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Rotation and
             FOV</button>

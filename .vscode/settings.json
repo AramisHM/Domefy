@@ -63,7 +63,9 @@
     "xmemory0": "cpp",
     "xstddef": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "atomic": "cpp",
+    "thread": "cpp"
   },
   "psi-header.variables": [
     ["projectCreationYear", "2014"],

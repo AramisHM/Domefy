@@ -232,8 +232,38 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                 }
                 if (!commandSplitted[1].compare(std::string("PROJFOV"))) {
                     int projector = std::stoi(commandSplitted[2]);
-                    Camera *c = cameraNodeDomeList_[projector]->GetComponent<Camera>();
+                    Camera *c =
+                        cameraNodeDomeList_[projector]->GetComponent<Camera>();
                     c->SetFov(std::stof(commandSplitted[3]));
+                }
+                if (!commandSplitted[1].compare(std::string("DOMEGRID"))) {
+                    int isEnabled = std::stoi(commandSplitted[2]);
+
+                    for (auto dome : _virtualDomes) {
+                        auto grid = dome->GetChild("DOME_GRID");
+                        // TODO: aside from setting grid visible, make the
+                        // actual dome a little transparent
+
+                        Variant va;  // we will set the material color with this
+                                     // variant
+                        if (isEnabled == 1) {
+                            va = Variant(Vector4(0.2f, 0.2f, 0.2f, 0.01f));
+                            grid->SetEnabled(true);
+                        } else {
+                            va = Variant(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                            grid->SetEnabled(false);
+                        }
+
+                        // the virtual dome has 5 materials, one
+                        // for each face
+                        for (int i = 0; i < 5; ++i) {
+                            auto domeMaterial =
+                                dome->GetComponent<Urho3D::StaticModel>()
+                                    ->GetMaterial(i);
+                            domeMaterial->SetShaderParameter("MatDiffColor",
+                                                             va);
+                        }
+                    }
                 }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text

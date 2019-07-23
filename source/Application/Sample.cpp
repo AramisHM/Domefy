@@ -278,6 +278,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
     Node* domeNode = sceneDome_->CreateChild("VIRTUAL_DOME", LOCAL);
     StaticModel* domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
+    _virtualDomes.push_back(domeNode);  // save for later referencing
 
     // create the grid for the virtual dome
     Node* domeGridNode = domeNode->CreateChild("DOME_GRID", LOCAL);
@@ -288,9 +289,10 @@ Node* Sample::CreateDomeCamera(Projection p) {
         cache->GetResource<Material>("Dome/Materials/domegrid.xml"));
     // Invert the mesh
     domeGridNode->SetScale(
-        Vector3(1.27f, -1.27f, 1.27f));  // this size is a magic number.
-                                         // don't boder trying to understand.
+        Vector3(1.265f, -1.265f, 1.265f));  // this size is a magic number.
+                                            // don't boder trying to understand.
     domeGridNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));
+    domeGridNode->SetEnabled(false);  // initially, it should be hidden
 
     // Create the camera that will see the vitual dome
     {
