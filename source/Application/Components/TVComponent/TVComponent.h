@@ -44,9 +44,13 @@ class URHO3D_API TVComponent : public Component {
     int GetFrameWidth(void) const { return frameWidth_; };
     int GetFrameHeight(void) const { return frameHeight_; };
     float GetFramesPerSecond(void) const { return framesPerSecond_; };
-    //void GetFrameRGB(char* outFrame, int pitch);
-    //void GetFrameYUV444(char* outFrame, int pitch);
+    // void GetFrameRGB(char* outFrame, int pitch);
+    // void GetFrameYUV444(char* outFrame, int pitch);
     void UpdatePlaneTextures();
+
+    // CreateViewer - Creates the static mesh for renderng the video
+    // TODO: make resolution parameters change the mesh dimensions aswell
+    void CreateViewer();
 
    private:
     void HandleUpdate(StringHash eventType, VariantMap& eventData);

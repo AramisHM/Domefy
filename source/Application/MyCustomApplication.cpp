@@ -7,6 +7,7 @@
 #include <Application/Components/AnatomicViewer/AnatomicViewer.h>
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
+#include <Application/Components/TVComponent/TVComponent.h>
 #include <Application/Components/VHP/VHP.h>
 #include <Core/ProgramConfig.h>
 
@@ -27,6 +28,7 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
     context_->RegisterFactory<SlideTransitionAnimatior>();
+    TVComponent::RegisterObject(context_);  // alternative way to do this
 
     // Register custom Urho3D componenets
 
@@ -130,28 +132,33 @@ void MyCustomApplication::Start() {
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
 
-    level = new CLevelData(context_);
+    Node *tvNode = scene_->CreateChild("TV");
+    Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
+    XMLFile *file = cache->GetResource<XMLFile>("Objects/TV.xml");
+    tvNode->LoadXML(file->GetRoot());
 
-    if (level->InitScene(scene_)) {
-        level->InitTVComponentForSceneNode("TV");
-    } else {
-        engine_->Exit();
+    if (tvNode) {
+        auto tvc = tvNode->CreateComponent<TVComponent>();
+        tvc->OpenFileName("./Data/Videos/test_video.ogv");
+        // tvc->OpenFileName("trailer_400p.ogv"); //error!
+        StaticModel *sm = tvNode->GetComponent<StaticModel>();
+        tvc->SetOutputModel(sm);
     }
 
-    ResourceCache *cache = GetSubsystem<ResourceCache>();
-    // debug text specific.
-    {
-        UI *ui = GetSubsystem<UI>();
+    // ResourceCache *cache = GetSubsystem<ResourceCache>();
+    // // debug text specific.
+    // {
+    //     UI *ui = GetSubsystem<UI>();
 
-        debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
-        debTex->SetText("Loading images, please wait a moment.");
-        debTex->SetFont(
-            cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"), 15);
-        debTex->SetTextAlignment(HA_CENTER);
-        debTex->SetHorizontalAlignment(HA_CENTER);
-        debTex->SetVerticalAlignment(VA_CENTER);
-        debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
-    }
+    //     debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
+    //     debTex->SetText("Loading images, please wait a moment.");
+    //     debTex->SetFont(
+    //         cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"), 15);
+    //     debTex->SetTextAlignment(HA_CENTER);
+    //     debTex->SetHorizontalAlignment(HA_CENTER);
+    //     debTex->SetVerticalAlignment(VA_CENTER);
+    //     debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
+    // }
 
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
