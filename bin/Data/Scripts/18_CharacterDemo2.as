@@ -22,6 +22,10 @@ float cameraDistance = 5.0;
 VHP @vhpComp;
 
 Node @characterNode;
+
+// mvxv - move on z axis value
+float mvzv = 0.0f;
+
 // Character script object class
 //
 // Those public member variables that can be expressed with a Variant and do not
@@ -94,7 +98,7 @@ class Character : ScriptObject {
         Vector3 moveDir(0.0f, 0.0f, 0.0f);
         Vector3 velocity = body.linearVelocity;
         // Velocity on the XZ plane
-        Vector3 planeVelocity(velocity.x, 0.0f, velocity.z);
+        Vector3 planeVelocity(velocity.x, 0.0f, velocity.z + mvzv);
 
         if (controls.IsDown(CTRL_FORWARD)) moveDir += Vector3::FORWARD;
         if (controls.IsDown(CTRL_BACK)) moveDir += Vector3::BACK;
@@ -144,10 +148,35 @@ class Character : ScriptObject {
 
         // Reset grounded flag for next frame
         onGround = false;
+
+        mvzv = 0;  // must reset each iteration
     }
 }
 
 class Fpmed : ScriptObject {
+    void DataGate(VariantMap vin, VariantMap& vout) {
+        String str = vin["CMD"].GetString();
+        // log.Info("angelscript received: " + str);
+
+        String[] @cmds = str.Split(';');
+
+        vout["RET"] = "Hello from Angelscript! :D";
+
+        if (cmds[0] == "sag-a") {
+            float factor = cmds[1].ToFloat() / 100.0f;
+            // log.Info("Making cut of " + factor);
+            // vhpComp.SetSagitalCut(factor, 0.0f, true);
+        }
+
+        // move along z axis
+        if (cmds[0] == "mvz") {
+            float factor = cmds[1].ToFloat() / 100.0f;
+            mvzv += factor * 400;
+            // log.Info("Making cut of " + factor);
+            // vhpComp.SetSagitalCut(factor, 0.0f, true);
+        }
+    }
+
     void FpmedStart() {
         // Execute the common startup for samples
         SampleStart();
@@ -334,21 +363,6 @@ class Fpmed : ScriptObject {
         instructionText.horizontalAlignment = HA_CENTER;
         instructionText.verticalAlignment = VA_CENTER;
         instructionText.SetPosition(0, ui.root.height / 4);
-    }
-
-    void DataGate(VariantMap vin, VariantMap& vout) {
-        String str = vin["CMD"].GetString();
-        // log.Info("angelscript received: " + str);
-
-        String[] @cmds = str.Split(';');
-
-        vout["RET"] = "Hello from Angelscript! :D";
-
-        if (cmds[0] == "sag-a") {
-            float factor = cmds[1].ToFloat() / 100.0f;
-            // log.Info("Making cut of " + factor);
-            // vhpComp.SetSagitalCut(factor, 0.0f, true);
-        }
     }
 
     void SubscribeToEvents() {
