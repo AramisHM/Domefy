@@ -132,18 +132,14 @@ void MyCustomApplication::Start() {
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
 
-    Node *tvNode = scene_->CreateChild("TV");
+    Node *videoNode = scene_->CreateChild("Video");
     Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
     XMLFile *file = cache->GetResource<XMLFile>("Objects/TV.xml");
-    tvNode->LoadXML(file->GetRoot());
-
-    if (tvNode) {
-        auto tvc = tvNode->CreateComponent<TVComponent>();
-        tvc->OpenFileName("./Data/Videos/test_video.ogv");
-        // tvc->OpenFileName("trailer_400p.ogv"); //error!
-        StaticModel *sm = tvNode->GetComponent<StaticModel>();
-        tvc->SetOutputModel(sm);
-    }
+    videoNode->LoadXML(file->GetRoot());
+    auto videoComp = videoNode->CreateComponent<TVComponent>();
+    videoComp->OpenFileName("./Data/Videos/test_video.ogv");
+    StaticModel *sm = videoComp->GetComponent<StaticModel>();
+    videoComp->SetOutputModel(sm);
 
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));

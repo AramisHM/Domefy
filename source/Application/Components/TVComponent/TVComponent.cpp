@@ -227,6 +227,9 @@ unsigned TVComponent::Advance(float timeStep) {
     videoTimer_ += timeStep;
 
     // calculate current frame
+    // FIXME: TODO: check if this calculation is
+    // right, because, currently, the
+    // video plays way too fast.
     const unsigned curFrame =
         static_cast<unsigned>(floor(videoTimer_ * framesPerSecond_));
 
