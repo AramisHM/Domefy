@@ -145,21 +145,6 @@ void MyCustomApplication::Start() {
         tvc->SetOutputModel(sm);
     }
 
-    // ResourceCache *cache = GetSubsystem<ResourceCache>();
-    // // debug text specific.
-    // {
-    //     UI *ui = GetSubsystem<UI>();
-
-    //     debTex = ui->GetRoot()->CreateChild<Urho3D::Text>();
-    //     debTex->SetText("Loading images, please wait a moment.");
-    //     debTex->SetFont(
-    //         cache->GetResource<Urho3D::Font>("Fonts/Anonymous Pro.ttf"), 15);
-    //     debTex->SetTextAlignment(HA_CENTER);
-    //     debTex->SetHorizontalAlignment(HA_CENTER);
-    //     debTex->SetVerticalAlignment(VA_CENTER);
-    //     debTex->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
-    // }
-
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
     // create C++ app
