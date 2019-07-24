@@ -57,7 +57,7 @@ void Sample::CreateLogo() {
     int textureWidth = logoTexture->GetWidth();
     int textureHeight = logoTexture->GetHeight();
 
-    logoSprite_->SetScale(256.0f / textureWidth);
+    logoSprite_->SetScale(24.0f / textureWidth);
     logoSprite_->SetSize(textureWidth, textureHeight);
     logoSprite_->SetHotSpot(0, textureHeight);
     logoSprite_->SetAlignment(HA_LEFT, VA_BOTTOM);

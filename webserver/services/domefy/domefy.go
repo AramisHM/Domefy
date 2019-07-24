@@ -93,3 +93,33 @@ func SaveCalibrationParameters(c *gin.Context) {
 	// save the parameters in a local file
 	c.JSON(http.StatusOK, "done")
 }
+
+// GetThisMAchineIpAddres - Returns the string with this machine IP address
+func GetThisMAchineIpAddres() string {
+	ifaces, err := net.Interfaces()
+
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	// handle err
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+
+		// handle err
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			// process IP address
+			fmt.Println(ip)
+		}
+	}
+
+	return ""
+}
