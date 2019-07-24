@@ -116,6 +116,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
   affecRadius = 8; // radius of neigbours affected
   moveNeighbours = true;
   var spacing = 45; // pixels
+
+  // these create indicates the offset that the vertices should be put regarding the parent element
+  // since we use absolute positioning type, this was a work-arround the problem
+  var gridNormalizationLeft = 14;
+  var gridNormalizationTop = 153;
   // matrix to translate the visible mesh vertex to actual index on buffer
   var transMatrix = [
     [68, 43, 42, 7, 6, 55, 54, 3, 2],
@@ -161,18 +166,19 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     img.src = "../assets/images/marker.png";
     img.height = 7;
     img.width = 7;
+    img.style.position = "absolute";
 
     // It needs the following normalization
-    img.style.top = y - img.height + "px"; // magic equation to normalize visual position with the image parameter
-    img.style.left = x - (1 + indexCounter * img.width) + "px"; // another magic normalization to align the visual element with its parameters
+    img.style.top = y + gridNormalizationTop + "px"; // magic equation to normalize visual position with the image parameter
+    img.style.left = x + gridNormalizationLeft + "px"; // another magic normalization to align the visual element with its parameters
 
     var i = Math.floor(indexCounter / 9);
     var j = Math.floor(indexCounter % 9);
     img.setAttribute("index", Number(id)); // ARAMIS: Uses this to know what vertex we are dealing with
 
     // value that  indicates the original position relative to parent element
-    img.setAttribute("orgigX", x); // original position X
-    img.setAttribute("orgigY", y); // original position Y
+    img.setAttribute("orgigX", x + gridNormalizationLeft); // original position X
+    img.setAttribute("orgigY", y + gridNormalizationTop); // original position Y
 
     // current position relative to its origin
     img.setAttribute("currPosX", 0);
@@ -196,8 +202,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         var $this = $(this);
         var thisPos = $this.position();
         var parentPos = $this.parent().position();
-        var x = thisPos.left - parentPos.left;
-        var y = thisPos.top - parentPos.top;
+        var x = thisPos.left;
+        var y = thisPos.top;
         //   console.log(
         //     img.getAttribute("index", indexCounter) + " " + x + ", " + y
         //   );
@@ -288,12 +294,10 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                 imag.style.left =
                   Math.floor(origX) +
                   pcXimag +
-                  -(1 + idx * img.width) + // normalization
                   "px";
                 imag.style.top =
                   Math.floor(origY) +
                   pcYimag +
-                  -img.height + // normalization
                   "px";
 
                 // store in a vector, that later we will send to the C++ app
