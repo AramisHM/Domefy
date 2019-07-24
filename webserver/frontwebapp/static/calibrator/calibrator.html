@@ -113,7 +113,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     this.y = 0;
   }
 
-  affecRadius = 2; // radius of neigbours affected
+  affecRadius = 8; // radius of neigbours affected
   moveNeighbours = true;
   var spacing = 45; // pixels
   // matrix to translate the visible mesh vertex to actual index on buffer
@@ -240,6 +240,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
           v.y = cpy;
           affectedAdjs.push(v);
           // affect all nodes arround the selected one
+
+          // visited is an array to mark what vertex has already been moved, 
+          // so we dont move on vertex more than once, causing the abnormal
+          // acceleration when selecting edge vertices
+          var visited = []
+
           for (i = i0 - affecRadius; i <= Number(i0) + affecRadius; ++i) {
             for (j = j0 - affecRadius; j <= Number(j0) + affecRadius; ++j) {
               // normalize indexes
@@ -248,6 +254,14 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
               // only affect adjacent nodes.
               if (ni != i0 || nj != j0) {
+
+                // check if already visited
+                var idx = vertices[ni][nj].getAttribute("index");
+                if (visited.includes(idx)) {
+                  continue; // this vertex has already been affected, ignore it!
+                }
+                visited.push(idx); // this vertex hasnt been visited yet, lets play with it.
+
                 // calulate how much it will affect
                 var xscore, yscore;
                 xscore = Math.abs(ni - i0);
