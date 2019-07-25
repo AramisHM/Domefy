@@ -13,8 +13,8 @@
     "y": 20
   },
   "master_resolution": {
-    "x": 1200,
-    "y": 700
+    "x": 1400,
+    "y": 875
   },
   "presets_file": "./presets/default.json"
 }

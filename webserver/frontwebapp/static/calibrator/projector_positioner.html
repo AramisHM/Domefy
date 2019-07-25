@@ -107,26 +107,26 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                             }
                         </script>
                         <p>X:
-                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotX"
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputRotX"
                                 oninput="updateToolsRanges()">
                             <input style="width: 300px" type="range" id="rotx" min="0" max="360" step="0.01"
                                 oninput="updateToolsNumericInput()">
                         </p>
                         <p>Y:
-                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotY"
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputRotY"
                                 oninput="updateToolsRanges()">
                             <input style="width: 300px" type="range" id="roty" min="0" max="360" step="0.01"
                                 oninput="updateToolsNumericInput()">
                         </p>
 
                         <p>Z:
-                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputRotZ"
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputRotZ"
                                 oninput="updateToolsRanges()">
                             <input style="width: 300px" type="range" id="rotz" min="0" max="360" step="0.01"
                                 oninput="updateToolsNumericInput()">
                         </p>
                         <p>FOV:
-                            <input type="number" placeholder="1.0" step="0.01" min="0" max="360" id="numInputFOV"
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputFOV"
                                 oninput="updateToolsRanges()">
                             <input style="width: 300px" type="range" id="fov" min="0" max="360" step="0.01"
                                 oninput="updateToolsNumericInput()">
@@ -359,10 +359,15 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     animate();
 
     function UpdateRanges() {
-        document.getElementById("rotx").value = SelectedObject.rotation.x * (180 / Math.PI);
+        document.getElementById("rotx").value = SelectedObject.rotation.z * (180 / Math.PI);
         document.getElementById("roty").value = SelectedObject.rotation.y * (180 / Math.PI);
-        document.getElementById("rotz").value = SelectedObject.rotation.z * (180 / Math.PI);
+        document.getElementById("rotz").value = SelectedObject.rotation.x * (180 / Math.PI);
         document.getElementById("fov").value = SelectedObject.userData.fov;
+
+        document.getElementById("numInputRotX").value = document.getElementById("rotx").value;
+        document.getElementById("numInputRotY").value = document.getElementById("roty").value;
+        document.getElementById("numInputRotZ").value = document.getElementById("rotz").value;
+        document.getElementById("numInputFOV").value = document.getElementById("fov").value;
     }
 
     // UpdateProjectorPosition - Sends commands to the Domefy server to update the projectors position

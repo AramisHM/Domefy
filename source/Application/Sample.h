@@ -78,6 +78,9 @@ class Sample : public Application {
     // _virtualDomes - All the virtualdomes from viewports
     std::vector<Node*> _virtualDomes;
 
+    // _calibrationAidMeshes - node with image of propper calibration for a given environment
+    std::vector<Node*> _calibrationAidMeshes;
+
     SharedPtr<ScriptInstance> frameworkScriptInstance;
 
     // CreateDomeCamera - Creates the dome camera node.

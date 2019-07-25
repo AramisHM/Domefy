@@ -236,10 +236,12 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                                      // variant
                         if (isEnabled == 1) {
                             va = Variant(Vector4(0.2f, 0.2f, 0.2f, 0.01f));
+                            dome->SetEnabled(false);
                             grid->SetEnabled(true);
                         } else {
                             va = Variant(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                             grid->SetEnabled(false);
+                            dome->SetEnabled(true);
                         }
 
                         // the virtual dome has 5 materials, one

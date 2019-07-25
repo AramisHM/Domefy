@@ -258,7 +258,7 @@ void Sample::HandleUpdate(StringHash eventType, VariantMap& eventData) {
 // It creates the scene the virtual dome, and on top of that, it creates another
 // scene that holds a special mesh that we use to do a morphologic
 // point-to-point geometry correction. Returns the node with the camera that
-// view the final geometry compositions0
+// view the final geometry compositions.
 Node* Sample::CreateDomeCamera(Projection p) {
     SharedPtr<Scene> sceneDome_;
     SharedPtr<Node> cameraNodeDome_;
@@ -596,6 +596,31 @@ Node* Sample::CreateDomeCamera(Projection p) {
         for (auto v : p._morphMesh) {
             AnimateVertex(p._index, v.index, v.x, v.y);
         }
+
+        // Add calibration aid mesh
+        Node* calibReferenceNode = geometryCorrectionScene_->CreateChild("CALIBRATION_REFERENCE", LOCAL);
+        StaticModel* boxMesh = calibReferenceNode->CreateComponent<StaticModel>();
+        boxMesh->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAddAlpha.xml"));
+        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
+            Urho3D::String("C:/Users/Aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/NORTH.png"));
+#ifdef FPMED_LATEST_URHO3D
+        t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+#else
+        t->SetFilterMode(FILTER_NEAREST);
+#endif
+        t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+        t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+        t->SetNumLevels(1);
+        m->SetTexture(TU_DIFFUSE, t);
+        Variant va = Variant(Vector4(0.0f, 1.0f,
+                                     0.0f, 1.0f));
+        m->SetShaderParameter("MatDiffColor", va);
+        boxMesh->SetMaterial(m);
+        _calibrationAidMeshes.push_back(domeNode);  // save for later referencing
     }
     return retCam;
 }
