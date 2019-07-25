@@ -94,16 +94,28 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                                 document.getElementById("roty").value = document.getElementById("numInputRotY").value;
                                 document.getElementById("rotz").value = document.getElementById("numInputRotZ").value;
                                 document.getElementById("fov").value = document.getElementById("numInputFOV").value;
+
+                                document.getElementById("CaliRotx").value = document.getElementById("numInputCaliRotX").value;
+                                document.getElementById("CaliRoty").value = document.getElementById("numInputCaliRotY").value;
+                                document.getElementById("CaliRotz").value = document.getElementById("numInputCaliRotZ").value;
+
                                 WriteRotToObj();
                                 UpdateProjectorFOV();
+                                updateSelectedObjectCustomData()
                             }
                             function updateToolsNumericInput() {
                                 document.getElementById("numInputRotX").value = document.getElementById("rotx").value;
                                 document.getElementById("numInputRotY").value = document.getElementById("roty").value;
                                 document.getElementById("numInputRotZ").value = document.getElementById("rotz").value;
                                 document.getElementById("numInputFOV").value = document.getElementById("fov").value;
+
+                                document.getElementById("numInputCaliRotX").value = document.getElementById("CaliRotx").value;
+                                document.getElementById("numInputCaliRotY").value = document.getElementById("CaliRoty").value;
+                                document.getElementById("numInputCaliRotZ").value = document.getElementById("CaliRotz").value;
+
                                 WriteRotToObj();
                                 UpdateProjectorFOV();
+                                updateSelectedObjectCustomData()
                             }
                         </script>
                         <p>X:
@@ -129,6 +141,36 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                             <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputFOV"
                                 oninput="updateToolsRanges()">
                             <input style="width: 300px" type="range" id="fov" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+                    </div>
+                </p>
+            </div>
+        </div>
+
+        <button onclick="myFunction(&#39;BPCRP&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Calib
+            Position
+            & Rotation</button>
+        <div id="BPCRP" class="w3-hide w3-container">
+            <div class="w3-row-padding">
+                <p>
+                    <div>
+                        <p>X:
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputCaliRotX"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="CaliRotx" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+                        <p>Y:
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputCaliRotY"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="CaliRoty" min="0" max="360" step="0.01"
+                                oninput="updateToolsNumericInput()">
+                        </p>
+                        <p>Z:
+                            <input type="number" placeholder="1.0" step="0.6" min="0" max="360" id="numInputCaliRotZ"
+                                oninput="updateToolsRanges()">
+                            <input style="width: 300px" type="range" id="CaliRotz" min="0" max="360" step="0.01"
                                 oninput="updateToolsNumericInput()">
                         </p>
                     </div>
@@ -305,6 +347,26 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             SelectedObject.rotation.z = degrees_to_radians(SelectedObject.userData.rotx);
         }
 
+    }
+
+    function updateSelectedObjectCustomData() {
+        // calibration viewport rotation
+        SelectedObject.userData.CaliRotx = document.getElementById("CaliRotx").value;
+        SelectedObject.userData.CaliRoty = document.getElementById("CaliRoty").value;
+        SelectedObject.userData.CaliRotz = document.getElementById("CaliRotz").value;
+
+
+
+        var index = SelectedObject.userData.index;
+
+        // compose and send command to backend
+        var command = "CPP;CALIROT;";
+        command += index + ";";
+        command += SelectedObject.userData.CaliRotx + ";";
+        command += SelectedObject.userData.CaliRoty + ";";
+        command += SelectedObject.userData.CaliRotz + ";";
+        //console.log(command);
+        ajaxPost(command, false, "/setExampleTextMessage")
     }
 
     // WriteRotToObj - Gets the rotation ranges values and write them into selected objec's userData

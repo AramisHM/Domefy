@@ -78,8 +78,13 @@ class Sample : public Application {
     // _virtualDomes - All the virtualdomes from viewports
     std::vector<Node*> _virtualDomes;
 
-    // _calibrationAidMeshes - node with image of propper calibration for a given environment
+    // _calibrationAidMeshes - node with image of propper calibration for a
+    // given environment
     std::vector<Node*> _calibrationAidMeshes;
+
+    // _geometryCorrectionNodes - The scene nodes that has the morphologic
+    // correction mesh
+    std::vector<Node*> _geometryCorrectionNodes;
 
     SharedPtr<ScriptInstance> frameworkScriptInstance;
 

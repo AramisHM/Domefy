@@ -543,6 +543,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         SharedPtr<Model> cloneModel = originalModel->Clone();
         geometryCorrectionMesh->SetModel(cloneModel);
         geometryCorrectionNode->SetRotation(Quaternion(180.0f, -90.0f, 0.0f));
+        _geometryCorrectionNodes.push_back(geometryCorrectionNode);
 
         // Store the cloned vertex buffer that we will modify when
         // animating
@@ -584,6 +585,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
                                   // created by the scene ambient color TODO:
                                   // should be parametrized and configurable on
                                   // the new calibrator
+
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(500.0f);
             geometryCorrCamera->SetAspectRatio(1.0f);
@@ -598,15 +600,18 @@ Node* Sample::CreateDomeCamera(Projection p) {
         }
 
         // Add calibration aid mesh
-        Node* calibReferenceNode = geometryCorrectionScene_->CreateChild("CALIBRATION_REFERENCE", LOCAL);
-        StaticModel* boxMesh = calibReferenceNode->CreateComponent<StaticModel>();
+        Node* calibReferenceNode = geometryCorrectionScene_->CreateChild(
+            "CALIBRATION_REFERENCE", LOCAL);
+        StaticModel* boxMesh =
+            calibReferenceNode->CreateComponent<StaticModel>();
         boxMesh->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
 
         SharedPtr<Material> m(new Material(context_));
-        m->SetTechnique(0, cache->GetResource<Technique>(
-                               "Techniques/DiffAddAlpha.xml"));
-        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
-            Urho3D::String("C:/Users/Aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/NORTH.png"));
+        m->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
+        Urho3D::Texture2D* t =
+            cache->GetResource<Urho3D::Texture2D>(Urho3D::String(
+                "/home/aramis/Desktop/Domefy/bin/Data/Dome/Aid/NORTH.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
 #else
@@ -616,11 +621,11 @@ Node* Sample::CreateDomeCamera(Projection p) {
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
         t->SetNumLevels(1);
         m->SetTexture(TU_DIFFUSE, t);
-        Variant va = Variant(Vector4(0.0f, 1.0f,
-                                     0.0f, 1.0f));
+        Variant va = Variant(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
         m->SetShaderParameter("MatDiffColor", va);
         boxMesh->SetMaterial(m);
-        _calibrationAidMeshes.push_back(domeNode);  // save for later referencing
+        _calibrationAidMeshes.push_back(
+            calibReferenceNode);  // save for later referencing
     }
     return retCam;
 }

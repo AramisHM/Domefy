@@ -255,6 +255,18 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         }
                     }
                 }
+                if (!commandSplitted[1].compare(std::string("CALIROT"))) {
+                    // Sets the calibration mesh rotation
+
+                    int viewportIndex = std::stoi(commandSplitted[2]);
+
+                    Quaternion rotation(std::stof(commandSplitted[3]),
+                                        std::stof(commandSplitted[4]),
+                                        std::stof(commandSplitted[5]));
+
+                    _geometryCorrectionNodes[viewportIndex]->SetRotation(
+                        rotation);
+                }
             } else {  // foreward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
                 // Get the command from network, redirect to script, execute it,
