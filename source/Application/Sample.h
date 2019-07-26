@@ -78,9 +78,9 @@ class Sample : public Application {
     // _virtualDomes - All the virtualdomes from viewports
     std::vector<Node*> _virtualDomes;
 
-    // _calibrationAidMeshes - node with image of propper calibration for a
+    // _calibrationAidNodes - node with image of propper calibration for a
     // given environment
-    std::vector<Node*> _calibrationAidMeshes;
+    std::vector<Node*> _calibrationAidNodes;
 
     // _geometryCorrectionNodes - The scene nodes that has the morphologic
     // correction mesh

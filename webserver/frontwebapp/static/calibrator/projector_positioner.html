@@ -79,8 +79,18 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                 //console.log(cmd);
                 ajaxPost(cmd, false, "/setExampleTextMessage");
             }
+            function setAidgrid() {
+                var cmd = "CPP;AIDGRID;" + (document.getElementById("aidgrid").checked ? 1 : 0) + ";";
+                //console.log(cmd);
+                ajaxPost(cmd, false, "/setExampleTextMessage");
+            }
+
+
         </script>
-        <p><input type="checkbox" id="domegrid" onchange="setDomegrid()" value="0"> Dome Grid</p>
+        <p>
+            <input type="checkbox" id="domegrid" onchange="setDomegrid()" value="0"> Dome Grid
+            <input type="checkbox" id="aidgrid" onchange="setAidgrid()" value="0"> Aid Grid
+        </p>
 
         <button onclick="myFunction(&#39;BP1&#39;)" class="w3-button w3-block w3-theme-l1 w3-left-align">Rotation and
             FOV</button>

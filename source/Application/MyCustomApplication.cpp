@@ -34,6 +34,8 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
 
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
     // VHP
+
+    // TODO: move this registration to a separated file!!!
     RegisterComponent<VHP>(engine, "VHP");
     engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)",
                                  asMETHOD(VHP, CreateModel), asCALL_THISCALL);
@@ -176,6 +178,7 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         if (cmdLen > 1) {
             if (!commandSplitted[0].compare(
                     std::string("CPP"))) {  // C++ exclusively
+                // TODO: move all this block to a separated file!
 
                 // The following VRTX and VRTXBATCH regards the manipulation
                 // of point-to-point calibration on projector view
@@ -267,10 +270,19 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     _geometryCorrectionNodes[viewportIndex]->SetRotation(
                         rotation);
                 }
-            } else {  // foreward to script instance
-                // if (!cmd.compare(std::string("SCRIPT"))) {  // external text
-                // Get the command from network, redirect to script, execute it,
-                // and print the scrip's response.
+                if (!commandSplitted[1].compare(std::string("AIDGRID"))) {
+                    // Disables/Enables the image of the aproximated ideal
+                    // calibration, used as reference to do our own calibration
+                    int isEnabled = std::stoi(commandSplitted[2]);
+
+                    for (auto node : _calibrationAidNodes) {
+                        node->SetEnabled(isEnabled);
+                    }
+                }
+            } else {  // forward to script instance
+                // if (!cmd.compare(std::string("SCRIPT"))) {  // external
+                // text Get the command from network, redirect to script,
+                // execute it, and print the scrip's response.
                 VariantVector parameters;
                 VariantMap vm;
                 VariantMap vm2;
@@ -282,7 +294,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
                 frameworkScriptInstance->Execute(
                     "void DataGate(VariantMap, VariantMap&)",
-                    parameters);  // Execute, second parameters is return value
+                    parameters);  // Execute, second parameters is return
+                                  // value
 
                 // extract and print return from angelscript
                 VariantMap retVM = parameters.Back().GetVariantMap();

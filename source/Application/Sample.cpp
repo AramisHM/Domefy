@@ -609,9 +609,9 @@ Node* Sample::CreateDomeCamera(Projection p) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
-        Urho3D::Texture2D* t =
-            cache->GetResource<Urho3D::Texture2D>(Urho3D::String(
-                "C:/Users/Aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/NORTH.png"));
+        Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
+            Urho3D::String("/home/aramis/Desktop/Domefy/bin/Data/Dome/Aid/"
+                           "NORTH.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
 #else
@@ -624,8 +624,9 @@ Node* Sample::CreateDomeCamera(Projection p) {
         Variant va = Variant(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
         m->SetShaderParameter("MatDiffColor", va);
         boxMesh->SetMaterial(m);
-        _calibrationAidMeshes.push_back(
-            calibReferenceNode);  // save for later referencing
+        _calibrationAidNodes.push_back(
+            calibReferenceNode);                // save for later referencing
+        calibReferenceNode->SetEnabled(false);  // disabled by default
     }
     return retCam;
 }
