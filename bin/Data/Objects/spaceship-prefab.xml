@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<node id="4">
+	<attribute name="Is Enabled" value="true" />
+	<attribute name="Name" value="Spaceship" />
+	<attribute name="Tags" />
+	<attribute name="Position" value="8.42826 11.7085 -9.89569" />
+	<attribute name="Rotation" value="-1 0 -1.11759e-007 0" />
+	<attribute name="Scale" value="1 1 1" />
+	<attribute name="Variables" />
+	<component type="StaticModel" id="5">
+		<attribute name="Model" value="Model;Models/Intergalactic Spaceship_Blender_2.79b_BI.mdl" />
+		<attribute name="Material" value="Material;space-ship-asset/spaceship.xml" />
+		<attribute name="Cast Shadows" value="true" />
+	</component>
+	<component type="RigidBody" id="7">
+		<attribute name="Physics Rotation" value="1 0 1.11758e-007 0" />
+		<attribute name="Physics Position" value="8.42826 11.7085 -9.89569" />
+		<attribute name="Mass" value="4" />
+		<attribute name="Use Gravity" value="false" />
+	</component>
+	<component type="CollisionShape" id="9">
+		<attribute name="Shape Type" value="TriangleMesh" />
+		<attribute name="Model" value="Model;Models/Intergalactic Spaceship_Blender_2.79b_BI.mdl" />
+	</component>
+	<node id="16777262">
+		<attribute name="Is Enabled" value="true" />
+		<attribute name="Name" value="lights" />
+		<attribute name="Tags" />
+		<attribute name="Position" value="0 -1.13946 -1.95703" />
+		<attribute name="Rotation" value="1 0 0 0" />
+		<attribute name="Scale" value="1 1 1" />
+		<attribute name="Variables" />
+		<node id="16777263">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="front" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="0 0.0294237 -0.122196" />
+			<attribute name="Rotation" value="0.173648 0.984809 0 0" />
+			<attribute name="Scale" value="9.6592 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777626">
+				<attribute name="Light Type" value="Spot" />
+				<attribute name="Color" value="2.33 1 1 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Spot FOV" value="92.42" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777273">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="leftwing" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="4.8695 0.940246 4.18717" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777724">
+				<attribute name="Color" value="3 1 1 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="2" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777274">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="enginelight2" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-1.11177 1.85616 5.49413" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777725">
+				<attribute name="Color" value="2.63 1.38 1 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="2" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777275">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="rightwing" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-4.95617 0.90071 4.16894" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777726">
+				<attribute name="Color" value="1 3 1 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="2" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777276">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="alma-lower" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="0.0132518 -0.0861635 -0.463575" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777727">
+				<attribute name="Color" value="1 0 0 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="0.65" />
+				<attribute name="Spot FOV" value="33.37" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777277">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="enginelight1" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="1.07598 1.85616 5.49398" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777728">
+				<attribute name="Color" value="2.63 1.38 1 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="2" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+		<node id="16777279">
+			<attribute name="Is Enabled" value="true" />
+			<attribute name="Name" value="alma-lower" />
+			<attribute name="Tags" />
+			<attribute name="Position" value="-0.0296135 -0.131079 4.50079" />
+			<attribute name="Rotation" value="1 0 0 0" />
+			<attribute name="Scale" value="1 1 1" />
+			<attribute name="Variables" />
+			<component type="Light" id="16777730">
+				<attribute name="Color" value="0 1.05 4 1" />
+				<attribute name="Brightness Multiplier" value="2.08" />
+				<attribute name="Range" value="3.58" />
+				<attribute name="Light Shape Texture" value="TextureCube;" />
+				<attribute name="Cast Shadows" value="true" />
+			</component>
+		</node>
+	</node>
+</node>

@@ -208,17 +208,22 @@ class Fpmed : ScriptObject {
         // to belong to the scene
         cameraNode = scene_.GetChild("CameRef");
         Camera @camera = cameraNode.CreateComponent("Camera");
-        camera.farClip = 300.0f;
+        camera.farClip = 5000.0f;
         renderer.viewports[0] = Viewport(scene_, camera);
 
         // Create a Zone component for ambient lighting & fog control
         Node @zoneNode = scene_.CreateChild("Zone");
         Zone @zone = zoneNode.CreateComponent("Zone");
-        zone.boundingBox = BoundingBox(-1000.0f, 1000.0f);
-        zone.ambientColor = Color(0.15f, 0.15f, 0.15f);
-        zone.fogColor = Color(0.5f, 0.5f, 0.7f);
-        zone.fogStart = 100.0f;
-        zone.fogEnd = 300.0f;
+        zone.boundingBox = BoundingBox(-6000.0f, 6000.0f);
+        zone.ambientColor = Color(0.0f, 0.0f, 0.0f);
+        zone.fogColor = Color(0.0f, 0.0f, 0.0f);
+        zone.fogStart = 5800.0f;
+        zone.fogEnd = 6000.0f;
+
+        XMLFile @space = cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
+        XMLFile @ship = cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
+        Node @spaceshipPrefab = scene.InstantiateXML(space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        Node @spaceScenePrefab = scene.InstantiateXML(ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
         // VHP
         // Node @vhpNode = scene_.CreateChild("VHP");

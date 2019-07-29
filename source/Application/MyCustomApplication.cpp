@@ -133,15 +133,15 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 void MyCustomApplication::Start() {
     // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
-
-    Node *videoNode = scene_->CreateChild("Video");
     Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
-    XMLFile *file = cache->GetResource<XMLFile>("Objects/TV.xml");
-    videoNode->LoadXML(file->GetRoot());
-    auto videoComp = videoNode->CreateComponent<TVComponent>();
-    videoComp->OpenFileName("./Data/Videos/test_video.ogv");
-    StaticModel *sm = videoComp->GetComponent<StaticModel>();
-    videoComp->SetOutputModel(sm);
+
+    // Node *videoNode = scene_->CreateChild("Video");
+    // XMLFile *file = cache->GetResource<XMLFile>("Objects/TV.xml");
+    // videoNode->LoadXML(file->GetRoot());
+    // auto videoComp = videoNode->CreateComponent<TVComponent>();
+    // videoComp->OpenFileName("./Data/Videos/test_video.ogv");
+    // StaticModel *sm = videoComp->GetComponent<StaticModel>();
+    // videoComp->SetOutputModel(sm);
 
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));

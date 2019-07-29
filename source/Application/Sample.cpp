@@ -335,7 +335,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
             cameraReferenceForDomeRender->CreateChild("CameraUpNode_", LOCAL);
         Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
         cameraRttDomeNode_->SetRotation(Quaternion(-90.0f, 0.0f, 0.0f));
-        camera->SetFarClip(500.0f);
+        camera->SetFarClip(p._farClip);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
         cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
@@ -364,7 +364,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
             "CameraRightNode_", LOCAL);
         Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
         cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 90.0f, 0.0f));
-        camera->SetFarClip(500.0f);
+        camera->SetFarClip(p._farClip);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
         cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
@@ -393,7 +393,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
             cameraReferenceForDomeRender->CreateChild("CameraBackNode_", LOCAL);
         Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
         cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 180.0f, 0.0f));
-        camera->SetFarClip(500.0f);
+        camera->SetFarClip(p._farClip);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
         cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
@@ -422,7 +422,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
             cameraReferenceForDomeRender->CreateChild("CameraLeftNode_", LOCAL);
         Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
         cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 270.0f, 0.0f));
-        camera->SetFarClip(500.0f);
+        camera->SetFarClip(p._farClip);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
         cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
@@ -451,7 +451,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
             "CameraFrontNode_", LOCAL);
         Camera* camera = cameraRttDomeNode_->CreateComponent<Camera>();
         cameraRttDomeNode_->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
-        camera->SetFarClip(500.0f);
+        camera->SetFarClip(p._farClip);
         camera->SetAspectRatio(1.0f);
         camera->SetFov(90.0f);
         cameraNodeDomeAll_.push_back(cameraRttDomeNode_);
@@ -587,7 +587,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
                                   // the new calibrator
 
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
-            geometryCorrCamera->SetFarClip(500.0f);
+            geometryCorrCamera->SetFarClip(p._farClip);
             geometryCorrCamera->SetAspectRatio(1.0f);
             geometryCorrCamera->SetFov(90.0f);
             cameraNodeMorphcorrList_.push_back(geometryCorrCameraNode);
