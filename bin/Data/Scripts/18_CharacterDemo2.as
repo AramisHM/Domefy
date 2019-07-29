@@ -220,10 +220,14 @@ class Fpmed : ScriptObject {
         zone.fogStart = 5800.0f;
         zone.fogEnd = 6000.0f;
 
-        XMLFile @space = cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
-        XMLFile @ship = cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
-        Node @spaceshipPrefab = scene.InstantiateXML(space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-        Node @spaceScenePrefab = scene.InstantiateXML(ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        XMLFile @space =
+            cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
+        XMLFile @ship =
+            cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
+        Node @spaceshipPrefab = scene.InstantiateXML(
+            space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        Node @spaceScenePrefab = scene.InstantiateXML(
+            ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
         // VHP
         // Node @vhpNode = scene_.CreateChild("VHP");
@@ -309,6 +313,28 @@ class Fpmed : ScriptObject {
                 objectNode.CreateComponent("CollisionShape");
             shape.SetBox(Vector3::ONE);
         }
+
+        // some ambient sounds
+        // Create music sound source
+        SoundSource @musicSource;
+        SoundSource @ambientSource;
+
+        @musicSource = scene_.CreateComponent("SoundSource");
+        @ambientSource = scene_.CreateComponent("SoundSource");
+        // Set the sound type to music so that master volume control works
+        // correctly
+        musicSource.soundType = SOUND_MUSIC;
+        ambientSource.soundType = SOUND_MUSIC;
+        Sound @music =
+            cache.GetResource("Sound", "Music/The Monster In Me.ogg");
+        Sound @ambientSound = cache.GetResource("Sound", "Sounds/ambient.ogg");
+        // Set the song to loop
+        // music.looped = true;
+        ambientSound.looped = true;
+
+        musicSource.gain = 0.6f;
+        musicSource.Play(music);
+        ambientSource.Play(ambientSound);
     }
 
     void CreateCharacter() {
@@ -355,8 +381,7 @@ class Fpmed : ScriptObject {
     void CreateInstructions() {
         // Construct new Text object, set string to display and font to use
         Text @instructionText = ui.root.CreateChild("Text");
-        instructionText.text =
-            "";
+        instructionText.text = "";
         instructionText.SetFont(
             cache.GetResource("Font", "Fonts/Anonymous Pro.ttf"), 15);
         // The text has multiple rows. Center them in relation to each other
