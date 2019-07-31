@@ -25,6 +25,8 @@ Node @characterNode;
 
 // mvxv - move on z axis value
 float mvzv = 0.0f;
+float mvx = 0.0f;
+float mvy = 0.0f;
 
 // Character script object class
 //
@@ -98,7 +100,7 @@ class Character : ScriptObject {
         Vector3 moveDir(0.0f, 0.0f, 0.0f);
         Vector3 velocity = body.linearVelocity;
         // Velocity on the XZ plane
-        Vector3 planeVelocity(velocity.x, 0.0f, velocity.z + mvzv);
+        Vector3 planeVelocity(velocity.x + mvx * 8, 0.0f, velocity.z + mvy * 8);
 
         if (controls.IsDown(CTRL_FORWARD)) moveDir += Vector3::FORWARD;
         if (controls.IsDown(CTRL_BACK)) moveDir += Vector3::BACK;
@@ -150,6 +152,8 @@ class Character : ScriptObject {
         onGround = false;
 
         mvzv = 0;  // must reset each iteration
+        mvx = 0.0f;
+        mvy = 0.0f;
     }
 }
 
@@ -174,6 +178,12 @@ class Fpmed : ScriptObject {
             mvzv += factor * 400;
             // log.Info("Making cut of " + factor);
             // vhpComp.SetSagitalCut(factor, 0.0f, true);
+        }
+
+        // Arbitrary move
+        if (cmds[0] == "MOVE") {
+            mvx = cmds[1].ToFloat() / 100.0f;
+            mvy = cmds[2].ToFloat() / 100.0f;
         }
     }
 

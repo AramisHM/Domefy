@@ -7,14 +7,14 @@ function GetConfigurationJSON() {
 }
 
 // ajaxPost - Perform a POST methode
-function ajaxPost(data, sync = SVGComponentTransferFunctionElement, url) {
+function ajaxPost(data, sync, url) {
   var tmp = null;
   $.ajax({
     type: "POST",
     url: "http://" + serviceIPPort + url,
     async: sync,
     data: '{"command": "' + data + '"}',
-    success: function(response) {
+    success: function (response) {
       if (response != "done") {
         var respJ = JSON.parse(response);
         tmp = respJ;
@@ -28,7 +28,7 @@ function ajaxPost(data, sync = SVGComponentTransferFunctionElement, url) {
 // ajaxPost - Perform a POST methode, no template on data parameter
 function ajaxPostRaw(
   data_raw,
-  sync = SVGComponentTransferFunctionElement,
+  sync,
   url
 ) {
   var tmp = null;
@@ -37,7 +37,7 @@ function ajaxPostRaw(
     url: "http://" + serviceIPPort + url,
     async: sync,
     data: data_raw,
-    success: function(response) {
+    success: function (response) {
       if (response == "done") {
         console.log(data_raw);
       }
