@@ -23,11 +23,6 @@ VHP @vhpComp;
 
 Node @characterNode;
 
-// mvxv - move on z axis value
-float mvzv = 0.0f;
-float mvx = 0.0f;
-float mvy = 0.0f;
-
 // Character script object class
 //
 // Those public member variables that can be expressed with a Variant and do not
@@ -37,6 +32,8 @@ float mvy = 0.0f;
 // manual binary format load / save methods for them. These functions will be
 // called by ScriptInstance when the script object is being loaded or saved.
 class Character : ScriptObject {
+    VariantMap controlsInput;
+
     // Character controls.
     Controls controls;
     // Grounded flag for movement.
@@ -100,12 +97,14 @@ class Character : ScriptObject {
         Vector3 moveDir(0.0f, 0.0f, 0.0f);
         Vector3 velocity = body.linearVelocity;
         // Velocity on the XZ plane
-        Vector3 planeVelocity(velocity.x + mvx * 8, 0.0f, velocity.z + mvy * 8);
+        Vector3 planeVelocity(velocity.x, 0.0f, velocity.z);
 
         if (controls.IsDown(CTRL_FORWARD)) moveDir += Vector3::FORWARD;
         if (controls.IsDown(CTRL_BACK)) moveDir += Vector3::BACK;
         if (controls.IsDown(CTRL_LEFT)) moveDir += Vector3::LEFT;
         if (controls.IsDown(CTRL_RIGHT)) moveDir += Vector3::RIGHT;
+
+        moveDir += Vector3(0.0f, 0.0f, 0.0f);
 
         // Normalize move vector so that diagonal strafing is not faster
         if (moveDir.lengthSquared > 0.0f) moveDir.Normalize();
@@ -150,10 +149,6 @@ class Character : ScriptObject {
 
         // Reset grounded flag for next frame
         onGround = false;
-
-        mvzv = 0;  // must reset each iteration
-        mvx = 0.0f;
-        mvy = 0.0f;
     }
 }
 
@@ -164,7 +159,7 @@ class Fpmed : ScriptObject {
 
         String[] @cmds = str.Split(';');
 
-        vout["RET"] = "Hello from Angelscript! :D";
+        // vout["RET"] = "Hello from Angelscript! :D";
 
         if (cmds[0] == "sag-a") {
             float factor = cmds[1].ToFloat() / 100.0f;
@@ -173,17 +168,44 @@ class Fpmed : ScriptObject {
         }
 
         // move along z axis
-        if (cmds[0] == "mvz") {
-            float factor = cmds[1].ToFloat() / 100.0f;
-            mvzv += factor * 400;
-            // log.Info("Making cut of " + factor);
-            // vhpComp.SetSagitalCut(factor, 0.0f, true);
-        }
+        // if (cmds[0] == "mvz") {
+        //     float factor = cmds[1].ToFloat() / 100.0f;
+        //     mvzv += factor * 400;
+        //     // log.Info("Making cut of " + factor);
+        //     // vhpComp.SetSagitalCut(factor, 0.0f, true);
+        // }
+
+        Character @character = cast<Character>(characterNode.scriptObject);
+
+        if (character is null) return;
 
         // Arbitrary move
         if (cmds[0] == "MOVE") {
-            mvx = cmds[1].ToFloat() / 100.0f;
-            mvy = cmds[2].ToFloat() / 100.0f;
+            float mvx = cmds[1].ToFloat();
+            float mvy = cmds[2].ToFloat();
+            float sss = cmds[3].ToFloat() / 15.0f;
+
+            character.controlsInput["ACTIVE"] = true;
+
+            if (Abs(mvy) > 40.0) {
+                if (mvy > 0)
+                    character.controls.Set(CTRL_BACK, true);
+                else
+                    character.controls.Set(CTRL_FORWARD, true);
+            }
+            if (Abs(mvx) > 40.0) {
+                if (mvx > 0)
+                    character.controls.Set(CTRL_RIGHT, true);
+                else
+                    character.controls.Set(CTRL_LEFT, true);
+            }
+        }
+        if (cmds[0] == "NMOVE") {
+            character.controlsInput["BACK"] = false;
+            character.controlsInput["FORWARD"] = false;
+            character.controlsInput["RIGHT"] = false;
+            character.controlsInput["LEFT"] = false;
+            character.controlsInput["ACTIVE"] = false;
         }
     }
 
@@ -343,7 +365,7 @@ class Fpmed : ScriptObject {
         ambientSound.looped = true;
 
         musicSource.gain = 0.6f;
-        musicSource.Play(music);
+        // musicSource.Play(music);
         ambientSource.Play(ambientSound);
     }
 
@@ -434,7 +456,6 @@ class Fpmed : ScriptObject {
             character.controls.Set(CTRL_BACK, input.keyDown[KEY_S]);
             character.controls.Set(CTRL_LEFT, input.keyDown[KEY_A]);
             character.controls.Set(CTRL_RIGHT, input.keyDown[KEY_D]);
-
             character.controls.Set(CTRL_JUMP, input.keyDown[KEY_SPACE]);
 
             // Add character yaw & pitch from the mouse motion or touch input

@@ -30,16 +30,14 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
         z-index: 2;
     }
-
-    /*  the image with the image for representing the joystick thumb */
-    .joystick-point {}
 </style>
 
 <body class="noScroll">
     <p id="demo">
         Touch controls
     </p>
-    <div class="joystick" ontouchmove="touchAction(event)">
+    <div class="joystick" ontouchend="stopControlsUpdate()" ontouchstart="updateControls = true"
+        ontouchmove="getTouchData(event)">
         <img id="thumbstickpointer" style="position:absolute" src=" ../../assets/images/marker.png">
         </img>
     </div>
@@ -52,6 +50,19 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     <script src="../../jquery/jquery.min.js"></script>
 
     <script>
+        // indicates when to send controls data
+        var updateControls = false;
+
+        let last = +new Date();
+        var baudInterval = 35;
+        function baudCommand(data) {
+            const now = +new Date();
+            if (now - last > baudInterval) {
+                last = now;
+                sendCommand(data, true);
+            }
+        }
+
         //  keeps track of ou gestures deslocation
         var touchHistoryData = {
             position: {
@@ -63,39 +74,89 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                 y: 0
             }
         }
+
         window.addEventListener('touchstart', function (event) {
             touchHistoryData.touch_start.x = event.touches[0].clientX;
             touchHistoryData.touch_start.y = event.touches[0].clientY;
         });
 
-        // touchAction - Get the touch event input of the first finger and send this to the application through ajax
-        function touchAction(event) {
-            var x = Math.round(event.touches[0].clientX);
-            var y = Math.round(event.touches[0].clientY);
+        var controls = {
+            "joystick": {
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                }
+            },
+            "movement": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "jump": false,
+            "intensity": 0.0
+        }
 
+        function stopControlsUpdate() {
+            updateControls = false;
+
+            // reset data
+            controls.movement.x = 0.0;
+            controls.movement.y = 0.0;
+            controls.intensity = 0.0;
+        }
+
+        function UpdateThumbDisplayPosition() {
             var thumb = document.getElementById("thumbstickpointer");
-
             thumb.style.position = "absolute";
-            thumb.style.left = x + "px";
-            thumb.style.top = y + "px";
+            thumb.style.left = controls.joystick.position.x + "px";
+            thumb.style.top = controls.joystick.position.y + "px";
+        }
+
+        // getTouchData - Get the touch event input of the first finger and send this to the application through ajax
+        function getTouchData(event) {
+            controls.joystick.position.x = Math.round(event.touches[0].clientX);
+            controls.joystick.position.y = Math.round(event.touches[0].clientY);
+
+            UpdateThumbDisplayPosition();
 
             touchHistoryData.last_pos = touchHistoryData.position
-            touchHistoryData.position.x = x;
-            touchHistoryData.position.y = y;
+            touchHistoryData.position.x = controls.joystick.position.x;
+            touchHistoryData.position.y = controls.joystick.position.y;
 
             // the deslocation
-            var mx = Math.floor(x - touchHistoryData.touch_start.x);
-            var my = Math.floor(y - touchHistoryData.touch_start.y);
+            controls.movement.x = Math.floor(controls.joystick.position.x - touchHistoryData.touch_start.x);
+            controls.movement.y = Math.floor(controls.joystick.position.y - touchHistoryData.touch_start.y);
 
+            var a = controls.movement.x
+            var b = controls.movement.y;
+            var c = Math.sqrt(a * a + b * b);
+            controls.intensity = c;
 
-            var command = "MOVE;";
-            command += mx + ";";
-            command += my + ";";
-            //console.log(command);
-            sendCommand(command, true);
-
-            document.getElementById("demo").innerHTML = x + ", " + y + " desloc = x: " + mx + " y:" + my;
+            document.getElementById("demo").innerHTML = "Moved: " + controls.movement.x + " " + controls.movement.y;
         }
+
+        function getCommandString() {
+            var command = "MOVE;";
+            command += controls.movement.x + ";";
+            command += controls.movement.y + ";";
+            command += Math.min(Math.max(controls.intensity, 0), 60) + ";";
+
+
+            //console.log(command);
+            return command;
+        }
+
+        // sendControls - Sends the actions for the applciation
+        function sendControls() {
+            if (updateControls) {
+                var command = getCommandString();
+                baudCommand(command);
+            } else {
+                baudCommand("NMOVE;0;0;");
+            }
+            setTimeout(sendControls, baudInterval);
+        }
+        sendControls("");
+
 
         document.addEventListener('click', function (event) {
             // Ignore clicks that weren't on the toggle button
@@ -121,8 +182,6 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                     //json object to sent to the authentication url
                     data: '{"command": "' + data + '"}',
                     success: function () {
-
-                        // alert("Thanks!");
                     }
                 })
         }
