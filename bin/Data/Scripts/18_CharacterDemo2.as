@@ -13,35 +13,19 @@ const float BRAKE_FORCE = 0.2f;
 const float JUMP_FORCE = 7.0f;
 const float YAW_SENSITIVITY = 0.1f;
 const float INAIR_THRESHOLD_TIME = 0.1f;
-bool firstPerson = false;  // First person camera flag
+bool firstPerson = false;
 
 const float CAMERA_MIN_DIST = 1.0f;
 const float CAMERA_MAX_DIST = 20.0f;
 float cameraDistance = 5.0;
 
-VHP @vhpComp;
-
 Node @characterNode;
 
-// Character script object class
-//
-// Those public member variables that can be expressed with a Variant and do not
-// begin with an underscore are automatically loaded / saved as attributes of
-// the ScriptInstance component. We also have variables which can not be
-// automatically saved (yaw and pitch inside the Controls object) so we write
-// manual binary format load / save methods for them. These functions will be
-// called by ScriptInstance when the script object is being loaded or saved.
 class Character : ScriptObject {
     VariantMap controlsInput;
-
-    // Character controls.
     Controls controls;
-    // Grounded flag for movement.
     bool onGround = false;
-    // Jump flag.
     bool okToJump = true;
-    // In air timer. Due to possible physics inaccuracy, character can be off
-    // ground for max. 1/10 second and still be allowed to move.
     float inAirTimer = 0.0f;
 
     void Start() {
@@ -60,7 +44,6 @@ class Character : ScriptObject {
 
     void HandleNodeCollision(StringHash eventType, VariantMap& eventData) {
         VectorBuffer contacts = eventData["Contacts"].GetBuffer();
-
         while (!contacts.eof) {
             Vector3 contactPosition = contacts.ReadVector3();
             Vector3 contactNormal = contacts.ReadVector3();
@@ -77,8 +60,6 @@ class Character : ScriptObject {
     }
 
     void FixedUpdate(float timeStep) {
-        /// \todo Could cache the components for faster access instead of
-        /// finding them each frame
         RigidBody @body = node.GetComponent("RigidBody");
         AnimationController @animCtrl =
             node.GetComponent("AnimationController", true);
@@ -161,44 +142,27 @@ class Fpmed : ScriptObject {
 
         // vout["RET"] = "Hello from Angelscript! :D";
 
-        if (cmds[0] == "sag-a") {
-            float factor = cmds[1].ToFloat() / 100.0f;
-            // log.Info("Making cut of " + factor);
-            // vhpComp.SetSagitalCut(factor, 0.0f, true);
-        }
-
-        // move along z axis
-        // if (cmds[0] == "mvz") {
-        //     float factor = cmds[1].ToFloat() / 100.0f;
-        //     mvzv += factor * 400;
-        //     // log.Info("Making cut of " + factor);
-        //     // vhpComp.SetSagitalCut(factor, 0.0f, true);
-        // }
-
         Character @character = cast<Character>(characterNode.scriptObject);
 
         if (character is null) return;
 
         // Arbitrary move
         if (cmds[0] == "MOVE") {
+            float triggerVal = 25.0f;
             float mvx = cmds[1].ToFloat();
             float mvy = cmds[2].ToFloat();
             float sss = cmds[3].ToFloat() / 15.0f;
-
+            log.Info(str);
             character.controlsInput["ACTIVE"] = true;
 
-            if (Abs(mvy) > 40.0) {
-                if (mvy > 0)
-                    character.controls.Set(CTRL_BACK, true);
-                else
-                    character.controls.Set(CTRL_FORWARD, true);
-            }
-            if (Abs(mvx) > 40.0) {
-                if (mvx > 0)
-                    character.controls.Set(CTRL_RIGHT, true);
-                else
-                    character.controls.Set(CTRL_LEFT, true);
-            }
+            character.controlsInput["BACK"] =
+                Abs(mvy) > triggerVal && mvy > 0.0f;
+            character.controlsInput["FORWARD"] =
+                Abs(mvy) > triggerVal && mvy < 0.0f;
+            character.controlsInput["RIGHT"] =
+                Abs(mvx) > triggerVal && mvx > 0.0f;
+            character.controlsInput["LEFT"] =
+                Abs(mvx) > triggerVal && mvx < 0.0f;
         }
         if (cmds[0] == "NMOVE") {
             character.controlsInput["BACK"] = false;
@@ -210,34 +174,17 @@ class Fpmed : ScriptObject {
     }
 
     void FpmedStart() {
-        // Execute the common startup for samples
         SampleStart();
-
-        // Create static scene content
         CreateScene();
-
-        // Create the controllable character
         CreateCharacter();
-
-        // Create the UI content
         CreateInstructions();
-
-        // Set the mouse mode to use in the sample
         SampleInitMouseMode(MM_RELATIVE);
-
-        // Subscribe to necessary events
         SubscribeToEvents();
     }
 
     void CreateScene() {
         scene_ = node;
 
-        // Create scene subsystem components
-        // scene_.CreateComponent("Octree");
-        // scene_.CreateComponent("PhysicsWorld");
-
-        // Create camera and define viewport. Camera does not necessarily have
-        // to belong to the scene
         cameraNode = scene_.GetChild("CameRef");
         Camera @camera = cameraNode.CreateComponent("Camera");
         camera.farClip = 5000.0f;
@@ -260,15 +207,6 @@ class Fpmed : ScriptObject {
             space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
         Node @spaceScenePrefab = scene.InstantiateXML(
             ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-
-        // VHP
-        // Node @vhpNode = scene_.CreateChild("VHP");
-        // vhpComp = vhpNode.CreateComponent("VHP");
-        // String path = progConf.GetVHPFile();
-        // log.Info("Loading VHP model" + path);
-        // vhpComp.CreateModel(path);
-        // vhpComp.SetViewNodeReference(cameraNode);
-        // vhpNode.Rotate(Quaternion(90, 0, 0));
 
         // Create a directional light to the world. Enable cascaded shadows on
         // it
@@ -345,27 +283,18 @@ class Fpmed : ScriptObject {
                 objectNode.CreateComponent("CollisionShape");
             shape.SetBox(Vector3::ONE);
         }
-
-        // some ambient sounds
-        // Create music sound source
+        // music and ambient sounds
         SoundSource @musicSource;
         SoundSource @ambientSource;
-
         @musicSource = scene_.CreateComponent("SoundSource");
         @ambientSource = scene_.CreateComponent("SoundSource");
-        // Set the sound type to music so that master volume control works
-        // correctly
         musicSource.soundType = SOUND_MUSIC;
         ambientSource.soundType = SOUND_MUSIC;
         Sound @music =
             cache.GetResource("Sound", "Music/The Monster In Me.ogg");
         Sound @ambientSound = cache.GetResource("Sound", "Sounds/ambient.ogg");
-        // Set the song to loop
-        // music.looped = true;
         ambientSound.looped = true;
-
         musicSource.gain = 0.6f;
-        // musicSource.Play(music);
         ambientSource.Play(ambientSound);
     }
 
@@ -375,62 +304,28 @@ class Fpmed : ScriptObject {
 
         Node @adjNode = characterNode.CreateChild("AdjNode");
         adjNode.rotation = Quaternion(180.0f, Vector3::UP);
-
-        // Create the rendering component + animation controller
         AnimatedModel @object = adjNode.CreateComponent("AnimatedModel");
         object.model = cache.GetResource("Model", "Models/Mutant/Mutant.mdl");
         object.material = cache.GetResource(
             "Material", "Models/Mutant/Materials/mutant_M.xml");
         object.castShadows = true;
         adjNode.CreateComponent("AnimationController");
-
-        // Set the head bone for manual control
         object.skeleton.GetBone("Mutant:Head").animated = false;
-
-        // Create rigidbody, and set non-zero mass so that the body becomes
-        // dynamic
         RigidBody @body = characterNode.CreateComponent("RigidBody");
         body.collisionLayer = 1;
         body.mass = 1.0f;
-
-        // Set zero angular factor so that physics doesn't turn the character on
-        // its own. Instead we will control the character yaw manually
         body.angularFactor = Vector3::ZERO;
-
-        // Set the rigidbody to signal collision also when in rest, so that we
-        // get ground collisions properly
         body.collisionEventMode = COLLISION_ALWAYS;
-
-        // Set a capsule shape for collision
         CollisionShape @shape = characterNode.CreateComponent("CollisionShape");
         shape.SetCapsule(0.7f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
-
-        // Create the character logic object, which takes care of steering the
-        // rigidbody
         characterNode.CreateScriptObject(scriptFile, "Character");
     }
 
-    void CreateInstructions() {
-        // Construct new Text object, set string to display and font to use
-        Text @instructionText = ui.root.CreateChild("Text");
-        instructionText.text = "";
-        instructionText.SetFont(
-            cache.GetResource("Font", "Fonts/Anonymous Pro.ttf"), 15);
-        // The text has multiple rows. Center them in relation to each other
-        instructionText.textAlignment = HA_CENTER;
-
-        // Position the text relative to the screen center
-        instructionText.horizontalAlignment = HA_CENTER;
-        instructionText.verticalAlignment = VA_CENTER;
-        instructionText.SetPosition(0, ui.root.height / 4);
-    }
+    void CreateInstructions() {}
 
     void SubscribeToEvents() {
-        // Subscribe to Update event for setting the character controls before
-        // physics simulation
+        //  before physics simulation
         SubscribeToEvent("Update", "HandleUpdate");
-
-        // Subscribe to PostUpdate event for updating the camera position after
         // physics simulation
         SubscribeToEvent("PostUpdate", "HandlePostUpdate");
 
@@ -457,6 +352,16 @@ class Fpmed : ScriptObject {
             character.controls.Set(CTRL_LEFT, input.keyDown[KEY_A]);
             character.controls.Set(CTRL_RIGHT, input.keyDown[KEY_D]);
             character.controls.Set(CTRL_JUMP, input.keyDown[KEY_SPACE]);
+            if (character.controlsInput["ACTIVE"].GetBool() == true) {
+                character.controls.Set(
+                    CTRL_FORWARD, character.controlsInput["FORWARD"].GetBool());
+                character.controls.Set(
+                    CTRL_BACK, character.controlsInput["BACK"].GetBool());
+                character.controls.Set(
+                    CTRL_LEFT, character.controlsInput["LEFT"].GetBool());
+                character.controls.Set(
+                    CTRL_RIGHT, character.controlsInput["RIGHT"].GetBool());
+            }
 
             // Add character yaw & pitch from the mouse motion or touch input
             if (touchEnabled) {

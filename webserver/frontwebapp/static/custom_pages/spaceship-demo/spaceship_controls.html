@@ -54,7 +54,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         var updateControls = false;
 
         let last = +new Date();
-        var baudInterval = 35;
+        var baudInterval = 180;
         function baudCommand(data) {
             const now = +new Date();
             if (now - last > baudInterval) {
@@ -97,7 +97,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
         function stopControlsUpdate() {
             updateControls = false;
-
+            sendCommand("NMOVE;0;0;"); // no baud, this MUST be sent
             // reset data
             controls.movement.x = 0.0;
             controls.movement.y = 0.0;
@@ -150,8 +150,6 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             if (updateControls) {
                 var command = getCommandString();
                 baudCommand(command);
-            } else {
-                baudCommand("NMOVE;0;0;");
             }
             setTimeout(sendControls, baudInterval);
         }
