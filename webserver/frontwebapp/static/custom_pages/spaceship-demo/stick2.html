@@ -1,0 +1,169 @@
+<!--
+File: stick2.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Monday, 5th August 2019 11:17:18 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Monday, 5th August 2019 11:18:02 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+<!DOCTYPE html>
+<html>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- embanded css classes in the html file -->
+    <style>
+        /* class to disable scrolling in the page */
+        .noScroll {
+            overflow-y: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* The region with for the touch enabled input */
+        .joystick {
+            width: 300px;
+            height: 300px;
+            border: 1px solid;
+
+            z-index: 2;
+        }
+    </style>
+
+    <body class="noScroll">
+        <p id="demo">
+            View
+        </p>
+        <div class="joystick" ontouchmove="getTouchData(event)">
+            <img id="thumbstickpointer" style="position:absolute"
+                src=" ../../assets/images/marker.png">
+            </img>
+        </div>
+
+        <!-- utilities for sending ajax etc -->
+        <script type="text/javascript" src="../../domefy/utils.js"></script>
+        <script type="text/javascript" src="../../config.js"></script>
+        <script src="../../jquery/jquery.min.js"></script>
+
+        <script>
+            let last = +new Date();
+            var baudInterval = 180;
+            function baudCommand(data) {
+                const now = +new Date();
+                if (now - last > baudInterval) {
+                    last = now;
+                    sendCommand(data, true);
+                }
+            }
+
+            //  keeps track of ou gestures deslocation
+            var touchHistoryData = {
+                position: {
+                    x: 0,
+                    y: 0
+                },
+                touch_start: {
+                    x: 0,
+                    y: 0
+                }
+            }
+
+            window.addEventListener('touchstart', function (event) {
+                touchHistoryData.touch_start.x = event.touches[0].clientX;
+                touchHistoryData.touch_start.y = event.touches[0].clientY;
+            });
+
+            var controls = {
+                "joystick": {
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "movement": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "jump": false,
+                "intensity": 0.0
+            }
+
+            function UpdateThumbDisplayPosition() {
+                var thumb = document.getElementById("thumbstickpointer");
+                thumb.style.position = "absolute";
+                thumb.style.left = controls.joystick.position.x + "px";
+                thumb.style.top = controls.joystick.position.y + "px";
+            }
+
+            // getTouchData - Get the touch event input of the first finger and send this to the application through ajax
+            function getTouchData(event) {
+                controls.joystick.position.x = Math.round(event.touches[0].clientX);
+                controls.joystick.position.y = Math.round(event.touches[0].clientY);
+
+                UpdateThumbDisplayPosition();
+
+                touchHistoryData.last_pos = touchHistoryData.position
+                touchHistoryData.position.x = controls.joystick.position.x;
+                touchHistoryData.position.y = controls.joystick.position.y;
+
+                // the deslocation
+                controls.movement.x = Math.floor(controls.joystick.position.x - touchHistoryData.touch_start.x);
+                controls.movement.y = Math.floor(controls.joystick.position.y - touchHistoryData.touch_start.y);
+
+                var a = controls.movement.x
+                var b = controls.movement.y;
+                var c = Math.sqrt(a * a + b * b); // intensity
+                controls.intensity = c;
+
+                var command = getCommandString();
+                baudCommand(command);
+
+                document.getElementById("demo").innerHTML = "Moved: " + controls.movement.x + " " + controls.movement.y;
+            }
+
+            function getCommandString() {
+                var command = "VIEW;";
+                command += controls.movement.x + ";";
+                command += controls.movement.y + ";";
+                command += Math.min(Math.max(controls.intensity, 0), 60) + ";";
+
+
+                //console.log(command);
+                return command;
+            }
+
+
+            // enable and disable fullscreen
+            document.addEventListener('click', function (event) {
+                // Ignore clicks that weren't on the toggle button
+                if (!event.target.hasAttribute('data-toggle-fullscreen')) return;
+
+                // If there's an element in fullscreen, exit
+                // Otherwise, enter it
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.requestFullscreen();
+                }
+            }, false);
+
+            function sendCommand(data, sync = true) {
+                $.ajax
+                    ({
+                        type: "POST",
+                        //the url where you want to sent the userName and password to
+                        url: 'http://' + serviceIPPort + '/setExampleTextMessage',
+                        dataType: 'json',
+                        async: sync,
+                        //json object to sent to the authentication url
+                        data: '{"command": "' + data + '"}',
+                        success: function () {
+                        }
+                    })
+            }
+        </script>
+    </body>
+
+</html>

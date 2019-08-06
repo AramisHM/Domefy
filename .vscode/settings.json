@@ -91,5 +91,6 @@
       ]
     }
   ],
-  "C_Cpp.configurationWarnings": "Disabled"
+  "C_Cpp.configurationWarnings": "Disabled",
+  "cmake.configureOnOpen": false
 }
