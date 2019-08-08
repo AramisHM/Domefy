@@ -273,55 +273,6 @@ class Fpmed : ScriptObject
         CollisionShape @shape = floorNode.CreateComponent("CollisionShape");
         shape.SetBox(Vector3::ONE);
 
-        // // Create mushrooms of varying sizes
-        // const uint NUM_MUSHROOMS = 60;
-        // for (uint i = 0; i < NUM_MUSHROOMS; ++i)
-        // {
-        //     Node @objectNode = scene_.CreateChild("Mushroom");
-        //     objectNode.position =
-        //         Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
-        //     objectNode.rotation = Quaternion(0.0f, Random(360.0f), 0.0f);
-        //     objectNode.SetScale(2.0f + Random(5.0f));
-        //     StaticModel @object = objectNode.CreateComponent("StaticModel");
-        //     object.model = cache.GetResource("Model", "Models/Mushroom.mdl");
-        //     object.material =
-        //         cache.GetResource("Material", "Materials/Mushroom.xml");
-        //     object.castShadows = true;
-
-        //     RigidBody @body = objectNode.CreateComponent("RigidBody");
-        //     body.collisionLayer = 2;
-        //     CollisionShape @shape =
-        //         objectNode.CreateComponent("CollisionShape");
-        //     shape.SetTriangleMesh(object.model, 0);
-        // }
-
-        // // Create movable boxes. Let them fall from the sky at first
-        // const uint NUM_BOXES = 100;
-        // for (uint i = 0; i < NUM_BOXES; ++i)
-        // {
-        //     float scale = Random(2.0f) + 0.5f;
-
-        //     Node @objectNode = scene_.CreateChild("Box");
-        //     objectNode.position =
-        //         Vector3(Random(180.0f) - 90.0f, Random(10.0f) + 10.0f,
-        //                 Random(180.0f) - 90.0f);
-        //     objectNode.rotation =
-        //         Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
-        //     objectNode.SetScale(scale);
-        //     StaticModel @object = objectNode.CreateComponent("StaticModel");
-        //     object.model = cache.GetResource("Model", "Models/Box.mdl");
-        //     object.material =
-        //         cache.GetResource("Material", "Materials/Stone.xml");
-        //     object.castShadows = true;
-
-        //     RigidBody @body = objectNode.CreateComponent("RigidBody");
-        //     body.collisionLayer = 2;
-        //     // Bigger boxes will be heavier and harder to move
-        //     body.mass = scale * 2.0f;
-        //     CollisionShape @shape =
-        //         objectNode.CreateComponent("CollisionShape");
-        //     shape.SetBox(Vector3::ONE);
-        // }
         // music and ambient sounds
         SoundSource @musicSource;
         SoundSource @ambientSource;
