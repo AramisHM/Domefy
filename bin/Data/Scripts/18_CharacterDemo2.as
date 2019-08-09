@@ -361,38 +361,16 @@ class Fpmed : ScriptObject
             }
 
             // Add character yaw & pitch from the mouse motion or touch input
-            if (touchEnabled)
-            {
-                for (uint i = 0; i < input.numTouches; ++i)
-                {
-                    TouchState @state = input.touches[i];
-                    if (state.touchedElement is null) // Touch on empty space
-                    {
-                        Camera @camera = cameraNode.GetComponent("Camera");
-                        if (camera is null)
-                            return;
+            character.controls.yaw += input.mouseMoveX * YAW_SENSITIVITY;
+            character.controls.pitch += input.mouseMoveY * YAW_SENSITIVITY;
 
-                        character.controls.yaw += TOUCH_SENSITIVITY *
-                                                  camera.fov / graphics.height *
-                                                  state.delta.x;
-                        character.controls.pitch +=
-                            TOUCH_SENSITIVITY * camera.fov / graphics.height *
-                            state.delta.y;
-                    }
-                }
-            }
-            else
-            {
-                character.controls.yaw += input.mouseMoveX * YAW_SENSITIVITY;
-                character.controls.pitch += input.mouseMoveY * YAW_SENSITIVITY;
-            }
             // Limit pitch
             character.controls.pitch =
                 Clamp(character.controls.pitch, -80.0f, 80.0f);
             // Set rotation already here so that it's updated every rendering
             // frame instead of every physics frame
             characterNode.rotation =
-                Quaternion(character.controls.yaw, Vector3::UP);
+                characterNode.rotation.Slerp(Quaternion(character.controls.yaw, Vector3::UP), 0.2f);
 
             // Switch between 1st and 3rd person
             if (input.keyPress[KEY_F])
@@ -479,7 +457,8 @@ class Fpmed : ScriptObject
             rayDistance = Clamp(rayDistance, CAMERA_MIN_DIST, cameraDistance);
 
             cameraNode.position = aimPoint + rayDir * rayDistance;
-            cameraNode.rotation = dir;
+            cameraNode.position = cameraNode.position.Lerp(cameraNode.position, 0.2f); // smooth it's position
+            cameraNode.rotation = dir.Slerp(dir, 0.0f);                                // smooth it's rotation
         }
     }
 }
