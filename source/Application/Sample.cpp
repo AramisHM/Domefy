@@ -610,7 +610,7 @@ Node* Sample::CreateDomeCamera(Projection p) {
         m->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
         Urho3D::Texture2D* t = cache->GetResource<Urho3D::Texture2D>(
-            Urho3D::String("/home/aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/"
+            Urho3D::String("C:/Users/Aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/"
                            "NORTH.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);

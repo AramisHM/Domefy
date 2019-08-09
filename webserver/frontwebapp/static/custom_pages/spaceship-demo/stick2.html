@@ -13,153 +13,152 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!DOCTYPE html>
 <html>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- embanded css classes in the html file -->
-    <style>
-        /* class to disable scrolling in the page */
-        .noScroll {
-            overflow-y: hidden;
-            overscroll-behavior: none;
-        }
+<!-- embanded css classes in the html file -->
+<style>
+    /* class to disable scrolling in the page */
+    .noScroll {
+        overflow-y: hidden;
+        overscroll-behavior: none;
+    }
 
-        /* The region with for the touch enabled input */
-        .joystick {
-            width: 300px;
-            height: 300px;
-            border: 1px solid;
+    /* The region with for the touch enabled input */
+    .joystick {
+        width: 300px;
+        height: 300px;
+        border: 1px solid;
 
-            z-index: 2;
-        }
-    </style>
+        z-index: 2;
+    }
+</style>
 
-    <body class="noScroll">
-        <p id="demo">
-            View Controls
-        </p>
-        <div class="joystick" ontouchmove="getTouchData(event)">
-            <img id="stick2" style="position:absolute"
-                src=" ../../assets/images/marker.png">
-            </img>
-        </div>
+<body class="noScroll">
+    <p id="demo">
+        View Controls
+    </p>
+    <div class="joystick" ontouchmove="getTouchData(event)">
+        <img id="stick2" style="position:absolute" src=" ../../assets/images/marker.png">
+        </img>
+    </div>
 
-        <!-- utilities for sending ajax etc -->
-        <script type="text/javascript" src="../../domefy/utils.js"></script>
-        <script type="text/javascript" src="../../config.js"></script>
-        <script src="../../jquery/jquery.min.js"></script>
+    <!-- utilities for sending ajax etc -->
+    <script type="text/javascript" src="../../domefy/utils.js"></script>
+    <script type="text/javascript" src="../../config.js"></script>
+    <script src="../../jquery/jquery.min.js"></script>
 
-        <script>
-            let last = +new Date();
-            var baudInterval = 50;
+    <script>
+        let last = +new Date();
+        var baudInterval = 25;
 
-            //  Keeps track of ou gestures deslocation
-            var touchHistoryData = {
-                position: {
-                    x: 0,
-                    y: 0
-                },
-                touch_start: {
-                    x: 0,
-                    y: 0
-                },
-                last_pos: {
-                    x: 0,
-                    y: 0
-                }
+        //  Keeps track of ou gestures deslocation
+        var touchHistoryData = {
+            position: {
+                x: 0,
+                y: 0
+            },
+            touch_start: {
+                x: 0,
+                y: 0
+            },
+            last_pos: {
+                x: 0,
+                y: 0
             }
+        }
 
-            var controls = {
-                "joystick": {
-                    "position": {
-                        "x": 0.0,
-                        "y": 0.0
-                    }
-                },
-                "movement": {
+        var controls = {
+            "joystick": {
+                "position": {
                     "x": 0.0,
                     "y": 0.0
-                },
-                "jump": false,
-                "intensity": 0.0
-            }
-
-            // send information in a given rate
-            function baudCommand(data) {
-                const now = +new Date();
-                if (now - last > baudInterval) {
-                    last = now;
-                    sendCommand(data, true);
                 }
+            },
+            "movement": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "jump": false,
+            "intensity": 0.0
+        }
+
+        // send information in a given rate
+        function baudCommand(data) {
+            const now = +new Date();
+            if (now - last > baudInterval) {
+                last = now;
+                sendCommand(data, true);
             }
+        }
 
-            function UpdateThumbDisplayPosition() {
-                var thumb = document.getElementById("stick2");
-                thumb.style.position = "absolute";
-                thumb.style.left = controls.joystick.position.x + "px";
-                thumb.style.top = controls.joystick.position.y + "px";
-            }
+        function UpdateThumbDisplayPosition() {
+            var thumb = document.getElementById("stick2");
+            thumb.style.position = "absolute";
+            thumb.style.left = controls.joystick.position.x + "px";
+            thumb.style.top = controls.joystick.position.y + "px";
+        }
 
-            // prevent first loop misscalculation
-            window.addEventListener('touchstart', function (event) {
-                touchHistoryData.last_pos.x = event.touches[0].clientX;
-                touchHistoryData.last_pos.y = event.touches[0].clientY;
-            });
+        // prevent first loop misscalculation
+        window.addEventListener('touchstart', function (event) {
+            touchHistoryData.last_pos.x = event.touches[0].clientX;
+            touchHistoryData.last_pos.y = event.touches[0].clientY;
+        });
 
-            // getTouchData - Get the touch event input of the first finger and send this to the application through ajax
-            function getTouchData(event) {
+        // getTouchData - Get the touch event input of the first finger and send this to the application through ajax
+        function getTouchData(event) {
 
-                var currx = Math.round(event.touches[0].clientX);
-                var curry = Math.round(event.touches[0].clientY);
+            var currx = Math.round(event.touches[0].clientX);
+            var curry = Math.round(event.touches[0].clientY);
 
-                controls.joystick.position.x = currx
-                controls.joystick.position.y = curry
+            controls.joystick.position.x = currx
+            controls.joystick.position.y = curry
 
-                UpdateThumbDisplayPosition();
+            UpdateThumbDisplayPosition();
 
-                // the deslocation
-                controls.movement.x = Math.floor(controls.joystick.position.x - touchHistoryData.last_pos.x);
-                controls.movement.y = Math.floor(controls.joystick.position.y - touchHistoryData.last_pos.y);
+            // the deslocation
+            controls.movement.x = Math.floor(controls.joystick.position.x - touchHistoryData.last_pos.x);
+            controls.movement.y = Math.floor(controls.joystick.position.y - touchHistoryData.last_pos.y);
 
-                var a = controls.movement.x
-                var b = controls.movement.y;
-                var c = Math.sqrt(a * a + b * b); // intensity
-                controls.intensity = c;
+            var a = controls.movement.x
+            var b = controls.movement.y;
+            var c = Math.sqrt(a * a + b * b); // intensity
+            controls.intensity = c;
 
-                var command = getCommandString();
-                baudCommand(command);
+            var command = getCommandString();
+            baudCommand(command);
 
-                console.log(command);
+            console.log(command);
 
-                touchHistoryData.last_pos.x = controls.joystick.position.x;
-                touchHistoryData.last_pos.y = controls.joystick.position.y;
-            }
+            touchHistoryData.last_pos.x = controls.joystick.position.x;
+            touchHistoryData.last_pos.y = controls.joystick.position.y;
+        }
 
-            function getCommandString() {
-                var command = "VIEW;";
-                command += controls.movement.x + ";";
-                command += controls.movement.y + ";";
-                command += Math.min(Math.max(controls.intensity, 0), 60) + ";";
+        function getCommandString() {
+            var command = "VIEW;";
+            command += controls.movement.x + ";";
+            command += controls.movement.y + ";";
+            command += Math.min(Math.max(controls.intensity, 0), 60) + ";";
 
-                //console.log(command);
-                return command;
-            }
+            //console.log(command);
+            return command;
+        }
 
-            // sendCommand - Does a REST POST
-            function sendCommand(data, sync = true) {
-                $.ajax
-                    ({
-                        type: "POST",
-                        //the url where you want to sent the userName and password to
-                        url: 'http://' + serviceIPPort + '/setExampleTextMessage',
-                        dataType: 'json',
-                        async: sync,
-                        //json object to sent to the authentication url
-                        data: '{"command": "' + data + '"}',
-                        success: function () {
-                        }
-                    })
-            }
-        </script>
-    </body>
+        // sendCommand - Does a REST POST
+        function sendCommand(data, sync = true) {
+            $.ajax
+                ({
+                    type: "POST",
+                    //the url where you want to sent the userName and password to
+                    url: 'http://' + serviceIPPort + '/setExampleTextMessage',
+                    dataType: 'json',
+                    async: sync,
+                    //json object to sent to the authentication url
+                    data: '{"command": "' + data + '"}',
+                    success: function () {
+                    }
+                })
+        }
+    </script>
+</body>
 
 </html>
