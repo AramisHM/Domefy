@@ -36,11 +36,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 </style>
 
 <body class="noScroll">
-    <div class="joystick" ontouchmove="ViewDrag(event)">
+    <div class="joystick" ontouchstart="RegisterIndex(1, event)" ontouchmove="ViewDrag(event)">
         <img id="stick1" style="position:absolute" src=" ../../assets/images/marker.png">
         </img>
     </div>
-    <div class="joystick" ontouchmove="MoveDrag(event)" ontouchend="silenceLoopStick2()">
+    <div class="joystick" ontouchstart="RegisterIndex(2, event)" ontouchmove="MoveDrag(event)"
+        ontouchend="silenceLoopStick2()">
         <img id="stick2" style="position:absolute" src=" ../../assets/images/marker.png">
         </img>
     </div>

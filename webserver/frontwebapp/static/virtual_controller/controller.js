@@ -9,6 +9,8 @@
  * -----
  * Copyright 2014 - 2019 Aramis Hornung Moraes
  */
+
+var touchCound = 0;
 var thumbstick1 = {
   position: {
     last: {
@@ -25,7 +27,8 @@ var thumbstick1 = {
     }
   },
   baudInterval: 25,
-  elementName: "stick1"
+  elementName: "stick1",
+  touchIndex: -1
 };
 
 function UpdateStickDisplay(thumbstick) {
@@ -36,18 +39,13 @@ function UpdateStickDisplay(thumbstick) {
   element.style.top = element.parentElement.style.top + p.y + "px";
 }
 
-window.addEventListener("touchstart", function(event) {
-  var lp = thumbstick1.position.last;
-  lp.x = event.touches[0].clientX;
-  lp.y = event.touches[0].clientY;
-});
-
 function ViewDrag(event) {
   var cp = thumbstick1.position.current;
   var lp = thumbstick1.position.last;
   var mv = thumbstick1.position.delta;
-  cp.x = Math.round(event.touches[0].clientX);
-  cp.y = Math.round(event.touches[0].clientY);
+  var tIndex = thumbstick1.touchIndex;
+  cp.x = Math.round(event.targetTouches[tIndex].clientX);
+  cp.y = Math.round(event.targetTouches[tIndex].clientY);
   UpdateStickDisplay(thumbstick1);
   mv.x = Math.floor(cp.x - lp.x);
   mv.y = Math.floor(cp.y - lp.y);
@@ -75,21 +73,17 @@ var thumbstick2 = {
   },
   baudInterval: 180,
   updateControls: false,
-  elementName: "stick2"
+  elementName: "stick2",
+  touchIndex: -1
 };
-
-window.addEventListener("touchstart", function(event) {
-  var ps = thumbstick2.position.start;
-  ps.x = event.touches[0].clientX;
-  ps.y = event.touches[0].clientY;
-});
 
 function MoveDrag(event) {
   var cp = thumbstick2.position.current;
   var ps = thumbstick2.position.start;
   var mv = thumbstick2.position.delta;
-  cp.x = Math.round(event.touches[0].clientX);
-  cp.y = Math.round(event.touches[0].clientY);
+  var tIndex = thumbstick2.touchIndex;
+  cp.x = Math.round(event.targetTouches[tIndex].clientX);
+  cp.y = Math.round(event.targetTouches[tIndex].clientY);
   UpdateStickDisplay(thumbstick2);
   mv.x = Math.floor(cp.x - ps.x);
   mv.y = Math.floor(cp.y - ps.y);
@@ -115,4 +109,19 @@ function silenceLoopStick2() {
   thumbstick2.updateControls = false;
   thumbstick2.position.delta.x = 0.0;
   thumbstick2.position.delta.y = 0.0;
+}
+
+function RegisterIndex(stick, event) {
+  var tIndex = event.targetTouches.length - 1;
+  if (stick == 1) {
+    thumbstick1.touchIndex = tIndex;
+    var lp = thumbstick1.position.last;
+    lp.x = event.targetTouches[tIndex].clientX;
+    lp.y = event.targetTouches[tIndex].clientY;
+  } else if (stick == 2) {
+    thumbstick2.touchIndex = tIndex;
+    var ps = thumbstick2.position.start;
+    ps.x = event.targetTouches[tIndex].clientX;
+    ps.y = event.targetTouches[tIndex].clientY;
+  }
 }
