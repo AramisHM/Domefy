@@ -45,7 +45,7 @@ type tomlConfig struct {
 	UseMiddleware bool `toml:"use_middleware"`
 
 	// path with executable for the domefy application binary
-	win32DomefyBinary    string `toml:"win32_domefy_binary"`
+	Win32DomefyBinary    string `toml:"win32_domefy_binary"`
 	GNULinuxDomefyBinary string `toml:"gnulinux_domefy_binary"`
 
 	Databases map[string]Database

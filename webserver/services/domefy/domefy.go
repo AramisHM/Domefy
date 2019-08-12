@@ -8,12 +8,18 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 
+	"github.com/AramisHM/Domefy/webserver/config"
 	"github.com/AramisHM/Domefy/webserver/rest"
 
 	"github.com/gin-gonic/gin"
 )
+
+// processes - slice of Domefy Processes
+var processes []*exec.Cmd
 
 // SendExample - Sends a single dummy POST to own API.
 func SendExample() {
@@ -36,6 +42,8 @@ func RegisterDomefy(router *gin.Engine) {
 	router.POST("/setExampleTextMessage", func(c *gin.Context) { SetExampleTextMessage(c) })
 	router.POST("/getConfigJSON", func(c *gin.Context) { GetConfigJSON(c) })
 	router.POST("/saveCalibrationParameters", func(c *gin.Context) { SaveCalibrationParameters(c) })
+	router.POST("/StartScriptApplication", func(c *gin.Context) { StartScriptApplication(c) })
+	router.POST("/KillAllApplicationProcesses", func(c *gin.Context) { KillAllApplicationProcesses() })
 }
 
 // SetExampleTextMessage - Sets the debug text auxiliar message
@@ -120,26 +128,57 @@ func GetThisMAchineIpAddres() string {
 			fmt.Println(ip)
 		}
 	}
-
 	return ""
 }
 
+// RunDomefy - Runs a Domefy instance
+func RunDomefy(cmd *exec.Cmd) {
+	KillAllApplicationProcesses() // kill and remove all previous processes
+	cmd.Stdout = os.Stdout
+	err := cmd.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Started Domefy subprocess %d\n", cmd.Process.Pid)
+	processes = append(processes, cmd)
+}
+
+func KillAllApplicationProcesses() {
+	for _, p := range processes {
+		if err := p.Process.Kill(); err != nil {
+			fmt.Errorf("Failed to kill process: %v", err)
+		}
+	}
+	processes = nil
+}
+
 // StartScriptApplication - Starts a Domefy process and make it run a specific script
-func StartScriptApplication() {
-	// var os string
-	// // get configuration globals
-	// if sys.GOOS == "windows" {
-	//     fmt.Println("You are running on Windows")
-	// } else {
-	//     fmt.Println("You are running on an OS other than Windows")
-	// }
-	// config.Config.
-	// paramObj := rest.GetPostParameters(c)
-	// scriptName := paramObj["script"].(string)
+func StartScriptApplication(c *gin.Context) {
+	paramObj := rest.GetPostParameters(c)
+	scriptName, gotScript := paramObj["script"].(string)
 
-	// lsCmd := exec.Command("bash", "-c", "ls -a -l -h")
-	// fmt.Println(lsCmd)
+	if gotScript {
+		// get configuration globals
+		fmt.Println("GOOS: ", runtime.GOOS)
+		fmt.Println(os.Getwd())
+		var cmd *exec.Cmd
+		if runtime.GOOS == "windows" {
+			fmt.Println(config.Config.Win32DomefyBinary + " " + scriptName)
+			cmd = exec.Command(config.Config.Win32DomefyBinary)
+		} else {
+			fmt.Println(config.Config.GNULinuxDomefyBinary + " " + scriptName)
+			cmd = exec.Command(config.Config.GNULinuxDomefyBinary)
+		}
+		go RunDomefy(cmd)
 
-	// // save the parameters in a local file
-	// c.JSON(http.StatusOK, "done")
+		// save the parameters in a local file
+		c.JSON(http.StatusOK, "done")
+		return
+	}
+	c.JSON(http.StatusBadRequest, "Something went wrong")
+	return
+}
+
+// StopScriptApplication - Stops the Domefy processes
+func StopScriptApplication(c *gin.Context) {
 }
