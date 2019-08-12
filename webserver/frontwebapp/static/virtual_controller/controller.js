@@ -9,8 +9,6 @@
  * -----
  * Copyright 2014 - 2019 Aramis Hornung Moraes
  */
-let last = +new Date();
-
 var thumbstick1 = {
   position: {
     last: {
@@ -26,14 +24,16 @@ var thumbstick1 = {
       y: 0.0
     }
   },
-  baudInterval: 25
+  baudInterval: 25,
+  elementName: "stick1"
 };
 
-function UpdateStickDisplay(element) {
+function UpdateStickDisplay(thumbstick) {
+  var element = document.getElementById(thumbstick.elementName);
   element.style.position = "absolute";
-  var p = thumbstick1.position.current;
-  element.style.left = p.x + "px";
-  element.style.top = p.y + "px";
+  var p = thumbstick.position.current;
+  element.style.left = element.parentElement.style.left + p.x + "px";
+  element.style.top = element.parentElement.style.top + p.y + "px";
 }
 
 window.addEventListener("touchstart", function(event) {
@@ -48,7 +48,7 @@ function ViewDrag(event) {
   var mv = thumbstick1.position.delta;
   cp.x = Math.round(event.touches[0].clientX);
   cp.y = Math.round(event.touches[0].clientY);
-  UpdateStickDisplay(document.getElementById("stick2"));
+  UpdateStickDisplay(thumbstick1);
   mv.x = Math.floor(cp.x - lp.x);
   mv.y = Math.floor(cp.y - lp.y);
   var cmd = "VIEW;" + mv.x + ";" + mv.y + ";";
@@ -56,4 +56,63 @@ function ViewDrag(event) {
   baudCommand(cmd, thumbstick1.baudInterval, commandsEndpoint);
   lp.x = cp.x;
   lp.y = cp.y;
+}
+//  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ---- second stick logic
+var thumbstick2 = {
+  position: {
+    start: {
+      x: 0.0,
+      y: 0.0
+    },
+    current: {
+      x: 0.0,
+      y: 0.0
+    },
+    delta: {
+      x: 0.0,
+      y: 0.0
+    }
+  },
+  baudInterval: 180,
+  updateControls: false,
+  elementName: "stick2"
+};
+
+window.addEventListener("touchstart", function(event) {
+  var ps = thumbstick2.position.start;
+  ps.x = event.touches[0].clientX;
+  ps.y = event.touches[0].clientY;
+});
+
+function MoveDrag(event) {
+  var cp = thumbstick2.position.current;
+  var ps = thumbstick2.position.start;
+  var mv = thumbstick2.position.delta;
+  cp.x = Math.round(event.touches[0].clientX);
+  cp.y = Math.round(event.touches[0].clientY);
+  UpdateStickDisplay(thumbstick2);
+  mv.x = Math.floor(cp.x - ps.x);
+  mv.y = Math.floor(cp.y - ps.y);
+  var cmd = "MOVE;" + mv.x + ";" + mv.y + ";";
+  console.log(cmd);
+  baudCommand(cmd, thumbstick2.baudInterval, commandsEndpoint);
+}
+
+// loopStick2 - infinitly check stick
+function loopStick2() {
+  if (thumbstick2.updateControls) {
+    // send last state
+    var mv = thumbstick2.position.delta;
+    var cmd = "MOVE;" + mv.x + ";" + mv.y + ";";
+    baudCommand(cmd, thumbstick2.baudInterval, commandsEndpoint);
+  }
+  setTimeout(loopStick2, thumbstick2.baudInterval);
+}
+loopStick2(""); // start loop
+
+function silenceLoopStick2() {
+  ajaxPost("NMOVE;0;0;", true, commandsEndpoint);
+  thumbstick2.updateControls = false;
+  thumbstick2.position.delta.x = 0.0;
+  thumbstick2.position.delta.y = 0.0;
 }

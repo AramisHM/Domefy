@@ -43,6 +43,7 @@ function ajaxPostRaw(data_raw, sync, url) {
   return tmp;
 }
 
+var last = +new Date();
 // baudCommand - Similar to sendCommand, but has rate limit to send the data
 function baudCommand(data, baudInterval, url) {
   const now = +new Date();

@@ -158,7 +158,7 @@ class Fpmed : ScriptObject {
             float triggerVal = 25.0f;
             float mvx = cmds[1].ToFloat();
             float mvy = cmds[2].ToFloat();
-            float sss = cmds[3].ToFloat() / 15.0f;
+            // float sss = cmds[3].ToFloat() / 15.0f;
             log.Info(str);
             character.controlsInput["ACTIVE"] = true;
 

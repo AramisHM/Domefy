@@ -14,8 +14,9 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!DOCTYPE html>
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="HandheldFriendly" content="true" />
 <!-- embanded css classes in the html file -->
 <style>
     /* class to disable scrolling in the page */
@@ -26,8 +27,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
     /* The region with for the touch enabled input */
     .joystick {
-        width: 300px;
-        height: 300px;
+        width: 256px;
+        height: 256px;
         border: 1px solid;
 
         z-index: 2;
@@ -36,11 +37,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <body class="noScroll">
     <div class="joystick" ontouchmove="ViewDrag(event)">
-        <img id="stick2" style="position:absolute" src=" ../../assets/images/marker.png">
+        <img id="stick1" style="position:absolute" src=" ../../assets/images/marker.png">
         </img>
     </div>
-    <div class="joystick" ontouchmove="ViewDrag(event)">
-        <img id="stick1" style="position:absolute" src=" ../../assets/images/marker.png">
+    <div class="joystick" ontouchmove="MoveDrag(event)" ontouchend="silenceLoopStick2()">
+        <img id="stick2" style="position:absolute" src=" ../../assets/images/marker.png">
         </img>
     </div>
 
