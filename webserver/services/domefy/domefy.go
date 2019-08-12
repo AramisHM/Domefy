@@ -164,10 +164,10 @@ func StartScriptApplication(c *gin.Context) {
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
 			fmt.Println(config.Config.Win32DomefyBinary + " " + scriptName)
-			cmd = exec.Command(config.Config.Win32DomefyBinary)
+			cmd = exec.Command(config.Config.Win32DomefyBinary, scriptName)
 		} else {
 			fmt.Println(config.Config.GNULinuxDomefyBinary + " " + scriptName)
-			cmd = exec.Command(config.Config.GNULinuxDomefyBinary)
+			cmd = exec.Command(config.Config.GNULinuxDomefyBinary, scriptName)
 		}
 		go RunDomefy(cmd)
 

@@ -13,10 +13,12 @@
 
 #include <Urho3D/AngelScript/APITemplates.h>
 
-extern std::string commandString;  // main.cpp
+extern std::string commandString; // main.cpp
+extern std::string scriptPath;
 MyCustomApplication *application;
 
-void MyCustomApplication::RegisterCustomScriptAPI() {
+void MyCustomApplication::RegisterCustomScriptAPI()
+{
 #ifdef fpmed_allow_scripted_application
     // Enable the script subsystem;
     context_->RegisterSubsystem(new Script(context_));
@@ -28,7 +30,7 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
     context_->RegisterFactory<SlideTransitionAnimatior>();
-    TVComponent::RegisterObject(context_);  // alternative way to do this
+    TVComponent::RegisterObject(context_); // alternative way to do this
 
     // Register custom Urho3D componenets
 
@@ -55,7 +57,7 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     ProgramConfig *config = ProgramConfig::GetInstance();
     engine->RegisterObjectType(
         "ProgramConfig", 0,
-        asOBJ_REF);  // asOBJ_REF because you wanted a reference call
+        asOBJ_REF); // asOBJ_REF because you wanted a reference call
     engine->RegisterObjectBehaviour("ProgramConfig", asBEHAVE_ADDREF,
                                     "void f()", asMETHOD(ProgramConfig, AddRef),
                                     asCALL_THISCALL);
@@ -68,15 +70,17 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
         asCALL_THISCALL);
     engine->RegisterGlobalProperty(
         "ProgramConfig progConf",
-        config);  // the class instance must be a pointer reference.
+        config); // the class instance must be a pointer reference.
 #endif
 }
 
-MyCustomApplication::MyCustomApplication(Context *context) : Sample(context) {
+MyCustomApplication::MyCustomApplication(Context *context) : Sample(context)
+{
     this->RegisterCustomScriptAPI();
 }
 
-void MyCustomApplication::CreateScene() {
+void MyCustomApplication::CreateScene()
+{
     Camera *cameraComp = cameraNode_->GetComponent<Camera>();
     cameraComp->SetFov(85.0f);
 
@@ -101,10 +105,11 @@ void MyCustomApplication::CreateScene() {
 
     // the custom projections
     int aux = 1;
-    for (auto const &proj : projections) {
+    for (auto const &proj : projections)
+    {
         Node *domeCamNode =
-            CreateDomeCamera(proj);  // last element from sceneDomeList_ is the
-                                     // scene for this camera
+            CreateDomeCamera(proj); // last element from sceneDomeList_ is the
+                                    // scene for this camera
         // TODO: make a function convert vec4 to Urho's rectangle
         int px, py, pdx, pdy;
         px = proj._viewport.getP();
@@ -120,19 +125,22 @@ void MyCustomApplication::CreateScene() {
     }
 }
 
-std::vector<std::string> split(std::string strToSplit, char delimeter) {
+std::vector<std::string> split(std::string strToSplit, char delimeter)
+{
     std::stringstream ss(strToSplit);
     std::string item;
     std::vector<std::string> splittedStrings;
-    while (std::getline(ss, item, delimeter)) {
+    while (std::getline(ss, item, delimeter))
+    {
         splittedStrings.push_back(item);
     }
     return splittedStrings;
 }
 
-void MyCustomApplication::Start() {
+void MyCustomApplication::Start()
+{
     // Execute base class startup
-    Sample::CreateScene();  // create fulldome's scene
+    Sample::CreateScene(); // create fulldome's scene
     Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
 
     // Node *videoNode = scene_->CreateChild("Video");
@@ -152,20 +160,22 @@ void MyCustomApplication::Start() {
 
 #ifdef fpmed_allow_scripted_application
     frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>("Scripts/18_CharacterDemo2.as"),
+        cache->GetResource<ScriptFile>(Urho3D::String(scriptPath.c_str())),
         "Fpmed");
     frameworkScriptInstance->Execute("void FpmedStart()");
 #endif
 }
 
-void MyCustomApplication::Stop() {
+void MyCustomApplication::Stop()
+{
     if (level)
-        delete level;  // Perform optional cleanup after main loop has
-                       // terminated
+        delete level; // Perform optional cleanup after main loop has
+                      // terminated
 }
 
 void MyCustomApplication::HandleUpdates(StringHash eventType,
-                                        VariantMap &eventData) {
+                                        VariantMap &eventData)
+{
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
@@ -175,14 +185,17 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         commandSplitted = split(commandString, ';');
         int cmdLen = commandSplitted.size();
 
-        if (cmdLen > 1) {
+        if (cmdLen > 1)
+        {
             if (!commandSplitted[0].compare(
-                    std::string("CPP"))) {  // C++ exclusively
+                    std::string("CPP")))
+            { // C++ exclusively
                 // TODO: move all this block to a separated file!
 
                 // The following VRTX and VRTXBATCH regards the manipulation
                 // of point-to-point calibration on projector view
-                if (!commandSplitted[1].compare(std::string("VRTX"))) {
+                if (!commandSplitted[1].compare(std::string("VRTX")))
+                {
                     float x, y;
                     int viewport = std::stoi(commandSplitted[2]);
                     int v = std::stoi(commandSplitted[3]);
@@ -190,11 +203,13 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     y = std::stof(commandSplitted[5]);
                     AnimateVertex(viewport, v, x, y);
                 }
-                if (!commandSplitted[1].compare(std::string("VRTXBATCH"))) {
+                if (!commandSplitted[1].compare(std::string("VRTXBATCH")))
+                {
                     int viewport = std::stoi(commandSplitted[2]);
                     int qtty = std::stoi(commandSplitted[3]);
 
-                    for (int i = 4; i < 4 + (qtty * 3); i += 3) {
+                    for (int i = 4; i < 4 + (qtty * 3); i += 3)
+                    {
                         float x, y;
                         int v = std::stoi(commandSplitted[i]);
                         x = std::stof(commandSplitted[i + 1]);
@@ -203,7 +218,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     }
                 }
                 // General projector parameters
-                if (!commandSplitted[1].compare(std::string("PROJPOS"))) {
+                if (!commandSplitted[1].compare(std::string("PROJPOS")))
+                {
                     int projector = std::stoi(commandSplitted[2]);
 
                     Vector3 postion(std::stof(commandSplitted[3]),
@@ -212,7 +228,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
                     cameraNodeDomeList_[projector]->SetPosition(postion);
                 }
-                if (!commandSplitted[1].compare(std::string("PROJROT"))) {
+                if (!commandSplitted[1].compare(std::string("PROJROT")))
+                {
                     int projector = std::stoi(commandSplitted[2]);
 
                     Quaternion rotation(std::stof(commandSplitted[3]),
@@ -221,27 +238,33 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
                     cameraNodeDomeList_[projector]->SetWorldRotation(rotation);
                 }
-                if (!commandSplitted[1].compare(std::string("PROJFOV"))) {
+                if (!commandSplitted[1].compare(std::string("PROJFOV")))
+                {
                     int projector = std::stoi(commandSplitted[2]);
                     Camera *c =
                         cameraNodeDomeList_[projector]->GetComponent<Camera>();
                     c->SetFov(std::stof(commandSplitted[3]));
                 }
-                if (!commandSplitted[1].compare(std::string("DOMEGRID"))) {
+                if (!commandSplitted[1].compare(std::string("DOMEGRID")))
+                {
                     int isEnabled = std::stoi(commandSplitted[2]);
 
-                    for (auto dome : _virtualDomes) {
+                    for (auto dome : _virtualDomes)
+                    {
                         auto grid = dome->GetChild("DOME_GRID");
                         // TODO: aside from setting grid visible, make the
                         // actual dome a little transparent
 
-                        Variant va;  // we will set the material color with this
-                                     // variant
-                        if (isEnabled == 1) {
+                        Variant va; // we will set the material color with this
+                                    // variant
+                        if (isEnabled == 1)
+                        {
                             va = Variant(Vector4(0.2f, 0.2f, 0.2f, 0.01f));
                             dome->SetEnabled(false);
                             grid->SetEnabled(true);
-                        } else {
+                        }
+                        else
+                        {
                             va = Variant(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                             grid->SetEnabled(false);
                             dome->SetEnabled(true);
@@ -249,7 +272,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
                         // the virtual dome has 5 materials, one
                         // for each face
-                        for (int i = 0; i < 5; ++i) {
+                        for (int i = 0; i < 5; ++i)
+                        {
                             auto domeMaterial =
                                 dome->GetComponent<Urho3D::StaticModel>()
                                     ->GetMaterial(i);
@@ -258,7 +282,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         }
                     }
                 }
-                if (!commandSplitted[1].compare(std::string("CALIROT"))) {
+                if (!commandSplitted[1].compare(std::string("CALIROT")))
+                {
                     // Sets the calibration mesh rotation
 
                     int viewportIndex = std::stoi(commandSplitted[2]);
@@ -270,16 +295,20 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     _geometryCorrectionNodes[viewportIndex]->SetRotation(
                         rotation);
                 }
-                if (!commandSplitted[1].compare(std::string("AIDGRID"))) {
+                if (!commandSplitted[1].compare(std::string("AIDGRID")))
+                {
                     // Disables/Enables the image of the aproximated ideal
                     // calibration, used as reference to do our own calibration
                     int isEnabled = std::stoi(commandSplitted[2]);
 
-                    for (auto node : _calibrationAidNodes) {
+                    for (auto node : _calibrationAidNodes)
+                    {
                         node->SetEnabled(isEnabled);
                     }
                 }
-            } else {  // forward to script instance
+            }
+            else
+            { // forward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) {  // external
                 // text Get the command from network, redirect to script,
                 // execute it, and print the scrip's response.
@@ -288,14 +317,14 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                 VariantMap vm2;
                 vm["CMD"] = Urho3D::String(
                     commandString
-                        .c_str());     // let .as split the command string.
-                parameters.Push(vm);   // function arguments
-                parameters.Push(vm2);  // return
+                        .c_str());    // let .as split the command string.
+                parameters.Push(vm);  // function arguments
+                parameters.Push(vm2); // return
 
                 frameworkScriptInstance->Execute(
                     "void DataGate(VariantMap, VariantMap&)",
-                    parameters);  // Execute, second parameters is return
-                                  // value
+                    parameters); // Execute, second parameters is return
+                                 // value
 
                 // extract and print return from angelscript
                 VariantMap retVM = parameters.Back().GetVariantMap();
@@ -304,5 +333,5 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
             }
         }
     }
-    commandString = "";  // Must clean it.
+    commandString = ""; // Must clean it.
 }
