@@ -14,7 +14,7 @@ function ajaxPost(data, sync, url) {
     url: "http://" + serviceIPPort + url,
     async: sync,
     data: '{"command": "' + data + '"}',
-    success: function (response) {
+    success: function(response) {
       if (response != "done") {
         var respJ = JSON.parse(response);
         tmp = respJ;
@@ -26,18 +26,14 @@ function ajaxPost(data, sync, url) {
 }
 
 // ajaxPost - Perform a POST methode, no template on data parameter
-function ajaxPostRaw(
-  data_raw,
-  sync,
-  url
-) {
+function ajaxPostRaw(data_raw, sync, url) {
   var tmp = null;
   $.ajax({
     type: "POST",
     url: "http://" + serviceIPPort + url,
     async: sync,
     data: data_raw,
-    success: function (response) {
+    success: function(response) {
       if (response == "done") {
         console.log(data_raw);
       }
@@ -45,4 +41,13 @@ function ajaxPostRaw(
     dataType: "json"
   });
   return tmp;
+}
+
+// baudCommand - Similar to sendCommand, but has rate limit to send the data
+function baudCommand(data, baudInterval, url) {
+  const now = +new Date();
+  if (now - last > baudInterval) {
+    last = now;
+    ajaxPost(data, true, url);
+  }
 }
