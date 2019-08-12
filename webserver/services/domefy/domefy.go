@@ -123,3 +123,23 @@ func GetThisMAchineIpAddres() string {
 
 	return ""
 }
+
+// StartScriptApplication - Starts a Domefy process and make it run a specific script
+func StartScriptApplication() {
+	// var os string
+	// // get configuration globals
+	// if sys.GOOS == "windows" {
+	//     fmt.Println("You are running on Windows")
+	// } else {
+	//     fmt.Println("You are running on an OS other than Windows")
+	// }
+	// config.Config.
+	// paramObj := rest.GetPostParameters(c)
+	// scriptName := paramObj["script"].(string)
+
+	// lsCmd := exec.Command("bash", "-c", "ls -a -l -h")
+	// fmt.Println(lsCmd)
+
+	// // save the parameters in a local file
+	// c.JSON(http.StatusOK, "done")
+}

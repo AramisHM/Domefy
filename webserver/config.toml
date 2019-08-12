@@ -13,9 +13,9 @@ hosting_address = "localhost"
 # It is an string because, we don't ever do arithmetics with it
 hosting_port = "9090"
 
-# Development host key. It's function is to restrict access from testing handles
+# Development host key. It's purpose is to restrict access from testing handlers
 # from our service
-# There is no righ or wront, it can be anything we decide.
+# There is no righ or wrong, it can be anything we decide.
 development_key = "ag3lrf9s-f3tk535c-c5ggbjov-85p57dab"
 
 # describes this software version
@@ -23,6 +23,10 @@ system_version = "0.196.0.1"
 
 # prototype function
 use_middleware = true
+
+# path with executable for the domefy application binary
+win32_domefy_binary = "../bin/fpmed.exe"
+gnulinux_domefy_binary = "../bin/fpmed"
 
 [databases]
   # MainBackendDBConn - It is the new database scheme from Postgresql
