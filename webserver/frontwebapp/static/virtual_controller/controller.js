@@ -125,3 +125,7 @@ function RegisterIndex(stick, event) {
     ps.y = event.targetTouches[tIndex].clientY;
   }
 }
+
+function JumpCommand() {
+  ajaxPost("JUMP;0;", true, commandsEndpoint);
+}
