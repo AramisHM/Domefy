@@ -126,6 +126,18 @@ function RegisterIndex(stick, event) {
   }
 }
 
-function JumpCommand() {
-  ajaxPost("JUMP;0;", true, commandsEndpoint);
+function SpacebarCommand() {
+  ajaxPost("SPACEBAR;0;", true, commandsEndpoint);
+}
+function LeftclickCommand() {
+  ajaxPost("LEFT_MOUSE;0;", true, commandsEndpoint);
+}
+function MiddleclickCommand() {
+  ajaxPost("MIDDLE_MOUSE;0;", true, commandsEndpoint);
+}
+function DemoAddActor() {
+  ajaxPost("ADDACTOR;0;", true, commandsEndpoint);
+}
+function SetStick2Baud(selecElm) {
+  thumbstick2.baudInterval = selecElm.options[selecElm.selectedIndex].value;
 }

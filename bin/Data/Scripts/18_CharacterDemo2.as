@@ -207,7 +207,7 @@ class Fpmed : ScriptObject
             log.Info(str);
         }
 
-        if (cmds[0] == "JUMP")
+        if (cmds[0] == "SPACEBAR")
         {
             log.Info(str);
             character.controls.Set(CTRL_JUMP, true);
@@ -229,7 +229,7 @@ class Fpmed : ScriptObject
         scene_ = node;
 
         cameraNode = scene_.GetChild("CameRef");
-        Camera @camera = cameraNode.CreateComponent("Camera");
+        Camera @camera = cameraNode.GetComponent("Camera");
         camera.farClip = 5000.0f;
         renderer.viewports[0] = Viewport(scene_, camera);
 

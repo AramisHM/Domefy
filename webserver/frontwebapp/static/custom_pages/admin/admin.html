@@ -11,6 +11,16 @@
     <body>
         <button type="button" onclick="startDomefy()">Start Domefy</button>
         <button type="button" onclick="stopDomefy()">Kill Domefy</button>
+
+        <select id="scriptSelector">
+            <option value="Scripts/18_CharacterDemo2.as">Maze</option>
+            <option value="Scripts/Pathfinder.as">Pathfinder</option>
+            <option value="Scripts/18_CharacterDemo2.as">Photos</option>
+            <option value="Scripts/18_CharacterDemo2.as">Spaceship</option>
+        </select>
+
+        <br>
+        <button onclick="RedirectToControllerPage()">Controller</button>
     </body>
 
     <script type="text/javascript" src="../../config.js"></script>
@@ -19,12 +29,15 @@
     <script>
         function startDomefy() {
             var command = {
-                script: "Scripts/18_CharacterDemo2.as"
+                script: document.getElementById("scriptSelector").value
             };
             ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
         }
         function stopDomefy() {
             ajaxPostRaw(JSON.stringify(""), true, cmdurlStopDomefy);
+        }
+        function RedirectToControllerPage() {
+            window.location = "http://" + frontendIPPort + "/virtual_controller/controller.html"
         }
     </script>
 

@@ -45,8 +45,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         <table style="width:100%">
             <tr>
                 <th>Move</th>
+                <th></th>
                 <th>View</th>
-                <th>Actions</th>
             </tr>
             <tr>
                 <td>
@@ -57,7 +57,26 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                             src=" ../../assets/images/marker.png">
                         </img>
                     </div>
+                </td>
+                <td>
+                    <button ontouchstart="SpacebarCommand()" type="button"
+                        class="large-buttom"> Spacebar </button>
+                    <button ontouchstart="LeftclickCommand()" type="button"
+                        class="large-buttom"> Left Click </button>
+                    <button ontouchstart="DemoAddActor()" type="button"
+                        class="large-buttom"> Custom 1 </button>
+                    <button ontouchstart="JumpCommand()" type="button"
+                        class="large-buttom"> Middle Click </button>
 
+                    <p> Move Baud
+                        <select id="stick1BaudRate"
+                            onchange="SetStick2Baud(this)">
+                            <option value="180">180ms
+                            </option>
+                            <option value="30">30ms
+                            </option>
+                        </select>
+                    </p>
                 </td>
                 <td>
                     <div class="joystick" ontouchstart="RegisterIndex(1, event)"
@@ -67,12 +86,9 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                         </img>
                     </div>
                 </td>
-                <td>
-                    <button onclick="JumpCommand()" ontouchstart="JumpCommand()"
-                        type="button" class="large-buttom">Jump!</button>
-                </td>
             </tr>
         </table>
+
 
 
         <!-- utilities for sending ajax etc -->
