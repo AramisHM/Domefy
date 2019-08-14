@@ -72,6 +72,8 @@ int ProgramConfig::LoadConfigFile(std::string path) {
                                         item["viewport_pos"]["y"].get<int>(),
                                         item["resolution"]["x"].get<int>(),
                                         item["resolution"]["y"].get<int>());
+                p._domeYaw = item["dome_yaw"].get<float>();
+
                 p._offsetPos = offPos;
                 p._offsetRot = offRot;
                 p._projPos = projPos;

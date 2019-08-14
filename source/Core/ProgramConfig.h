@@ -41,6 +41,7 @@ typedef struct Pojection {
     fpmed::Vec3<float> _projPos;
     fpmed::Vec3<float> _projRot;
     fpmed::Vec4<int> _viewport;
+    float _domeYaw;
     float _fov;
     float _farClip;
     unsigned int _rttResolution;

@@ -335,6 +335,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                     "z": Number(cube.userData.rotz)
                 },
                 "far_clip": Number(cube.userData.far_clip),
+                "dome_yaw": Number(cube.userData.dome_yaw),
                 "fov": Number(cube.userData.fov),
                 "morph_mesh": cube.userData.morphMesh
             };
@@ -627,6 +628,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             object.userData.viewport_pos = preset.viewport_pos;
             object.userData.offset_position = preset.offset_position;
             object.userData.offset_rotation = preset.offset_rotation;
+            object.userData.dome_yaw = preset.dome_yaw;
 
             var vertices = [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],

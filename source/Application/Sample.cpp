@@ -306,6 +306,7 @@ Node *Sample::CreateDomeCamera(Projection p)
     Node *domeNode = sceneDome_->CreateChild("VIRTUAL_DOME", LOCAL);
     StaticModel *domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
+    domeNode->SetRotation(Urho3D::Quaternion(0.0f, p._domeYaw,0.0f));
     _virtualDomes.push_back(domeNode); // save for later referencing
 
     // create the grid for the virtual dome
@@ -647,7 +648,7 @@ Node *Sample::CreateDomeCamera(Projection p)
         m->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
         Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
-            Urho3D::String("/home/aramis/go/src/github.com/AramisHM/Domefy/bin/Data/Dome/Aid/"
+            Urho3D::String("./Dome/Aid/"
                            "NORTH.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
