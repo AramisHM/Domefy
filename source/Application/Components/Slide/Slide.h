@@ -18,13 +18,13 @@
 #include <Math/vector3.h>
 #include <iostream>
 #include <string>
-#include <vector>  // c++ standar vector calss
+#include <vector> // c++ standar vector calss
 
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
-#include <Application/SlideReader/SlideReader.h>  // TODO: refactor this cllass to SlideReader
+#include <Application/SlideReader/SlideReader.h> // TODO: refactor this cllass to SlideReader
 #include <Urho3D/Scene/LogicComponent.h>
 using namespace Urho3D;
 using namespace fpmed;
@@ -38,41 +38,42 @@ using namespace fpmed;
 
 /// Custom logic component: Used to load and display slides in the 3D
 /// scene of the application
-class Slide : public LogicComponent {
+class Slide : public LogicComponent
+{
     // Must do this to register your class componenet
     URHO3D_OBJECT(Slide, LogicComponent);
 
-   private:
+private:
     // the slide reader, reads files and convert info that we can bring to our
     // 3D application
     fpmed::Slides slideReader;
 
     // this holds the individual slides materials
-    Material* slidesMaterialArray[MAX_SLIDE_COUNT];
+    Material *slidesMaterialArray[MAX_SLIDE_COUNT];
 
     // the texts for interest points (they float arroud the scene, its a
     // prototype)
     // TODO: move it to it own componenet
-    Node* interestPointTexts_[1024];
+    Node *interestPointTexts_[1024];
 
     // slideNode is a secondary reference that we place ontop of the camera
     // node. So it can move arround the camera's node
-    Node* slideNode;
+    Node *slideNode;
 
     // slideGrabbableUI - We use this to move the slide arround the camera node,
     // accordingly to a spheric coordinate system
-    GrabbableUI* slideGrabbableUI;
+    GrabbableUI *slideGrabbableUI;
 
     // slideModel - the master-slide model reference, used for swap slides on
     // the fly. Saves use one step, had we try to get it by the node children.
-    StaticModel* slideModel;
+    StaticModel *slideModel;
 
     // Simple indicator of wich slide we currently are.
     int currentSlideIndex;
 
-   public:
+public:
     // Slide - The constructor
-    Slide(Context* context);
+    Slide(Context *context);
     // ~Slide - The destructor
     ~Slide();
     // CreateSlide - Load data and creates the slide model into the root node
@@ -82,7 +83,10 @@ class Slide : public LogicComponent {
     virtual void Update(float timeStep) override;
 
     // Passes the data to GrabbableUI to apply movement and momentum
-    void ApplyMouseMove(Vec2<int> d);
+    void ApplyMouseMoveLegacy(Vec2<int> d);
+    // Passes the data to GrabbableUI to apply movement and momentum with Urho3D's IntVector2
+    void ApplyMouseMove(Urho3D::IntVector2 d);
+    void SetZoom(float zoom);
 
     // Go to next slide
     void NextSlide();

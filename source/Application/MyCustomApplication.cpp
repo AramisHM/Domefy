@@ -32,11 +32,9 @@ void MyCustomApplication::RegisterCustomScriptAPI()
     context_->RegisterFactory<SlideTransitionAnimatior>();
     TVComponent::RegisterObject(context_); // alternative way to do this
 
-    // Register custom Urho3D componenets
-
+    // Register custom Urho3D componenets on scripting engine
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
     // VHP
-
     // TODO: move this registration to a separated file!!!
     RegisterComponent<VHP>(engine, "VHP");
     engine->RegisterObjectMethod("VHP", "void CreateModel(String&in)",
@@ -51,6 +49,18 @@ void MyCustomApplication::RegisterCustomScriptAPI()
                                  asMETHOD(VHP, SetCoronalCut), asCALL_THISCALL);
     engine->RegisterObjectMethod("VHP", "void SetAxialCut(float, float)",
                                  asMETHOD(VHP, SetAxialCut), asCALL_THISCALL);
+    // Slides
+    RegisterComponent<Slide>(engine, "Slide");
+    engine->RegisterObjectMethod("Slide", "void CreateSlide(String&in)",
+                                 asMETHOD(Slide, CreateSlide), asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void ApplyMouseMove(IntVector2&in)",
+                                 asMETHOD(Slide, ApplyMouseMove), asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void NextSlide()",
+                                 asMETHOD(Slide, NextSlide), asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void PreviousSlide()",
+                                 asMETHOD(Slide, PreviousSlide), asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void SetZoom(float)",
+                                 asMETHOD(Slide, SetZoom), asCALL_THISCALL);
 
     // Registers custom C++ class in AngelScript and pass a class instance
     // (singleton)
@@ -123,6 +133,10 @@ void MyCustomApplication::CreateScene()
         renderer->SetViewport(aux, tempViewport);
         ++aux;
     }
+
+    // // Howdy, slides goes here partner.
+    // this->slideComponent = cameraNode_->CreateComponent<Slide>();
+    // slideComponent->CreateSlide(Urho3D::String("./presentation/set.xml"));
 }
 
 std::vector<std::string> split(std::string strToSplit, char delimeter)
@@ -178,6 +192,13 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 {
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
+
+    Input *input = GetSubsystem<Input>();
+    // if (input->GetKeyDown(KEY_F))
+    // {
+    //     IntVector2 md = input->GetMouseMove();
+    //     slideComponent->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
+    // }
 
     // external commands
     {

@@ -1,0 +1,93 @@
+<!--
+File: controller.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Friday, 9th August 2019 8:28:35 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Friday, 9th August 2019 8:29:03 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+
+
+<!DOCTYPE html>
+<html>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="HandheldFriendly" content="true" />
+    <!-- embanded css classes in the html file -->
+    <style>
+        /* class to disable scrolling in the page */
+        .noScroll {
+            overflow-y: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* The region with for the touch enabled input */
+        .joystick {
+            width: 200px;
+            height: 200px;
+            border: 1px solid;
+
+            z-index: 2;
+        }
+
+        .large-buttom {
+            width: auto;
+            height: 75px;
+        }
+    </style>
+
+    <body class="noScroll">
+        <table style="width:100%">
+            <tr>
+                <th>Move Slide</th>
+                <th></th>
+                <th>View</th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="joystick"
+                        ontouchstart="RegisterTouchStartSliderStick3(event)"
+                        ontouchmove="
+                        MoveSlide(event)">
+                        <img id="stick3" style="position:absolute"
+                            src=" ../../assets/images/marker.png">
+                        </img>
+                    </div>
+                </td>
+                <td>
+                    <button ontouchstart="PreviousSlide()" type="button"
+                        class="large-buttom"> Previous slide </button>
+
+                </td>
+                <td>
+                    <button ontouchstart="NextSlide()" type="button"
+                        class="large-buttom"> Next slide </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ZOOM: <input type="range" id="slideZoom" min="1" max="100"
+                        value="100" style="width: 100%" oninput="
+                        SlideZoom(this.value)">
+                </td>
+                <td>Empty</td>
+                <td>Empty</td>
+            </tr>
+        </table>
+
+
+
+        <!-- utilities for sending ajax etc -->
+        <script type="text/javascript" src="../config.js"></script>
+        <script type="text/javascript" src="../domefy/utils.js"></script>
+        <script src="../jquery/jquery.min.js"></script>
+        <script src="controller.js"></script>
+        <script src="slider.js"></script>
+    </body>
+
+</html>

@@ -13,46 +13,48 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
-namespace Urho3D {
+namespace Urho3D
+{
 class Button;
 class Connection;
 class Scene;
 class Text;
 class UIElement;
-}  // namespace Urho3D
+} // namespace Urho3D
 
-class MyCustomApplication : public Sample {
+class MyCustomApplication : public Sample
+{
     URHO3D_OBJECT(MyCustomApplication, Sample);
 
-   public:
-    MyCustomApplication(Context* context);
+public:
+    MyCustomApplication(Context *context);
     void Start();
     void Stop();
     void CreateScene();
     void MoveCamera(float timeStep);
-    void HandleUpdates(StringHash eventType, VariantMap& eventData);
+    void HandleUpdates(StringHash eventType, VariantMap &eventData);
     void updateCameraPosition();
     void updateRemoteControls();
-
+    Slide *slideComponent;
     // Registers the custom componenets and other functions taht are not natively distributed with Urho3D.
     void RegisterCustomScriptAPI();
 
-   protected:
+protected:
     /* this will be used to show the debug info of this prototype app */
-    Urho3D::Text* debTex;
+    Urho3D::Text *debTex;
 
     // The viewer node itself, contains a sub-node named "ViewerModel" with the
     // model
     // Node* viewerNode;
-    GrabbableUI* viewerGrab;
+    GrabbableUI *viewerGrab;
     // The anatomic viewer componenet
-    AnatomicViewer* anatomicViewer;
+    // AnatomicViewer *anatomicViewer;
     // Camera Grabbable
-    GrabbableUI* cameraGrab;
+    GrabbableUI *cameraGrab;
     // Visible Human Project Component - The actual model
-    VHP* vhp;
-    GrabbableUI* slideGrab;
-// experimental, used for OGV videos feature
-    CLevelData* level;  
+    VHP *vhp;
+    GrabbableUI *slideGrab;
+    // experimental, used for OGV videos feature
+    CLevelData *level;
 };
 #endif

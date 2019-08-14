@@ -20,6 +20,7 @@ const float CAMERA_MAX_DIST = 20.0f;
 float cameraDistance = 5.0;
 
 Node @characterNode;
+Slide @slideComp;
 
 class Character : ScriptObject
 {
@@ -212,6 +213,26 @@ class Fpmed : ScriptObject
             log.Info(str);
             character.controls.Set(CTRL_JUMP, true);
         }
+        if (cmds[0] == "SLIDEMOVE")
+        {
+            log.Info(str);
+            slideComp.ApplyMouseMove(IntVector2(cmds[1].ToFloat() * 75.0f, cmds[2].ToFloat() * 75.0f));
+        }
+        if (cmds[0] == "SLIDEZOOM")
+        {
+            log.Info(str);
+            slideComp.SetZoom(cmds[1].ToFloat() / 5.0f);
+        }
+        if (cmds[0] == "NEXTSLIDE")
+        {
+            log.Info(str);
+            slideComp.NextSlide();
+        }
+        if (cmds[0] == "PREVIOUSSLIDE")
+        {
+            log.Info(str);
+            slideComp.PreviousSlide();
+        }
     }
 
     void FpmedStart()
@@ -292,6 +313,9 @@ class Fpmed : ScriptObject
         ambientSound.looped = true;
         musicSource.gain = 0.6f;
         //ambientSource.Play(ambientSound);
+
+        slideComp = cameraNode.CreateComponent("Slide");
+        slideComp.CreateSlide("./presentation/set.xml");
     }
 
     void CreateCharacter()
