@@ -9,12 +9,12 @@
     "win32": "./Data/FakeVHD/test-set.json"
   },
   "window_position": {
-    "x": 20,
-    "y": 20
+    "x": 0,
+    "y": 0
   },
   "master_resolution": {
-    "x": 1400,
-    "y": 875
+    "x": 1200,
+    "y": 768
   },
   "presets_file": "./presets/default.json"
 }

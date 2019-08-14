@@ -649,7 +649,7 @@ Node *Sample::CreateDomeCamera(Projection p)
             0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
         Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
             Urho3D::String("./Dome/Aid/"
-                           "NORTH.png"));
+                           "SOUTH.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
 #else
