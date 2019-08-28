@@ -180,6 +180,7 @@ void Sample::CreateConsoleAndDebugHud()
     // Create debug HUD.
     DebugHud *debugHud = engine_->CreateDebugHud();
     debugHud->SetDefaultStyle(xmlFile);
+    // console->SetVisible(true);
 }
 
 void Sample::HandleKeyDown(StringHash eventType, VariantMap &eventData)
@@ -306,7 +307,7 @@ Node *Sample::CreateDomeCamera(Projection p)
     Node *domeNode = sceneDome_->CreateChild("VIRTUAL_DOME", LOCAL);
     StaticModel *domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
-    domeNode->SetRotation(Urho3D::Quaternion(0.0f, p._domeYaw,0.0f));
+    domeNode->SetRotation(Urho3D::Quaternion(0.0f, p._domeYaw, 0.0f));
     _virtualDomes.push_back(domeNode); // save for later referencing
 
     // create the grid for the virtual dome

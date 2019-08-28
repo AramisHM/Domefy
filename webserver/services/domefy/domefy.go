@@ -153,7 +153,8 @@ func GetThisMachineIpAddresses() string {
 
 	selected := 0
 	scanner := bufio.NewScanner(os.Stdin)
-	for {
+	nTriesToScan := 3 // this is to prevent infinite loop...
+	for nTriesToScan > 0 {
 
 		if scanner.Scan() {
 			// fmt.Println(scanner.Text())
@@ -161,13 +162,15 @@ func GetThisMachineIpAddresses() string {
 		}
 
 		if selected < 1 || selected > len(ips) {
-			fmt.Println("Invalid IP selected... please try again... Here is the list of IPs:")
+			nTriesToScan--
+			fmt.Println("Invalid IP selected... ", nTriesToScan, " tries left... please try again... Here is the list of IPs:")
 			printIPs(ips)
 		} else {
 			selected-- // 1 indexed to 0 indexed
 			break
 		}
 	}
+	selected = 1 // default 127.0.0.1
 
 	fmt.Println("Selected Network Interface with IP", ips[selected])
 
@@ -182,7 +185,7 @@ func GetThisMachineIpAddresses() string {
 	respective Network aswell.
 	`, adminURL)
 
-	// TODO: parametrizate all the variables
+	// TODO: Parametrizate all the variables
 
 	// write the configuration file with the selected ip address
 	dataBytes, _ := ioutil.ReadFile("./frontwebapp/static/config.js.template")

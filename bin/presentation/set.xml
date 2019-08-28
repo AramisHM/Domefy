@@ -3,7 +3,7 @@
 			<info name="generated in slide-indexer" author="generated in slide-indexer" description="generated in slide-indexer" thumbnail="thumbnail.png"/>
 
 			<SlideGroup description = "Things 1" position="1.0f, 1.0f, 1.0f"/>
-		
+<!-- 		
 				<Slide img_file ="./out1.xml"/>
                 <Slide img_file ="./out2.xml"/>
                 <Slide img_file ="./out3.xml"/>
@@ -45,7 +45,7 @@
 				<Slide img_file ="./out39.xml"/>
 				<Slide img_file ="./out40.xml"/>
 				<Slide img_file ="./out41.xml"/>
-				<Slide img_file ="./out42.xml"/>
+				<Slide img_file ="./out42.xml"/> -->
 				
 			</SlideGroup>
 		</FDS>

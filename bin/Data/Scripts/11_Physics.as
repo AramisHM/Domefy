@@ -49,19 +49,16 @@ class Fpmed : ScriptObject
         //log.Info(str);
         if (cmds[0] == "LEFT_MOUSE")
         {
-            SetPathPoint(false);
         }
         if (cmds[0] == "MIDDLE_MOUSE")
         {
-            AddOrRemoveObject();
         }
         if (cmds[0] == "SPACEBAR")
         {
-            drawDebug = !drawDebug;
+            // drawDebug = !drawDebug;
         }
         if (cmds[0] == "ADDACTOR")
         {
-            SetPathPoint(true);
         }
     }
     void FpmedStart()
@@ -87,7 +84,7 @@ class Fpmed : ScriptObject
 
     void CreateScene()
     {
-        scene_ = Scene();
+        scene_ = node;
 
         // Create octree, use default volume (-1000, -1000, -1000) to (1000, 1000, 1000)
         // Create a physics simulation world with default parameters, which will update at 60fps. Like the Octree must
@@ -171,8 +168,8 @@ class Fpmed : ScriptObject
 
         // Create the camera. Set far clip to match the fog. Note: now we actually create the camera node outside
         // the scene, because we want it to be unaffected by scene load / save
-        cameraNode = Node();
-        Camera @camera = cameraNode.CreateComponent("Camera");
+        cameraNode = scene_.GetChild("CameRef");
+        Camera @camera = cameraNode.GetComponent("Camera");
         camera.farClip = 500.0f;
 
         // Set an initial position for the camera scene node above the floor
