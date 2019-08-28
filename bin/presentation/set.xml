@@ -4,10 +4,49 @@
 
 			<SlideGroup description = "Things 1" position="1.0f, 1.0f, 1.0f"/>
 		
-				<Slide img_file ="./presentation/1.xml"/>
-				<Slide img_file ="./presentation/2.xml"/>
-				<Slide img_file ="./presentation/3 #1.xml"/>
-				<Slide img_file ="./presentation/3.xml"/>
+				<Slide img_file ="./out1.xml"/>
+                <Slide img_file ="./out2.xml"/>
+                <Slide img_file ="./out3.xml"/>
+                <Slide img_file ="./out4.xml"/>
+                <Slide img_file ="./out5.xml"/>
+				<Slide img_file ="./out6.xml"/>
+				<Slide img_file ="./out7.xml"/>
+				<Slide img_file ="./out8.xml"/>
+				<Slide img_file ="./out9.xml"/>
+				<Slide img_file ="./out10.xml"/>
+				<Slide img_file ="./out11.xml"/>
+				<Slide img_file ="./out12.xml"/>
+				<Slide img_file ="./out13.xml"/>
+				<Slide img_file ="./out14.xml"/>
+				<Slide img_file ="./out15.xml"/>
+				<Slide img_file ="./out16.xml"/>
+				<Slide img_file ="./out17.xml"/>
+				<Slide img_file ="./out18.xml"/>
+				<Slide img_file ="./out19.xml"/>
+				<Slide img_file ="./out20.xml"/>
+				<Slide img_file ="./out21.xml"/>
+				<Slide img_file ="./out22.xml"/>
+				<Slide img_file ="./out23.xml"/>
+				<Slide img_file ="./out24.xml"/>
+				<Slide img_file ="./out25.xml"/>
+				<Slide img_file ="./out26.xml"/>
+				<Slide img_file ="./out27.xml"/>
+				<Slide img_file ="./out28.xml"/>
+				<Slide img_file ="./out29.xml"/>
+				<Slide img_file ="./out30.xml"/>
+				<Slide img_file ="./out31.xml"/>
+				<Slide img_file ="./out32.xml"/>
+				<Slide img_file ="./out33.xml"/>
+				<Slide img_file ="./out34.xml"/>
+				<Slide img_file ="./out35.xml"/>
+				<Slide img_file ="./out36.xml"/>
+				<Slide img_file ="./out37.xml"/>
+				<Slide img_file ="./out38.xml"/>
+				<Slide img_file ="./out39.xml"/>
+				<Slide img_file ="./out40.xml"/>
+				<Slide img_file ="./out41.xml"/>
+				<Slide img_file ="./out42.xml"/>
+				
 			</SlideGroup>
 		</FDS>
 		

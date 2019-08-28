@@ -1,6 +1,7 @@
 package domefy
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,9 +12,13 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
+	"strings"
 
 	"github.com/AramisHM/Domefy/webserver/config"
+	"github.com/AramisHM/Domefy/webserver/logger"
 	"github.com/AramisHM/Domefy/webserver/rest"
+	"github.com/mdp/qrterminal"
 
 	"github.com/gin-gonic/gin"
 )
@@ -102,14 +107,22 @@ func SaveCalibrationParameters(c *gin.Context) {
 	c.JSON(http.StatusOK, "done")
 }
 
-// GetThisMAchineIpAddres - Returns the string with this machine IP address
-func GetThisMAchineIpAddres() string {
+func printIPs(ips []string) {
+	for i, ip := range ips {
+		fmt.Println(i+1, " ", ip)
+	}
+}
+
+// GetThisMachineIpAddresses - Returns the string with this machine IP address
+func GetThisMachineIpAddresses() string {
 	ifaces, err := net.Interfaces()
 
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
+
+	ips := make([]string, 1)
 
 	// handle err
 	for _, i := range ifaces {
@@ -125,10 +138,61 @@ func GetThisMAchineIpAddres() string {
 				ip = v.IP
 			}
 			// process IP address
-			fmt.Println(ip)
+			// fmt.Println(ip)
+			ips = append(ips, ip.String())
 		}
 	}
-	return ""
+	fmt.Println("The available Network interface IPs are:")
+	printIPs(ips)
+	fmt.Printf("Please, select one of these with a number from 1 to %d according to the order printed above.\n", len(ips))
+
+	if len(ips) == 0 {
+		fmt.Println("Your computer seems to have no Network Interface, this application is of no use without Network Interfaces. Exiting")
+		os.Exit(-142) // Some random number just to aid debugging
+	}
+
+	selected := 0
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+
+		if scanner.Scan() {
+			// fmt.Println(scanner.Text())
+			selected, _ = strconv.Atoi(scanner.Text())
+		}
+
+		if selected < 1 || selected > len(ips) {
+			fmt.Println("Invalid IP selected... please try again... Here is the list of IPs:")
+			printIPs(ips)
+		} else {
+			selected-- // 1 indexed to 0 indexed
+			break
+		}
+	}
+
+	fmt.Println("Selected Network Interface with IP", ips[selected])
+
+	adminURL := fmt.Sprintf("http://%s:%d/%s", ips[selected], 3000, "custom_pages/admin/admin.html")
+	qrterminal.Generate(adminURL, qrterminal.L, os.Stdout)
+	fmt.Printf(`
+	%s
+	Use the QR code above to open
+	the administration page on the browser.
+	Note that if the IP is local,
+	you should be connected to the
+	respective Network aswell.
+	`, adminURL)
+
+	// TODO: parametrizate all the variables
+
+	// write the configuration file with the selected ip address
+	dataBytes, _ := ioutil.ReadFile("./frontwebapp/static/config.js.template")
+	newData := strings.Replace((string)(dataBytes), "{{.thisMachineIP}}", ips[selected], -1)
+	d1 := []byte(newData)
+	ioerr := ioutil.WriteFile("./frontwebapp/static/config.js", d1, 0644)
+	logger.CheckErr(ioerr)
+	fmt.Println("WriteFile err: ", ioerr)
+
+	return ips[selected]
 }
 
 // RunDomefy - Runs a Domefy instance
