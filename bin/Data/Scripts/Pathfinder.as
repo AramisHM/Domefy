@@ -227,13 +227,7 @@ class Fpmed : ScriptObject
         // Construct new Text object, set string to display and font to use
         Text @instructionText = ui.root.CreateChild("Text", INSTRUCTION);
         instructionText.text =
-            "Use WASD keys to move, RMB to rotate view\n"
-            "LMB to set destination, SHIFT+LMB to spawn a Jack\n"
-            "MMB or O key to add obstacles or remove obstacles/agents\n"
-            "F5 to save scene, F7 to load\n"
-            "Tab to toggle navigation mesh streaming\n"
-            "Space to toggle debug geometry\n"
-            "F12 to toggle this instruction text";
+            "";
         instructionText.SetFont(cache.GetResource("Font", "Fonts/Anonymous Pro.ttf"), 15);
         // The text has multiple rows. Center them in relation to each other
         instructionText.textAlignment = HA_CENTER;

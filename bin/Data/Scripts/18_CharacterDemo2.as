@@ -263,15 +263,6 @@ class Fpmed : ScriptObject
         zone.fogStart = 5800.0f;
         zone.fogEnd = 6000.0f;
 
-        XMLFile @space =
-            cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
-        XMLFile @ship =
-            cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
-        // Node @spaceshipPrefab = scene.InstantiateXML(
-        //     space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-        // Node @spaceScenePrefab = scene.InstantiateXML(
-        //     ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-
         // Create a directional light to the world. Enable cascaded shadows on
         // it
         Node @lightNode = scene_.CreateChild("DirectionalLight");
@@ -313,6 +304,58 @@ class Fpmed : ScriptObject
         ambientSound.looped = true;
         musicSource.gain = 0.6f;
         //ambientSource.Play(ambientSound);
+
+        // Create mushrooms of varying sizes
+        const uint NUM_MUSHROOMS = 60;
+        for (uint i = 0; i < NUM_MUSHROOMS; ++i)
+        {
+            Node @objectNode = scene_.CreateChild("Mushroom");
+            objectNode.position = Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
+            objectNode.rotation = Quaternion(0.0f, Random(360.0f), 0.0f);
+            objectNode.SetScale(2.0f + Random(5.0f));
+            StaticModel @object = objectNode.CreateComponent("StaticModel");
+            object.model = cache.GetResource("Model", "Models/Mushroom.mdl");
+            object.material = cache.GetResource("Material", "Materials/Mushroom.xml");
+            object.castShadows = true;
+
+            RigidBody @body = objectNode.CreateComponent("RigidBody");
+            body.collisionLayer = 2;
+            CollisionShape @shape = objectNode.CreateComponent("CollisionShape");
+            shape.SetTriangleMesh(object.model, 0);
+        }
+
+        // Create movable boxes. Let them fall from the sky at first
+        const uint NUM_BOXES = 100;
+        for (uint i = 0; i < NUM_BOXES; ++i)
+        {
+            float scale = Random(2.0f) + 0.5f;
+
+            Node @objectNode = scene_.CreateChild("Box");
+            objectNode.position = Vector3(Random(180.0f) - 90.0f, Random(10.0f) + 10.0f, Random(180.0f) - 90.0f);
+            objectNode.rotation = Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
+            objectNode.SetScale(scale);
+            StaticModel @object = objectNode.CreateComponent("StaticModel");
+            object.model = cache.GetResource("Model", "Models/Box.mdl");
+            object.material = cache.GetResource("Material", "Materials/Stone.xml");
+            object.castShadows = true;
+
+            RigidBody @body = objectNode.CreateComponent("RigidBody");
+            body.collisionLayer = 2;
+            // Bigger boxes will be heavier and harder to move
+            body.mass = scale * 2.0f;
+            CollisionShape @shape = objectNode.CreateComponent("CollisionShape");
+            shape.SetBox(Vector3::ONE);
+        }
+
+        // load prefab
+        XMLFile @space =
+            cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
+        XMLFile @ship =
+            cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
+        Node @spaceshipPrefab = scene.InstantiateXML(
+            space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        //Node @spaceScenePrefab = scene.InstantiateXML(
+        //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
         slideComp = cameraNode.CreateComponent("Slide");
         slideComp.CreateSlide("./presentation/set.xml");

@@ -40,18 +40,18 @@ void CreateScene()
     scene_.CreateComponent("DebugRenderer");
 
     // Create a Zone component for ambient lighting & fog control
-    Node@ zoneNode = scene_.CreateChild("Zone");
-    Zone@ zone = zoneNode.CreateComponent("Zone");
+    Node @zoneNode = scene_.CreateChild("Zone");
+    Zone @zone = zoneNode.CreateComponent("Zone");
     zone.boundingBox = BoundingBox(-1000.0f, 1000.0f);
-    zone.ambientColor = Color(0.15f, 0.15f, 0.15f);
+    zone.ambientColor = Color(0.85f, 0.85f, 0.85f);
     zone.fogColor = Color(0.5f, 0.5f, 0.7f);
     zone.fogStart = 100.0f;
     zone.fogEnd = 300.0f;
 
     // Create a directional light to the world. Enable cascaded shadows on it
-    Node@ lightNode = scene_.CreateChild("DirectionalLight");
+    Node @lightNode = scene_.CreateChild("DirectionalLight");
     lightNode.direction = Vector3(0.6f, -1.0f, 0.8f);
-    Light@ light = lightNode.CreateComponent("Light");
+    Light @light = lightNode.CreateComponent("Light");
     light.lightType = LIGHT_DIRECTIONAL;
     light.castShadows = true;
     light.shadowBias = BiasParameters(0.00025f, 0.5f);
@@ -60,19 +60,19 @@ void CreateScene()
 
     {
         // Create a floor object, 500 x 500 world units. Adjust position so that the ground is at zero Y
-        Node@ floorNode = scene_.CreateChild("Floor");
+        Node @floorNode = scene_.CreateChild("Floor");
         floorNode.position = Vector3(0.0f, -0.5f, 0.0f);
         floorNode.scale = Vector3(500.0f, 1.0f, 500.0f);
-        StaticModel@ floorObject = floorNode.CreateComponent("StaticModel");
+        StaticModel @floorObject = floorNode.CreateComponent("StaticModel");
         floorObject.model = cache.GetResource("Model", "Models/Box.mdl");
         floorObject.material = cache.GetResource("Material", "Materials/StoneTiled.xml");
 
         // Make the floor physical by adding RigidBody and CollisionShape components
-        RigidBody@ body = floorNode.CreateComponent("RigidBody");
+        RigidBody @body = floorNode.CreateComponent("RigidBody");
         // We will be spawning spherical objects in this sample. The ground also needs non-zero rolling friction so that
         // the spheres will eventually come to rest
         body.rollingFriction = 0.15f;
-        CollisionShape@ shape = floorNode.CreateComponent("CollisionShape");
+        CollisionShape @shape = floorNode.CreateComponent("CollisionShape");
         // Set a box shape of size 1 x 1 x 1 for collision. The shape will be scaled with the scene node scale, so the
         // rendering and physics representation sizes should match (the box model is also 1 x 1 x 1.)
         shape.SetBox(Vector3::ONE);
@@ -83,10 +83,10 @@ void CreateScene()
     {
         for (int x = -4; x <= 4; ++x)
         {
-            Node@ modelNode = scene_.CreateChild("Jack");
+            Node @modelNode = scene_.CreateChild("Jack");
             modelNode.position = Vector3(x * 5.0f, 0.0f, z * 5.0f);
             modelNode.rotation = Quaternion(0.0f, 180.0f, 0.0f);
-            AnimatedModel@ modelObject = modelNode.CreateComponent("AnimatedModel");
+            AnimatedModel @modelObject = modelNode.CreateComponent("AnimatedModel");
             modelObject.model = cache.GetResource("Model", "Models/Jack.mdl");
             modelObject.material = cache.GetResource("Material", "Materials/Jack.xml");
             modelObject.castShadows = true;
@@ -96,11 +96,11 @@ void CreateScene()
 
             // Create a rigid body and a collision shape. These will act as a trigger for transforming the
             // model into a ragdoll when hit by a moving object
-            RigidBody@ body = modelNode.CreateComponent("RigidBody");
+            RigidBody @body = modelNode.CreateComponent("RigidBody");
             // The trigger mode makes the rigid body only detect collisions, but impart no forces on the
             // colliding objects
             body.trigger = true;
-            CollisionShape@ shape = modelNode.CreateComponent("CollisionShape");
+            CollisionShape @shape = modelNode.CreateComponent("CollisionShape");
             // Create the capsule shape with an offset so that it is correctly aligned with the model, which
             // has its origin at the feet
             shape.SetCapsule(0.7f, 2.0f, Vector3(0.0f, 1.0f, 0.0f));
@@ -113,7 +113,7 @@ void CreateScene()
     // Create the camera. Limit far clip distance to match the fog. Note: now we actually create the camera node outside
     // the scene, because we want it to be unaffected by scene load / save
     cameraNode = Node();
-    Camera@ camera = cameraNode.CreateComponent("Camera");
+    Camera @camera = cameraNode.CreateComponent("Camera");
     camera.farClip = 300.0f;
 
     // Set an initial position for the camera scene node above the floor
@@ -123,7 +123,7 @@ void CreateScene()
 void CreateInstructions()
 {
     // Construct new Text object, set string to display and font to use
-    Text@ instructionText = ui.root.CreateChild("Text");
+    Text @instructionText = ui.root.CreateChild("Text");
     instructionText.text =
         "Use WASD keys and mouse to move\n"
         "LMB to spawn physics objects\n"
@@ -142,7 +142,7 @@ void CreateInstructions()
 void SetupViewport()
 {
     // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
-    Viewport@ viewport = Viewport(scene_, cameraNode.GetComponent("Camera"));
+    Viewport @viewport = Viewport(scene_, cameraNode.GetComponent("Camera"));
     renderer.viewports[0] = viewport;
 }
 
@@ -209,19 +209,19 @@ void MoveCamera(float timeStep)
 
 void SpawnObject()
 {
-    Node@ boxNode = scene_.CreateChild("Sphere");
+    Node @boxNode = scene_.CreateChild("Sphere");
     boxNode.position = cameraNode.position;
     boxNode.rotation = cameraNode.rotation;
     boxNode.SetScale(0.25f);
-    StaticModel@ boxObject = boxNode.CreateComponent("StaticModel");
+    StaticModel @boxObject = boxNode.CreateComponent("StaticModel");
     boxObject.model = cache.GetResource("Model", "Models/Sphere.mdl");
     boxObject.material = cache.GetResource("Material", "Materials/StoneSmall.xml");
     boxObject.castShadows = true;
 
-    RigidBody@ body = boxNode.CreateComponent("RigidBody");
+    RigidBody @body = boxNode.CreateComponent("RigidBody");
     body.mass = 1.0f;
     body.rollingFriction = 0.15f;
-    CollisionShape@ shape = boxNode.CreateComponent("CollisionShape");
+    CollisionShape @shape = boxNode.CreateComponent("CollisionShape");
     shape.SetSphere(1.0f);
 
     const float OBJECT_VELOCITY = 10.0f;
@@ -231,7 +231,7 @@ void SpawnObject()
     body.linearVelocity = cameraNode.rotation * Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY;
 }
 
-void HandleUpdate(StringHash eventType, VariantMap& eventData)
+void HandleUpdate(StringHash eventType, VariantMap &eventData)
 {
     // Take the frame time step, which is stored as a float
     float timeStep = eventData["TimeStep"].GetFloat();
@@ -240,7 +240,7 @@ void HandleUpdate(StringHash eventType, VariantMap& eventData)
     MoveCamera(timeStep);
 }
 
-void HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
+void HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData)
 {
     // If draw debug mode is enabled, draw physics debug geometry. Use depth test to make the result easier to interpret
     if (drawDebug)
@@ -256,10 +256,10 @@ class CreateRagdoll : ScriptObject
         SubscribeToEvent(node, "NodeCollision", "HandleNodeCollision");
     }
 
-    void HandleNodeCollision(StringHash eventType, VariantMap& eventData)
+    void HandleNodeCollision(StringHash eventType, VariantMap &eventData)
     {
         // Get the other colliding body, make sure it is moving (has nonzero mass)
-        RigidBody@ otherBody = eventData["OtherBody"].GetPtr();
+        RigidBody @otherBody = eventData["OtherBody"].GetPtr();
 
         if (otherBody.mass > 0.0f)
         {
@@ -269,53 +269,53 @@ class CreateRagdoll : ScriptObject
 
             // Create RigidBody & CollisionShape components to bones
             CreateRagdollBone("Bip01_Pelvis", SHAPE_BOX, Vector3(0.3f, 0.2f, 0.25f), Vector3(0.0f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 0.0f));
+                              Quaternion(0.0f, 0.0f, 0.0f));
             CreateRagdollBone("Bip01_Spine1", SHAPE_BOX, Vector3(0.35f, 0.2f, 0.3f), Vector3(0.15f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 0.0f));
+                              Quaternion(0.0f, 0.0f, 0.0f));
             CreateRagdollBone("Bip01_L_Thigh", SHAPE_CAPSULE, Vector3(0.175f, 0.45f, 0.175f), Vector3(0.25f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_R_Thigh", SHAPE_CAPSULE, Vector3(0.175f, 0.45f, 0.175f), Vector3(0.25f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_L_Calf", SHAPE_CAPSULE, Vector3(0.15f, 0.55f, 0.15f), Vector3(0.25f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_R_Calf", SHAPE_CAPSULE, Vector3(0.15f, 0.55f, 0.15f), Vector3(0.25f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_Head", SHAPE_BOX, Vector3(0.2f, 0.2f, 0.2f), Vector3(0.1f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 0.0f));
+                              Quaternion(0.0f, 0.0f, 0.0f));
             CreateRagdollBone("Bip01_L_UpperArm", SHAPE_CAPSULE, Vector3(0.15f, 0.35f, 0.15f), Vector3(0.1f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_R_UpperArm", SHAPE_CAPSULE, Vector3(0.15f, 0.35f, 0.15f), Vector3(0.1f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_L_Forearm", SHAPE_CAPSULE, Vector3(0.125f, 0.4f, 0.125f), Vector3(0.2f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
             CreateRagdollBone("Bip01_R_Forearm", SHAPE_CAPSULE, Vector3(0.125f, 0.4f, 0.125f), Vector3(0.2f, 0.0f, 0.0f),
-                Quaternion(0.0f, 0.0f, 90.0f));
+                              Quaternion(0.0f, 0.0f, 90.0f));
 
             // Create Constraints between bones
             CreateRagdollConstraint("Bip01_L_Thigh", "Bip01_Pelvis", CONSTRAINT_CONETWIST, Vector3::BACK,
-                Vector3::FORWARD, Vector2(45.0f, 45.0f), Vector2::ZERO);
+                                    Vector3::FORWARD, Vector2(45.0f, 45.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_R_Thigh", "Bip01_Pelvis", CONSTRAINT_CONETWIST, Vector3::BACK,
-                Vector3::FORWARD, Vector2(45.0f, 45.0f), Vector2::ZERO);
+                                    Vector3::FORWARD, Vector2(45.0f, 45.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_L_Calf", "Bip01_L_Thigh", CONSTRAINT_HINGE, Vector3::BACK,
-                Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
+                                    Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_R_Calf", "Bip01_R_Thigh", CONSTRAINT_HINGE, Vector3::BACK,
-                Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
+                                    Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_Spine1", "Bip01_Pelvis", CONSTRAINT_HINGE, Vector3::FORWARD,
-                Vector3::FORWARD, Vector2(45.0f, 0.0f), Vector2(-10.0f, 0.0f));
+                                    Vector3::FORWARD, Vector2(45.0f, 0.0f), Vector2(-10.0f, 0.0f));
             CreateRagdollConstraint("Bip01_Head", "Bip01_Spine1", CONSTRAINT_CONETWIST, Vector3::LEFT,
-                Vector3::LEFT, Vector2(0.0f, 30.0f), Vector2::ZERO);
+                                    Vector3::LEFT, Vector2(0.0f, 30.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_L_UpperArm", "Bip01_Spine1", CONSTRAINT_CONETWIST, Vector3::DOWN,
-                Vector3::UP, Vector2(45.0f, 45.0f), Vector2::ZERO, false);
+                                    Vector3::UP, Vector2(45.0f, 45.0f), Vector2::ZERO, false);
             CreateRagdollConstraint("Bip01_R_UpperArm", "Bip01_Spine1", CONSTRAINT_CONETWIST, Vector3::DOWN,
-                Vector3::UP, Vector2(45.0f, 45.0f), Vector2::ZERO, false);
+                                    Vector3::UP, Vector2(45.0f, 45.0f), Vector2::ZERO, false);
             CreateRagdollConstraint("Bip01_L_Forearm", "Bip01_L_UpperArm", CONSTRAINT_HINGE, Vector3::BACK,
-                Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
+                                    Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
             CreateRagdollConstraint("Bip01_R_Forearm", "Bip01_R_UpperArm", CONSTRAINT_HINGE, Vector3::BACK,
-                Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
+                                    Vector3::BACK, Vector2(90.0f, 0.0f), Vector2::ZERO);
 
             // Disable keyframe animation from all bones so that they will not interfere with the ragdoll
-            AnimatedModel@ model = node.GetComponent("AnimatedModel");
-            Skeleton@ skeleton = model.skeleton;
+            AnimatedModel @model = node.GetComponent("AnimatedModel");
+            Skeleton @skeleton = model.skeleton;
             for (uint i = 0; i < skeleton.numBones; ++i)
                 skeleton.bones[i].animated = false;
 
@@ -325,18 +325,18 @@ class CreateRagdoll : ScriptObject
         }
     }
 
-    void CreateRagdollBone(const String&in boneName, ShapeType type, const Vector3&in size, const Vector3&in position,
-        const Quaternion&in rotation)
+    void CreateRagdollBone(const String &in boneName, ShapeType type, const Vector3 &in size, const Vector3 &in position,
+                           const Quaternion &in rotation)
     {
         // Find the correct child scene node recursively
-        Node@ boneNode = node.GetChild(boneName, true);
+        Node @boneNode = node.GetChild(boneName, true);
         if (boneNode is null)
         {
             log.Warning("Could not find bone " + boneName + " for creating ragdoll physics components");
             return;
         }
 
-        RigidBody@ body = boneNode.CreateComponent("RigidBody");
+        RigidBody @body = boneNode.CreateComponent("RigidBody");
         // Set mass to make movable
         body.mass = 1.0f;
         // Set damping parameters to smooth out the motion
@@ -346,7 +346,7 @@ class CreateRagdoll : ScriptObject
         body.linearRestThreshold = 1.5f;
         body.angularRestThreshold = 2.5f;
 
-        CollisionShape@ shape = boneNode.CreateComponent("CollisionShape");
+        CollisionShape @shape = boneNode.CreateComponent("CollisionShape");
         // We use either a box or a capsule shape for all of the bones
         if (type == SHAPE_BOX)
             shape.SetBox(size, position, rotation);
@@ -354,12 +354,12 @@ class CreateRagdoll : ScriptObject
             shape.SetCapsule(size.x, size.y, position, rotation);
     }
 
-    void CreateRagdollConstraint(const String&in boneName, const String&in parentName, ConstraintType type,
-        const Vector3&in axis, const Vector3&in parentAxis, const Vector2&in highLimit, const Vector2&in lowLimit,
-        bool disableCollision = true)
+    void CreateRagdollConstraint(const String &in boneName, const String &in parentName, ConstraintType type,
+                                 const Vector3 &in axis, const Vector3 &in parentAxis, const Vector2 &in highLimit, const Vector2 &in lowLimit,
+                                 bool disableCollision = true)
     {
-        Node@ boneNode = node.GetChild(boneName, true);
-        Node@ parentNode = node.GetChild(parentName, true);
+        Node @boneNode = node.GetChild(boneName, true);
+        Node @parentNode = node.GetChild(parentName, true);
         if (boneNode is null)
         {
             log.Warning("Could not find bone " + boneName + " for creating ragdoll constraint");
@@ -371,7 +371,7 @@ class CreateRagdoll : ScriptObject
             return;
         }
 
-        Constraint@ constraint = boneNode.CreateComponent("Constraint");
+        Constraint @constraint = boneNode.CreateComponent("Constraint");
         constraint.constraintType = type;
         // Most of the constraints in the ragdoll will work better when the connected bodies don't collide against each other
         constraint.disableCollision = disableCollision;
@@ -389,21 +389,21 @@ class CreateRagdoll : ScriptObject
 
 // Create XML patch instructions for screen joystick layout specific to this sample app
 String patchInstructions =
-        "<patch>" +
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />" +
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Spawn</replace>" +
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">" +
-        "        <element type=\"Text\">" +
-        "            <attribute name=\"Name\" value=\"MouseButtonBinding\" />" +
-        "            <attribute name=\"Text\" value=\"LEFT\" />" +
-        "        </element>" +
-        "    </add>" +
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />" +
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Debug</replace>" +
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">" +
-        "        <element type=\"Text\">" +
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />" +
-        "            <attribute name=\"Text\" value=\"SPACE\" />" +
-        "        </element>" +
-        "    </add>" +
-        "</patch>";
+    "<patch>" +
+    "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />" +
+    "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Spawn</replace>" +
+    "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">" +
+    "        <element type=\"Text\">" +
+    "            <attribute name=\"Name\" value=\"MouseButtonBinding\" />" +
+    "            <attribute name=\"Text\" value=\"LEFT\" />" +
+    "        </element>" +
+    "    </add>" +
+    "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />" +
+    "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Debug</replace>" +
+    "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">" +
+    "        <element type=\"Text\">" +
+    "            <attribute name=\"Name\" value=\"KeyBinding\" />" +
+    "            <attribute name=\"Text\" value=\"SPACE\" />" +
+    "        </element>" +
+    "    </add>" +
+    "</patch>";
