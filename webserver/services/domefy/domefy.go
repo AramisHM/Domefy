@@ -170,7 +170,9 @@ func GetThisMachineIpAddresses() string {
 			break
 		}
 	}
-	selected = 1 // default 127.0.0.1
+	if nTriesToScan <= 0 {
+		selected = 1 // default 127.0.0.1
+	}
 
 	fmt.Println("Selected Network Interface with IP", ips[selected])
 

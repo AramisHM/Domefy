@@ -34,6 +34,7 @@ void MyCustomApplication::RegisterCustomScriptAPI()
 
     // Register custom Urho3D componenets on scripting engine
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
+
     // VHP
     // TODO: move this registration to a separated file!!!
     RegisterComponent<VHP>(engine, "VHP");
@@ -61,6 +62,14 @@ void MyCustomApplication::RegisterCustomScriptAPI()
                                  asMETHOD(Slide, PreviousSlide), asCALL_THISCALL);
     engine->RegisterObjectMethod("Slide", "void SetZoom(float)",
                                  asMETHOD(Slide, SetZoom), asCALL_THISCALL);
+
+    // Video // FIXME: The video entire C++ component is bugy, it crashes uppon closing!
+    // Really serious. We neet to kill the process to ganrantee it is really closed
+    // RegisterComponent<Slide>(engine, "TvComponent");
+    // engine->RegisterObjectMethod("TvComponent", "bool OpenFileName(String&in)",
+    //                              asMETHOD(Slide, CreateSlide), asCALL_THISCALL);
+    // engine->RegisterObjectMethod("TvComponent", "void NextSlide()",
+    //                              asMETHOD(Slide, NextSlide), asCALL_THISCALL);
 
     // Registers custom C++ class in AngelScript and pass a class instance
     // (singleton)
