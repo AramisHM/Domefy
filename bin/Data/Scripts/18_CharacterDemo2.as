@@ -21,6 +21,7 @@ float cameraDistance = 5.0;
 
 Node @characterNode;
 Slide @slideComp;
+//TVComponent @videoComp;
 
 class Character : ScriptObject
 {
@@ -180,7 +181,7 @@ class Fpmed : ScriptObject
             float mvx = cmds[1].ToFloat();
             float mvy = cmds[2].ToFloat();
             // float sss = cmds[3].ToFloat() / 15.0f;
-            log.Info(str);
+            //log.Info(str);
             character.controlsInput["ACTIVE"] = true;
 
             character.controlsInput["BACK"] =
@@ -205,7 +206,7 @@ class Fpmed : ScriptObject
         {
             character.controls.yaw += cmds[1].ToFloat() * 1.2f;
             character.controls.pitch += cmds[2].ToFloat() / 2.0f; // hemisphere vieweing
-            log.Info(str);
+            //log.Info(str);
         }
 
         if (cmds[0] == "SPACEBAR")
@@ -232,6 +233,18 @@ class Fpmed : ScriptObject
         {
             log.Info(str);
             slideComp.PreviousSlide();
+        }
+        if (cmds[0] == "ADDACTOR")
+        {
+            log.Info("PLAY VID");
+            // TODO: FIXME: this is only to assure the command to work, PLEASE FIXME:
+            //videoCompvideoComp.Play();
+        }
+        if (cmds[0] == "LEFT_MOUSE")
+        {
+            log.Info("STOP VID");
+            // TODO: FIXME: this is only to assure the command to work, PLEASE FIXME:
+            //videoComp.Stop();
         }
     }
 
@@ -359,6 +372,15 @@ class Fpmed : ScriptObject
 
         slideComp = cameraNode.CreateComponent("Slide");
         slideComp.CreateSlide("./presentation/set.xml");
+
+        // testing video component
+        // Node @videoNode = scene_.CreateChild("Video");
+        // XMLFile @file = cache.GetResource("XMLFile", "Objects/TV.xml");
+        // videoNode.LoadXML(file.GetRoot());
+        // videoComp = videoNode.CreateComponent("TVComponent");
+        // videoComp.OpenFileName("./Data/Videos/test_video.ogv");
+        // // StaticModel @sm = videoNode.GetComponent("StaticModel");
+        // videoComp.SetOutputModel(videoNode.GetComponent("StaticModel"));
     }
 
     void CreateCharacter()

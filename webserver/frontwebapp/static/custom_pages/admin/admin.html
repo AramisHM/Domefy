@@ -1,6 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 
+    <style>
+        /* class to disable scrolling in the page */
+        .noScroll {
+            overflow-y: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* The region with for the touch enabled input */
+        .joystick {
+            width: 200px;
+            height: 200px;
+            border: 1px solid;
+
+            z-index: 2;
+        }
+
+        .large-buttom {
+            width: auto;
+            height: 80px;
+        }
+
+        .byel {
+            background-color: rgb(255, 204, 35);
+        }
+
+        .bred {
+            background-color: rgb(255, 0, 0);
+            color: aliceblue;
+        }
+
+        .bblu {
+            background-color: rgb(0, 37, 139);
+            color: aliceblue;
+        }
+
+        .bgre {
+            background-color: rgb(29, 117, 63);
+            color: aliceblue;
+        }
+    </style>
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=], initial-scale=1.0">
@@ -9,19 +50,46 @@
     </head>
 
     <body>
-        <button type="button" onclick="startDomefy()">Start Domefy</button>
-        <button type="button" onclick="stopDomefy()">Kill Domefy</button>
+        <button type="button" class="large-buttom" onclick="startDomefy()">Start
+            Domefy</button>
+        <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
+            Domefy</button>
 
-        <select id="scriptSelector">
+        <select id="scriptSelector" class="large-buttom">
             <option value="Scripts/18_CharacterDemo2.as">Maze</option>
+            <option value="Scripts/DummySpaceNav.as">Video Component Test
+            </option>
+            <option value="Scripts/Video1.as">Video 1
+            </option>
+            <option value="Scripts/Video2.as">Video 2
+            </option>
+            <option value="Scripts/Video3.as">Video 3
+            </option>
+            <option value="Scripts/Video4.as">Video 4
+            </option>
+            <option value="Scripts/Video5.as">Video 5
+            </option>
+            <option value="Scripts/Video6.as">Video 6
+            </option>
+            <option value="Scripts/Video7.as">Video 7
+            </option>
+            <option value="Scripts/Video8.as">Video 8
+            </option>
+            <option value="Scripts/Video9.as">Video 9
+            </option>
+            <option value="Scripts/Video10.as">Video 10
+            </option>
             <option value="Scripts/Pathfinder.as">Pathfinder</option>
             <option value="Scripts/11_Physics.as">Physics</option>
+            <option value="Scripts/13_Ragdolls.as">Ragdoll
+            </option>
             <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car
             </option>
         </select>
 
         <br>
-        <button onclick="RedirectToControllerPage()">Controller</button>
+        <button class="large-buttom"
+            onclick="RedirectToControllerPage()">Controller</button>
     </body>
 
     <script type="text/javascript" src="../../config.js"></script>

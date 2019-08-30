@@ -30,7 +30,8 @@ void MyCustomApplication::RegisterCustomScriptAPI()
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
     context_->RegisterFactory<SlideTransitionAnimatior>();
-    TVComponent::RegisterObject(context_); // alternative way to do this
+    context_->RegisterFactory<TVComponent>();
+    //TVComponent::RegisterObject(context_); // alternative way to do this
 
     // Register custom Urho3D componenets on scripting engine
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
@@ -65,11 +66,15 @@ void MyCustomApplication::RegisterCustomScriptAPI()
 
     // Video // FIXME: The video entire C++ component is bugy, it crashes uppon closing!
     // Really serious. We neet to kill the process to ganrantee it is really closed
-    // RegisterComponent<Slide>(engine, "TvComponent");
-    // engine->RegisterObjectMethod("TvComponent", "bool OpenFileName(String&in)",
-    //                              asMETHOD(Slide, CreateSlide), asCALL_THISCALL);
-    // engine->RegisterObjectMethod("TvComponent", "void NextSlide()",
-    //                              asMETHOD(Slide, NextSlide), asCALL_THISCALL);
+    RegisterComponent<TVComponent>(engine, "TVComponent");
+    engine->RegisterObjectMethod("TVComponent", "bool OpenFileName(String&in)",
+                                 asMETHOD(TVComponent, OpenFileName), asCALL_THISCALL);
+    engine->RegisterObjectMethod("TVComponent", "bool SetOutputModel(StaticModel&in)",
+                                 asMETHOD(TVComponent, SetOutputModel), asCALL_THISCALL);
+    engine->RegisterObjectMethod("TVComponent", "void Play()",
+                                 asMETHOD(TVComponent, Play), asCALL_THISCALL);
+    engine->RegisterObjectMethod("TVComponent", "void Stop()",
+                                 asMETHOD(TVComponent, Stop), asCALL_THISCALL);
 
     // Registers custom C++ class in AngelScript and pass a class instance
     // (singleton)

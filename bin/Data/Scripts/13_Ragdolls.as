@@ -6,247 +6,304 @@
 
 #include "Scripts/Utilities/Sample.as"
 
-void Start()
+class Fpmed : ScriptObject
 {
-    // Execute the common startup for samples
-    SampleStart();
-
-    // Create the scene content
-    CreateScene();
-
-    // Create the UI content
-    CreateInstructions();
-
-    // Setup the viewport for displaying the scene
-    SetupViewport();
-
-    // Set the mouse mode to use in the sample
-    SampleInitMouseMode(MM_RELATIVE);
-
-    // Hook up to the frame update and render post-update events
-    SubscribeToEvents();
-}
-
-void CreateScene()
-{
-    scene_ = Scene();
-
-    // Create octree, use default volume (-1000, -1000, -1000) to (1000, 1000, 1000)
-    // Create a physics simulation world with default parameters, which will update at 60fps. Like the Octree must
-    // exist before creating drawable components, the PhysicsWorld must exist before creating physics components.
-    // Finally, create a DebugRenderer component so that we can draw physics debug geometry
-    scene_.CreateComponent("Octree");
-    scene_.CreateComponent("PhysicsWorld");
-    scene_.CreateComponent("DebugRenderer");
-
-    // Create a Zone component for ambient lighting & fog control
-    Node @zoneNode = scene_.CreateChild("Zone");
-    Zone @zone = zoneNode.CreateComponent("Zone");
-    zone.boundingBox = BoundingBox(-1000.0f, 1000.0f);
-    zone.ambientColor = Color(0.85f, 0.85f, 0.85f);
-    zone.fogColor = Color(0.5f, 0.5f, 0.7f);
-    zone.fogStart = 100.0f;
-    zone.fogEnd = 300.0f;
-
-    // Create a directional light to the world. Enable cascaded shadows on it
-    Node @lightNode = scene_.CreateChild("DirectionalLight");
-    lightNode.direction = Vector3(0.6f, -1.0f, 0.8f);
-    Light @light = lightNode.CreateComponent("Light");
-    light.lightType = LIGHT_DIRECTIONAL;
-    light.castShadows = true;
-    light.shadowBias = BiasParameters(0.00025f, 0.5f);
-    // Set cascade splits at 10, 50 and 200 world units, fade shadows out at 80% of maximum shadow distance
-    light.shadowCascade = CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f);
-
+    void DataGate(VariantMap vin, VariantMap &vout)
     {
-        // Create a floor object, 500 x 500 world units. Adjust position so that the ground is at zero Y
-        Node @floorNode = scene_.CreateChild("Floor");
-        floorNode.position = Vector3(0.0f, -0.5f, 0.0f);
-        floorNode.scale = Vector3(500.0f, 1.0f, 500.0f);
-        StaticModel @floorObject = floorNode.CreateComponent("StaticModel");
-        floorObject.model = cache.GetResource("Model", "Models/Box.mdl");
-        floorObject.material = cache.GetResource("Material", "Materials/StoneTiled.xml");
+        String str = vin["CMD"].GetString();
+        // log.Info("angelscript received: " + str);
 
-        // Make the floor physical by adding RigidBody and CollisionShape components
-        RigidBody @body = floorNode.CreateComponent("RigidBody");
-        // We will be spawning spherical objects in this sample. The ground also needs non-zero rolling friction so that
-        // the spheres will eventually come to rest
-        body.rollingFriction = 0.15f;
-        CollisionShape @shape = floorNode.CreateComponent("CollisionShape");
-        // Set a box shape of size 1 x 1 x 1 for collision. The shape will be scaled with the scene node scale, so the
-        // rendering and physics representation sizes should match (the box model is also 1 x 1 x 1.)
-        shape.SetBox(Vector3::ONE);
-    }
+        String[] @cmds = str.Split(';');
 
-    // Create animated models
-    for (int z = -1; z <= 1; ++z)
-    {
-        for (int x = -4; x <= 4; ++x)
+        cameraNode = node.GetChild("CameRef");
+        // Arbitrary move
+        if (cmds[0] == "MOVE")
         {
-            Node @modelNode = scene_.CreateChild("Jack");
-            modelNode.position = Vector3(x * 5.0f, 0.0f, z * 5.0f);
-            modelNode.rotation = Quaternion(0.0f, 180.0f, 0.0f);
-            AnimatedModel @modelObject = modelNode.CreateComponent("AnimatedModel");
-            modelObject.model = cache.GetResource("Model", "Models/Jack.mdl");
-            modelObject.material = cache.GetResource("Material", "Materials/Jack.xml");
-            modelObject.castShadows = true;
-            // Set the model to also update when invisible to avoid staying invisible when the model should come into
-            // view, but does not as the bounding box is not updated
-            modelObject.updateInvisible = true;
+            float triggerVal = 25.0f;
+            float mvx = cmds[1].ToFloat() / 100.0f;
+            float mvy = -cmds[2].ToFloat() / 100.0f;
+            // float sss = cmds[3].ToFloat() / 15.0f;
+            log.Info(str);
 
-            // Create a rigid body and a collision shape. These will act as a trigger for transforming the
-            // model into a ragdoll when hit by a moving object
-            RigidBody @body = modelNode.CreateComponent("RigidBody");
-            // The trigger mode makes the rigid body only detect collisions, but impart no forces on the
-            // colliding objects
-            body.trigger = true;
-            CollisionShape @shape = modelNode.CreateComponent("CollisionShape");
-            // Create the capsule shape with an offset so that it is correctly aligned with the model, which
-            // has its origin at the feet
-            shape.SetCapsule(0.7f, 2.0f, Vector3(0.0f, 1.0f, 0.0f));
+            cameraNode.Translate(Vector3::RIGHT * mvx);
+            cameraNode.Translate(Vector3::FORWARD * mvy);
+        }
+        if (cmds[0] == "NMOVE")
+        {
+            // character.controlsInput["BACK"] = false;
+            // character.controlsInput["FORWARD"] = false;
+            // character.controlsInput["RIGHT"] = false;
+            // character.controlsInput["LEFT"] = false;
+            // character.controlsInput["ACTIVE"] = false;
+        }
 
-            // Create a custom script object that reacts to collisions and creates the ragdoll
-            modelNode.CreateScriptObject(scriptFile, "CreateRagdoll");
+        if (cmds[0] == "VIEW")
+        {
+            // character.controls.yaw += cmds[1].ToFloat() * 1.2f;
+            // character.controls.pitch += cmds[2].ToFloat() / 2.0f; // hemisphere vieweing
+            yaw += cmds[1].ToFloat() / 2.0f;
+            pitch += cmds[2].ToFloat() / 4.0f;
+            cameraNode.rotation = Quaternion(pitch, yaw, 0.0f);
+            //log.Info(str);
+        }
+        //log.Info(str);
+        if (cmds[0] == "LEFT_MOUSE")
+        {
+            SpawnObject();
+        }
+        if (cmds[0] == "MIDDLE_MOUSE")
+        {
+        }
+        if (cmds[0] == "SPACEBAR")
+        {
+            // drawDebug = !drawDebug;
+        }
+        if (cmds[0] == "ADDACTOR")
+        {
         }
     }
 
-    // Create the camera. Limit far clip distance to match the fog. Note: now we actually create the camera node outside
-    // the scene, because we want it to be unaffected by scene load / save
-    cameraNode = Node();
-    Camera @camera = cameraNode.CreateComponent("Camera");
-    camera.farClip = 300.0f;
-
-    // Set an initial position for the camera scene node above the floor
-    cameraNode.position = Vector3(0.0f, 5.0f, -20.0f);
-}
-
-void CreateInstructions()
-{
-    // Construct new Text object, set string to display and font to use
-    Text @instructionText = ui.root.CreateChild("Text");
-    instructionText.text =
-        "Use WASD keys and mouse to move\n"
-        "LMB to spawn physics objects\n"
-        "F5 to save scene, F7 to load\n"
-        "Space to toggle physics debug geometry";
-    instructionText.SetFont(cache.GetResource("Font", "Fonts/Anonymous Pro.ttf"), 15);
-    // The text has multiple rows. Center them in relation to each other
-    instructionText.textAlignment = HA_CENTER;
-
-    // Position the text relative to the screen center
-    instructionText.horizontalAlignment = HA_CENTER;
-    instructionText.verticalAlignment = VA_CENTER;
-    instructionText.SetPosition(0, ui.root.height / 4);
-}
-
-void SetupViewport()
-{
-    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
-    Viewport @viewport = Viewport(scene_, cameraNode.GetComponent("Camera"));
-    renderer.viewports[0] = viewport;
-}
-
-void SubscribeToEvents()
-{
-    // Subscribe HandleUpdate() function for processing update events
-    SubscribeToEvent("Update", "HandleUpdate");
-
-    // Subscribe HandlePostRenderUpdate() function for processing the post-render update event, during which we request
-    // debug geometry
-    SubscribeToEvent("PostRenderUpdate", "HandlePostRenderUpdate");
-}
-
-void MoveCamera(float timeStep)
-{
-    // Do not move if the UI has a focused element (the console)
-    if (ui.focusElement !is null)
-        return;
-
-    // Movement speed as world units per second
-    const float MOVE_SPEED = 20.0f;
-    // Mouse sensitivity as degrees per pixel
-    const float MOUSE_SENSITIVITY = 0.1f;
-
-    // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-    IntVector2 mouseMove = input.mouseMove;
-    yaw += MOUSE_SENSITIVITY * mouseMove.x;
-    pitch += MOUSE_SENSITIVITY * mouseMove.y;
-    pitch = Clamp(pitch, -90.0f, 90.0f);
-
-    // Construct new orientation for the camera scene node from yaw and pitch. Roll is fixed to zero
-    cameraNode.rotation = Quaternion(pitch, yaw, 0.0f);
-
-    // Read WASD keys and move the camera scene node to the corresponding direction if they are pressed
-    if (input.keyDown[KEY_W])
-        cameraNode.Translate(Vector3::FORWARD * MOVE_SPEED * timeStep);
-    if (input.keyDown[KEY_S])
-        cameraNode.Translate(Vector3::BACK * MOVE_SPEED * timeStep);
-    if (input.keyDown[KEY_A])
-        cameraNode.Translate(Vector3::LEFT * MOVE_SPEED * timeStep);
-    if (input.keyDown[KEY_D])
-        cameraNode.Translate(Vector3::RIGHT * MOVE_SPEED * timeStep);
-
-    // "Shoot" a physics object with left mousebutton
-    if (input.mouseButtonPress[MOUSEB_LEFT])
-        SpawnObject();
-
-    // Check for loading / saving the scene
-    if (input.keyPress[KEY_F5])
+    void FpmedStart()
     {
-        File saveFile(fileSystem.programDir + "Data/Scenes/Ragdolls.xml", FILE_WRITE);
-        scene_.SaveXML(saveFile);
-    }
-    if (input.keyPress[KEY_F7])
-    {
-        File loadFile(fileSystem.programDir + "Data/Scenes/Ragdolls.xml", FILE_READ);
-        scene_.LoadXML(loadFile);
+        // Execute the common startup for samples
+        SampleStart();
+
+        // Create the scene content
+        CreateScene();
+
+        // Create the UI content
+        CreateInstructions();
+
+        // Setup the viewport for displaying the scene
+        SetupViewport();
+
+        // Set the mouse mode to use in the sample
+        SampleInitMouseMode(MM_RELATIVE);
+
+        // Hook up to the frame update and render post-update events
+        SubscribeToEvents();
     }
 
-    // Toggle debug geometry with space
-    if (input.keyPress[KEY_SPACE])
-        drawDebug = !drawDebug;
+    void CreateScene()
+    {
+        scene_ = node;
+
+        // Create octree, use default volume (-1000, -1000, -1000) to (1000, 1000, 1000)
+        // Create a physics simulation world with default parameters, which will update at 60fps. Like the Octree must
+        // exist before creating drawable components, the PhysicsWorld must exist before creating physics components.
+        // Finally, create a DebugRenderer component so that we can draw physics debug geometry
+        scene_.CreateComponent("Octree");
+        scene_.CreateComponent("PhysicsWorld");
+        scene_.CreateComponent("DebugRenderer");
+
+        // Create a Zone component for ambient lighting & fog control
+        Node @zoneNode = scene_.CreateChild("Zone");
+        Zone @zone = zoneNode.CreateComponent("Zone");
+        zone.boundingBox = BoundingBox(-1000.0f, 1000.0f);
+        zone.ambientColor = Color(0.85f, 0.85f, 0.85f);
+        zone.fogColor = Color(0.5f, 0.5f, 0.7f);
+        zone.fogStart = 100.0f;
+        zone.fogEnd = 300.0f;
+
+        // Create a directional light to the world. Enable cascaded shadows on it
+        Node @lightNode = scene_.CreateChild("DirectionalLight");
+        lightNode.direction = Vector3(0.6f, -1.0f, 0.8f);
+        Light @light = lightNode.CreateComponent("Light");
+        light.lightType = LIGHT_DIRECTIONAL;
+        light.castShadows = true;
+        light.shadowBias = BiasParameters(0.00025f, 0.5f);
+        // Set cascade splits at 10, 50 and 200 world units, fade shadows out at 80% of maximum shadow distance
+        light.shadowCascade = CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f);
+
+        {
+            // Create a floor object, 500 x 500 world units. Adjust position so that the ground is at zero Y
+            Node @floorNode = scene_.CreateChild("Floor");
+            floorNode.position = Vector3(0.0f, -0.5f, 0.0f);
+            floorNode.scale = Vector3(500.0f, 1.0f, 500.0f);
+            StaticModel @floorObject = floorNode.CreateComponent("StaticModel");
+            floorObject.model = cache.GetResource("Model", "Models/Box.mdl");
+            floorObject.material = cache.GetResource("Material", "Materials/StoneTiled.xml");
+
+            // Make the floor physical by adding RigidBody and CollisionShape components
+            RigidBody @body = floorNode.CreateComponent("RigidBody");
+            // We will be spawning spherical objects in this sample. The ground also needs non-zero rolling friction so that
+            // the spheres will eventually come to rest
+            body.rollingFriction = 0.15f;
+            CollisionShape @shape = floorNode.CreateComponent("CollisionShape");
+            // Set a box shape of size 1 x 1 x 1 for collision. The shape will be scaled with the scene node scale, so the
+            // rendering and physics representation sizes should match (the box model is also 1 x 1 x 1.)
+            shape.SetBox(Vector3::ONE);
+        }
+
+        // Create animated models
+        for (int z = -1; z <= 1; ++z)
+        {
+            for (int x = -4; x <= 4; ++x)
+            {
+                Node @modelNode = scene_.CreateChild("Jack");
+                modelNode.position = Vector3(x * 5.0f, 0.0f, z * 5.0f);
+                modelNode.rotation = Quaternion(0.0f, 180.0f, 0.0f);
+                AnimatedModel @modelObject = modelNode.CreateComponent("AnimatedModel");
+                modelObject.model = cache.GetResource("Model", "Models/Jack.mdl");
+                modelObject.material = cache.GetResource("Material", "Materials/Jack.xml");
+                modelObject.castShadows = true;
+                // Set the model to also update when invisible to avoid staying invisible when the model should come into
+                // view, but does not as the bounding box is not updated
+                modelObject.updateInvisible = true;
+
+                // Create a rigid body and a collision shape. These will act as a trigger for transforming the
+                // model into a ragdoll when hit by a moving object
+                RigidBody @body = modelNode.CreateComponent("RigidBody");
+                // The trigger mode makes the rigid body only detect collisions, but impart no forces on the
+                // colliding objects
+                body.trigger = true;
+                CollisionShape @shape = modelNode.CreateComponent("CollisionShape");
+                // Create the capsule shape with an offset so that it is correctly aligned with the model, which
+                // has its origin at the feet
+                shape.SetCapsule(0.7f, 2.0f, Vector3(0.0f, 1.0f, 0.0f));
+
+                // Create a custom script object that reacts to collisions and creates the ragdoll
+                modelNode.CreateScriptObject(scriptFile, "CreateRagdoll");
+            }
+        }
+
+        // Create the camera. Limit far clip distance to match the fog. Note: now we actually create the camera node outside
+        // the scene, because we want it to be unaffected by scene load / save
+        cameraNode = node.GetChild("CameRef");
+        Camera @camera = cameraNode.GetComponent("Camera");
+        camera.farClip = 300.0f;
+
+        // Set an initial position for the camera scene node above the floor
+        cameraNode.position = Vector3(0.0f, 5.0f, -20.0f);
+    }
+
+    void CreateInstructions()
+    {
+        // Construct new Text object, set string to display and font to use
+        Text @instructionText = ui.root.CreateChild("Text");
+        instructionText.text =
+            "Use WASD keys and mouse to move\n"
+            "LMB to spawn physics objects\n"
+            "F5 to save scene, F7 to load\n"
+            "Space to toggle physics debug geometry";
+        instructionText.SetFont(cache.GetResource("Font", "Fonts/Anonymous Pro.ttf"), 15);
+        // The text has multiple rows. Center them in relation to each other
+        instructionText.textAlignment = HA_CENTER;
+
+        // Position the text relative to the screen center
+        instructionText.horizontalAlignment = HA_CENTER;
+        instructionText.verticalAlignment = VA_CENTER;
+        instructionText.SetPosition(0, ui.root.height / 4);
+    }
+
+    void SetupViewport()
+    {
+        // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
+        Viewport @viewport = Viewport(scene_, cameraNode.GetComponent("Camera"));
+        renderer.viewports[0] = viewport;
+    }
+
+    void SubscribeToEvents()
+    {
+        // Subscribe HandleUpdate() function for processing update events
+        SubscribeToEvent("Update", "HandleUpdate");
+
+        // Subscribe HandlePostRenderUpdate() function for processing the post-render update event, during which we request
+        // debug geometry
+        SubscribeToEvent("PostRenderUpdate", "HandlePostRenderUpdate");
+    }
+
+    void MoveCamera(float timeStep)
+    {
+        // Do not move if the UI has a focused element (the console)
+        if (ui.focusElement !is null)
+            return;
+
+        // Movement speed as world units per second
+        const float MOVE_SPEED = 20.0f;
+        // Mouse sensitivity as degrees per pixel
+        const float MOUSE_SENSITIVITY = 0.1f;
+
+        // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
+        IntVector2 mouseMove = input.mouseMove;
+        yaw += MOUSE_SENSITIVITY * mouseMove.x;
+        pitch += MOUSE_SENSITIVITY * mouseMove.y;
+        pitch = Clamp(pitch, -90.0f, 90.0f);
+
+        // Construct new orientation for the camera scene node from yaw and pitch. Roll is fixed to zero
+        cameraNode.rotation = Quaternion(pitch, yaw, 0.0f);
+
+        // Read WASD keys and move the camera scene node to the corresponding direction if they are pressed
+        if (input.keyDown[KEY_W])
+            cameraNode.Translate(Vector3::FORWARD * MOVE_SPEED * timeStep);
+        if (input.keyDown[KEY_S])
+            cameraNode.Translate(Vector3::BACK * MOVE_SPEED * timeStep);
+        if (input.keyDown[KEY_A])
+            cameraNode.Translate(Vector3::LEFT * MOVE_SPEED * timeStep);
+        if (input.keyDown[KEY_D])
+            cameraNode.Translate(Vector3::RIGHT * MOVE_SPEED * timeStep);
+
+        // "Shoot" a physics object with left mousebutton
+        if (input.mouseButtonPress[MOUSEB_LEFT])
+            SpawnObject();
+
+        // Check for loading / saving the scene
+        if (input.keyPress[KEY_F5])
+        {
+            File saveFile(fileSystem.programDir + "Data/Scenes/Ragdolls.xml", FILE_WRITE);
+            scene_.SaveXML(saveFile);
+        }
+        if (input.keyPress[KEY_F7])
+        {
+            File loadFile(fileSystem.programDir + "Data/Scenes/Ragdolls.xml", FILE_READ);
+            scene_.LoadXML(loadFile);
+        }
+
+        // Toggle debug geometry with space
+        if (input.keyPress[KEY_SPACE])
+            drawDebug = !drawDebug;
+    }
+
+    void SpawnObject()
+    {
+        Node @boxNode = scene_.CreateChild("Sphere");
+        boxNode.position = cameraNode.position;
+        boxNode.rotation = cameraNode.rotation;
+        boxNode.SetScale(0.25f);
+        StaticModel @boxObject = boxNode.CreateComponent("StaticModel");
+        boxObject.model = cache.GetResource("Model", "Models/Sphere.mdl");
+        boxObject.material = cache.GetResource("Material", "Materials/StoneSmall.xml");
+        boxObject.castShadows = true;
+
+        RigidBody @body = boxNode.CreateComponent("RigidBody");
+        body.mass = 1.0f;
+        body.rollingFriction = 0.15f;
+        CollisionShape @shape = boxNode.CreateComponent("CollisionShape");
+        shape.SetSphere(1.0f);
+
+        const float OBJECT_VELOCITY = 10.0f;
+
+        // Set initial velocity for the RigidBody based on camera forward vector. Add also a slight up component
+        // to overcome gravity better
+        body.linearVelocity = cameraNode.rotation * Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY;
+    }
+
+    void HandleUpdate(StringHash eventType, VariantMap &eventData)
+    {
+        // Take the frame time step, which is stored as a float
+        float timeStep = eventData["TimeStep"].GetFloat();
+
+        // Move the camera, scale movement with time step
+        MoveCamera(timeStep);
+    }
+
+    void HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData)
+    {
+        // If draw debug mode is enabled, draw physics debug geometry. Use depth test to make the result easier to interpret
+        if (drawDebug)
+            scene_.physicsWorld.DrawDebugGeometry(true);
+    }
 }
-
-void SpawnObject()
-{
-    Node @boxNode = scene_.CreateChild("Sphere");
-    boxNode.position = cameraNode.position;
-    boxNode.rotation = cameraNode.rotation;
-    boxNode.SetScale(0.25f);
-    StaticModel @boxObject = boxNode.CreateComponent("StaticModel");
-    boxObject.model = cache.GetResource("Model", "Models/Sphere.mdl");
-    boxObject.material = cache.GetResource("Material", "Materials/StoneSmall.xml");
-    boxObject.castShadows = true;
-
-    RigidBody @body = boxNode.CreateComponent("RigidBody");
-    body.mass = 1.0f;
-    body.rollingFriction = 0.15f;
-    CollisionShape @shape = boxNode.CreateComponent("CollisionShape");
-    shape.SetSphere(1.0f);
-
-    const float OBJECT_VELOCITY = 10.0f;
-
-    // Set initial velocity for the RigidBody based on camera forward vector. Add also a slight up component
-    // to overcome gravity better
-    body.linearVelocity = cameraNode.rotation * Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY;
-}
-
-void HandleUpdate(StringHash eventType, VariantMap &eventData)
-{
-    // Take the frame time step, which is stored as a float
-    float timeStep = eventData["TimeStep"].GetFloat();
-
-    // Move the camera, scale movement with time step
-    MoveCamera(timeStep);
-}
-
-void HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData)
-{
-    // If draw debug mode is enabled, draw physics debug geometry. Use depth test to make the result easier to interpret
-    if (drawDebug)
-        scene_.physicsWorld.DrawDebugGeometry(true);
-}
-
 // CreateRagdoll script object class
 class CreateRagdoll : ScriptObject
 {
