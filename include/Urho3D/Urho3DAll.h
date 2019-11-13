@@ -25,7 +25,8 @@
 #include <Urho3D/Urho3D.h>
 
 #if URHO3D_ANGELSCRIPT
-
+#include <Urho3D/AngelScript/APITemplates.h>
+#include <Urho3D/AngelScript/Addons.h>
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/AngelScript/ScriptAPI.h>
 #include <Urho3D/AngelScript/ScriptEventListener.h>

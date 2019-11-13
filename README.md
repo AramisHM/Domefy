@@ -20,6 +20,11 @@ If you are using Xubuntu 18.04 addition dependencies might be needed.
 ```sh
 sudo apt-get install libxinerama-dev libxft-dev libfontconfig-dev libxcursor-dev
 ```
+If you are going to build CEF with it, remember to have these packages installed aswell:
+```sh
+sudo apt-get install libgtk2.0-dev libgtkglext1-dev
+```
+
 Now, we can build Urho3D from source code. Go to Urho3D's main directory and do the following:
 ```sh
 sudo ./cmake_generic.sh ./

@@ -1,8 +1,0 @@
-
-		<material>
-			<technique name="Techniques/DiffOverlay.xml" />
-			<texture unit="diffuse" name="./slides/23.png" />
-			<parameter name="MatDiffColor" value="1 1 1 1" />
-			<depthbias constant="-0.00001" slopescaled="0" />
-		</material>
-		

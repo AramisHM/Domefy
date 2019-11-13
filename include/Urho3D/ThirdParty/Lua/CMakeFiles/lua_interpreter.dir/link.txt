@@ -1,1 +1,0 @@
-/usr/bin/cc -march=native -ffast-math -pthread -fdiagnostics-color=auto -O3 -DNDEBUG  -rdynamic CMakeFiles/lua_interpreter.dir/src/lua.c.o  -o ../../../bin/lua libLua.a -lm 

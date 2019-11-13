@@ -1,1 +1,0 @@
-This tool was designed to create the slide presentation for a set of exported images from gimp.

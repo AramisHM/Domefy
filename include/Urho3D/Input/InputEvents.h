@@ -203,11 +203,11 @@ URHO3D_EVENT(E_DROPFILE, DropFile)
 }
 
 /// Application input focus or minimization changed.
-// URHO3D_EVENT(E_INPUTFOCUS, InputFocus)
-// {
-//     URHO3D_PARAM(P_FOCUS, Focus);                  // bool
-//     URHO3D_PARAM(P_MINIMIZED, Minimized);          // bool
-// }
+URHO3D_EVENT(E_INPUTFOCUS, InputFocus)
+{
+    URHO3D_PARAM(P_FOCUS, Focus);                  // bool
+    URHO3D_PARAM(P_MINIMIZED, Minimized);          // bool
+}
 
 /// OS mouse cursor visibility changed.
 URHO3D_EVENT(E_MOUSEVISIBLECHANGED, MouseVisibleChanged)

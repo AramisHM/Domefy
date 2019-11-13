@@ -1,0 +1,7 @@
+get cef 3.2785.1466.g80e473e for linux or close equivalent for windows
+build it with cmake...
+    create a build folder... cd to it
+    from the build folder, execute cmake ../ && make
+copy the resource and bin data etc files to wherever you specify the .so lib linkage on on the cmake... For example, if you told cmake to link to cef.so at folder X, then you gotta place all the binary files at this X folder.
+COPY THE "build/libcef_dll_wrapper" to the root folder of cef - remove generated cmake files from this folder, or it will redefine main function
+delete the build folder of cef_binary folder

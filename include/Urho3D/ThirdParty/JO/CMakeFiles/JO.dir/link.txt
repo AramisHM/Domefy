@@ -1,2 +1,0 @@
-/usr/bin/ar qc libJO.a  CMakeFiles/JO.dir/jo_jpeg.cpp.o
-/usr/bin/ranlib libJO.a

@@ -28,7 +28,8 @@
 #include "../Resource/Resource.h"
 #include "../Scene/ValueAnimationInfo.h"
 
-namespace Urho3D {
+namespace Urho3D
+{
 
 class Material;
 class Pass;
@@ -43,7 +44,8 @@ class JSONFile;
 static const unsigned char DEFAULT_RENDER_ORDER = 128;
 
 /// %Material's shader parameter definition.
-struct MaterialShaderParameter {
+struct MaterialShaderParameter
+{
     /// Name.
     String name_;
     /// Value.
@@ -51,7 +53,8 @@ struct MaterialShaderParameter {
 };
 
 /// %Material's technique list entry.
-struct TechniqueEntry {
+struct TechniqueEntry
+{
     /// Construct with defaults.
     TechniqueEntry();
     /// Construct with parameters.
@@ -61,8 +64,7 @@ struct TechniqueEntry {
 
     /// Technique.
     SharedPtr<Technique> technique_;
-    /// Original technique, in case the material adds shader compilation
-    /// defines. The modified clones are requested from it.
+    /// Original technique, in case the material adds shader compilation defines. The modified clones are requested from it.
     SharedPtr<Technique> original_;
     /// Quality level.
     int qualityLevel_;
@@ -71,12 +73,12 @@ struct TechniqueEntry {
 };
 
 /// Material's shader parameter animation instance.
-class ShaderParameterAnimationInfo : public ValueAnimationInfo {
-   public:
+class ShaderParameterAnimationInfo : public ValueAnimationInfo
+{
+public:
     /// Construct.
-    ShaderParameterAnimationInfo(Material* material, const String& name,
-                                 ValueAnimation* attributeAnimation,
-                                 WrapMode wrapMode, float speed);
+    ShaderParameterAnimationInfo
+        (Material* material, const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode, float speed);
     /// Copy construct.
     ShaderParameterAnimationInfo(const ShaderParameterAnimationInfo& other);
     /// Destruct.
@@ -85,26 +87,27 @@ class ShaderParameterAnimationInfo : public ValueAnimationInfo {
     /// Return shader parameter name.
     const String& GetName() const { return name_; }
 
-   protected:
+protected:
     /// Apply new animation value to the target object. Called by Update().
     virtual void ApplyValue(const Variant& newValue);
 
-   private:
+private:
     /// Shader parameter name.
     String name_;
 };
 
 /// TextureUnit hash function.
-template <>
-inline unsigned MakeHash(const TextureUnit& value) {
+template <> inline unsigned MakeHash(const TextureUnit& value)
+{
     return (unsigned)value;
 }
 
 /// Describes how to render 3D geometries.
-class URHO3D_API Material : public Resource {
+class URHO3D_API Material : public Resource
+{
     URHO3D_OBJECT(Material, Resource);
 
-   public:
+public:
     /// Construct.
     Material(Context* context);
     /// Destruct.
@@ -112,11 +115,9 @@ class URHO3D_API Material : public Resource {
     /// Register object factory.
     static void RegisterObject(Context* context);
 
-    /// Load resource from stream. May be called from a worker thread. Return
-    /// true if successful.
+    /// Load resource from stream. May be called from a worker thread. Return true if successful.
     virtual bool BeginLoad(Deserializer& source);
-    /// Finish resource loading. Always called from the main thread. Return true
-    /// if successful.
+    /// Finish resource loading. Always called from the main thread. Return true if successful.
     virtual bool EndLoad();
     /// Save resource. Return true if successful.
     virtual bool Save(Serializer& dest) const;
@@ -134,60 +135,43 @@ class URHO3D_API Material : public Resource {
     /// Set number of techniques.
     void SetNumTechniques(unsigned num);
     /// Set technique.
-    void SetTechnique(unsigned index, Technique* tech,
-                      unsigned qualityLevel = 0, float lodDistance = 0.0f);
-    /// Set additional vertex shader defines. Separate multiple defines with
-    /// spaces. Setting defines at the material level causes technique(s) to be
-    /// cloned as necessary.
+    void SetTechnique(unsigned index, Technique* tech, unsigned qualityLevel = 0, float lodDistance = 0.0f);
+    /// Set additional vertex shader defines. Separate multiple defines with spaces. Setting defines at the material level causes technique(s) to be cloned as necessary.
     void SetVertexShaderDefines(const String& defines);
-    /// Set additional pixel shader defines. Separate multiple defines with
-    /// spaces. Setting defines at the material level causes technique(s) to be
-    /// cloned as necessary.
+    /// Set additional pixel shader defines. Separate multiple defines with spaces. Setting defines at the material level causes technique(s) to be cloned as necessary.
     void SetPixelShaderDefines(const String& defines);
     /// Set shader parameter.
     void SetShaderParameter(const String& name, const Variant& value);
     /// Set shader parameter animation.
-    void SetShaderParameterAnimation(const String& name,
-                                     ValueAnimation* animation,
-                                     WrapMode wrapMode = WM_LOOP,
-                                     float speed = 1.0f);
+    void
+        SetShaderParameterAnimation(const String& name, ValueAnimation* animation, WrapMode wrapMode = WM_LOOP, float speed = 1.0f);
     /// Set shader parameter animation wrap mode.
-    void SetShaderParameterAnimationWrapMode(const String& name,
-                                             WrapMode wrapMode);
+    void SetShaderParameterAnimationWrapMode(const String& name, WrapMode wrapMode);
     /// Set shader parameter animation speed.
     void SetShaderParameterAnimationSpeed(const String& name, float speed);
     /// Set texture.
     void SetTexture(TextureUnit unit, Texture* texture);
     /// Set texture coordinate transform.
-    void SetUVTransform(const Vector2& offset, float rotation,
-                        const Vector2& repeat);
+    void SetUVTransform(const Vector2& offset, float rotation, const Vector2& repeat);
     /// Set texture coordinate transform.
     void SetUVTransform(const Vector2& offset, float rotation, float repeat);
     /// Set culling mode.
     void SetCullMode(CullMode mode);
     /// Set culling mode for shadows.
     void SetShadowCullMode(CullMode mode);
-    /// Set polygon fill mode. Interacts with the camera's fill mode setting so
-    /// that the "least filled" mode will be used.
+    /// Set polygon fill mode. Interacts with the camera's fill mode setting so that the "least filled" mode will be used.
     void SetFillMode(FillMode mode);
-    /// Set depth bias parameters for depth write and compare. Note that the
-    /// normal offset parameter is not used and will not be saved, as it affects
-    /// only shadow map sampling during light rendering.
+    /// Set depth bias parameters for depth write and compare. Note that the normal offset parameter is not used and will not be saved, as it affects only shadow map sampling during light rendering.
     void SetDepthBias(const BiasParameters& parameters);
     /// Set alpha-to-coverage mode on all passes.
     void SetAlphaToCoverage(bool enable);
-    /// Set line antialiasing on/off. Has effect only on models that consist of
-    /// line lists.
+    /// Set line antialiasing on/off. Has effect only on models that consist of line lists.
     void SetLineAntiAlias(bool enable);
-    /// Set 8-bit render order within pass. Default 128. Lower values will
-    /// render earlier and higher values later, taking precedence over e.g.
-    /// state and distance sorting.
+    /// Set 8-bit render order within pass. Default 128. Lower values will render earlier and higher values later, taking precedence over e.g. state and distance sorting.
     void SetRenderOrder(unsigned char order);
     /// Set whether to use in occlusion rendering. Default true.
     void SetOcclusion(bool enable);
-    /// Associate the material with a scene to ensure that shader parameter
-    /// animation happens in sync with scene update, respecting the scene time
-    /// scale. If no scene is set, the global update events will be used.
+    /// Associate the material with a scene to ensure that shader parameter animation happens in sync with scene update, respecting the scene time scale. If no scene is set, the global update events will be used.
     void SetScene(Scene* scene);
     /// Remove shader parameter.
     void RemoveShaderParameter(const String& name);
@@ -216,14 +200,10 @@ class URHO3D_API Material : public Resource {
     Texture* GetTexture(TextureUnit unit) const;
 
     /// Return all textures.
-    const HashMap<TextureUnit, SharedPtr<Texture> >& GetTextures() const {
-        return textures_;
-    }
+    const HashMap<TextureUnit, SharedPtr<Texture> >& GetTextures() const { return textures_; }
 
     /// Return additional vertex shader defines.
-    const String& GetVertexShaderDefines() const {
-        return vertexShaderDefines_;
-    }
+    const String& GetVertexShaderDefines() const { return vertexShaderDefines_; }
     /// Return additional pixel shader defines.
     const String& GetPixelShaderDefines() const { return pixelShaderDefines_; }
 
@@ -237,10 +217,7 @@ class URHO3D_API Material : public Resource {
     float GetShaderParameterAnimationSpeed(const String& name) const;
 
     /// Return all shader parameters.
-    const HashMap<StringHash, MaterialShaderParameter>& GetShaderParameters()
-        const {
-        return shaderParameters_;
-    }
+    const HashMap<StringHash, MaterialShaderParameter>& GetShaderParameters() const { return shaderParameters_; }
 
     /// Return normal culling mode.
     CullMode GetCullMode() const { return cullMode_; }
@@ -262,7 +239,7 @@ class URHO3D_API Material : public Resource {
 
     /// Return render order.
     unsigned char GetRenderOrder() const { return renderOrder_; }
-
+    
     /// Return last auxiliary view rendered frame number.
     unsigned GetAuxViewFrameNumber() const { return auxViewFrameNumber_; }
 
@@ -272,21 +249,18 @@ class URHO3D_API Material : public Resource {
     /// Return whether should render specular.
     bool GetSpecular() const { return specular_; }
 
-    /// Return the scene associated with the material for shader parameter
-    /// animation updates.
+    /// Return the scene associated with the material for shader parameter animation updates.
     Scene* GetScene() const;
 
-    /// Return shader parameter hash value. Used as an optimization to avoid
-    /// setting shader parameters unnecessarily.
+    /// Return shader parameter hash value. Used as an optimization to avoid setting shader parameters unnecessarily.
     unsigned GetShaderParameterHash() const { return shaderParameterHash_; }
 
     /// Return name for texture unit.
     static String GetTextureUnitName(TextureUnit unit);
-    /// Parse a shader parameter value from a string. Retunrs either a bool, a
-    /// float, or a 2 to 4-component vector.
+    /// Parse a shader parameter value from a string. Retunrs either a bool, a float, or a 2 to 4-component vector.
     static Variant ParseShaderParameterValue(const String& value);
 
-   private:
+private:
     /// Helper function for loading JSON files.
     bool BeginLoadJSON(Deserializer& source);
     /// Helper function for loading XML files.
@@ -301,14 +275,11 @@ class URHO3D_API Material : public Resource {
     /// Reapply shader defines to technique index. By default reapply all.
     void ApplyShaderDefines(unsigned index = M_MAX_UNSIGNED);
     /// Return shader parameter animation info.
-    ShaderParameterAnimationInfo* GetShaderParameterAnimationInfo(
-        const String& name) const;
-    /// Update whether should be subscribed to scene or global update events for
-    /// shader parameter animation.
+    ShaderParameterAnimationInfo* GetShaderParameterAnimationInfo(const String& name) const;
+    /// Update whether should be subscribed to scene or global update events for shader parameter animation.
     void UpdateEventSubscription();
     /// Update shader parameter animations.
-    void HandleAttributeAnimationUpdate(StringHash eventType,
-                                        VariantMap& eventData);
+    void HandleAttributeAnimationUpdate(StringHash eventType, VariantMap& eventData);
 
     /// Techniques.
     Vector<TechniqueEntry> techniques_;
@@ -317,8 +288,7 @@ class URHO3D_API Material : public Resource {
     /// %Shader parameters.
     HashMap<StringHash, MaterialShaderParameter> shaderParameters_;
     /// %Shader parameters animation infos.
-    HashMap<StringHash, SharedPtr<ShaderParameterAnimationInfo> >
-        shaderParameterAnimationInfos_;
+    HashMap<StringHash, SharedPtr<ShaderParameterAnimationInfo> > shaderParameterAnimationInfos_;
     /// Vertex shader defines.
     String vertexShaderDefines_;
     /// Pixel shader defines.
@@ -347,8 +317,7 @@ class URHO3D_API Material : public Resource {
     bool specular_;
     /// Flag for whether is subscribed to animation updates.
     bool subscribed_;
-    /// Flag to suppress parameter hash and memory use recalculation when
-    /// setting multiple shader parameters (loading or resetting the material.)
+    /// Flag to suppress parameter hash and memory use recalculation when setting multiple shader parameters (loading or resetting the material.)
     bool batchedParameterUpdate_;
     /// XML file used while loading.
     SharedPtr<XMLFile> loadXMLFile_;
@@ -358,4 +327,4 @@ class URHO3D_API Material : public Resource {
     WeakPtr<Scene> scene_;
 };
 
-}  // namespace Urho3D
+}

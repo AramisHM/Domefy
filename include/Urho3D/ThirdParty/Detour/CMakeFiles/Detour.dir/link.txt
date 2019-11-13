@@ -1,2 +1,0 @@
-/usr/bin/ar qc libDetour.a  CMakeFiles/Detour.dir/source/DetourAlloc.cpp.o CMakeFiles/Detour.dir/source/DetourCommon.cpp.o CMakeFiles/Detour.dir/source/DetourNavMesh.cpp.o CMakeFiles/Detour.dir/source/DetourNavMeshBuilder.cpp.o CMakeFiles/Detour.dir/source/DetourNavMeshQuery.cpp.o CMakeFiles/Detour.dir/source/DetourNode.cpp.o
-/usr/bin/ranlib libDetour.a

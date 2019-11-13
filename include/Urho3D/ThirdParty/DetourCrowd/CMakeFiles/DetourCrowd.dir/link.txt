@@ -1,2 +1,0 @@
-/usr/bin/ar qc libDetourCrowd.a  CMakeFiles/DetourCrowd.dir/source/DetourCrowd.cpp.o CMakeFiles/DetourCrowd.dir/source/DetourLocalBoundary.cpp.o CMakeFiles/DetourCrowd.dir/source/DetourObstacleAvoidance.cpp.o CMakeFiles/DetourCrowd.dir/source/DetourPathCorridor.cpp.o CMakeFiles/DetourCrowd.dir/source/DetourPathQueue.cpp.o CMakeFiles/DetourCrowd.dir/source/DetourProximityGrid.cpp.o
-/usr/bin/ranlib libDetourCrowd.a

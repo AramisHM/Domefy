@@ -1,1 +1,0 @@
-/usr/bin/cc -march=native -ffast-math -pthread -fdiagnostics-color=auto -O3 -DNDEBUG  -rdynamic CMakeFiles/luac.dir/src/luac.c.o  -o ../../../bin/luac libLua.a -lm 

@@ -32,7 +32,7 @@ namespace Urho3D
 {
 
 /// %Cursor shapes recognized by the UI subsystem.
-enum CursorShape2
+enum CursorShape
 {
     CS_NORMAL = 0,
     CS_IBEAM,
@@ -50,44 +50,42 @@ enum CursorShape2
 };
 
 /// %Cursor image and hotspot information.
-struct URHO3D_API CursorShape2Info
+struct URHO3D_API CursorShapeInfo
 {
-//     /// Construct with defaults.
-//     CursorShape2
-// Info() :
-//         //imageRect_(IntRect::ZERO),
-//         //hotSpot_(IntVector2::ZERO),
-//         //osCursor_(0),
-//         //systemDefined_(false),
-//         //systemCursor_(-1)
-//     {
-//     }
+    /// Construct with defaults.
+    CursorShapeInfo() :
+        imageRect_(IntRect::ZERO),
+        hotSpot_(IntVector2::ZERO),
+        osCursor_(0),
+        systemDefined_(false),
+        systemCursor_(-1)
+    {
+    }
 
-//     /// Construct with system cursor.
-//     CursorShape2
-// Info(int systemCursor) :
-//         //imageRect_(IntRect::ZERO),
-//         //hotSpot_(IntVector2::ZERO),
-//         //osCursor_(0),
-//        // systemDefined_(false),
-//        // systemCursor_(systemCursor)
-//     {
-//     }
+    /// Construct with system cursor.
+    CursorShapeInfo(int systemCursor) :
+        imageRect_(IntRect::ZERO),
+        hotSpot_(IntVector2::ZERO),
+        osCursor_(0),
+        systemDefined_(false),
+        systemCursor_(systemCursor)
+    {
+    }
 
-//     /// Image.
-//     SharedPtr<Image> image_;
-//     /// Texture.
-//     SharedPtr<Texture> texture_;
-//     /// Image rectangle.
-//     IntRect imageRect_;
-//     /// Hotspot coordinates.
-//     IntVector2 hotSpot_;
-//     /// OS cursor.
-//     SDL_Cursor* osCursor_;
-//     /// Whether the OS cursor is system defined.
-//     bool systemDefined_;
-//     /// System cursor index.
-//     int systemCursor_;
+    /// Image.
+    SharedPtr<Image> image_;
+    /// Texture.
+    SharedPtr<Texture> texture_;
+    /// Image rectangle.
+    IntRect imageRect_;
+    /// Hotspot coordinates.
+    IntVector2 hotSpot_;
+    /// OS cursor.
+    SDL_Cursor* osCursor_;
+    /// Whether the OS cursor is system defined.
+    bool systemDefined_;
+    /// System cursor index.
+    int systemCursor_;
 };
 
 /// Mouse cursor %UI element.
@@ -109,13 +107,11 @@ public:
     /// Define a shape.
     void DefineShape(const String& shape, Image* image, const IntRect& imageRect, const IntVector2& hotSpot);
     /// Define a shape.
-    //void DefineShape(CursorShape2
- //shape, Image* image, const IntRect& imageRect, const IntVector2& hotSpot);
+    void DefineShape(CursorShape shape, Image* image, const IntRect& imageRect, const IntVector2& hotSpot);
     /// Set current shape.
     void SetShape(const String& shape);
     /// Set current shape.
-    //void SetShape(CursorShape2
- //shape);
+    void SetShape(CursorShape shape);
     /// Set whether to use system default shapes. Is only possible when the OS mouse cursor has been set visible from the Input subsystem.
     void SetUseSystemShapes(bool enable);
 
@@ -130,8 +126,7 @@ public:
     /// Return shapes attribute.
     VariantVector GetShapesAttr() const;
     /// Apply pending OS cursor shape. Called by UI. No-op when the OS mouse pointer is not used.
-    void ApplyOSCursorShape2
-();
+    void ApplyOSCursorShape();
 
 protected:
     /// Handle operating system mouse cursor visibility change event.
@@ -140,8 +135,7 @@ protected:
     /// Current shape definition.
     String shape_;
     /// Shape definitions.
-    //HashMap<String, CursorShape2
-//Info> shapeInfos_;
+    HashMap<String, CursorShapeInfo> shapeInfos_;
     /// Use system default shapes flag.
     bool useSystemShapes_;
     /// OS cursor shape needs update flag.

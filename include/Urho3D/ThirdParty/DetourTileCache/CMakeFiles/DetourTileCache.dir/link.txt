@@ -1,2 +1,0 @@
-/usr/bin/ar qc libDetourTileCache.a  CMakeFiles/DetourTileCache.dir/source/DetourTileCache.cpp.o CMakeFiles/DetourTileCache.dir/source/DetourTileCacheBuilder.cpp.o
-/usr/bin/ranlib libDetourTileCache.a

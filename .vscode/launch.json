@@ -5,6 +5,25 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "(gdb) Starten",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/fpmed",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Automatische Strukturierung und Einrückung für "gdb" aktivieren",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
       "name": "Go Webserver (WIN32)",
       "type": "go",
       "request": "launch",

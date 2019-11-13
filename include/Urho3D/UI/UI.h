@@ -244,7 +244,7 @@ private:
     /// Return cursor position and visibility either from the cursor element, or the Input subsystem.
     void GetCursorPositionAndVisible(IntVector2& pos, bool& visible);
     /// Set active cursor's shape.
-    //void SetCursorShape(CursorShape shape);
+    void SetCursorShape(CursorShape shape);
     /// Force release of font faces when global font properties change.
     void ReleaseFontFaces();
     /// Handle button or touch hover.

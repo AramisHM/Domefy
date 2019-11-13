@@ -1,2 +1,0 @@
-/usr/bin/ar qc libtoluapp.a  CMakeFiles/toluapp.dir/tolua_event.c.o CMakeFiles/toluapp.dir/tolua_is.c.o CMakeFiles/toluapp.dir/tolua_map.c.o CMakeFiles/toluapp.dir/tolua_push.c.o CMakeFiles/toluapp.dir/tolua_to.c.o
-/usr/bin/ranlib libtoluapp.a

@@ -28,8 +28,8 @@
 /* #undef URHO3D_D3D11 */
 #define URHO3D_SSE
 /* #undef URHO3D_DATABASE_ODBC */
-/* #undef URHO3D_DATABASE_SQLITE */
-/* #undef URHO3D_LUAJIT */
+#define URHO3D_DATABASE_SQLITE
+#define URHO3D_LUAJIT
 /* #undef URHO3D_TESTING */
 
 #ifdef URHO3D_STATIC_DEFINE
