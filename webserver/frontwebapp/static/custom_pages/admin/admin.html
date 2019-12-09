@@ -50,6 +50,7 @@
     </head>
 
     <body>
+        <h1>Administrator Panel</h1>
         <button type="button" class="large-buttom" onclick="startDomefy()">Start
             Domefy</button>
         <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
@@ -90,6 +91,10 @@
         <br>
         <button class="large-buttom"
             onclick="RedirectToControllerPage()">Controller</button>
+        <br>
+        <button class="large-buttom"
+            onclick="RedirectToSlideControllerPage()">Slide
+            Controller</button>
     </body>
 
     <script type="text/javascript" src="../../config.js"></script>
@@ -107,6 +112,9 @@
         }
         function RedirectToControllerPage() {
             window.location = "http://" + frontendIPPort + "/virtual_controller/controller.html"
+        }
+        function RedirectToSlideControllerPage() {
+            window.location = "http://" + frontendIPPort + "/virtual_controller/slider.html"
         }
     </script>
 
