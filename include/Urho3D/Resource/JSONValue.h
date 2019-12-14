@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,6 @@
 
 #pragma once
 
-#include "../Core/Variant.h"
-
 namespace Urho3D
 {
 
@@ -41,7 +39,7 @@ enum JSONValueType
     /// JSON array type.
     JSON_ARRAY,
     /// JSON object type.
-    JSON_OBJECT
+    JSON_OBJECT,
 };
 
 /// JSON number type.
@@ -54,7 +52,7 @@ enum JSONNumberType
     /// Unsigned integer.
     JSONNT_UINT,
     /// Float or double.
-    JSONNT_FLOAT_DOUBLE
+    JSONNT_FLOAT_DOUBLE,
 };
 
 class JSONValue;
@@ -168,11 +166,6 @@ public:
     JSONValueType GetValueType() const;
     /// Return number type.
     JSONNumberType GetNumberType() const;
-    /// Return value type's name.
-    String GetValueTypeName() const;
-    /// Return number type's name.
-    String GetNumberTypeName() const;
-
     /// Check is null.
     bool IsNull() const { return GetValueType() == JSON_NULL; }
     /// Check is boolean.
@@ -220,7 +213,7 @@ public:
     void Erase(unsigned pos, unsigned length = 1);
     /// Resize array.
     void Resize(unsigned newSize);
-    /// Return size of array or number of keys in object.
+    /// Return size of array.
     unsigned Size() const;
 
     // JSON object functions
@@ -274,19 +267,6 @@ public:
     static const JSONArray emptyArray;
     /// Empty JSON object.
     static const JSONObject emptyObject;
-
-    /// Return name corresponding to a value type.
-    static String GetValueTypeName(JSONValueType type);
-    /// Return name corresponding to a number type.
-    static String GetNumberTypeName(JSONNumberType type);
-    /// Return a value type from name; null if unrecognized.
-    static JSONValueType GetValueTypeFromName(const String& typeName);
-    /// Return a value type from name; null if unrecognized.
-    static JSONValueType GetValueTypeFromName(const char* typeName);
-    /// Return a number type from name; NaN if unrecognized.
-    static JSONNumberType GetNumberTypeFromName(const String& typeName);
-    /// Return a value type from name; NaN if unrecognized.
-    static JSONNumberType GetNumberTypeFromName(const char* typeName);
 
 private:
     /// type.

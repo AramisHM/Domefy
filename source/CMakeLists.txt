@@ -1,4 +1,8 @@
-set(CEF_DISTRIBUTION "../cef_binary_3.2785.1465.g87ce149_linux64")
+#################################################
+# Chromium Embedded Framework (CEF) Standard Binary Distribution
+#**note** when using a different distribution, change the CEF_DISTRIBUTION value!
+# cef_binary_3.2785.1466.g80e473e_windows32
+set(CEF_DISTRIBUTION cef_binary_3.2785.1466.g80e473e_windows64)
 
 
 file (GLOB SIMPLE_CC_FILES ${CEF_DISTRIBUTION}/cefsimple/*.cc )
@@ -26,40 +30,31 @@ include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
 
+# CEF specific
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/include)
+
 ########################
 # specify what we want here
 set(CEF_BLD_TYPE Release)
 
 	
 message ("source dir" ${CMAKE_SOURCE_DIR})
-FILE(GLOB_RECURSE Urho3DLibs "${CMAKE_SOURCE_DIR}/lib/linux/*.a" )
+FILE(GLOB_RECURSE Urho3DLibs "${CMAKE_SOURCE_DIR}/lib/windows/*.lib" )
 message("urho libs: " ${Urho3DLibs})
-FILE(GLOB_RECURSE CEFStaticLibs "${CMAKE_SOURCE_DIR}/source/${CEF_DISTRIBUTION}/libcef_dll_wrapper/*.a")
+FILE(GLOB_RECURSE CEFStaticLibs "${CMAKE_SOURCE_DIR}/source/${CEF_DISTRIBUTION}/libcef_dll_wrapper/*.lib")
 message("cef static libs: " ${CEFStaticLibs})
-FILE(GLOB_RECURSE CEFWrapperLibs "${CMAKE_SOURCE_DIR}/source/${CEF_DISTRIBUTION}/${CEF_BLD_TYPE}/libcef.so")
-message("cef dynamic wrapper libs: " ${CEFWrapperLibs})
 
-add_definitions(-DURHO3D_SSE)
-add_definitions(-DURHO3D_MINIDUMPS)
-add_definitions(-DURHO3D_FILEWATCHER)
-add_definitions(-DURHO3D_PROFILING)
-add_definitions(-DURHO3D_LOGGING)
-add_definitions(-DURHO3D_OPENGL)
-add_definitions(-DGLEW_STATIC)
-add_definitions(-DGLEW_NO_GLU)
-add_definitions(-DURHO3D_ANGELSCRIPT)
-add_definitions(-DURHO3D_NAVIGATION)
-add_definitions(-DURHO3D_NETWORK)
-add_definitions(-DURHO3D_PHYSICS)
-add_definitions(-DURHO3D_URHO2D)
-add_definitions(-DURHO3D_STATIC_DEFINE)
-add_definitions(-DNDEBUG)
+
+# FILE(GLOB_RECURSE CEFWrapperLibs "${CMAKE_SOURCE_DIR}/source/${CEF_DISTRIBUTION}/${CEF_BLD_TYPE}/libcef.dll")
+# message("cef dynamic wrapper libs: " ${CEFWrapperLibs})
+
 
 #################################################
 # libcef_dll_wrapper
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/include)
-set(Dependency_Libs ${Dependency_Libs} ${Urho3DLibs} ${CEFWrapperLibs} ${CEFStaticLibs} ) 
+set(Dependency_Libs ${Dependency_Libs} ${Urho3DLibs}) 
 
 
 
@@ -97,7 +92,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/cefsimple)
 
 
 
-add_executable (fpmed ${Fpmed_Sources2})
+add_executable (fpmed WIN32 ${Fpmed_Sources2}) # the WIN32 solves the msvc external dependecy error
 
 set_target_properties(fpmed
     PROPERTIES
@@ -105,9 +100,60 @@ set_target_properties(fpmed
 )
 
 
-LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/bin")
+LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/bin" "${CMAKE_SOURCE_DIR}/lib/windows")
 
 message( ${Dependency_Libs} )
-target_link_libraries (fpmed LINK_PUBLIC ${Dependency_Libs} pthread GLU GL dl X11 Xext Xinerama Xft fontconfig Xxf86vm Xfixes Xrender Xcursor)
+target_link_libraries (
+		  fpmed LINK_PUBLIC
+		  ${Dependency_Libs}
+		  Comdlg32.lib
+		  Comctl32.lib
+		  winmm.lib
+		  ws2_32.lib
+		  opengl32.lib
+		  imm32.lib
+		  version.lib
+		  advapi32.lib
+		  user32.lib
+		  gdi32.lib
+		  Setupapi.lib
+		  shlwapi.lib
+		  d3d9.lib
+		  d3d11.lib
+		  dxguid.lib
+		  winmm.lib
+		  imm32.lib
+		  version.lib
+		  ws2_32.lib
+		  winmm.lib
+		  dbghelp.lib
+		  d3dcompiler.lib
+		  kernel32.lib
+		  winspool.lib
+		  shell32.lib
+		  ole32.lib
+		  oleaut32.lib
+		  uuid.lib )
+	
+	add_definitions(-DURHO3D_SSE)
+	add_definitions(-DURHO3D_MINIDUMPS)
+	add_definitions(-DURHO3D_FILEWATCHER)
+	add_definitions(-DURHO3D_PROFILING)
+	add_definitions(-DURHO3D_LOGGING)
+	add_definitions(-DURHO3D_OPENGL)
+	add_definitions(-DGLEW_STATIC)
+	add_definitions(-DGLEW_NO_GLU)
+	add_definitions(-DURHO3D_ANGELSCRIPT)
+	add_definitions(-DURHO3D_NAVIGATION)
+	add_definitions(-DURHO3D_NETWORK)
+	add_definitions(-DURHO3D_PHYSICS)
+	add_definitions(-DURHO3D_URHO2D)
+	add_definitions(-DURHO3D_STATIC_DEFINE)
+	add_definitions(-DWIN32_LEAN_AND_MEAN)
+	add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
+	# add_definitions(-DURHO3D_STATIC_RUNTIME=1)
+	 
 
+
+	
 

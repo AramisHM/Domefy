@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -94,22 +94,6 @@ struct DelayedWorldTransform
     Vector3 worldPosition_;
     /// New world rotation.
     Quaternion worldRotation_;
-};
-
-/// Manifold pointers stored during collision processing.
-struct ManifoldPair
-{
-    /// Construct with defaults.
-    ManifoldPair() :
-        manifold_(0),
-        flippedManifold_(0)
-    {
-    }
-
-    /// Manifold without the body pointers flipped.
-    btPersistentManifold* manifold_;
-    /// Manifold with the body pointers flipped.
-    btPersistentManifold* flippedManifold_;
 };
 
 /// Custom overrides of physics internals. To use overrides, must be set before the physics component is created.
@@ -261,7 +245,7 @@ public:
     void SetDebugDepthTest(bool enable);
 
     /// Return the Bullet physics world.
-    btDiscreteDynamicsWorld* GetWorld() { return world_.Get(); }
+    btDiscreteDynamicsWorld* GetWorld() { return world_; }
 
     /// Clean up the geometry cache.
     void CleanupGeometryCache();
@@ -301,13 +285,13 @@ private:
     /// Bullet collision configuration.
     btCollisionConfiguration* collisionConfiguration_;
     /// Bullet collision dispatcher.
-    UniquePtr<btDispatcher> collisionDispatcher_;
+    btDispatcher* collisionDispatcher_;
     /// Bullet collision broadphase.
-    UniquePtr<btBroadphaseInterface> broadphase_;
+    btBroadphaseInterface* broadphase_;
     /// Bullet constraint solver.
-    UniquePtr<btConstraintSolver> solver_;
+    btConstraintSolver* solver_;
     /// Bullet physics world.
-    UniquePtr<btDiscreteDynamicsWorld> world_;
+    btDiscreteDynamicsWorld* world_;
     /// Extra weak pointer to scene to allow for cleanup in case the world is destroyed before other components.
     WeakPtr<Scene> scene_;
     /// Rigid bodies in the world.
@@ -317,9 +301,9 @@ private:
     /// Constraints in the world.
     PODVector<Constraint*> constraints_;
     /// Collision pairs on this frame.
-    HashMap<Pair<WeakPtr<RigidBody>, WeakPtr<RigidBody> >, ManifoldPair> currentCollisions_;
+    HashMap<Pair<WeakPtr<RigidBody>, WeakPtr<RigidBody> >, btPersistentManifold*> currentCollisions_;
     /// Collision pairs on the previous frame. Used to check if a collision is "new." Manifolds are not guaranteed to exist anymore.
-    HashMap<Pair<WeakPtr<RigidBody>, WeakPtr<RigidBody> >, ManifoldPair> previousCollisions_;
+    HashMap<Pair<WeakPtr<RigidBody>, WeakPtr<RigidBody> >, btPersistentManifold*> previousCollisions_;
     /// Delayed (parented) world transform assignments.
     HashMap<RigidBody*, DelayedWorldTransform> delayedWorldTransforms_;
     /// Cache for trimesh geometry data by model and LOD level.

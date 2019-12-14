@@ -26,7 +26,6 @@ class btDispatcher;
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h"
 #include "btCollisionCreateFunc.h"
 #include "LinearMath/btAlignedObjectArray.h"
-#include "BulletCollision/BroadphaseCollision/btDbvt.h"
 class btDispatcher;
 class btCollisionObject;
 
@@ -37,9 +36,6 @@ extern btShapePairCallback gCompoundChildShapePairCallback;
 /// btCompoundCollisionAlgorithm  supports collision between CompoundCollisionShapes and other collision shapes
 class btCompoundCollisionAlgorithm  : public btActivatingCollisionAlgorithm
 {
-	btNodeStack stack2;
-	btManifoldArray manifoldArray;
-
 protected:
 	btAlignedObjectArray<btCollisionAlgorithm*> m_childCollisionAlgorithms;
 	bool m_isSwapped;

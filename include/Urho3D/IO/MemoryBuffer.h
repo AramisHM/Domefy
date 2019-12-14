@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,14 @@
 
 #pragma once
 
-#include "../IO/AbstractFile.h"
+#include "../IO/Deserializer.h"
+#include "../IO/Serializer.h"
 
 namespace Urho3D
 {
 
 /// Memory area that can be read and written to as a stream.
-class URHO3D_API MemoryBuffer : public AbstractFile
+class URHO3D_API MemoryBuffer : public Deserializer, public Serializer
 {
 public:
     /// Construct with a pointer and size.
@@ -42,7 +43,7 @@ public:
 
     /// Read bytes from the memory area. Return number of bytes actually read.
     virtual unsigned Read(void* dest, unsigned size);
-    /// Set position from the beginning of the memory area. Return actual new position.
+    /// Set position from the beginning of the memory area.
     virtual unsigned Seek(unsigned position);
     /// Write bytes to the memory area.
     virtual unsigned Write(const void* data, unsigned size);

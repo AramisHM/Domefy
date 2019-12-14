@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -75,11 +75,11 @@ struct TriangleMeshData : public CollisionGeometryData
     ~TriangleMeshData();
 
     /// Bullet triangle mesh interface.
-    UniquePtr<TriangleMeshInterface> meshInterface_;
+    TriangleMeshInterface* meshInterface_;
     /// Bullet triangle mesh collision shape.
-    UniquePtr<btBvhTriangleMeshShape> shape_;
+    btBvhTriangleMeshShape* shape_;
     /// Bullet triangle info map.
-    UniquePtr<btTriangleInfoMap> infoMap_;
+    btTriangleInfoMap* infoMap_;
 };
 
 /// Convex hull geometry data.
@@ -196,7 +196,7 @@ public:
     void SetLodLevel(unsigned lodLevel);
 
     /// Return Bullet collision shape.
-    btCollisionShape* GetCollisionShape() const { return shape_.Get(); }
+    btCollisionShape* GetCollisionShape() const { return shape_; }
 
     /// Return the shared geometry data.
     CollisionGeometryData* GetGeometryData() const { return geometry_; }
@@ -272,7 +272,7 @@ private:
     /// Shared geometry data.
     SharedPtr<CollisionGeometryData> geometry_;
     /// Bullet collision shape.
-    UniquePtr<btCollisionShape> shape_;
+    btCollisionShape* shape_;
     /// Collision shape type.
     ShapeType shapeType_;
     /// Offset position.

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,13 +60,10 @@ enum VariantType
     VAR_MATRIX4,
     VAR_DOUBLE,
     VAR_STRINGVECTOR,
-    VAR_RECT,
-    VAR_INTVECTOR3,
-    VAR_INT64,
     MAX_VAR_TYPES
 };
 
-/// Union for the possible variant values. Also stores non-POD objects such as String and math objects (excluding Matrix) which must not exceed 16 bytes in size (or 32 bytes in a 64-bit build.) Objects exceeding the limit are allocated on the heap and pointed to by _ptr.
+/// Union for the possible variant values. Also stores non-POD objects such as String and math objects (excluding Matrix) which must not exceed 16 bytes in size. Objects exceeding 16 bytes size are stored in the heap pointed by _ptr.
 struct VariantValue
 {
     union
@@ -215,25 +212,11 @@ public:
         *this = value;
     }
 
-    /// Construct from 64 bit integer.
-    Variant(long long value) :
-        type_(VAR_NONE)
-    {
-        *this = value;
-    }
-
     /// Construct from unsigned integer.
     Variant(unsigned value) :
         type_(VAR_NONE)
     {
         *this = (int)value;
-    }
-
-    /// Construct from unsigned integer.
-    Variant(unsigned long long value) :
-        type_(VAR_NONE)
-    {
-        *this = (long long)value;
     }
 
     /// Construct from a string hash (convert to integer).
@@ -369,13 +352,6 @@ public:
         *this = value;
     }
 
-    /// Construct from a rect.
-    Variant(const Rect& value) :
-        type_(VAR_NONE)
-    {
-        *this = value;
-    }
-
     /// Construct from an integer rect.
     Variant(const IntRect& value) :
         type_(VAR_NONE)
@@ -385,13 +361,6 @@ public:
 
     /// Construct from an IntVector2.
     Variant(const IntVector2& value) :
-        type_(VAR_NONE)
-    {
-        *this = value;
-    }
-
-    /// Construct from an IntVector3.
-    Variant(const IntVector3& value) :
         type_(VAR_NONE)
     {
         *this = value;
@@ -480,22 +449,6 @@ public:
     {
         SetType(VAR_INT);
         value_.int_ = rhs;
-        return *this;
-    }
-
-    /// Assign from 64 bit integer.
-    Variant& operator =(long long rhs)
-    {
-        SetType(VAR_INT64);
-        *reinterpret_cast<long long*>(&value_) = rhs;
-        return *this;
-    }
-
-    /// Assign from unsigned 64 bit integer.
-    Variant& operator =(unsigned long long rhs)
-    {
-        SetType(VAR_INT64);
-        *reinterpret_cast<long long*>(&value_) = (long long)rhs;
         return *this;
     }
 
@@ -654,14 +607,6 @@ public:
         return *this;
     }
 
-    /// Assign from a rect.
-    Variant& operator =(const Rect& rhs)
-    {
-        SetType(VAR_RECT);
-        *(reinterpret_cast<Rect*>(&value_)) = rhs;
-        return *this;
-    }
-
     /// Assign from an integer rect.
     Variant& operator =(const IntRect& rhs)
     {
@@ -675,14 +620,6 @@ public:
     {
         SetType(VAR_INTVECTOR2);
         *(reinterpret_cast<IntVector2*>(&value_)) = rhs;
-        return *this;
-    }
-
-    /// Assign from an IntVector3.
-    Variant& operator =(const IntVector3& rhs)
-    {
-        SetType(VAR_INTVECTOR3);
-        *(reinterpret_cast<IntVector3*>(&value_)) = rhs;
         return *this;
     }
 
@@ -724,14 +661,8 @@ public:
     /// Test for equality with an integer. To return true, both the type and value must match.
     bool operator ==(int rhs) const { return type_ == VAR_INT ? value_.int_ == rhs : false; }
 
-    /// Test for equality with an unsigned 64 bit integer. To return true, both the type and value must match.
-    bool operator ==(unsigned rhs) const { return type_ == VAR_INT ? value_.int_ == (int)rhs : false; }
-
-    /// Test for equality with an 64 bit integer. To return true, both the type and value must match.
-    bool operator ==(long long rhs) const { return type_ == VAR_INT64 ? *reinterpret_cast<const long long*>(&value_.int_) == rhs : false; }
-
     /// Test for equality with an unsigned integer. To return true, both the type and value must match.
-    bool operator ==(unsigned long long rhs) const { return type_ == VAR_INT64 ? *reinterpret_cast<const unsigned long long*>(&value_.int_) == (int)rhs : false; }
+    bool operator ==(unsigned rhs) const { return type_ == VAR_INT ? value_.int_ == (int)rhs : false; }
 
     /// Test for equality with a bool. To return true, both the type and value must match.
     bool operator ==(bool rhs) const { return type_ == VAR_BOOL ? value_.bool_ == rhs : false; }
@@ -824,12 +755,6 @@ public:
         return type_ == VAR_VARIANTMAP ? *(reinterpret_cast<const VariantMap*>(&value_)) == rhs : false;
     }
 
-    /// Test for equality with a rect. To return true, both the type and value must match.
-    bool operator ==(const Rect& rhs) const
-    {
-        return type_ == VAR_RECT ? *(reinterpret_cast<const Rect*>(&value_)) == rhs : false;
-    }
-
     /// Test for equality with an integer rect. To return true, both the type and value must match.
     bool operator ==(const IntRect& rhs) const
     {
@@ -840,12 +765,6 @@ public:
     bool operator ==(const IntVector2& rhs) const
     {
         return type_ == VAR_INTVECTOR2 ? *(reinterpret_cast<const IntVector2*>(&value_)) == rhs : false;
-    }
-
-    /// Test for equality with an IntVector3. To return true, both the type and value must match.
-    bool operator ==(const IntVector3& rhs) const
-    {
-        return type_ == VAR_INTVECTOR3 ? *(reinterpret_cast<const IntVector3*>(&value_)) == rhs : false;
     }
 
     /// Test for equality with a StringHash. To return true, both the type and value must match.
@@ -888,12 +807,6 @@ public:
 
     /// Test for inequality with an unsigned integer.
     bool operator !=(unsigned rhs) const { return !(*this == rhs); }
-
-    /// Test for inequality with an 64 bit integer.
-    bool operator !=(long long rhs) const { return !(*this == rhs); }
-
-    /// Test for inequality with an unsigned 64 bit integer.
-    bool operator !=(unsigned long long rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a bool.
     bool operator !=(bool rhs) const { return !(*this == rhs); }
@@ -943,17 +856,11 @@ public:
     /// Test for inequality with a variant map.
     bool operator !=(const VariantMap& rhs) const { return !(*this == rhs); }
 
-    /// Test for inequality with a rect.
-    bool operator !=(const Rect& rhs) const { return !(*this == rhs); }
-
     /// Test for inequality with an integer rect.
     bool operator !=(const IntRect& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an IntVector2.
     bool operator !=(const IntVector2& rhs) const { return !(*this == rhs); }
-
-    /// Test for inequality with an IntVector3.
-    bool operator !=(const IntVector3& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a StringHash.
     bool operator !=(const StringHash& rhs) const { return !(*this == rhs); }
@@ -994,41 +901,11 @@ public:
             return 0;
     }
 
-    /// Return 64 bit int or zero on type mismatch. Floats and doubles are converted.
-    long long GetInt64() const
-    {
-        if (type_ == VAR_INT64)
-            return *(reinterpret_cast<const long long*>(&value_));
-        else if (type_ == VAR_INT)
-            return value_.int_;
-        else if (type_ == VAR_FLOAT)
-            return (long long)value_.float_;
-        else if (type_ == VAR_DOUBLE)
-            return (long long)*reinterpret_cast<const double*>(&value_);
-        else
-            return 0;
-    }
-
-    /// Return unsigned 64 bit int or zero on type mismatch. Floats and doubles are converted.
-    unsigned long long GetUInt64() const
-    {
-        if (type_ == VAR_INT64)
-            return *(reinterpret_cast<const unsigned long long*>(&value_));
-        else if (type_ == VAR_INT)
-            return static_cast<unsigned long long>(value_.int_);
-        else if (type_ == VAR_FLOAT)
-            return (unsigned long long)value_.float_;
-        else if (type_ == VAR_DOUBLE)
-            return (unsigned long long)*reinterpret_cast<const double*>(&value_);
-        else
-            return 0;
-    }
-
     /// Return unsigned int or zero on type mismatch. Floats and doubles are converted.
     unsigned GetUInt() const
     {
         if (type_ == VAR_INT)
-            return (unsigned)value_.int_;
+            return value_.int_;
         else if (type_ == VAR_FLOAT)
             return (unsigned)value_.float_;
         else if (type_ == VAR_DOUBLE)
@@ -1140,9 +1017,6 @@ public:
         return type_ == VAR_VARIANTMAP ? *reinterpret_cast<const VariantMap*>(&value_) : emptyVariantMap;
     }
 
-    /// Return a rect or empty on type mismatch.
-    const Rect& GetRect() const { return type_ == VAR_RECT ? *reinterpret_cast<const Rect*>(&value_) : Rect::ZERO; }
-
     /// Return an integer rect or empty on type mismatch.
     const IntRect& GetIntRect() const { return type_ == VAR_INTRECT ? *reinterpret_cast<const IntRect*>(&value_) : IntRect::ZERO; }
 
@@ -1150,12 +1024,6 @@ public:
     const IntVector2& GetIntVector2() const
     {
         return type_ == VAR_INTVECTOR2 ? *reinterpret_cast<const IntVector2*>(&value_) : IntVector2::ZERO;
-    }
-
-    /// Return an IntVector3 or empty on type mismatch.
-    const IntVector3& GetIntVector3() const
-    {
-        return type_ == VAR_INTVECTOR3 ? *reinterpret_cast<const IntVector3*>(&value_) : IntVector3::ZERO;
     }
 
     /// Return a RefCounted pointer or null on type mismatch. Will return null if holding a void pointer, as it can not be safely verified that the object is a RefCounted.
@@ -1253,10 +1121,6 @@ template <> inline VariantType GetVariantType<int>() { return VAR_INT; }
 
 template <> inline VariantType GetVariantType<unsigned>() { return VAR_INT; }
 
-template <> inline VariantType GetVariantType<long long>() { return VAR_INT64; }
-
-template <> inline VariantType GetVariantType<unsigned long long>() { return VAR_INT64; }
-
 template <> inline VariantType GetVariantType<bool>() { return VAR_BOOL; }
 
 template <> inline VariantType GetVariantType<float>() { return VAR_FLOAT; }
@@ -1289,13 +1153,9 @@ template <> inline VariantType GetVariantType<StringVector>() { return VAR_STRIN
 
 template <> inline VariantType GetVariantType<VariantMap>() { return VAR_VARIANTMAP; }
 
-template <> inline VariantType GetVariantType<Rect>() { return VAR_RECT; }
-
 template <> inline VariantType GetVariantType<IntRect>() { return VAR_INTRECT; }
 
 template <> inline VariantType GetVariantType<IntVector2>() { return VAR_INTVECTOR2; }
-
-template <> inline VariantType GetVariantType<IntVector3>() { return VAR_INTVECTOR3; }
 
 template <> inline VariantType GetVariantType<Matrix3>() { return VAR_MATRIX3; }
 
@@ -1307,10 +1167,6 @@ template <> inline VariantType GetVariantType<Matrix4>() { return VAR_MATRIX4; }
 template <> URHO3D_API int Variant::Get<int>() const;
 
 template <> URHO3D_API unsigned Variant::Get<unsigned>() const;
-
-template <> URHO3D_API long long Variant::Get<long long>() const;
-
-template <> URHO3D_API unsigned long long Variant::Get<unsigned long long>() const;
 
 template <> URHO3D_API StringHash Variant::Get<StringHash>() const;
 
@@ -1332,13 +1188,9 @@ template <> URHO3D_API const Color& Variant::Get<const Color&>() const;
 
 template <> URHO3D_API const String& Variant::Get<const String&>() const;
 
-template <> URHO3D_API const Rect& Variant::Get<const Rect&>() const;
-
 template <> URHO3D_API const IntRect& Variant::Get<const IntRect&>() const;
 
 template <> URHO3D_API const IntVector2& Variant::Get<const IntVector2&>() const;
-
-template <> URHO3D_API const IntVector3& Variant::Get<const IntVector3&>() const;
 
 template <> URHO3D_API const PODVector<unsigned char>& Variant::Get<const PODVector<unsigned char>&>() const;
 
@@ -1374,13 +1226,9 @@ template <> URHO3D_API Color Variant::Get<Color>() const;
 
 template <> URHO3D_API String Variant::Get<String>() const;
 
-template <> URHO3D_API Rect Variant::Get<Rect>() const;
-
 template <> URHO3D_API IntRect Variant::Get<IntRect>() const;
 
 template <> URHO3D_API IntVector2 Variant::Get<IntVector2>() const;
-
-template <> URHO3D_API IntVector3 Variant::Get<IntVector3>() const;
 
 template <> URHO3D_API PODVector<unsigned char> Variant::Get<PODVector<unsigned char> >() const;
 

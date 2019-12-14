@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,6 @@ class Texture2D;
 class TextureCube;
 class View;
 class Zone;
-struct BatchQueue;
 
 static const int SHADOW_MIN_PIXELS = 64;
 static const int INSTANCING_BUFFER_DEFAULT_SIZE = 1024;
@@ -195,9 +194,9 @@ public:
     void SetHDRRendering(bool enable);
     /// Set specular lighting on/off.
     void SetSpecularLighting(bool enable);
-    /// Set default texture max anisotropy level.
+    /// Set texture anisotropy.
     void SetTextureAnisotropy(int level);
-    /// Set default texture filtering.
+    /// Set texture filtering.
     void SetTextureFilterMode(TextureFilterMode mode);
     /// Set texture quality level. See the QUALITY constants in GraphicsDefs.h.
     void SetTextureQuality(int quality);
@@ -213,8 +212,6 @@ public:
     void SetShadowSoftness(float shadowSoftness);
     /// Set shadow parameters when VSM is used, they help to reduce light bleeding. LightBleeding must be in [0, 1[
     void SetVSMShadowParameters(float minVariance, float lightBleedingReduction);
-    /// Set VSM shadow map multisampling level. Default 1 (no multisampling.)
-    void SetVSMMultiSample(int multiSample);
     /// Set post processing filter to the shadow map
     void SetShadowMapFilter(Object* instance, ShadowMapFilter functionPtr);
     /// Set reuse of shadow maps. Default is true. If disabled, also transparent geometry can be shadowed.
@@ -268,10 +265,10 @@ public:
     /// Return whether drawing shadows is enabled.
     bool GetDrawShadows() const { return drawShadows_; }
 
-    /// Return default texture max. anisotropy level.
+    /// Return texture anisotropy.
     int GetTextureAnisotropy() const { return textureAnisotropy_; }
 
-    /// Return default texture filtering mode.
+    /// Return texture filtering.
     TextureFilterMode GetTextureFilterMode() const { return textureFilterMode_; }
 
     /// Return texture quality level.
@@ -289,11 +286,8 @@ public:
     /// Return shadow softness.
     float GetShadowSoftness() const { return shadowSoftness_; }
 
-    /// Return VSM shadow parameters.
+    /// Return VSM shadow parameters
     Vector2 GetVSMShadowParameters() const { return vsmShadowParams_; };
-
-    /// Return VSM shadow multisample level.
-    int GetVSMMultiSample() const { return vsmMultiSample_; }
 
     /// Return whether shadow maps are reused.
     bool GetReuseShadowMaps() const { return reuseShadowMaps_; }
@@ -395,9 +389,9 @@ public:
     Texture2D* GetShadowMap(Light* light, Camera* camera, unsigned viewWidth, unsigned viewHeight);
     /// Allocate a rendertarget or depth-stencil texture for deferred rendering or postprocessing. Should only be called during actual rendering, not before.
     Texture* GetScreenBuffer
-        (int width, int height, unsigned format, int multiSample, bool autoResolve, bool cubemap, bool filtered, bool srgb, unsigned persistentKey = 0);
+        (int width, int height, unsigned format, bool cubemap, bool filtered, bool srgb, unsigned persistentKey = 0);
     /// Allocate a depth-stencil surface that does not need to be readable. Should only be called during actual rendering, not before.
-    RenderSurface* GetDepthStencil(int width, int height, int multiSample, bool autoResolve);
+    RenderSurface* GetDepthStencil(int width, int height);
     /// Allocate an occlusion buffer.
     OcclusionBuffer* GetOcclusionBuffer(Camera* camera);
     /// Allocate a temporary shadow camera and a scene node for it. Is thread-safe.
@@ -406,8 +400,8 @@ public:
     void StorePreparedView(View* view, Camera* cullCamera);
     /// Return a prepared view if exists for the specified camera. Used to avoid duplicate view preparation CPU work.
     View* GetPreparedView(Camera* cullCamera);
-    /// Choose shaders for a forward rendering batch. The related batch queue is provided in case it has extra shader compilation defines.
-    void SetBatchShaders(Batch& batch, Technique* tech, bool allowShadows, const BatchQueue& queue);
+    /// Choose shaders for a forward rendering batch.
+    void SetBatchShaders(Batch& batch, Technique* tech, bool allowShadows = true);
     /// Choose shaders for a deferred light volume batch.
     void SetLightVolumeBatchShaders
         (Batch& batch, Camera* camera, const String& vsName, const String& psName, const String& vsDefines, const String& psDefines);
@@ -434,8 +428,8 @@ private:
     void Initialize();
     /// Reload shaders.
     void LoadShaders();
-    /// Reload shaders for a material pass. The related batch queue is provided in case it has extra shader compilation defines.
-    void LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& vertexShaders, Vector<SharedPtr<ShaderVariation> >& pixelShaders, const BatchQueue& queue);
+    /// Reload shaders for a material pass.
+    void LoadPassShaders(Pass* pass);
     /// Release shaders used in materials.
     void ReleaseMaterialShaders();
     /// Reload textures.
@@ -551,8 +545,6 @@ private:
     float shadowSoftness_;
     /// Shadow parameters when VSM is used, they help to reduce light bleeding.
     Vector2 vsmShadowParams_;
-    /// Multisample level for VSM shadows.
-    int vsmMultiSample_;
     /// Maximum number of shadow maps per resolution.
     int maxShadowMaps_;
     /// Minimum number of instances required in a batch group to render as instanced.

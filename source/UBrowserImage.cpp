@@ -43,15 +43,20 @@
 
 //=============================================================================
 //=============================================================================
-#define FRAME_RATE_MS 32
-#define MOUSE_WHEEL_MULTIPLYER 30.0f
+#define FRAME_RATE_MS           32
+#define MOUSE_WHEEL_MULTIPLYER  30.0f
 
 //=============================================================================
 //=============================================================================
 UCefRenderHandle::UCefRenderHandle(int width, int height, unsigned components)
-    : width_(width), height_(height), components_(components), bufferUpdated_(false), browser_(NULL), isShuttingDown_(false)
+    : width_(width)
+    , height_(height)
+    , components_(components)
+    , bufferUpdated_(false)
+    , browser_(NULL)
+    , isShuttingDown_(false)
 {
-    copyBuffer_ = new unsigned char[width * height * components];
+    copyBuffer_ = new unsigned char[width*height*components];
 }
 
 UCefRenderHandle::~UCefRenderHandle()
@@ -60,54 +65,53 @@ UCefRenderHandle::~UCefRenderHandle()
     browser_ = NULL;
 }
 
-bool UCefRenderHandle::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
+bool UCefRenderHandle::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect)
 {
     rect = CefRect(0, 0, width_, height_);
     return true;
 }
 
-void UCefRenderHandle::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType ttype,
-                               const RectList &dirtyRects, const void *buffer, int width, int height)
+void UCefRenderHandle::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType ttype, 
+                               const RectList& dirtyRects, const void* buffer, int width, int height)
 {
-    printf("painting");
-    if (IsShuttingDown())
+    if ( IsShuttingDown() )
     {
         return;
     }
 
-    if (copyTimer_.GetMSec(false) < FRAME_RATE_MS)
+    if ( copyTimer_.GetMSec(false) < FRAME_RATE_MS )
     {
         return;
     }
 
-    if (width != width_ || height != height_)
+    if ( width != width_ || height != height_ )
     {
         MutexLock lock(copyMutex_);
 
         width_ = width;
         height_ = height;
-        copyBuffer_ = new unsigned char[width_ * height_ * components_];
+        copyBuffer_ = new unsigned char[width_*height_*components_];
     }
 
-    if (browser_ == NULL)
+    if ( browser_ == NULL )
     {
         browser_ = browser;
     }
 
-    CopyBuffer(copyBuffer_.Get(), (void *)buffer, width_ * height_ * components_);
+    CopyBuffer(copyBuffer_.Get(), (void*)buffer, width_*height_*components_);
 
     copyTimer_.Reset();
 }
 
 void UCefRenderHandle::Resize(int width, int height)
 {
-    if (width != width_ || height != height_)
+    if ( width != width_ || height != height_ )
     {
         MutexLock lock(copyMutex_);
 
         width_ = width;
         height_ = height;
-        copyBuffer_ = new unsigned char[width_ * height_ * components_];
+        copyBuffer_ = new unsigned char[width_*height_*components_];
     }
 }
 
@@ -121,11 +125,11 @@ void UCefRenderHandle::CopyBuffer(void *dst, void *src, unsigned usize)
         unsigned char r_, g_, b_, a_;
     };
 
-#ifdef INDIVIDUAL_RGBA_CPY
-    CefColor *fsrc = (CefColor *)src;
-    CefColor *fdst = (CefColor *)dst;
+    #ifdef INDIVIDUAL_RGBA_CPY
+    CefColor *fsrc = (CefColor*)src;
+    CefColor *fdst = (CefColor*)dst;
 
-    for (unsigned i = 0; i < usize / sizeof(CefColor); ++i)
+    for ( unsigned i = 0; i < usize/sizeof(CefColor); ++i )
     {
         fdst[i].r_ = fsrc[i].b_;
         fdst[i].g_ = fsrc[i].g_;
@@ -134,8 +138,8 @@ void UCefRenderHandle::CopyBuffer(void *dst, void *src, unsigned usize)
     }
     //SDL_Log("rgba cp = %I64d", htimer.GetUSec(false) );
 
-#else
-    // doing mempcy first then doing the r-b swap in shared ptr
+    #else
+    // doing mempcy first then doing the r-b swap in shared ptr 
     // array is about 20%-40% faster than individual rgba cpy
     // -sample output data (in usecs):
     //INFO: rgba cp = 12581
@@ -149,16 +153,16 @@ void UCefRenderHandle::CopyBuffer(void *dst, void *src, unsigned usize)
 
     memcpy(dst, src, usize);
 
-    CefColor *fdst = (CefColor *)dst;
+    CefColor *fdst = (CefColor*)dst;
 
-    for (unsigned i = 0; i < usize / sizeof(CefColor); ++i)
+    for ( unsigned i = 0; i < usize/sizeof(CefColor); ++i )
     {
         unsigned char tmp = fdst[i].r_;
         fdst[i].r_ = fdst[i].b_;
         fdst[i].b_ = tmp;
     }
-//SDL_Log("memcpy - rb swap = %I64d", htimer.GetUSec(false) );
-#endif
+    //SDL_Log("memcpy - rb swap = %I64d", htimer.GetUSec(false) );
+    #endif
 
     bufferUpdated_ = true;
 }
@@ -167,7 +171,7 @@ void UCefRenderHandle::CopyToTexture(Texture2D *texture)
 {
     MutexLock lock(copyMutex_);
 
-    if (bufferUpdated_)
+    if ( bufferUpdated_ )
     {
         texture->SetData(0, 0, 0, width_, height_, copyBuffer_.Get());
         bufferUpdated_ = false;
@@ -175,8 +179,8 @@ void UCefRenderHandle::CopyToTexture(Texture2D *texture)
 }
 
 void UCefRenderHandle::Shutdown()
-{
-    isShuttingDown_ = true;
+{ 
+    isShuttingDown_ = true; 
 }
 
 bool UCefRenderHandle::IsShuttingDown()
@@ -187,7 +191,9 @@ bool UCefRenderHandle::IsShuttingDown()
 //=============================================================================
 //=============================================================================
 UBrowserImage::UBrowserImage(Context *context)
-    : BorderImage(context), cefBrowser_(NULL), cefRendererHandle_(NULL)
+    : BorderImage(context)
+    , cefBrowser_(NULL)
+    , cefRendererHandle_(NULL)
 {
 }
 
@@ -199,13 +205,13 @@ UBrowserImage::~UBrowserImage()
 
 void UBrowserImage::ClearCefHandler()
 {
-    if (cefRendererHandle_)
+    if ( cefRendererHandle_ )
     {
         cefRendererHandle_->Shutdown();
         cefRendererHandle_->browser_ = NULL;
     }
 
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         cefBrowser_ = NULL;
     }
@@ -223,12 +229,12 @@ void UBrowserImage::Init(UCefRenderHandle *cefRenderHandler, int width, int heig
 void UBrowserImage::InitTexture(int width, int height)
 {
     texture_ = new Texture2D(context_);
-
+    
     // set texture format
     texture_->SetMipsToSkip(QUALITY_LOW, 0);
     texture_->SetNumLevels(1);
     texture_->SetSize(CEFBUF_WIDTH, CEFBUF_HEIGHT, Graphics::GetRGBAFormat());
-
+    
     // set modes
     texture_->SetFilterMode(FILTER_BILINEAR);
     texture_->SetAddressMode(COORD_U, ADDRESS_CLAMP);
@@ -237,10 +243,10 @@ void UBrowserImage::InitTexture(int width, int height)
     width_ = width;
     height_ = height;
 
-    scaleDiff_ = Vector2((float)CEFBUF_WIDTH / (float)width_, (float)CEFBUF_HEIGHT / (float)height_);
+    scaleDiff_ = Vector2( (float)CEFBUF_WIDTH/(float)width_, (float)CEFBUF_HEIGHT/(float)height_ );
     initalOffset_ = IntVector2(20, 20);
 
-    // init
+    // init 
     SetVisible(false);
     SetPosition(initalOffset_);
     SetTexture(texture_);
@@ -252,18 +258,18 @@ void UBrowserImage::InitTexture(int width, int height)
 void UBrowserImage::UpdateBuffer()
 {
     // check timer before appready
-    if (copyTimer_.GetMSec(false) < FRAME_RATE_MS || !IsAppReady())
+    if ( copyTimer_.GetMSec(false) < FRAME_RATE_MS || !IsAppReady())
     {
         return;
     }
 
     // copy buffer
-    cefRendererHandle_->CopyToTexture(texture_);
+    cefRendererHandle_->CopyToTexture( texture_ );
     copyTimer_.Reset();
 
     cefBrowser_ = cefRendererHandle_->browser_;
 
-    if (!IsVisible())
+    if ( !IsVisible() )
     {
         SetVisible(true);
     }
@@ -271,7 +277,7 @@ void UBrowserImage::UpdateBuffer()
 
 bool UBrowserImage::IsAppReady() const
 {
-    return (cefRendererHandle_ && cefRendererHandle_->IsUpdated());
+    return ( cefRendererHandle_ && cefRendererHandle_->IsUpdated() );
 }
 
 void UBrowserImage::RegisterHandlers()
@@ -294,23 +300,23 @@ void UBrowserImage::RegisterHandlers()
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleUpdate(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleUpdate(StringHash eventType, VariantMap& eventData)
 {
     UpdateBuffer();
 }
 
-void UBrowserImage::HandleFocusChanged(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleFocusChanged(StringHash eventType, VariantMap& eventData)
 {
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         cefBrowser_->GetHost()->SendFocusEvent(IsHovering());
     }
 }
 
-void UBrowserImage::OnHover(const IntVector2 &position, const IntVector2 &screenPosition,
-                            int buttons, int qualifiers, Cursor *cursor)
+void UBrowserImage::OnHover(const IntVector2& position, const IntVector2& screenPosition, 
+                            int buttons, int qualifiers, Cursor* cursor)
 {
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         lastMousePos_ = position;
         CefMouseEvent cevent = GetCefMoustEvent(qualifiers);
@@ -319,10 +325,10 @@ void UBrowserImage::OnHover(const IntVector2 &position, const IntVector2 &screen
     }
 }
 
-void UBrowserImage::OnClickBegin(const IntVector2 &position, const IntVector2 &screenPosition,
-                                 int button, int buttons, int qualifiers, Cursor *cursor)
+void UBrowserImage::OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, 
+                                 int button, int buttons, int qualifiers, Cursor* cursor)
 {
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         lastMousePos_ = position;
         CefMouseEvent cevent = GetCefMoustEvent(qualifiers);
@@ -333,10 +339,10 @@ void UBrowserImage::OnClickBegin(const IntVector2 &position, const IntVector2 &s
     }
 }
 
-void UBrowserImage::OnClickEnd(const IntVector2 &position, const IntVector2 &screenPosition,
-                               int button, int buttons, int qualifiers, Cursor *cursor, UIElement *beginElement)
+void UBrowserImage::OnClickEnd(const IntVector2& position, const IntVector2& screenPosition, 
+                               int button, int buttons, int qualifiers, Cursor* cursor, UIElement* beginElement)
 {
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         lastMousePos_ = position;
         CefMouseEvent cevent = GetCefMoustEvent(qualifiers);
@@ -349,14 +355,14 @@ void UBrowserImage::OnClickEnd(const IntVector2 &position, const IntVector2 &scr
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleMouseWheel(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleMouseWheel(StringHash eventType, VariantMap& eventData)
 {
     using namespace MouseWheel;
 
-    int qualifiers = eventData[UIMouseDoubleClick::P_QUALIFIERS].GetInt();
+    int qualifiers = eventData[P_QUALIFIERS].GetInt();
     int delta = eventData[P_WHEEL].GetInt();
 
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         CefMouseEvent cevent = GetCefMoustEvent(qualifiers);
 
@@ -368,7 +374,7 @@ void UBrowserImage::HandleMouseWheel(StringHash eventType, VariantMap &eventData
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleScreenMode(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleScreenMode(StringHash eventType, VariantMap& eventData)
 {
     using namespace ScreenMode;
 
@@ -377,18 +383,18 @@ void UBrowserImage::HandleScreenMode(StringHash eventType, VariantMap &eventData
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleKeyDown(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleKeyDown(StringHash eventType, VariantMap& eventData)
 {
     using namespace KeyDown;
 
-    int qualifiers = eventData[UIMouseDoubleClick::P_QUALIFIERS].GetInt();
+    int qualifiers = eventData[P_QUALIFIERS].GetInt();
     int key = eventData[P_KEY].GetInt();
 
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         CefKeyEvent cevent;
-        cevent.type = KEYEVENT_KEYDOWN;
-        cevent.modifiers = GetKeyModifiers(qualifiers);
+        cevent.type             = KEYEVENT_KEYDOWN;
+        cevent.modifiers        = GetKeyModifiers(qualifiers);
         cevent.windows_key_code = key;
 
         cefBrowser_->GetHost()->SendKeyEvent(cevent);
@@ -397,18 +403,18 @@ void UBrowserImage::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleKeyUp(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleKeyUp(StringHash eventType, VariantMap& eventData)
 {
     using namespace KeyUp;
 
-    int qualifiers = eventData[UIMouseDoubleClick::P_QUALIFIERS].GetInt();
+    int qualifiers = eventData[P_QUALIFIERS].GetInt();
     int key = eventData[P_KEY].GetInt();
 
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         CefKeyEvent cevent;
-        cevent.type = KEYEVENT_KEYUP;
-        cevent.modifiers = GetKeyModifiers(qualifiers);
+        cevent.type             = KEYEVENT_KEYUP;
+        cevent.modifiers        = GetKeyModifiers(qualifiers);
         cevent.windows_key_code = key;
 
         cefBrowser_->GetHost()->SendKeyEvent(cevent);
@@ -417,18 +423,18 @@ void UBrowserImage::HandleKeyUp(StringHash eventType, VariantMap &eventData)
 
 //=============================================================================
 //=============================================================================
-void UBrowserImage::HandleTextInput(StringHash eventType, VariantMap &eventData)
+void UBrowserImage::HandleTextInput(StringHash eventType, VariantMap& eventData)
 {
     using namespace TextInput;
 
-    int qualifiers = eventData[UIMouseDoubleClick::P_QUALIFIERS].GetInt();
-    int key = (int)eventData[P_TEXT].GetString().CString()[0];
+    int qualifiers = eventData[P_QUALIFIERS].GetInt();
+    int key = (int)eventData[ P_TEXT ].GetString().CString()[ 0 ];
 
-    if (cefBrowser_)
+    if ( cefBrowser_ )
     {
         CefKeyEvent cevent;
-        cevent.type = KEYEVENT_CHAR;
-        cevent.modifiers = GetKeyModifiers(qualifiers);
+        cevent.type             = KEYEVENT_CHAR;
+        cevent.modifiers        = GetKeyModifiers(qualifiers);
         cevent.windows_key_code = key;
 
         cefBrowser_->GetHost()->SendKeyEvent(cevent);
@@ -450,16 +456,20 @@ unsigned UBrowserImage::GetKeyModifiers(int qualifiers)
 {
     unsigned modifier = 0;
 
-    if (qualifiers & QUAL_SHIFT)
-        modifier = EVENTFLAG_SHIFT_DOWN;
-    if (qualifiers & QUAL_CTRL)
-        modifier |= EVENTFLAG_CONTROL_DOWN;
-    if (qualifiers & QUAL_ALT)
-        modifier |= EVENTFLAG_ALT_DOWN;
+    if ( qualifiers & QUAL_SHIFT ) modifier  = EVENTFLAG_SHIFT_DOWN;
+    if ( qualifiers & QUAL_CTRL  ) modifier |= EVENTFLAG_CONTROL_DOWN;
+    if ( qualifiers & QUAL_ALT   ) modifier |= EVENTFLAG_ALT_DOWN;
 
-    Input *input = GetSubsystem<Input>();
-    if (input->GetKeyDown(KEY_CAPSLOCK))
-        modifier |= EVENTFLAG_CAPS_LOCK_ON;
+    Input* input = GetSubsystem<Input>();
+    if ( input->GetKeyDown(KEY_CAPSLOCK) ) modifier |= EVENTFLAG_CAPS_LOCK_ON;
 
     return modifier;
 }
+
+
+
+
+
+
+
+

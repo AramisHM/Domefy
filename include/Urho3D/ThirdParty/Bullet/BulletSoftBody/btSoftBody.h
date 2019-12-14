@@ -232,18 +232,15 @@ public:
 		int						m_battach:1;	// Attached
 	};
 	/* Link			*/ 
-	ATTRIBUTE_ALIGNED16(struct)	Link : Feature
+	struct	Link : Feature
 	{
-		btVector3				m_c3;			// gradient
 		Node*					m_n[2];			// Node pointers
 		btScalar				m_rl;			// Rest length		
 		int						m_bbending:1;	// Bending link
 		btScalar				m_c0;			// (ima+imb)*kLST
 		btScalar				m_c1;			// rl^2
 		btScalar				m_c2;			// |gradient|^2/c0
-	
-		BT_DECLARE_ALIGNED_ALLOCATOR();
-
+		btVector3				m_c3;			// gradient
 	};
 	/* Face			*/ 
 	struct	Face : Feature

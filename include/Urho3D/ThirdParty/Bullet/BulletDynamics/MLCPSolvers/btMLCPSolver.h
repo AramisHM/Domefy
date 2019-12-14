@@ -42,17 +42,7 @@ protected:
 	btAlignedObjectArray<btSolverConstraint*>	m_allConstraintPtrArray;
 	btMLCPSolverInterface* m_solver;
 	int m_fallback;
-
-    /// The following scratch variables are not stateful -- contents are cleared prior to each use.
-    /// They are only cached here to avoid extra memory allocations and deallocations and to ensure
-    /// that multiple instances of the solver can be run in parallel.
-    btMatrixXu m_scratchJ3;
-    btMatrixXu m_scratchJInvM3;
-    btAlignedObjectArray<int> m_scratchOfs;
-    btMatrixXu m_scratchMInv;
-    btMatrixXu m_scratchJ;
-    btMatrixXu m_scratchJTranspose;
-    btMatrixXu m_scratchTmp;
+	btScalar m_cfm;
 
 	virtual btScalar solveGroupCacheFriendlySetup(btCollisionObject** bodies, int numBodies, btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo& infoGlobal,btIDebugDraw* debugDrawer);
 	virtual btScalar solveGroupCacheFriendlyIterations(btCollisionObject** bodies ,int numBodies,btPersistentManifold** manifoldPtr, int numManifolds,btTypedConstraint** constraints,int numConstraints,const btContactSolverInfo& infoGlobal,btIDebugDraw* debugDrawer);
@@ -81,6 +71,15 @@ public:
 	void setNumFallbacks(int num)
 	{
 		m_fallback = num;
+	}
+
+	btScalar	getCfm() const
+	{
+		return m_cfm;
+	}
+	void setCfm(btScalar cfm)
+	{
+		m_cfm = cfm;
 	}
 
 	virtual btConstraintSolverType	getSolverType() const

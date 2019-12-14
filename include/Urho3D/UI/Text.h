@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 namespace Urho3D
 {
 
-static const float DEFAULT_FONT_SIZE = 12;
+static const int DEFAULT_FONT_SIZE = 12;
 
 class Font;
 class FontFace;
@@ -45,16 +45,16 @@ enum TextEffect
 struct CharLocation
 {
     /// Position.
-    Vector2 position_;
+    IntVector2 position_;
     /// Size.
-    Vector2 size_;
+    IntVector2 size_;
 };
 
 /// Glyph and its location within the text. Used when preparing text rendering.
 struct GlyphLocation
 {
     /// Construct.
-    GlyphLocation(float x, float y, const FontGlyph* glyph) :
+    GlyphLocation(int x, int y, const FontGlyph* glyph) :
         x_(x),
         y_(y),
         glyph_(glyph)
@@ -62,9 +62,9 @@ struct GlyphLocation
     }
 
     /// X coordinate.
-    float x_;
+    int x_;
     /// Y coordinate.
-    float y_;
+    int y_;
     /// Glyph.
     const FontGlyph* glyph_;
 };
@@ -89,16 +89,16 @@ public:
     /// Return UI rendering batches.
     virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor);
     /// React to resize.
-    virtual void OnResize(const IntVector2& newSize, const IntVector2& delta);
+    virtual void OnResize();
     /// React to indent change.
     virtual void OnIndentSet();
 
     /// Set font by looking from resource cache by name and font size. Return true if successful.
     bool SetFont(const String& fontName, int size = DEFAULT_FONT_SIZE);
     /// Set font and font size. Return true if successful.
-    bool SetFont(Font* font, float size = DEFAULT_FONT_SIZE);
+    bool SetFont(Font* font, int size = DEFAULT_FONT_SIZE);
     /// Set font size only while retaining the existing font. Return true if successful.
-    bool SetFontSize(float size);
+    bool SetFontSize(int size);
     /// Set text. Text is assumed to be either ASCII or UTF8-encoded.
     void SetText(const String& text);
     /// Set row alignment.
@@ -132,7 +132,7 @@ public:
     Font* GetFont() const { return font_; }
 
     /// Return font size.
-    float GetFontSize() const { return fontSize_; }
+    int GetFontSize() const { return fontSize_; }
 
     /// Return text.
     const String& GetText() const { return text_; }
@@ -177,7 +177,7 @@ public:
     const Color& GetEffectColor() const { return effectColor_; }
 
     /// Return row height.
-    float GetRowHeight() const { return rowHeight_; }
+    int GetRowHeight() const { return rowHeight_; }
 
     /// Return number of rows.
     unsigned GetNumRows() const { return rowWidths_.Size(); }
@@ -186,11 +186,11 @@ public:
     unsigned GetNumChars() const { return unicodeText_.Size(); }
 
     /// Return width of row by index.
-    float GetRowWidth(unsigned index) const;
+    int GetRowWidth(unsigned index) const;
     /// Return position of character by index relative to the text element origin.
-    Vector2 GetCharPosition(unsigned index);
+    IntVector2 GetCharPosition(unsigned index);
     /// Return size of character by index.
-    Vector2 GetCharSize(unsigned index);
+    IntVector2 GetCharSize(unsigned index);
 
     /// Set text effect Z bias. Zero by default, adjusted only in 3D mode.
     void SetEffectDepthBias(float bias);
@@ -220,7 +220,7 @@ protected:
     int GetRowStartPosition(unsigned rowIndex) const;
     /// Contruct batch.
     void ConstructBatch
-        (UIBatch& pageBatch, const PODVector<GlyphLocation>& pageGlyphLocation, float dx = 0, float dy = 0, Color* color = 0,
+        (UIBatch& pageBatch, const PODVector<GlyphLocation>& pageGlyphLocation, int dx = 0, int dy = 0, Color* color = 0,
             float depthBias = 0.0f);
 
     /// Font.
@@ -228,7 +228,7 @@ protected:
     /// Current face.
     WeakPtr<FontFace> fontFace_;
     /// Font size.
-    float fontSize_;
+    int fontSize_;
     /// UTF-8 encoded text.
     String text_;
     /// Row alignment.
@@ -260,7 +260,7 @@ protected:
     /// Text effect Z bias.
     float effectDepthBias_;
     /// Row height.
-    float rowHeight_;
+    int rowHeight_;
     /// Text as Unicode characters.
     PODVector<unsigned> unicodeText_;
     /// Text modified into printed form.
@@ -268,7 +268,7 @@ protected:
     /// Mapping of printed form back to original char indices.
     PODVector<unsigned> printToText_;
     /// Row widths.
-    PODVector<float> rowWidths_;
+    PODVector<int> rowWidths_;
     /// Glyph locations per each texture in the font.
     Vector<PODVector<GlyphLocation> > pageGlyphLocations_;
     /// Cached locations of each character in the text.

@@ -26,15 +26,13 @@ class btDispatcher;
 #include "btCollisionCreateFunc.h"
 
 ///For each triangle in the concave mesh that overlaps with the AABB of a convex (m_convexProxy), processTriangle is called.
-ATTRIBUTE_ALIGNED16(class)  btConvexTriangleCallback : public btTriangleCallback
+class btConvexTriangleCallback : public btTriangleCallback
 {
-
-	btVector3	m_aabbMin;
-	btVector3	m_aabbMax ;
-
 	const btCollisionObjectWrapper* m_convexBodyWrap;
 	const btCollisionObjectWrapper* m_triBodyWrap;
 
+	btVector3	m_aabbMin;
+	btVector3	m_aabbMax ;
 
 
 	btManifoldResult* m_resultOut;
@@ -43,8 +41,6 @@ ATTRIBUTE_ALIGNED16(class)  btConvexTriangleCallback : public btTriangleCallback
 	btScalar m_collisionMarginTriangle;
 	
 public:
-	BT_DECLARE_ALIGNED_ALLOCATOR();
-	
 int	m_triangleCount;
 	
 	btPersistentManifold*	m_manifoldPtr;
@@ -79,19 +75,17 @@ int	m_triangleCount;
 
 
 /// btConvexConcaveCollisionAlgorithm  supports collision between convex shapes and (concave) trianges meshes.
-ATTRIBUTE_ALIGNED16(class)  btConvexConcaveCollisionAlgorithm  : public btActivatingCollisionAlgorithm
+class btConvexConcaveCollisionAlgorithm  : public btActivatingCollisionAlgorithm
 {
 
-	btConvexTriangleCallback m_btConvexTriangleCallback;
-
 	bool	m_isSwapped;
+
+	btConvexTriangleCallback m_btConvexTriangleCallback;
 
 
 
 public:
 
-	BT_DECLARE_ALIGNED_ALLOCATOR();
-	
 	btConvexConcaveCollisionAlgorithm( const btCollisionAlgorithmConstructionInfo& ci,const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap,bool isSwapped);
 
 	virtual ~btConvexConcaveCollisionAlgorithm();

@@ -21,7 +21,9 @@
 //=============================================================================
 //=============================================================================
 UCefApp::UCefApp(Context *context)
-    : Object(context), uBrowserImage_(NULL), uCefRenderHandler_(NULL)
+    : Object(context)
+    , uBrowserImage_(NULL)
+    , uCefRenderHandler_(NULL)
 {
 }
 
@@ -32,18 +34,18 @@ UCefApp::~UCefApp()
 
 int UCefApp::CreateAppBrowser()
 {
-    UI *ui = GetSubsystem<UI>();
+    UI* ui = GetSubsystem<UI>();
     uBrowserImage_ = new UBrowserImage(context_);
     ui->GetRoot()->AddChild(uBrowserImage_);
 
     uCefRenderHandler_ = new UCefRenderHandle(CEFBUF_WIDTH, CEFBUF_HEIGHT, CEFBUF_COMPONENTS);
     uBrowserImage_->Init(uCefRenderHandler_, BROWSER_RENDER_WIDTH, BROWSER_RENDER_HEIGTH);
 
-    CefMainArgs main_args(NULL, NULL);
+    CefMainArgs main_args(NULL);
 
     // Specify CEF global settings here.
     CefSettings settings;
-    settings.multi_threaded_message_loop = false;
+    settings.multi_threaded_message_loop = true;
     settings.windowless_rendering_enabled = true;
 
     CefRefPtr<SimpleHandler> simpHandler = new SimpleHandler((CefRenderHandler *)uCefRenderHandler_);
@@ -62,7 +64,7 @@ int UCefApp::CreateAppBrowser()
 void UCefApp::DestroyAppBrowser()
 {
     // flag the handler from copying its buffer
-    if (uCefRenderHandler_)
+    if ( uCefRenderHandler_ )
     {
         uCefRenderHandler_->Shutdown();
     }
@@ -76,22 +78,22 @@ void UCefApp::DestroyAppBrowser()
     // DoClose() is called.
     // 1.  User clicks the window close button which sends a close notification to
     //     the application's top-level window.
-    // . . .
+    // . . . 
     // 9.  Application's top-level window is destroyed.
     // 10. Application's OnBeforeClose() handler is called and the browser object is destroyed.
 
     SimpleHandler::GetInstance()->CloseAllBrowsers(false);
 
     int itr = 0;
-    while (!SimpleHandler::GetInstance()->OnBeforeCloseWasCalled())
+    while ( !SimpleHandler::GetInstance()->OnBeforeCloseWasCalled() )
     {
         itr++;
         Time::Sleep(10);
     }
 
-    SDL_Log("onBeforeClose itr = %d", itr);
+    SDL_Log( "onBeforeClose itr = %d", itr );
 
-    if (uBrowserImage_)
+    if ( uBrowserImage_ )
     {
         uBrowserImage_->ClearCefHandler();
         uBrowserImage_->Remove();
@@ -100,3 +102,6 @@ void UCefApp::DestroyAppBrowser()
 
     Time::Sleep(10);
 }
+
+
+

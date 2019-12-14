@@ -90,11 +90,11 @@ public:
 };
 
 /// Hash-space based Pair Cache, thanks to Erin Catto, Box2D, http://www.box2d.org, and Pierre Terdiman, Codercorner, http://codercorner.com
-
-ATTRIBUTE_ALIGNED16(class) btHashedOverlappingPairCache : public btOverlappingPairCache
+class btHashedOverlappingPairCache : public btOverlappingPairCache
 {
 	btBroadphasePairArray	m_overlappingPairArray;
 	btOverlapFilterCallback* m_overlapFilterCallback;
+	bool		m_blockedForChanges;
 
 protected:
 	
@@ -104,8 +104,6 @@ protected:
 
 
 public:
-	BT_DECLARE_ALIGNED_ALLOCATOR();
-	
 	btHashedOverlappingPairCache();
 	virtual ~btHashedOverlappingPairCache();
 

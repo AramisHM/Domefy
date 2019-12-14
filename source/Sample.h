@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2017 the Urho3D project.
+// Copyright (c) 2008-2016 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ class Node;
 class Scene;
 class Sprite;
 
-} // namespace Urho3D
+}
 
 // All Urho3D classes reside in namespace Urho3D
 using namespace Urho3D;
@@ -56,7 +56,7 @@ class Sample : public Application
 
 public:
     /// Construct.
-    Sample(Context *context);
+    Sample(Context* context);
 
     /// Setup before engine initialization. Modifies the engine parameters.
     virtual void Setup();
@@ -98,17 +98,17 @@ private:
     /// Create console and debug HUD.
     void CreateConsoleAndDebugHud();
     /// Handle request for mouse mode on web platform.
-    void HandleMouseModeRequest(StringHash eventType, VariantMap &eventData);
+    void HandleMouseModeRequest(StringHash eventType, VariantMap& eventData);
     /// Handle request for mouse mode change on web platform.
-    void HandleMouseModeChange(StringHash eventType, VariantMap &eventData);
+    void HandleMouseModeChange(StringHash eventType, VariantMap& eventData);
     /// Handle key down event to process key controls common to all samples.
-    void HandleKeyDown(StringHash eventType, VariantMap &eventData);
+    void HandleKeyDown(StringHash eventType, VariantMap& eventData);
     /// Handle key up event to process key controls common to all samples.
-    void HandleKeyUp(StringHash eventType, VariantMap &eventData);
+    void HandleKeyUp(StringHash eventType, VariantMap& eventData);
     /// Handle scene update event to control camera's pitch and yaw for all samples.
-    void HandleSceneUpdate(StringHash eventType, VariantMap &eventData);
+    void HandleSceneUpdate(StringHash eventType, VariantMap& eventData);
     /// Handle touch begin event to initialize touch input on desktop platform.
-    void HandleTouchBegin(StringHash eventType, VariantMap &eventData);
+    void HandleTouchBegin(StringHash eventType, VariantMap& eventData);
 
     /// Screen joystick index for navigational controls (mobile platforms only).
     unsigned screenJoystickIndex_;

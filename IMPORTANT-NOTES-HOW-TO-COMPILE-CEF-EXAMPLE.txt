@@ -1,0 +1,19 @@
+These notes explain how i managed to work with the CEF integration example on 2019...
+
+Observations:
+I cloned the CEF-Integration git repo and followed the instructions, and compiled the entire Urho3D with the given sample layout.
+
+I used Urho3D 1.6, the exact CEF distro shipped with the CEF sample on the repo and Visual Studio 2017.
+
+The fact that I used VS 2017 is because it allowd me to compile as 32bit.
+It only worked with 32bit target compilation.
+
+Then i created a prorject for CMake to dev with VS code IDE using CMake Tools.
+
+On VS Code, be sure to set the Cmake target to run on Release, this can be changed on the botton bar, (that turn orange when running)...
+
+Also, be sure to use the same compiler used to generate the code for Urho3D.lib and CEF libs... in this case was VS2017.
+Most important of all, use the 32bit version... thats about it.
+
+- Aramis
+Curitiba, 13th of december 2019
