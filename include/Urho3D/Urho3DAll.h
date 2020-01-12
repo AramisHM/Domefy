@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -88,6 +88,7 @@
 #include <Urho3D/Engine/Console.h>
 #include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/Engine/Engine.h>
+#include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Engine/EngineEvents.h>
 #include <Urho3D/Graphics/AnimatedModel.h>
 #include <Urho3D/Graphics/Animation.h>
@@ -143,6 +144,15 @@
 #include <Urho3D/Graphics/View.h>
 #include <Urho3D/Graphics/Viewport.h>
 #include <Urho3D/Graphics/Zone.h>
+#if URHO3D_IK
+#include <Urho3D/IK/IK.h>
+#include <Urho3D/IK/IKConstraint.h>
+#include <Urho3D/IK/IKConverters.h>
+#include <Urho3D/IK/IKEffector.h>
+#include <Urho3D/IK/IKEvents.h>
+#include <Urho3D/IK/IKSolver.h>
+#endif
+#include <Urho3D/IO/AbstractFile.h>
 #include <Urho3D/IO/Compression.h>
 #include <Urho3D/IO/Deserializer.h>
 #include <Urho3D/IO/File.h>
@@ -215,6 +225,7 @@
 #include <Urho3D/Physics/PhysicsEvents.h>
 #include <Urho3D/Physics/PhysicsUtils.h>
 #include <Urho3D/Physics/PhysicsWorld.h>
+#include <Urho3D/Physics/RaycastVehicle.h>
 #include <Urho3D/Physics/RigidBody.h>
 #endif
 #include <Urho3D/Resource/BackgroundLoader.h>
@@ -259,6 +270,7 @@
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Menu.h>
 #include <Urho3D/UI/MessageBox.h>
+#include <Urho3D/UI/ProgressBar.h>
 #include <Urho3D/UI/ScrollBar.h>
 #include <Urho3D/UI/ScrollView.h>
 #include <Urho3D/UI/Slider.h>
@@ -311,6 +323,7 @@
 #include <Urho3D/Urho2D/TileMapLayer2D.h>
 #include <Urho3D/Urho2D/TmxFile2D.h>
 #include <Urho3D/Urho2D/Urho2D.h>
+#include <Urho3D/Urho2D/Urho2DEvents.h>
 #endif
 
 #include <Urho3D/DebugNew.h>

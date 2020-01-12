@@ -2,7 +2,7 @@
 # Chromium Embedded Framework (CEF) Standard Binary Distribution
 #**note** when using a different distribution, change the CEF_DISTRIBUTION value!
 # cef_binary_3.2785.1466.g80e473e_windows32
-set(CEF_DISTRIBUTION cef_binary_3.2785.1466.g80e473e_windows64)
+set(CEF_DISTRIBUTION cef_binary_3.2785.1466.g80e473e_windows32)
 
 
 file (GLOB SIMPLE_CC_FILES ${CEF_DISTRIBUTION}/cefsimple/*.cc )

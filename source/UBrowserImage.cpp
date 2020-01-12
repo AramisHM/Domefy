@@ -427,7 +427,7 @@ void UBrowserImage::HandleTextInput(StringHash eventType, VariantMap& eventData)
 {
     using namespace TextInput;
 
-    int qualifiers = eventData[P_QUALIFIERS].GetInt();
+    int qualifiers = eventData[UIMouseClick::P_QUALIFIERS].GetInt();
     int key = (int)eventData[ P_TEXT ].GetString().CString()[ 0 ];
 
     if ( cefBrowser_ )

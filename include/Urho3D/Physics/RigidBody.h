@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2008-2016 the Urho3D project.
+// Copyright (c) 2008-2017 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -153,10 +153,10 @@ public:
     PhysicsWorld* GetPhysicsWorld() const { return physicsWorld_; }
 
     /// Return Bullet rigid body.
-    btRigidBody* GetBody() const { return body_; }
+    btRigidBody* GetBody() const { return body_.Get(); }
 
     /// Return Bullet compound collision shape.
-    btCompoundShape* GetCompoundShape() const { return compoundShape_; }
+    btCompoundShape* GetCompoundShape() const { return compoundShape_.Get(); }
 
     /// Return mass.
     float GetMass() const { return mass_; }
@@ -230,7 +230,7 @@ public:
 
     /// Apply new world transform after a simulation step. Called internally.
     void ApplyWorldTransform(const Vector3& newWorldPosition, const Quaternion& newWorldRotation);
-    /// Update mass and inertia to the Bullet rigid body.
+    /// Update mass and inertia to the Bullet rigid body. Readd body to world if necessary: if was in world and the Bullet collision shape to use changed.
     void UpdateMass();
     /// Update gravity parameters to the Bullet rigid body.
     void UpdateGravity();
@@ -264,11 +264,11 @@ private:
     void HandleTargetRotation(StringHash eventType, VariantMap& eventData);
 
     /// Bullet rigid body.
-    btRigidBody* body_;
+    UniquePtr<btRigidBody> body_;
     /// Bullet compound collision shape.
-    btCompoundShape* compoundShape_;
+    UniquePtr<btCompoundShape> compoundShape_;
     /// Compound collision shape with center of mass offset applied.
-    btCompoundShape* shiftedCompoundShape_;
+    UniquePtr<btCompoundShape> shiftedCompoundShape_;
     /// Physics world.
     WeakPtr<PhysicsWorld> physicsWorld_;
     /// Smoothed transform, if has one.

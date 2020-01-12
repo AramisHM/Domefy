@@ -69,11 +69,11 @@
 /* #undef STDC_HEADERS */
 /* #undef HAVE_STDLIB_H */
 #define HAVE_STDARG_H 1
-/* #undef HAVE_MALLOC_H */
+#define HAVE_MALLOC_H 1
 /* #undef HAVE_MEMORY_H */
 /* #undef HAVE_STRING_H */
 /* #undef HAVE_STRINGS_H */
-/* #undef HAVE_INTTYPES_H */
+#define HAVE_INTTYPES_H 1
 #define HAVE_STDINT_H 1
 /* #undef HAVE_CTYPE_H */
 /* #undef HAVE_MATH_H */
@@ -83,6 +83,8 @@
 /* #undef HAVE_PTHREAD_NP_H */
 /* #undef HAVE_LIBUDEV_H */
 /* #undef HAVE_DBUS_DBUS_H */
+/* #undef HAVE_IBUS_IBUS_H */
+/* #undef HAVE_FCITX_FRONTEND_H */
 
 /* C library functions */
 /* #undef HAVE_MALLOC */
@@ -275,7 +277,7 @@
 /* #undef SDL_VIDEO_DRIVER_ANDROID */
 /* #undef SDL_VIDEO_DRIVER_HAIKU */
 /* #undef SDL_VIDEO_DRIVER_COCOA */
-// Urho3D - needed on iOS platform
+// Urho3D - needed on iOS/tvOS platform
 /* #undef SDL_VIDEO_DRIVER_UIKIT */
 /* #undef SDL_VIDEO_DRIVER_DIRECTFB */
 /* #undef SDL_VIDEO_DRIVER_DIRECTFB_DYNAMIC */
@@ -342,7 +344,7 @@
 /* #undef SDL_POWER_LINUX */
 #define SDL_POWER_WINDOWS 1
 /* #undef SDL_POWER_MACOSX */
-// Urho3D - needed on iOS platform
+// Urho3D - needed on iOS/tvOS platform
 /* #undef SDL_POWER_UIKIT */
 /* #undef SDL_POWER_HAIKU */
 /* #undef SDL_POWER_EMSCRIPTEN */
@@ -361,7 +363,16 @@
 #define SDL_ASSEMBLY_ROUTINES 1
 /* #undef SDL_ALTIVEC_BLITTERS */
 
-// Urho3D - needed on iOS platform
+/* Enable ime support */
+/* #undef SDL_USE_IME */
+
+/* Enable dynamic udev support */
+/* #undef SDL_UDEV_DYNAMIC */
+
+/* Enable dynamic libsamplerate support */
+/* #undef SDL_LIBSAMPLERATE_DYNAMIC */
+
+// Urho3D - needed on iOS/tvOS platform
 /* #undef SDL_IPHONE_KEYBOARD */
 /* #undef SDL_IPHONE_LAUNCHSCREEN */
 /* #undef SDL_IPHONE_MAX_GFORCE */
