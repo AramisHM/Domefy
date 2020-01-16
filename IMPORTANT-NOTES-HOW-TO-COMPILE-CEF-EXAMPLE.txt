@@ -23,3 +23,7 @@ Curitiba, 13th of december 2019
 Second test, I used VS Community 2019 - Building for 32bit architecture.
 I could also use Urho3D 1.7 (With Direct3D11), but it has to be 32bit library.
 When building with VS Code, you must make sure you selected the build tool with architecture x86, and to build as Release.
+
+
+--------------
+for vs community 2019, you must install Windows SDK package
