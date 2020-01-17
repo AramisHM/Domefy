@@ -370,8 +370,8 @@ class Fpmed : ScriptObject
         //Node @spaceScenePrefab = scene.InstantiateXML(
         //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
-        slideComp = cameraNode.CreateComponent("Slide");
-        slideComp.CreateSlide("./presentation/set.xml");
+        // slideComp = cameraNode.CreateComponent("Slide");
+        // slideComp.CreateSlide("./presentation/set.xml");
 
         // testing video component
         // Node @videoNode = scene_.CreateChild("Video");
