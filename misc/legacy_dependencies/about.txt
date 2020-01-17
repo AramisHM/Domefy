@@ -1,3 +1,7 @@
 To save up time, you eventually want to just grab the MinGW precompile libs.
 
 Source came from: https://packages.msys2.org/package/
+or
+https://github.com/msys2/MINGW-packages
+or
+https://packages.msys2.org/search?t=pkg&q=libvorbis

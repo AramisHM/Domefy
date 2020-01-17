@@ -7,7 +7,7 @@
 #include <Application/Components/AnatomicViewer/AnatomicViewer.h>
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
-#include <Application/Components/TVComponent/TVComponent.h>
+
 #include <Application/Components/VHP/VHP.h>
 #include <Core/ProgramConfig.h>
 
@@ -30,8 +30,8 @@ void MyCustomApplication::RegisterCustomScriptAPI()
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
     context_->RegisterFactory<SlideTransitionAnimatior>();
-    context_->RegisterFactory<TVComponent>();
-    //TVComponent::RegisterObject(context_); // alternative way to do this
+
+
 
     // Register custom Urho3D componenets on scripting engine
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
@@ -66,15 +66,15 @@ void MyCustomApplication::RegisterCustomScriptAPI()
 
     // Video // FIXME: The video entire C++ component is bugy, it crashes uppon closing!
     // Really serious. We neet to kill the process to ganrantee it is really closed
-    RegisterComponent<TVComponent>(engine, "TVComponent");
-    engine->RegisterObjectMethod("TVComponent", "bool OpenFileName(String&in)",
-                                 asMETHOD(TVComponent, OpenFileName), asCALL_THISCALL);
-    engine->RegisterObjectMethod("TVComponent", "bool SetOutputModel(StaticModel&in)",
-                                 asMETHOD(TVComponent, SetOutputModel), asCALL_THISCALL);
-    engine->RegisterObjectMethod("TVComponent", "void Play()",
-                                 asMETHOD(TVComponent, Play), asCALL_THISCALL);
-    engine->RegisterObjectMethod("TVComponent", "void Stop()",
-                                 asMETHOD(TVComponent, Stop), asCALL_THISCALL);
+    // RegisterComponent<TVComponent>(engine, "TVComponent");
+    // engine->RegisterObjectMethod("TVComponent", "bool OpenFileName(String&in)",
+    //                              asMETHOD(TVComponent, OpenFileName), asCALL_THISCALL);
+    // engine->RegisterObjectMethod("TVComponent", "bool SetOutputModel(StaticModel&in)",
+    //                              asMETHOD(TVComponent, SetOutputModel), asCALL_THISCALL);
+    // engine->RegisterObjectMethod("TVComponent", "void Play()",
+    //                              asMETHOD(TVComponent, Play), asCALL_THISCALL);
+    // engine->RegisterObjectMethod("TVComponent", "void Stop()",
+    //                              asMETHOD(TVComponent, Stop), asCALL_THISCALL);
 
     // Registers custom C++ class in AngelScript and pass a class instance
     // (singleton)
@@ -196,9 +196,7 @@ void MyCustomApplication::Start()
 
 void MyCustomApplication::Stop()
 {
-    if (level)
-        delete level; // Perform optional cleanup after main loop has
-                      // terminated
+
 }
 
 void MyCustomApplication::HandleUpdates(StringHash eventType,

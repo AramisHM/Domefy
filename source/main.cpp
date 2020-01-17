@@ -44,6 +44,8 @@ void ListenForExternalCommands()
     }
 }
 
+
+
 int main(int argc, char *argv[])
 {
     ProgramConfig *p1 = ProgramConfig::GetInstance();
