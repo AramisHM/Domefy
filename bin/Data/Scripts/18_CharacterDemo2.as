@@ -21,38 +21,32 @@ float cameraDistance = 5.0;
 
 Node @characterNode;
 Slide @slideComp;
-//TVComponent @videoComp;
+// TVComponent @videoComp;
 
-class Character : ScriptObject
-{
+class Character : ScriptObject {
     VariantMap controlsInput;
     Controls controls;
     bool onGround = false;
     bool okToJump = true;
     float inAirTimer = 0.0f;
 
-    void Start()
-    {
+    void Start() {
         SubscribeToEvent(node, "NodeCollision", "HandleNodeCollision");
     }
 
-    void Load(Deserializer &deserializer)
-    {
+    void Load(Deserializer &deserializer) {
         controls.yaw = deserializer.ReadFloat();
         controls.pitch = deserializer.ReadFloat();
     }
 
-    void Save(Serializer &serializer)
-    {
+    void Save(Serializer &serializer) {
         serializer.WriteFloat(controls.yaw);
         serializer.WriteFloat(controls.pitch);
     }
 
-    void HandleNodeCollision(StringHash eventType, VariantMap &eventData)
-    {
+    void HandleNodeCollision(StringHash eventType, VariantMap &eventData) {
         VectorBuffer contacts = eventData["Contacts"].GetBuffer();
-        while (!contacts.eof)
-        {
+        while (!contacts.eof) {
             Vector3 contactPosition = contacts.ReadVector3();
             Vector3 contactNormal = contacts.ReadVector3();
             float contactDistance = contacts.ReadFloat();
@@ -60,17 +54,14 @@ class Character : ScriptObject
 
             // If contact is below node center and pointing up, assume it's a
             // ground contact
-            if (contactPosition.y < (node.position.y + 1.0f))
-            {
+            if (contactPosition.y < (node.position.y + 1.0f)) {
                 float level = contactNormal.y;
-                if (level > 0.75)
-                    onGround = true;
+                if (level > 0.75) onGround = true;
             }
         }
     }
 
-    void FixedUpdate(float timeStep)
-    {
+    void FixedUpdate(float timeStep) {
         RigidBody @body = node.GetComponent("RigidBody");
         AnimationController @animCtrl =
             node.GetComponent("AnimationController", true);
@@ -91,64 +82,50 @@ class Character : ScriptObject
         // Velocity on the XZ plane
         Vector3 planeVelocity(velocity.x, 0.0f, velocity.z);
 
-        if (controls.IsDown(CTRL_FORWARD))
-            moveDir += Vector3::FORWARD;
-        if (controls.IsDown(CTRL_BACK))
-            moveDir += Vector3::BACK;
-        if (controls.IsDown(CTRL_LEFT))
-            moveDir += Vector3::LEFT;
-        if (controls.IsDown(CTRL_RIGHT))
-            moveDir += Vector3::RIGHT;
+        if (controls.IsDown(CTRL_FORWARD)) moveDir += Vector3::FORWARD;
+        if (controls.IsDown(CTRL_BACK)) moveDir += Vector3::BACK;
+        if (controls.IsDown(CTRL_LEFT)) moveDir += Vector3::LEFT;
+        if (controls.IsDown(CTRL_RIGHT)) moveDir += Vector3::RIGHT;
 
         moveDir += Vector3(0.0f, 0.0f, 0.0f);
 
         // Normalize move vector so that diagonal strafing is not faster
-        if (moveDir.lengthSquared > 0.0f)
-            moveDir.Normalize();
+        if (moveDir.lengthSquared > 0.0f) moveDir.Normalize();
 
         // If in air, allow control, but slower than when on ground
         body.ApplyImpulse(rot * moveDir *
                           (softGrounded ? MOVE_FORCE : INAIR_MOVE_FORCE));
 
-        if (softGrounded)
-        {
+        if (softGrounded) {
             // When on ground, apply a braking force to limit maximum ground
             // velocity
             Vector3 brakeForce = -planeVelocity * BRAKE_FORCE;
             body.ApplyImpulse(brakeForce);
 
             // Jump. Must release jump control between jumps
-            if (controls.IsDown(CTRL_JUMP))
-            {
-                if (okToJump)
-                {
+            if (controls.IsDown(CTRL_JUMP)) {
+                if (okToJump) {
                     body.ApplyImpulse(Vector3::UP * JUMP_FORCE);
                     okToJump = false;
                     animCtrl.PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0,
                                            false, 0.2f);
                 }
-            }
-            else
+            } else
                 okToJump = true;
         }
 
-        if (!onGround)
-        {
+        if (!onGround) {
             animCtrl.PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false,
                                    0.2f);
-        }
-        else
-        {
+        } else {
             // Play walk animation if moving on ground, otherwise fade it out
-            if (softGrounded && !moveDir.Equals(Vector3::ZERO))
-            {
+            if (softGrounded && !moveDir.Equals(Vector3::ZERO)) {
                 animCtrl.PlayExclusive("Models/Mutant/Mutant_Run.ani", 0, true,
                                        0.2f);
                 // Set walk animation speed proportional to velocity
                 animCtrl.SetSpeed("Models/Mutant/Mutant_Run.ani",
                                   planeVelocity.length * 0.3f);
-            }
-            else
+            } else
                 animCtrl.PlayExclusive("Models/Mutant/Mutant_Idle0.ani", 0,
                                        true, 0.2f);
         }
@@ -158,10 +135,8 @@ class Character : ScriptObject
     }
 }
 
-class Fpmed : ScriptObject
-{
-    void DataGate(VariantMap vin, VariantMap &vout)
-    {
+class Fpmed : ScriptObject {
+    void DataGate(VariantMap vin, VariantMap &vout) {
         String str = vin["CMD"].GetString();
         // log.Info("angelscript received: " + str);
 
@@ -171,17 +146,15 @@ class Fpmed : ScriptObject
 
         Character @character = cast<Character>(characterNode.scriptObject);
 
-        if (character is null)
-            return;
+        if (character is null) return;
 
         // Arbitrary move
-        if (cmds[0] == "MOVE")
-        {
+        if (cmds[0] == "MOVE") {
             float triggerVal = 25.0f;
             float mvx = cmds[1].ToFloat();
             float mvy = cmds[2].ToFloat();
             // float sss = cmds[3].ToFloat() / 15.0f;
-            //log.Info(str);
+            // log.Info(str);
             character.controlsInput["ACTIVE"] = true;
 
             character.controlsInput["BACK"] =
@@ -193,8 +166,7 @@ class Fpmed : ScriptObject
             character.controlsInput["LEFT"] =
                 Abs(mvx) > triggerVal && mvx < 0.0f;
         }
-        if (cmds[0] == "NMOVE")
-        {
+        if (cmds[0] == "NMOVE") {
             character.controlsInput["BACK"] = false;
             character.controlsInput["FORWARD"] = false;
             character.controlsInput["RIGHT"] = false;
@@ -202,54 +174,49 @@ class Fpmed : ScriptObject
             character.controlsInput["ACTIVE"] = false;
         }
 
-        if (cmds[0] == "VIEW")
-        {
+        if (cmds[0] == "VIEW") {
             character.controls.yaw += cmds[1].ToFloat() * 1.2f;
-            character.controls.pitch += cmds[2].ToFloat() / 2.0f; // hemisphere vieweing
-            //log.Info(str);
+            character.controls.pitch +=
+                cmds[2].ToFloat() / 2.0f;  // hemisphere vieweing
+            // log.Info(str);
         }
 
-        if (cmds[0] == "SPACEBAR")
-        {
+        if (cmds[0] == "SPACEBAR") {
             log.Info(str);
             character.controls.Set(CTRL_JUMP, true);
         }
-        if (cmds[0] == "SLIDEMOVE")
-        {
+        if (cmds[0] == "SLIDEMOVE") {
             log.Info(str);
-            slideComp.ApplyMouseMove(IntVector2(cmds[1].ToFloat() * 75.0f, cmds[2].ToFloat() * 75.0f));
+            slideComp.ApplyMouseMove(IntVector2(cmds[1].ToFloat() * 75.0f,
+                                                cmds[2].ToFloat() * 75.0f));
         }
-        if (cmds[0] == "SLIDEZOOM")
-        {
+        if (cmds[0] == "SLIDEZOOM") {
             log.Info(str);
             slideComp.SetZoom(cmds[1].ToFloat() / 5.0f);
         }
-        if (cmds[0] == "NEXTSLIDE")
-        {
+        if (cmds[0] == "NEXTSLIDE") {
             log.Info(str);
             slideComp.NextSlide();
         }
-        if (cmds[0] == "PREVIOUSSLIDE")
-        {
+        if (cmds[0] == "PREVIOUSSLIDE") {
             log.Info(str);
             slideComp.PreviousSlide();
         }
-        if (cmds[0] == "ADDACTOR")
-        {
+        if (cmds[0] == "ADDACTOR") {
             log.Info("PLAY VID");
-            // TODO: FIXME: this is only to assure the command to work, PLEASE FIXME:
-            //videoCompvideoComp.Play();
+            // TODO: FIXME: this is only to assure the command to work, PLEASE
+            // FIXME:
+            // videoCompvideoComp.Play();
         }
-        if (cmds[0] == "LEFT_MOUSE")
-        {
+        if (cmds[0] == "LEFT_MOUSE") {
             log.Info("STOP VID");
-            // TODO: FIXME: this is only to assure the command to work, PLEASE FIXME:
-            //videoComp.Stop();
+            // TODO: FIXME: this is only to assure the command to work, PLEASE
+            // FIXME:
+            // videoComp.Stop();
         }
     }
 
-    void FpmedStart()
-    {
+    void FpmedStart() {
         SampleStart();
         CreateScene();
         CreateCharacter();
@@ -258,8 +225,7 @@ class Fpmed : ScriptObject
         SubscribeToEvents();
     }
 
-    void CreateScene()
-    {
+    void CreateScene() {
         scene_ = node;
 
         cameraNode = scene_.GetChild("CameRef");
@@ -316,47 +282,53 @@ class Fpmed : ScriptObject
         Sound @ambientSound = cache.GetResource("Sound", "Sounds/ambient.ogg");
         ambientSound.looped = true;
         musicSource.gain = 0.6f;
-        //ambientSource.Play(ambientSound);
+        // ambientSource.Play(ambientSound);
 
         // Create mushrooms of varying sizes
         const uint NUM_MUSHROOMS = 60;
-        for (uint i = 0; i < NUM_MUSHROOMS; ++i)
-        {
+        for (uint i = 0; i < NUM_MUSHROOMS; ++i) {
             Node @objectNode = scene_.CreateChild("Mushroom");
-            objectNode.position = Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
+            objectNode.position =
+                Vector3(Random(180.0f) - 90.0f, 0.0f, Random(180.0f) - 90.0f);
             objectNode.rotation = Quaternion(0.0f, Random(360.0f), 0.0f);
             objectNode.SetScale(2.0f + Random(5.0f));
             StaticModel @object = objectNode.CreateComponent("StaticModel");
             object.model = cache.GetResource("Model", "Models/Mushroom.mdl");
-            object.material = cache.GetResource("Material", "Materials/Mushroom.xml");
+            object.material =
+                cache.GetResource("Material", "Materials/Mushroom.xml");
             object.castShadows = true;
 
             RigidBody @body = objectNode.CreateComponent("RigidBody");
             body.collisionLayer = 2;
-            CollisionShape @shape = objectNode.CreateComponent("CollisionShape");
+            CollisionShape @shape =
+                objectNode.CreateComponent("CollisionShape");
             shape.SetTriangleMesh(object.model, 0);
         }
 
         // Create movable boxes. Let them fall from the sky at first
         const uint NUM_BOXES = 100;
-        for (uint i = 0; i < NUM_BOXES; ++i)
-        {
+        for (uint i = 0; i < NUM_BOXES; ++i) {
             float scale = Random(2.0f) + 0.5f;
 
             Node @objectNode = scene_.CreateChild("Box");
-            objectNode.position = Vector3(Random(180.0f) - 90.0f, Random(10.0f) + 10.0f, Random(180.0f) - 90.0f);
-            objectNode.rotation = Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
+            objectNode.position =
+                Vector3(Random(180.0f) - 90.0f, Random(10.0f) + 10.0f,
+                        Random(180.0f) - 90.0f);
+            objectNode.rotation =
+                Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
             objectNode.SetScale(scale);
             StaticModel @object = objectNode.CreateComponent("StaticModel");
             object.model = cache.GetResource("Model", "Models/Box.mdl");
-            object.material = cache.GetResource("Material", "Materials/Stone.xml");
+            object.material =
+                cache.GetResource("Material", "Materials/Stone.xml");
             object.castShadows = true;
 
             RigidBody @body = objectNode.CreateComponent("RigidBody");
             body.collisionLayer = 2;
             // Bigger boxes will be heavier and harder to move
             body.mass = scale * 2.0f;
-            CollisionShape @shape = objectNode.CreateComponent("CollisionShape");
+            CollisionShape @shape =
+                objectNode.CreateComponent("CollisionShape");
             shape.SetBox(Vector3::ONE);
         }
 
@@ -367,11 +339,11 @@ class Fpmed : ScriptObject
             cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
         Node @spaceshipPrefab = scene.InstantiateXML(
             space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-        //Node @spaceScenePrefab = scene.InstantiateXML(
+        // Node @spaceScenePrefab = scene.InstantiateXML(
         //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
-        slideComp = cameraNode.CreateComponent("Slide");
-        slideComp.CreateSlide("./presentation/set.xml");
+        // slideComp = cameraNode.CreateComponent("Slide");
+        // slideComp.CreateSlide("./presentation/set.xml");
 
         // testing video component
         // Node @videoNode = scene_.CreateChild("Video");
@@ -383,8 +355,7 @@ class Fpmed : ScriptObject
         // videoComp.SetOutputModel(videoNode.GetComponent("StaticModel"));
     }
 
-    void CreateCharacter()
-    {
+    void CreateCharacter() {
         characterNode = scene_.CreateChild("Jack");
         characterNode.position = Vector3(0.0f, 1.0f, 0.0f);
 
@@ -409,8 +380,7 @@ class Fpmed : ScriptObject
 
     void CreateInstructions() {}
 
-    void SubscribeToEvents()
-    {
+    void SubscribeToEvents() {
         //  before physics simulation
         SubscribeToEvent("Update", "HandleUpdate");
         // physics simulation
@@ -421,14 +391,11 @@ class Fpmed : ScriptObject
         UnsubscribeFromEvent("SceneUpdate");
     }
 
-    void HandleUpdate(StringHash eventType, VariantMap &eventData)
-    {
-        if (characterNode is null)
-            return;
+    void HandleUpdate(StringHash eventType, VariantMap &eventData) {
+        if (characterNode is null) return;
 
         Character @character = cast<Character>(characterNode.scriptObject);
-        if (character is null)
-            return;
+        if (character is null) return;
 
         // Clear previous controls
         character.controls.Set(
@@ -436,15 +403,13 @@ class Fpmed : ScriptObject
             false);
 
         // Update controls using keys (desktop)
-        if (ui.focusElement is null)
-        {
+        if (ui.focusElement is null) {
             character.controls.Set(CTRL_FORWARD, input.keyDown[KEY_W]);
             character.controls.Set(CTRL_BACK, input.keyDown[KEY_S]);
             character.controls.Set(CTRL_LEFT, input.keyDown[KEY_A]);
             character.controls.Set(CTRL_RIGHT, input.keyDown[KEY_D]);
             character.controls.Set(CTRL_JUMP, input.keyDown[KEY_SPACE]);
-            if (character.controlsInput["ACTIVE"].GetBool() == true)
-            {
+            if (character.controlsInput["ACTIVE"].GetBool() == true) {
                 character.controls.Set(
                     CTRL_FORWARD, character.controlsInput["FORWARD"].GetBool());
                 character.controls.Set(
@@ -464,23 +429,20 @@ class Fpmed : ScriptObject
                 Clamp(character.controls.pitch, -80.0f, 80.0f);
             // Set rotation already here so that it's updated every rendering
             // frame instead of every physics frame
-            characterNode.rotation =
-                characterNode.rotation.Slerp(Quaternion(character.controls.yaw, Vector3::UP), 0.18f);
+            characterNode.rotation = characterNode.rotation.Slerp(
+                Quaternion(character.controls.yaw, Vector3::UP), 0.18f);
 
             // Switch between 1st and 3rd person
-            if (input.keyPress[KEY_F])
-                firstPerson = !firstPerson;
+            if (input.keyPress[KEY_F]) firstPerson = !firstPerson;
 
             // Check for loading / saving the scene
-            if (input.keyPress[KEY_F5])
-            {
+            if (input.keyPress[KEY_F5]) {
                 File saveFile(
                     fileSystem.programDir + "Data/Scenes/CharacterDemo.xml",
                     FILE_WRITE);
                 scene_.SaveXML(saveFile);
             }
-            if (input.keyPress[KEY_F7])
-            {
+            if (input.keyPress[KEY_F7]) {
                 File loadFile(
                     fileSystem.programDir + "Data/Scenes/CharacterDemo.xml",
                     FILE_READ);
@@ -489,20 +451,16 @@ class Fpmed : ScriptObject
                 // as it has been recreated Simply find by name as there's only
                 // one of them
                 characterNode = scene_.GetChild("Jack", true);
-                if (characterNode is null)
-                    return;
+                if (characterNode is null) return;
             }
         }
     }
 
-    void HandlePostUpdate(StringHash eventType, VariantMap &eventData)
-    {
-        if (characterNode is null)
-            return;
+    void HandlePostUpdate(StringHash eventType, VariantMap &eventData) {
+        if (characterNode is null) return;
 
         Character @character = cast<Character>(characterNode.scriptObject);
-        if (character is null)
-            return;
+        if (character is null) return;
 
         // Get camera lookat dir from character yaw + pitch
         Quaternion rot = characterNode.rotation;
@@ -520,30 +478,27 @@ class Fpmed : ScriptObject
             headNode.worldPosition + headDir * Vector3(0.0f, 0.0f, -1.0f);
         headNode.LookAt(headWorldTarget, Vector3(0.0f, 1.0f, 0.0f));
 
-        if (firstPerson)
-        {
+        if (firstPerson) {
             // First person camera: position to the head bone + offset slightly
             // forward & up
             cameraNode.position =
                 headNode.worldPosition + rot * Vector3(0.0f, 0.15f, 0.2f);
             cameraNode.rotation = dir;
-        }
-        else
-        {
+        } else {
             // Third person camera: position behind the character
             Vector3 aimPoint =
                 characterNode.position +
                 rot * Vector3(0.0f, 1.7f,
-                              0.0f); // You can modify x Vector3 value to
-                                     // translate the fixed character position
-                                     // (indicative range[-2;2])
+                              0.0f);  // You can modify x Vector3 value to
+                                      // translate the fixed character position
+                                      // (indicative range[-2;2])
 
             // Collide camera ray with static physics objects (layer bitmask 2)
             // to ensure we see the character properly
             Vector3 rayDir =
-                dir * Vector3::BACK; // For indoor scenes you can use dir *
-                                     // Vector3(0.0, 0.0, -0.5) to prevent
-                                     // camera from crossing the walls
+                dir * Vector3::BACK;  // For indoor scenes you can use dir *
+                                      // Vector3(0.0, 0.0, -0.5) to prevent
+                                      // camera from crossing the walls
             float rayDistance = cameraDistance;
             PhysicsRaycastResult result = scene_.physicsWorld.RaycastSingle(
                 Ray(aimPoint, rayDir), rayDistance, 2);

@@ -13,39 +13,33 @@
 
 #include <ahm/net/net.h>
 
-#include <Core/ProgramConfig.h> // Singleton
+#include <Core/ProgramConfig.h>  // Singleton
 
-namespace Urho3D
-{
+namespace Urho3D {
 class Button;
 class Connection;
 class Scene;
 class Text;
 class UIElement;
-} // namespace Urho3D
+}  // namespace Urho3D
 
 extern MyCustomApplication *application;
 conn extChanel;
 std::string commandString;
 std::string scriptPath;
 
-void ListenForExternalCommands()
-{
-    if (sock_read(&extChanel, 1) > 0)
-    {
+void ListenForExternalCommands() {
+    if (sock_read(&extChanel, 1) > 0) {
         // printf(
-        //     "\nReceived a command via AHMNet from %s, with the following data : %s\n\n",
-        //     sender_ip(&extChanel), extChanel.buf);
+        //     "\nReceived a command via AHMNet from %s, with the following data
+        //     : %s\n\n", sender_ip(&extChanel), extChanel.buf);
         commandString = std::string(extChanel.buf);
-    }
-    else
-    {
+    } else {
         commandString = "";
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
     ahmnet_init();
@@ -57,22 +51,17 @@ int main(int argc, char *argv[])
     Urho3D::Context *context = new Urho3D::Context();
     application = new MyCustomApplication(context);
 
-    if (argc > 1)
-    {
+    if (argc > 1) {
         scriptPath = std::string(argv[1]);
-    }
-    else
-    {
-        scriptPath = std::string("Scripts/18_CharacterDemo2.as");
+    } else {
+        scriptPath = std::string("./Data/Scripts/18_CharacterDemo2.as");
     }
 
-    if (application->isApplication())
-    {
+    if (application->isApplication()) {
         application->Prepare();
         application->Start();
 
-        while (application->isApplication())
-        {
+        while (application->isApplication()) {
             ListenForExternalCommands();
             application->RunFrameC();
         }

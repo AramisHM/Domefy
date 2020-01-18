@@ -160,9 +160,9 @@ void MyCustomApplication::Start() {
     Sample::Start();
 
 #ifdef fpmed_allow_scripted_application
-    frameworkScriptInstance->CreateObject(
-        cache->GetResource<ScriptFile>(Urho3D::String(scriptPath.c_str())),
-        "Fpmed");
+    Urho3D::ScriptFile *sf;
+    sf = cache->GetResource<ScriptFile>(Urho3D::String(scriptPath.c_str()));
+    frameworkScriptInstance->CreateObject(sf, "Fpmed");
     frameworkScriptInstance->Execute("void FpmedStart()");
 #endif
 }
