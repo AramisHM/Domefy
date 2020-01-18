@@ -5,7 +5,6 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
-#include <Application/Components/TVComponent/LevelData.h>
 #include <Application/Components/VHP/VHP.h>
 #include <Application/Sample.h>
 #include <Core/auxiliarAppFuncs.h>
@@ -13,20 +12,18 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
-namespace Urho3D
-{
+namespace Urho3D {
 class Button;
 class Connection;
 class Scene;
 class Text;
 class UIElement;
-} // namespace Urho3D
+}  // namespace Urho3D
 
-class MyCustomApplication : public Sample
-{
+class MyCustomApplication : public Sample {
     URHO3D_OBJECT(MyCustomApplication, Sample);
 
-public:
+   public:
     MyCustomApplication(Context *context);
     void Start();
     void Stop();
@@ -36,10 +33,11 @@ public:
     void updateCameraPosition();
     void updateRemoteControls();
     Slide *slideComponent;
-    // Registers the custom componenets and other functions taht are not natively distributed with Urho3D.
+    // Registers the custom componenets and other functions taht are not
+    // natively distributed with Urho3D.
     void RegisterCustomScriptAPI();
 
-protected:
+   protected:
     /* this will be used to show the debug info of this prototype app */
     Urho3D::Text *debTex;
 
@@ -55,6 +53,5 @@ protected:
     VHP *vhp;
     GrabbableUI *slideGrab;
     // experimental, used for OGV videos feature
-    CLevelData *level;
 };
 #endif

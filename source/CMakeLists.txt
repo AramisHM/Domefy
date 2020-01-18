@@ -12,7 +12,6 @@ if(MINGW)
 endif(MINGW)
 
 
-
 # include_directories(${CMAKE_SOURCE_DIR}/source/) ## same as above
 # include_directories (../include/regular)
 
@@ -29,29 +28,43 @@ set_target_properties(fpmed
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
-if(MINGW)
-	FILE(GLOB_RECURSE Dependency_Libs "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
-	
+if(WIN32)
+	FILE(GLOB_RECURSE Dependency_Libs_A "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
+	FILE(GLOB_RECURSE Dependency_Libs_LIB "${CMAKE_SOURCE_DIR}/lib/windows/*.lib")
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
   	target_link_libraries (
 		  fpmed LINK_PUBLIC
-		  ${Dependency_Libs}
+		  ${Dependency_Libs_A}
+		  ${Dependency_Libs_LIB}
 		  Comdlg32.lib
 		  Comctl32.lib
-		  ole32.lib
-		  oleaut32.lib
 		  winmm.lib
 		  ws2_32.lib
 		  opengl32.lib
 		  imm32.lib
 		  version.lib
 		  advapi32.lib
-		  kernel32.lib
 		  user32.lib
 		  gdi32.lib
 		  Setupapi.lib
+		  shlwapi.lib
+		  d3d9.lib
+		  d3d11.lib
+		  d3dcompiler.lib
+		  dxguid.lib
+		  winmm.lib
+		  imm32.lib
+		  version.lib
+		  ws2_32.lib
+		  winmm.lib
+		  dbghelp.lib
+		  kernel32.lib
+		  winspool.lib
 		  shell32.lib
-		  shlwapi.lib)
+		  ole32.lib
+		  oleaut32.lib
+		  uuid.lib
+		)
 	
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)

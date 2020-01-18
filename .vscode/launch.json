@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Windows (MSVC)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/fpmed.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false
+    },
+    {
       "name": "Go Webserver (WIN32)",
       "type": "go",
       "request": "launch",
@@ -31,7 +42,7 @@
       ]
     },
     {
-      "name": "Debug Windows",
+      "name": "Debug Windows (MinGW)",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed.exe",

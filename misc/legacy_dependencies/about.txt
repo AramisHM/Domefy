@@ -1,3 +1,0 @@
-To save up time, you eventually want to just grab the MinGW precompile libs.
-
-Source came from: https://packages.msys2.org/package/
