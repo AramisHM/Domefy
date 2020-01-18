@@ -13,6 +13,11 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
+// cef requirement
+#include <Application/Sample.h>
+#include "UBrowserImage.h"
+#include "simple_app.h"
+
 namespace Urho3D
 {
 class Button;
@@ -22,12 +27,17 @@ class Text;
 class UIElement;
 } // namespace Urho3D
 
+// cef requirement
+class UCefApp;
+class UCefBrowserWin;
+
 class MyCustomApplication : public Sample
 {
     URHO3D_OBJECT(MyCustomApplication, Sample);
 
 public:
     MyCustomApplication(Context *context);
+    ~MyCustomApplication();
     void Start();
     void Stop();
     void CreateScene();
@@ -54,6 +64,8 @@ protected:
     // Visible Human Project Component - The actual model
     VHP *vhp;
     GrabbableUI *slideGrab;
-
+private:
+    SharedPtr<UCefApp> uCefApp_;
+    bool cefAppCreatedOnce_;
 };
 #endif

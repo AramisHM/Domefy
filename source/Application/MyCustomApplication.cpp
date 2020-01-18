@@ -13,6 +13,13 @@
 
 #include <Urho3D/AngelScript/APITemplates.h>
 
+#include "CharacterDemo.h"
+#include "simple_app.h"
+#include "UCefApp.h"
+
+#ifdef WIN32
+#include <Windows.h>
+#endif
 extern std::string commandString; // main.cpp
 extern std::string scriptPath;
 MyCustomApplication *application;
@@ -99,8 +106,36 @@ void MyCustomApplication::RegisterCustomScriptAPI()
 }
 
 MyCustomApplication::MyCustomApplication(Context *context) : Sample(context)
+    , uCefApp_(NULL)
+    , cefAppCreatedOnce_(false)
 {
     this->RegisterCustomScriptAPI();
+
+    // CefExecuteProcess() needs to be call in the constructor, otherwise, 
+    // you'll get multiple windows when using SDL
+    CefMainArgs main_args(NULL);
+
+    // CEF applications have multiple sub-processes (render, plugin, GPU, etc)
+    // that share the same executable. This function checks the command-line and,
+    // if this is a sub-process, executes the appropriate logic.
+    int exit_code = CefExecuteProcess(main_args, NULL, NULL);
+}
+
+MyCustomApplication::~MyCustomApplication() {
+    if ( uCefApp_ )
+    {
+        uCefApp_->DestroyAppBrowser();
+        uCefApp_ = NULL;
+    }
+
+    // calling CefShutdown() w/o having called CefInitialize() once 
+    // causes exception due to no context created for cef
+    if ( cefAppCreatedOnce_ )
+    {
+        CefShutdown();
+        Time::Sleep(10);
+    }
+    ExitProcess(0);
 }
 
 void MyCustomApplication::CreateScene()
@@ -167,24 +202,20 @@ std::vector<std::string> split(std::string strToSplit, char delimeter)
 
 void MyCustomApplication::Start()
 {
-    // Execute base class startup
     Sample::CreateScene(); // create fulldome's scene
-    Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
 
-    // Node *videoNode = scene_->CreateChild("Video");
-    // XMLFile *file = cache->GetResource<XMLFile>("Objects/TV.xml");
-    // videoNode->LoadXML(file->GetRoot());
-    // auto videoComp = videoNode->CreateComponent<TVComponent>();
-    // videoComp->OpenFileName("./Data/Videos/test_video.ogv");
-    // StaticModel *sm = videoComp->GetComponent<StaticModel>();
-    // videoComp->SetOutputModel(sm);
+    // Execute base class startup
+    Sample::Start();
+
+    
+    Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
 
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
     // create C++ app
     CreateScene();
 
-    Sample::Start();
+    
 
 #ifdef fpmed_allow_scripted_application
     frameworkScriptInstance->CreateObject(
@@ -367,4 +398,11 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         }
     }
     commandString = ""; // Must clean it.
+
+    if (input->GetKeyPress(KEY_F5) && uCefApp_ == NULL)
+    {
+        uCefApp_ = new UCefApp(context_);
+        uCefApp_->CreateAppBrowser();
+        cefAppCreatedOnce_ = true;
+    }
 }

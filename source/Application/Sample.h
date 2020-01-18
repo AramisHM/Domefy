@@ -117,6 +117,11 @@ class Sample : public Application {
     // END Vertex animation variables and functions
     // -------------------------------------------
 
+    /// Camera yaw angle.
+    float yaw_;
+    /// Camera pitch angle.
+    float pitch_;
+
    private:
     /// Create logo.
     void CreateLogo();
