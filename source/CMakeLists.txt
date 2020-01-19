@@ -1,4 +1,13 @@
+#  tells to use or not cef
+add_definitions(-DCEF_INTEGRATION)
+
+set(CEF_DISTRIBUTION cef_binary_3.2785.1466.g80e473e_windows32)
+file (GLOB SIMPLE_CC_FILES ${CEF_DISTRIBUTION}/cefsimple/*.cc )
+file (GLOB SIMPLE_H_FILES ${CEF_DISTRIBUTION}/cefsimple/*.h )
+set (CEF_SOURCE_FILES ${SIMPLE_CC_FILES} ${SIMPLE_H_FILES})
+
 FILE(GLOB_RECURSE Fpmed_Sources2 "./*.cpp" "./*.inl" "./*.h" "./*.rc")
+set (Fpmed_Sources2 ${Fpmed_Sources2} ${CEF_SOURCE_FILES})
 # FILE(GLOB_RECURSE Fpmed_Includes "./*.h" "../include/*.h" "../include/Urho3D/*.h")
 
 
@@ -20,8 +29,22 @@ include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
+# CEF specific
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/include)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/cefsimple)
+set(CEF_BLD_TYPE Release)
 
+#  debug message
+message ("source dir" ${CMAKE_SOURCE_DIR}) 
+FILE(GLOB_RECURSE CEFStaticLibs "${CMAKE_SOURCE_DIR}/lib/windows/*.lib")
+message("cef static libs: " ${CEFStaticLibs})
+
+if(WIN32)
+add_executable (fpmed WIN32 ${Fpmed_Sources2}) # the WIN32 solves the msvc external dependecy error, also... CEF
+else()
 add_executable (fpmed ${Fpmed_Sources2})
+endif()
 
 set_target_properties(fpmed
     PROPERTIES
@@ -36,6 +59,7 @@ if(WIN32)
 		  fpmed LINK_PUBLIC
 		  ${Dependency_Libs_A}
 		  ${Dependency_Libs_LIB}
+		  ${CEFStaticLibs}
 		  Comdlg32.lib
 		  Comctl32.lib
 		  winmm.lib
@@ -104,4 +128,27 @@ else()
 endif()
 
 
+if(WIN32)
+# CEF copy resource files
+set(CEF_BINARY_FILES
+	natives_blob.bin
+	snapshot_blob.bin
+)
 
+set(CEF_RESOURCE_FILES
+	cef.pak
+	cef_100_percent.pak
+	cef_200_percent.pak
+	cef_extensions.pak
+	devtools_resources.pak
+	icudtl.dat
+	locales
+)
+foreach(fileResource ${CEF_BINARY_FILES} )
+    file(COPY ${CEF_DISTRIBUTION}/${CEF_BLD_TYPE}/${fileResource} DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endforeach()
+
+foreach(fileResource ${CEF_RESOURCE_FILES} )
+    file(COPY ${CEF_DISTRIBUTION}/Resources/${fileResource} DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endforeach()
+endif()

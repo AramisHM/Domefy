@@ -12,6 +12,15 @@
 
 #include <Urho3D/AngelScript/APITemplates.h>
 
+#ifdef CEF_INTEGRATION
+#include "UCefApp.h"
+#include "simple_app.h"
+#endif
+
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 extern std::string commandString;  // main.cpp
 extern std::string scriptPath;
 MyCustomApplication *application;
@@ -85,8 +94,42 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
 #endif
 }
 
+#ifdef CEF_INTEGRATION
+MyCustomApplication::MyCustomApplication(Context *context)
+    : Sample(context), uCefApp_(NULL), cefAppCreatedOnce_(false) {
+#else
 MyCustomApplication::MyCustomApplication(Context *context) : Sample(context) {
+#endif
+
     this->RegisterCustomScriptAPI();
+
+#ifdef CEF_INTEGRATION
+    // CefExecuteProcess() needs to be call in the constructor, otherwise,
+    // you'll get multiple windows when using SDL
+    CefMainArgs main_args(NULL);
+
+    // CEF applications have multiple sub-processes (render, plugin, GPU, etc)
+    // that share the same executable. This function checks the command-line
+    // and, if this is a sub-process, executes the appropriate logic.
+    int exit_code = CefExecuteProcess(main_args, NULL, NULL);
+#endif
+}
+
+MyCustomApplication::~MyCustomApplication() {
+#ifdef CEF_INTEGRATION
+    if (uCefApp_) {
+        uCefApp_->DestroyAppBrowser();
+        uCefApp_ = NULL;
+    }
+
+    // calling CefShutdown() w/o having called CefInitialize() once
+    // causes exception due to no context created for cef
+    if (cefAppCreatedOnce_) {
+        CefShutdown();
+        Time::Sleep(10);
+    }
+    ExitProcess(0);
+#endif
 }
 
 void MyCustomApplication::CreateScene() {
@@ -317,4 +360,12 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         }
     }
     commandString = "";  // Must clean it.
+
+#ifdef CEF_INTEGRATION
+    if (input->GetKeyPress(KEY_F5) && uCefApp_ == NULL) {
+        uCefApp_ = new UCefApp(context_);
+        uCefApp_->CreateAppBrowser();
+        cefAppCreatedOnce_ = true;
+    }
+#endif
 }

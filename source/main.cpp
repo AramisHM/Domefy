@@ -75,3 +75,11 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+#ifdef _WIN32  // NON-CONSOLE LIKE/WINDOWS WAY OF RUNNING PROGRAMS
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
+                   int showCmd) {
+    Urho3D::ParseArguments(GetCommandLineW());
+    return main(0, 0);
+}
+#endif

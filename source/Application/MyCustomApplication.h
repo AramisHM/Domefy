@@ -12,6 +12,13 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
+#ifdef CEF_INTEGRATION
+// cef requirement
+#include <Application/Sample.h>
+#include "UBrowserImage.h"
+#include "simple_app.h"
+#endif
+
 namespace Urho3D {
 class Button;
 class Connection;
@@ -20,11 +27,16 @@ class Text;
 class UIElement;
 }  // namespace Urho3D
 
+// cef requirement
+class UCefApp;
+class UCefBrowserWin;
+
 class MyCustomApplication : public Sample {
     URHO3D_OBJECT(MyCustomApplication, Sample);
 
    public:
     MyCustomApplication(Context *context);
+    ~MyCustomApplication();
     void Start();
     void Stop();
     void CreateScene();
@@ -53,5 +65,10 @@ class MyCustomApplication : public Sample {
     VHP *vhp;
     GrabbableUI *slideGrab;
     // experimental, used for OGV videos feature
+   private:
+#ifdef CEF_INTEGRATION
+    SharedPtr<UCefApp> uCefApp_;
+    bool cefAppCreatedOnce_;
+#endif
 };
 #endif
