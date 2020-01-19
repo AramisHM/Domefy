@@ -52,6 +52,7 @@ set_target_properties(fpmed
 )
 
 if(WIN32)
+	LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/bin" "${CMAKE_SOURCE_DIR}/lib/windows")
 	FILE(GLOB_RECURSE Dependency_Libs_A "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
 	FILE(GLOB_RECURSE Dependency_Libs_LIB "${CMAKE_SOURCE_DIR}/lib/windows/*.lib")
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")

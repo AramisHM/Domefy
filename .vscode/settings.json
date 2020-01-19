@@ -65,7 +65,13 @@
     "xtr1common": "cpp",
     "xutility": "cpp",
     "atomic": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "concepts": "cpp",
+    "iterator": "cpp",
+    "map": "cpp",
+    "queue": "cpp",
+    "random": "cpp",
+    "xtree": "cpp"
   },
   "psi-header.variables": [
     ["projectCreationYear", "2014"],

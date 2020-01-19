@@ -15,6 +15,18 @@
 
 #include <Core/ProgramConfig.h>  // Singleton
 
+#ifdef WIN32
+#include <atlstr.h>
+#include <shellapi.h>  // for CommandLineToArgvW
+#include <codecvt>
+#include <cstring>
+#include <iostream>
+#include <locale>
+#include <string>
+#include <vector>
+#include "windows.h"
+#endif
+
 namespace Urho3D {
 class Button;
 class Connection;
@@ -23,7 +35,7 @@ class Text;
 class UIElement;
 }  // namespace Urho3D
 
-extern MyCustomApplication *application;
+// extern MyCustomApplication *application;
 conn extChanel;
 std::string commandString;
 std::string scriptPath;
@@ -40,16 +52,19 @@ void ListenForExternalCommands() {
 }
 
 int main(int argc, char *argv[]) {
+    Urho3D::ParseArguments(argc, argv);
+    Urho3D::Context *context = new Urho3D::Context();
+    MyCustomApplication *application = new MyCustomApplication(context);
+    // Urho3D::SharedPtr<Urho3D::Context> context(new Urho3D::Context());
+    // Urho3D::SharedPtr<MyCustomApplication> application(
+    //     new MyCustomApplication(context));
+
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
     ahmnet_init();
     udp_listen("127.0.0.1:42871", &extChanel);
     fpmedInit(argc, argv);
     p1->LoadConfigFile("./config.json");
-
-    Urho3D::ParseArguments(argc, argv);
-    Urho3D::Context *context = new Urho3D::Context();
-    application = new MyCustomApplication(context);
 
     if (argc > 1) {
         scriptPath = std::string(argv[1]);
@@ -80,6 +95,31 @@ int main(int argc, char *argv[]) {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
                    int showCmd) {
     Urho3D::ParseArguments(GetCommandLineW());
-    return main(0, 0);
+
+    // below we convert The windows like argument (GetCommandLineW) to c like,
+    // proper for main() call
+    LPWSTR *szArglist;
+    int nArgs;
+    int i;
+    char *argv[50];
+    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+    if (NULL == szArglist) {
+        wprintf(L"CommandLineToArgvW failed\n");
+        return 0;
+    } else {
+        for (i = 0; i < nArgs; i++) {
+            printf("%d: %ws\n", i, szArglist[i]);
+            std::string MyString = CW2A(szArglist[i]);
+            char *cstr =
+                new char[MyString.length() + 1];  // FIXME: free memory?
+            std::strcpy(cstr, MyString.c_str());
+            argv[i] = cstr;
+        }
+    }
+
+    main(nArgs, argv);
+
+    // Free memory allocated for CommandLineToArgvW arguments.
+    LocalFree(szArglist);
 }
 #endif

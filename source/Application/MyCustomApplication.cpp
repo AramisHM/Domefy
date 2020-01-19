@@ -191,16 +191,12 @@ std::vector<std::string> split(std::string strToSplit, char delimeter) {
 }
 
 void MyCustomApplication::Start() {
-    // Execute base class startup
     Sample::CreateScene();  // create fulldome's scene
+    Sample::Start();
     Urho3D::ResourceCache *cache = GetSubsystem<Urho3D::ResourceCache>();
-
     SubscribeToEvent(E_SCENEUPDATE,
                      URHO3D_HANDLER(MyCustomApplication, HandleUpdates));
-    // create C++ app
-    CreateScene();
-
-    Sample::Start();
+    CreateScene();  // create C++ app
 
 #ifdef fpmed_allow_scripted_application
     Urho3D::ScriptFile *sf;

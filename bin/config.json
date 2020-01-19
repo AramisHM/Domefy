@@ -9,8 +9,8 @@
     "win32": "./Data/FakeVHD/test-set.json"
   },
   "window_position": {
-    "x": 0,
-    "y": 0
+    "x": 60,
+    "y": 60
   },
   "master_resolution": {
     "x": 1200,
