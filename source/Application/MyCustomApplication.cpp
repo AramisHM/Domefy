@@ -174,10 +174,6 @@ void MyCustomApplication::CreateScene() {
         renderer->SetViewport(aux, tempViewport);
         ++aux;
     }
-
-    // // Howdy, slides goes here partner.
-    // this->slideComponent = cameraNode_->CreateComponent<Slide>();
-    // slideComponent->CreateSlide(Urho3D::String("./presentation/set.xml"));
 }
 
 std::vector<std::string> split(std::string strToSplit, char delimeter) {
@@ -214,11 +210,6 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
     Input *input = GetSubsystem<Input>();
-    // if (input->GetKeyDown(KEY_F))
-    // {
-    //     IntVector2 md = input->GetMouseMove();
-    //     slideComponent->ApplyMouseMove(Vec2<int>(md.x_, md.y_));
-    // }
 
     // external commands
     {
@@ -362,6 +353,31 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         uCefApp_ = new UCefApp(context_);
         uCefApp_->CreateAppBrowser();
         cefAppCreatedOnce_ = true;
+
+        // Create the world browser
+        ResourceCache *cache = GetSubsystem<ResourceCache>();
+
+        Node *browserNode = scene_->CreateChild("browserNode");
+        browserNode->SetPosition(Vector3(0.0f, 2.0f, 0.0f));
+        browserNode->SetScale(Vector3(2.0f, 1.0f, 0.1f));
+        StaticModel *object = browserNode->CreateComponent<StaticModel>();
+        object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+
+        // programmatically create a material
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAlphaTranslucent.xml"));
+        // texture from browser
+        m->SetTexture(TU_DIFFUSE, uCefApp_->GetBrowserImage()->GetTexture());
+
+        object->SetMaterial(m);
+
+        RigidBody *body = browserNode->CreateComponent<RigidBody>();
+        // Use collision layer bit 2 to mark world scenery. This is what we will
+        // raycast against to prevent camera from going inside geometry
+        body->SetCollisionLayer(2);
+        CollisionShape *shape = browserNode->CreateComponent<CollisionShape>();
+        shape->SetBox(Vector3::ONE);
     }
 #endif
 }

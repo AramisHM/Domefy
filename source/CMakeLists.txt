@@ -41,7 +41,7 @@ FILE(GLOB_RECURSE CEFStaticLibs "${CMAKE_SOURCE_DIR}/lib/windows/*.lib")
 message("cef static libs: " ${CEFStaticLibs})
 
 if(WIN32)
-add_executable (fpmed WIN32 ${Fpmed_Sources2}) # the WIN32 solves the msvc external dependecy error, also... CEF
+add_executable (fpmed ${Fpmed_Sources2}) # the WIN32 solves the msvc external dependecy error, also... CEF
 else()
 add_executable (fpmed ${Fpmed_Sources2})
 endif()

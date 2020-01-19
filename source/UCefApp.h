@@ -12,18 +12,18 @@ class UBrowserImage;
 
 //=============================================================================
 //=============================================================================
-class UCefApp : public Object
-{
+class UCefApp : public Object {
     URHO3D_OBJECT(UCefApp, Object);
-public:
+
+   public:
     UCefApp(Context *context);
     virtual ~UCefApp();
 
     int CreateAppBrowser();
     void DestroyAppBrowser();
+    Urho3D::SharedPtr<UBrowserImage> GetBrowserImage();
 
-protected:
-    UCefRenderHandle         *uCefRenderHandler_;
+   protected:
+    UCefRenderHandle *uCefRenderHandler_;
     SharedPtr<UBrowserImage> uBrowserImage_;
 };
-

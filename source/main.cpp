@@ -11,9 +11,8 @@
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
-#include <ahm/net/net.h>
-
 #include <Core/ProgramConfig.h>  // Singleton
+#include <ahm/net/net.h>
 
 #ifdef WIN32
 #include <atlstr.h>
@@ -55,10 +54,6 @@ int main(int argc, char *argv[]) {
     Urho3D::ParseArguments(argc, argv);
     Urho3D::Context *context = new Urho3D::Context();
     MyCustomApplication *application = new MyCustomApplication(context);
-    // Urho3D::SharedPtr<Urho3D::Context> context(new Urho3D::Context());
-    // Urho3D::SharedPtr<MyCustomApplication> application(
-    //     new MyCustomApplication(context));
-
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
     ahmnet_init();
@@ -96,8 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
                    int showCmd) {
     Urho3D::ParseArguments(GetCommandLineW());
 
-    // below we convert The windows like argument (GetCommandLineW) to c like,
-    // proper for main() call
+    // conver windows args to classic main() args
     LPWSTR *szArglist;
     int nArgs;
     int i;
@@ -116,7 +110,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
             argv[i] = cstr;
         }
     }
-
     main(nArgs, argv);
 
     // Free memory allocated for CommandLineToArgvW arguments.
