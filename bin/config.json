@@ -13,7 +13,7 @@
     "y": 60
   },
   "master_resolution": {
-    "x": 1200,
+    "x": 1366,
     "y": 768
   },
   "presets_file": "./presets/default.json"

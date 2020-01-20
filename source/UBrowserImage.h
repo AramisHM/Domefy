@@ -94,6 +94,8 @@ class UBrowserImage : public BorderImage {
 
     // return the Urho3D Texture from the browser
     Urho3D::SharedPtr<Urho3D::Texture2D> GetTexture();
+    // return the CEF browser
+    void LoadURL(std::string urls);
 
    protected:
     void InitTexture(int width, int height);

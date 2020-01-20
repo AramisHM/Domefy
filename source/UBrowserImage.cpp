@@ -185,6 +185,9 @@ void UBrowserImage::ClearCefHandler() {
 Urho3D::SharedPtr<Urho3D::Texture2D> UBrowserImage::GetTexture() {
     return texture_;
 }
+void UBrowserImage::LoadURL(std::string urls) {
+    cefBrowser_->GetMainFrame()->LoadURL(urls);
+}
 
 void UBrowserImage::Init(UCefRenderHandle* cefRenderHandler, int width,
                          int height) {

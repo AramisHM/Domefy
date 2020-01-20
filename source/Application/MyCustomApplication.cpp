@@ -358,8 +358,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         ResourceCache *cache = GetSubsystem<ResourceCache>();
 
         Node *browserNode = scene_->CreateChild("browserNode");
-        browserNode->SetPosition(Vector3(0.0f, 2.0f, 0.0f));
-        browserNode->SetScale(Vector3(2.0f, 1.0f, 0.1f));
+        browserNode->SetPosition(Vector3(0.0f, 15.0f, 0.0f));
+        browserNode->SetScale(Vector3(160.0f, 90.0f, 0.1f));
         StaticModel *object = browserNode->CreateComponent<StaticModel>();
         object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
 
@@ -379,5 +379,10 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         CollisionShape *shape = browserNode->CreateComponent<CollisionShape>();
         shape->SetBox(Vector3::ONE);
     }
+    if (input->GetKeyPress(KEY_F6) && uCefApp_) {
+        uCefApp_->GetBrowserImage()->LoadURL(
+            "https://youtu.be/FRx5M6NgDk8?t=78");
+    }
+
 #endif
 }

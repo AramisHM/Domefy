@@ -1,5 +1,7 @@
 # ignore all logs
 *.log
+*.pdb
+*.ilk
 /build
 .vscode/ipch/
-
+Urho3D.lib

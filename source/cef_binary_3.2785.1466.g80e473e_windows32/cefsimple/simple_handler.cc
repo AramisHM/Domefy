@@ -25,58 +25,47 @@ SimpleHandler* g_instance = NULL;
 
 }  // namespace
 
-SimpleHandler::SimpleHandler(CefRenderHandler *cefRenderHandler)
-    : cefRenderHandler_(cefRenderHandler)
-    , use_views_(false)
-    , is_closing_(false)
-    , onLoadEnded_(false)
-    , messageLoopStarted_(false)
-    , onBeforeCloseCalled_(false)
-{
-  DCHECK(!g_instance);
-  g_instance = this;
+SimpleHandler::SimpleHandler(CefRenderHandler* cefRenderHandler)
+    : cefRenderHandler_(cefRenderHandler),
+      use_views_(false),
+      is_closing_(false),
+      onLoadEnded_(false),
+      messageLoopStarted_(false),
+      onBeforeCloseCalled_(false) {
+    DCHECK(!g_instance);
+    g_instance = this;
 }
 
-SimpleHandler::~SimpleHandler() 
-{
-  cefRenderHandler_ = NULL;
-  g_instance = NULL;
+SimpleHandler::~SimpleHandler() {
+    cefRenderHandler_ = NULL;
+    g_instance = NULL;
 }
 
 // static
-SimpleHandler* SimpleHandler::GetInstance() 
-{
-  return g_instance;
-}
-void SimpleHandler::ClearInstance()
-{
-    g_instance = NULL;
-}
-void SimpleHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title) 
-{
+SimpleHandler* SimpleHandler::GetInstance() { return g_instance; }
+void SimpleHandler::ClearInstance() { g_instance = NULL; }
+void SimpleHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
+                                  const CefString& title) {
     CEF_REQUIRE_UI_THREAD();
 
     // Set the title of the window using platform APIs.
     PlatformTitleChange(browser, title);
 }
 
-void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) 
-{
+void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();
 
     // Add to the list of existing browsers.
     browser_list_.push_back(browser);
 }
 
-bool SimpleHandler::DoClose(CefRefPtr<CefBrowser> browser) 
-{
+bool SimpleHandler::DoClose(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();
 
     // Closing the main window requires special handling. See the DoClose()
     // documentation in the CEF header for a detailed destription of this
     // process.
-    if (browser_list_.size() == 1) 
-    {
+    if (browser_list_.size() == 1) {
         // Set a flag to indicate that the window close should be allowed.
         is_closing_ = true;
     }
@@ -86,93 +75,76 @@ bool SimpleHandler::DoClose(CefRefPtr<CefBrowser> browser)
     return false;
 }
 
-void SimpleHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) 
-{
+void SimpleHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
     CEF_REQUIRE_UI_THREAD();
 
     // Remove from the list of existing browsers.
     BrowserList::iterator bit = browser_list_.begin();
-    for (; bit != browser_list_.end(); ++bit) 
-    {
-        if ((*bit)->IsSame(browser)) 
-        {
+    for (; bit != browser_list_.end(); ++bit) {
+        if ((*bit)->IsSame(browser)) {
             browser_list_.erase(bit);
             break;
         }
     }
 
-    if (browser_list_.empty()) 
-    {
+    if (browser_list_.empty()) {
         onBeforeCloseCalled_ = true;
 
         // All browser windows have closed. Quit the application message loop.
-        if ( messageLoopStarted_ )
-            CefQuitMessageLoop();
+        if (messageLoopStarted_) CefQuitMessageLoop();
     }
 }
 
-bool SimpleHandler::OnBeforeCloseWasCalled()
-{
-    return onBeforeCloseCalled_;
-}
+bool SimpleHandler::OnBeforeCloseWasCalled() { return onBeforeCloseCalled_; }
 
 void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
-                                CefRefPtr<CefFrame> frame,
-                                ErrorCode errorCode,
+                                CefRefPtr<CefFrame> frame, ErrorCode errorCode,
                                 const CefString& errorText,
-                                const CefString& failedUrl) 
-{
+                                const CefString& failedUrl) {
     CEF_REQUIRE_UI_THREAD();
 
     // Don't display an error for downloaded files.
-    if (errorCode == ERR_ABORTED)
-        return;
+    if (errorCode == ERR_ABORTED) return;
 
     // Display a load error message.
     std::stringstream ss;
-        ss << "<html><body bgcolor=\"white\">"
-            "<h2>Failed to load URL " << std::string(failedUrl) <<
-            " with error " << std::string(errorText) << " (" << errorCode <<
-            ").</h2></body></html>";
+    ss << "<html><body bgcolor=\"white\">"
+          "<h2>Failed to load URL "
+       << std::string(failedUrl) << " with error " << std::string(errorText)
+       << " (" << errorCode << ").</h2></body></html>";
     frame->LoadString(ss.str(), failedUrl);
 }
 
-void SimpleHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode)
-{
+void SimpleHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
+                              CefRefPtr<CefFrame> frame, int httpStatusCode) {
     onLoadEnded_ = true;
 }
 
-void SimpleHandler::CloseAllBrowsers(bool force_close) 
-{
-    if (!CefCurrentlyOn(TID_UI))
-    {
+void SimpleHandler::CloseAllBrowsers(bool force_close) {
+    if (!CefCurrentlyOn(TID_UI)) {
         // Execute on the UI thread.
-        CefPostTask(TID_UI, base::Bind(&SimpleHandler::CloseAllBrowsers, this, force_close));
+        CefPostTask(TID_UI, base::Bind(&SimpleHandler::CloseAllBrowsers, this,
+                                       force_close));
         return;
     }
 
-    if (browser_list_.empty())
-        return;
+    if (browser_list_.empty()) return;
 
     // copy the browser list to a temp list
     BrowserList tmpList;
     tmpList.clear();
     BrowserList::const_iterator it1 = browser_list_.begin();
-    for ( ; it1 != browser_list_.end(); ++it1)
-        tmpList.push_back(*it1);
-
+    for (; it1 != browser_list_.end(); ++it1) tmpList.push_back(*it1);
 
     BrowserList::const_iterator it = tmpList.begin();
-    for ( ; it != tmpList.end(); ++it)
+    for (; it != tmpList.end(); ++it)
         (*it)->GetHost()->CloseBrowser(force_close);
 }
 
-bool SimpleHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
-                                             CefProcessId source_process,
-                                             CefRefPtr<CefProcessMessage> message) 
-{
+bool SimpleHandler::OnProcessMessageReceived(
+    CefRefPtr<CefBrowser> browser, CefProcessId source_process,
+    CefRefPtr<CefProcessMessage> message) {
     std::string strname = message->GetName().ToString();
-    SDL_Log("SH:onProcMsgRcv - %s", strname.c_str() );
+    SDL_Log("SH:onProcMsgRcv - %s", strname.c_str());
     return false;
 }
-
