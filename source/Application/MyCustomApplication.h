@@ -68,7 +68,6 @@ class MyCustomApplication : public Sample {
    private:
 #ifdef CEF_INTEGRATION
     SharedPtr<UCefApp> uCefApp_;
-    SharedPtr<UCefApp> uCefApp2_;
     bool cefAppCreatedOnce_;
 #endif
 };
