@@ -2,6 +2,9 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#ifndef UCEFAPP_H
+#define UCEFAPP_H
+
 #include <Urho3D/Core/Object.h>
 #include "cefsimple/simple_app.h"
 
@@ -27,3 +30,5 @@ class UCefApp : public Object {
     UCefRenderHandle *uCefRenderHandler_;
     SharedPtr<UBrowserImage> uBrowserImage_;
 };
+
+#endif  // UCEFAPP_H

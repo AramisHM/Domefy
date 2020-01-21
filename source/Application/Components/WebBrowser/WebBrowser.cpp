@@ -1,20 +1,19 @@
 /*
- * File: WebBrowser.cpp
  * Project: FpMED - Framework for Distributed Multiprojection Systems
- * File Created: Tuesday, 21st May 2019 4:36:52 pm
  * Author: Aramis Hornung Moraes (aramishm@gmail.com)
  * -----
- * Last Modified: Tuesday, 21st May 2019 4:37:15 pm
+ * Last Modified: 21th January 2020
  * Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
  * -----
  * Copyright 2014 - 2020 Aramis Hornung Moraes
  */
+
 #ifdef CEF_INTEGRATION
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/WebBrowser/WebBrowser.h>
 
 // CEF specific
-#include "UBrowserImage.h"
+
 #include "UCefApp.h"
 #include "simple_app.h"
 
@@ -34,19 +33,19 @@ void WebBrowser::CreateWebBrowser() {
     // this is expected to ve linked to the camera, therefore, camera always is
     // at center.
     webBrowserGrabbableUI_->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
-    webBrowserGrabbableUI_->SetRadius(5.0f);
+    webBrowserGrabbableUI_->SetRadius(1.0f);
     webBrowserModel_ = webBrowserNode_->CreateComponent<StaticModel>();
     webBrowserModel_->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
     webBrowserNode_->SetScale(Vector3(4.0f, 0.0f, 2.25f));
 
     // modelSlideNode->SetRotation(Quaternion(-90,180,0));
-    webBrowserNode_->SetRotation(Quaternion(0, 0.0f, 0));
+    webBrowserNode_->SetRotation(Quaternion(0, 0.0f, 180.0f));
 
     {
-        UBrowserImage *uBrowserImage_ = new UBrowserImage(context_);
+        browser_ = new UBrowserImage(context_);
         UCefRenderHandle *uCefRenderHandler_ = new UCefRenderHandle(
             CEFBUF_WIDTH, CEFBUF_HEIGHT, CEFBUF_COMPONENTS);
-        uBrowserImage_->Init(uCefRenderHandler_, 800, 600);
+        browser_->Init(uCefRenderHandler_, 800, 600);
         CefMainArgs main_args(NULL);
 
         // Specify CEF global settings here.
@@ -65,8 +64,6 @@ void WebBrowser::CreateWebBrowser() {
         // so, use that instead of the default URL.
         url = command_line->GetSwitchValue("url");
         if (url.empty()) {
-            // url = "http://www.google.com";
-            // url = "https://www.youtube.com/watch?v=-fmCoUjOMXU";
             url = "file:///./Data/fpmed/domefy_logo_fullsize.png";
         }
 
@@ -85,10 +82,12 @@ void WebBrowser::CreateWebBrowser() {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(0, cache->GetResource<Technique>(
                                "Techniques/DiffAlphaTranslucent.xml"));
-        m->SetTexture(TU_DIFFUSE, uBrowserImage_->GetTexture());
+        m->SetTexture(TU_DIFFUSE, browser_->GetTexture());
         webBrowserModel_->SetMaterial(m);
     }
 }
+
+void WebBrowser::LoadURL(std::string url) { browser_->LoadURL(url); }
 
 // TODO: implement it for something maybe?
 void WebBrowser::Update(float timeStep) {}

@@ -39,8 +39,8 @@ class CefAppThread;
 #define CEFBUF_HEIGHT 700
 #define CEFBUF_COMPONENTS 4
 
-#define BROWSER_RENDER_WIDTH 640
-#define BROWSER_RENDER_HEIGTH 480
+#define BROWSER_RENDER_WIDTH 1280
+#define BROWSER_RENDER_HEIGTH 720
 
 class UCefRenderHandle : public CefRenderHandler {
     IMPLEMENT_REFCOUNTING(UCefRenderHandle);

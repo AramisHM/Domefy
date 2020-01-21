@@ -47,7 +47,8 @@ typedef struct Pojection {
     unsigned int _rttResolution;
     unsigned int _index;  // internal numeration for each projection loaded
 
-    // the mesh that holds the mesh transformation for point-to-point calibration
+    // the mesh that holds the mesh transformation for point-to-point
+    // calibration
     std::vector<MorphVertex> _morphMesh;
 } Projection;
 

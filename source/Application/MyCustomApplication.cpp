@@ -9,14 +9,10 @@
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>
 #include <Application/Components/WebBrowser/WebBrowser.h>
+#include <Application/WebBrowser/CEFWebBrowser.h>
 #include <Core/ProgramConfig.h>
 
 #include <Urho3D/AngelScript/APITemplates.h>
-
-#ifdef CEF_INTEGRATION
-#include "UCefApp.h"
-#include "simple_app.h"
-#endif
 
 #ifdef WIN32
 #include <Windows.h>
@@ -96,40 +92,19 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
 #endif
 }
 
-#ifdef CEF_INTEGRATION
-MyCustomApplication::MyCustomApplication(Context *context)
-    : Sample(context), uCefApp_(NULL), cefAppCreatedOnce_(false) {
-#else
 MyCustomApplication::MyCustomApplication(Context *context) : Sample(context) {
-#endif
-
     this->RegisterCustomScriptAPI();
 
 #ifdef CEF_INTEGRATION
-    // CefExecuteProcess() needs to be call in the constructor, otherwise,
-    // you'll get multiple windows when using SDL
-    CefMainArgs main_args(NULL);
-
-    // CEF applications have multiple sub-processes (render, plugin, GPU, etc)
-    // that share the same executable. This function checks the command-line
-    // and, if this is a sub-process, executes the appropriate logic.
-    int exit_code = CefExecuteProcess(main_args, NULL, NULL);
+    CEFWebBrowser *wb = CEFWebBrowser::GetInstance();
+    wb->Init(context);
 #endif
 }
 
 MyCustomApplication::~MyCustomApplication() {
-#ifdef CEF_INTEGRATION
-    if (uCefApp_) {
-        uCefApp_->DestroyAppBrowser();
-        uCefApp_ = NULL;
-    }
-
-    // calling CefShutdown() w/o having called CefInitialize() once
-    // causes exception due to no context created for cef
-    if (cefAppCreatedOnce_) {
-        CefShutdown();
-        Time::Sleep(10);
-    }
+#ifdef WIN32
+    CEFWebBrowser *wb = CEFWebBrowser::GetInstance();
+    wb->ShutDown();
     ExitProcess(0);
 #endif
 }
@@ -356,39 +331,14 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     commandString = "";  // Must clean it.
 
 #ifdef CEF_INTEGRATION
-    if (input->GetKeyPress(KEY_F5) && uCefApp_ == NULL) {
-        uCefApp_ = new UCefApp(context_);
-        uCefApp_->CreateAppBrowser();
-        cefAppCreatedOnce_ = true;
-
-        // Create a world browser
-        {
-            ResourceCache *cache = GetSubsystem<ResourceCache>();
-            Node *browserNode = scene_->CreateChild("browserNode");
-            browserNode->SetPosition(Vector3(0.0f, 15.0f, 0.0f));
-            browserNode->SetScale(Vector3(16.0f, 9.0f, 0.1f));
-            StaticModel *object = browserNode->CreateComponent<StaticModel>();
-            object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-            // programmatically create a material
-            SharedPtr<Material> m(new Material(context_));
-            m->SetTechnique(0, cache->GetResource<Technique>(
-                                   "Techniques/DiffAlphaTranslucent.xml"));
-            m->SetTexture(TU_DIFFUSE,
-                          uCefApp_->GetBrowserImage()->GetTexture());
-            object->SetMaterial(m);
-            RigidBody *body = browserNode->CreateComponent<RigidBody>();
-            CollisionShape *shape =
-                browserNode->CreateComponent<CollisionShape>();
-            shape->SetBox(Vector3::ONE);
-        }
-
+    if (input->GetKeyPress(KEY_F5)) {
         // second browser
         Node *browserNode = cameraNode_->CreateChild("browserNode");
         webbrowser = browserNode->CreateComponent<WebBrowser>();
         webbrowser->CreateWebBrowser();
     }
-    if (input->GetKeyPress(KEY_F6) && uCefApp_) {
-        uCefApp_->GetBrowserImage()->LoadURL("http://192.168.0.4:8081/");
+    if (input->GetKeyPress(KEY_F6)) {
+        webbrowser->LoadURL("https://youtu.be/FRx5M6NgDk8?t=78");
     }
 
 #endif

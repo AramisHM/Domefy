@@ -26,6 +26,10 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 
 #include <Urho3D/Scene/LogicComponent.h>
+
+// cef
+#include "UBrowserImage.h"
+
 using namespace Urho3D;
 using namespace fpmed;
 
@@ -51,6 +55,8 @@ class WebBrowser : public LogicComponent {
     // WebBrowserModel - The model of the scene node
     StaticModel *webBrowserModel_;
 
+    UBrowserImage *browser_;
+
    public:
     // WebBrowser - The constructor
     WebBrowser(Context *context);
@@ -69,6 +75,8 @@ class WebBrowser : public LogicComponent {
     // Urho3D's IntVector2
     void ApplyMouseMove(Urho3D::IntVector2 d);
     void SetZoom(float zoom);
+
+    void LoadURL(std::string url);
 };
 
 #endif
