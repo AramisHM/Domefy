@@ -6,6 +6,7 @@
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/SlideAnimator/SlideAnimator.h>
 #include <Application/Components/VHP/VHP.h>
+#include <Application/Components/WebBrowser/WebBrowser.h>
 #include <Application/Sample.h>
 #include <Core/auxiliarAppFuncs.h>
 #include <FPMED.H>
@@ -64,6 +65,7 @@ class MyCustomApplication : public Sample {
     // Visible Human Project Component - The actual model
     VHP *vhp;
     GrabbableUI *slideGrab;
+    WebBrowser *webbrowser;
     // experimental, used for OGV videos feature
    private:
 #ifdef CEF_INTEGRATION

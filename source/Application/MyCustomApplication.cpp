@@ -8,6 +8,7 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>
+#include <Application/Components/WebBrowser/WebBrowser.h>
 #include <Core/ProgramConfig.h>
 
 #include <Urho3D/AngelScript/APITemplates.h>
@@ -30,12 +31,13 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     // Enable the script subsystem;
     context_->RegisterSubsystem(new Script(context_));
 
-    // Register the Componenets to be usable on C++ level
+    // Register the Componenets to be usable at C++ level
     // Some of those componenets are not needed on script side.
     context_->RegisterFactory<VHP>();
     context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
+    context_->RegisterFactory<WebBrowser>();
     context_->RegisterFactory<SlideTransitionAnimatior>();
     // TVComponent::RegisterObject(context_); // alternative way to do this
 
@@ -211,6 +213,11 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
     Input *input = GetSubsystem<Input>();
 
+    if (input->GetKeyDown(KEY_F)) {
+        IntVector2 md = input->GetMouseMove();
+        webbrowser->ApplyMouseMove(md);
+    }
+
     // external commands
     {
         std::vector<std::string> commandSplitted;
@@ -354,70 +361,6 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         uCefApp_->CreateAppBrowser();
         cefAppCreatedOnce_ = true;
 
-        // THE SECOND BROWSER, JUST TO SHOWCASE MULTIPLE BROWSERS
-        // todo: simplify, make functions and create a component for angelscript
-        // TERMINATE PROPERLY
-        {
-            UBrowserImage *uBrowserImage_ = new UBrowserImage(context_);
-            UI *ui = GetSubsystem<UI>();
-            ui->GetRoot()->AddChild(uBrowserImage_);
-            UCefRenderHandle *uCefRenderHandler_ = new UCefRenderHandle(
-                CEFBUF_WIDTH, CEFBUF_HEIGHT, CEFBUF_COMPONENTS);
-            uBrowserImage_->Init(uCefRenderHandler_, 800, 600);
-            CefMainArgs main_args(NULL);
-
-            // Specify CEF global settings here.
-            CefSettings settings;
-            settings.multi_threaded_message_loop = true;
-            settings.windowless_rendering_enabled = true;
-
-            CefRefPtr<SimpleHandler> simpHandler =
-                new SimpleHandler((CefRenderHandler *)uCefRenderHandler_);
-
-            CefRefPtr<CefCommandLine> command_line =
-                CefCommandLine::GetGlobalCommandLine();
-
-            // Specify CEF browser settings here.
-            CefBrowserSettings browser_settings;
-
-            std::string url;
-
-            // Check if a "--url=" value was provided via the command-line. If
-            // so, use that instead of the default URL.
-            url = command_line->GetSwitchValue("url");
-            if (url.empty()) {
-                // url = "http://www.google.com";
-                // url = "https://www.youtube.com/watch?v=-fmCoUjOMXU";
-                url = "file:///./Data/fpmed/domefy_logo_fullsize.png";
-            }
-
-            // Information used when creating the native window.
-            CefWindowInfo window_info;
-
-            // LUMAK: change to windowless and browser sync
-            window_info.SetAsWindowless(NULL, false);
-
-            CefBrowserHost::CreateBrowser(window_info, simpHandler, url,
-                                          browser_settings, NULL);
-
-            ResourceCache *cache = GetSubsystem<ResourceCache>();
-            Node *browserNode = scene_->CreateChild("browserNode");
-            browserNode->SetPosition(Vector3(17.0f, 15.0f, 0.0f));
-            browserNode->SetScale(Vector3(16.0f, 9.0f, 0.1f));
-            StaticModel *object = browserNode->CreateComponent<StaticModel>();
-            object->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-            // programmatically create a material
-            SharedPtr<Material> m(new Material(context_));
-            m->SetTechnique(0, cache->GetResource<Technique>(
-                                   "Techniques/DiffAlphaTranslucent.xml"));
-            m->SetTexture(TU_DIFFUSE, uBrowserImage_->GetTexture());
-            object->SetMaterial(m);
-            RigidBody *body = browserNode->CreateComponent<RigidBody>();
-            CollisionShape *shape =
-                browserNode->CreateComponent<CollisionShape>();
-            shape->SetBox(Vector3::ONE);
-        }
-
         // Create a world browser
         {
             ResourceCache *cache = GetSubsystem<ResourceCache>();
@@ -438,10 +381,14 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                 browserNode->CreateComponent<CollisionShape>();
             shape->SetBox(Vector3::ONE);
         }
+
+        // second browser
+        Node *browserNode = cameraNode_->CreateChild("browserNode");
+        webbrowser = browserNode->CreateComponent<WebBrowser>();
+        webbrowser->CreateWebBrowser();
     }
     if (input->GetKeyPress(KEY_F6) && uCefApp_) {
-        uCefApp_->GetBrowserImage()->LoadURL(
-            "https://youtu.be/FRx5M6NgDk8?t=78");
+        uCefApp_->GetBrowserImage()->LoadURL("http://192.168.0.4:8081/");
     }
 
 #endif

@@ -306,7 +306,7 @@ class Fpmed : ScriptObject {
         }
 
         // Create movable boxes. Let them fall from the sky at first
-        const uint NUM_BOXES = 100;
+        const uint NUM_BOXES = 500;
         for (uint i = 0; i < NUM_BOXES; ++i) {
             float scale = Random(2.0f) + 0.5f;
 
