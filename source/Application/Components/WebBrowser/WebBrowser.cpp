@@ -45,7 +45,7 @@ void WebBrowser::CreateWebBrowser() {
         browser_ = new UBrowserImage(context_);
         UCefRenderHandle *uCefRenderHandler_ = new UCefRenderHandle(
             CEFBUF_WIDTH, CEFBUF_HEIGHT, CEFBUF_COMPONENTS);
-        browser_->Init(uCefRenderHandler_, 800, 600);
+        browser_->Init(uCefRenderHandler_, 1920, 1080);
         CefMainArgs main_args(NULL);
 
         // Specify CEF global settings here.

@@ -35,12 +35,12 @@ class Texture2D;
 using namespace Urho3D;
 class CefAppThread;
 
-#define CEFBUF_WIDTH 1100
-#define CEFBUF_HEIGHT 700
+#define CEFBUF_WIDTH 2048
+#define CEFBUF_HEIGHT 1024
 #define CEFBUF_COMPONENTS 4
 
-#define BROWSER_RENDER_WIDTH 1280
-#define BROWSER_RENDER_HEIGTH 720
+#define BROWSER_RENDER_WIDTH 2048
+#define BROWSER_RENDER_HEIGTH 1024
 
 class UCefRenderHandle : public CefRenderHandler {
     IMPLEMENT_REFCOUNTING(UCefRenderHandle);

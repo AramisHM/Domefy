@@ -333,12 +333,15 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 #ifdef CEF_INTEGRATION
     if (input->GetKeyPress(KEY_F5)) {
         // second browser
-        Node *browserNode = cameraNode_->CreateChild("browserNode");
+        Node *browserNode = scene_->CreateChild("browserNode");
+        browserNode->SetPosition(Vector3(0, 2.0f, 0));
+        browserNode->SetRotation(Quaternion(0, 0, 180.0f));
         webbrowser = browserNode->CreateComponent<WebBrowser>();
         webbrowser->CreateWebBrowser();
     }
     if (input->GetKeyPress(KEY_F6)) {
-        webbrowser->LoadURL("https://youtu.be/FRx5M6NgDk8?t=78");
+        webbrowser->LoadURL("file:///./Data/Textures/360-example.JPG");
+        // https://www.google.com/maps/@-25.453766,-49.2517911,96a,35y,39.24t/data=!3m1!1e3
     }
 
 #endif
