@@ -26,6 +26,7 @@ import (
 var _isDockerized = -1
 
 type tomlConfig struct {
+	SelectedIndexHostIP int `toml:"selected_index_host_ip"`
 
 	// HostingAddress - The IP or Domain where this service is running
 	HostingAddress string `toml:"hosting_address"`

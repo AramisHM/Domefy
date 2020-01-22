@@ -21,12 +21,14 @@ development_key = "ag3lrf9s-f3tk535c-c5ggbjov-85p57dab"
 # describes this software version
 system_version = "0.196.0.1"
 
-# prototype function
+# prototype functionf
 use_middleware = true
 
 # path with executable for the domefy application binary
-win32_domefy_binary = "../bin/fpmed.exe"
+win32_domefy_binary = "..\\bin\\fpmed.exe"
 gnulinux_domefy_binary = "../bin/fpmed"
+
+selected_index_host_ip = 3
 
 [databases]
   # MainBackendDBConn - It is the new database scheme from Postgresql

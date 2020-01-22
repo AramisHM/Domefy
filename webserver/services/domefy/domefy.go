@@ -154,24 +154,29 @@ func GetThisMachineIpAddresses() string {
 	selected := 0
 	scanner := bufio.NewScanner(os.Stdin)
 	nTriesToScan := 3 // this is to prevent infinite loop...
-	for nTriesToScan > 0 {
 
-		if scanner.Scan() {
-			// fmt.Println(scanner.Text())
-			selected, _ = strconv.Atoi(scanner.Text())
-		}
+	if config.Config.SelectedIndexHostIP > 0 && config.Config.SelectedIndexHostIP <= len(ips) {
+		selected = config.Config.SelectedIndexHostIP - 1
+	} else {
+		for nTriesToScan > 0 {
 
-		if selected < 1 || selected > len(ips) {
-			nTriesToScan--
-			fmt.Println("Invalid IP selected... ", nTriesToScan, " tries left... please try again... Here is the list of IPs:")
-			printIPs(ips)
-		} else {
-			selected-- // 1 indexed to 0 indexed
-			break
+			if scanner.Scan() {
+				// fmt.Println(scanner.Text())
+				selected, _ = strconv.Atoi(scanner.Text())
+			}
+
+			if selected < 1 || selected > len(ips) {
+				nTriesToScan--
+				fmt.Println("Invalid IP selected... ", nTriesToScan, " tries left... please try again... Here is the list of IPs:")
+				printIPs(ips)
+			} else {
+				selected-- // 1 indexed to 0 indexed
+				break
+			}
 		}
-	}
-	if nTriesToScan <= 0 {
-		selected = 1 // default 127.0.0.1
+		if nTriesToScan <= 0 {
+			selected = 1 // default 127.0.0.1
+		}
 	}
 
 	fmt.Println("Selected Network Interface with IP", ips[selected])
@@ -212,11 +217,21 @@ func RunDomefy(cmd *exec.Cmd) {
 	processes = append(processes, cmd)
 }
 
+// KillAllApplicationProcesses - Kills all runniing process of Domefy
 func KillAllApplicationProcesses() {
 	for _, p := range processes {
-		if err := p.Process.Kill(); err != nil {
-			fmt.Errorf("Failed to kill process: %v", err)
+
+		if runtime.GOOS == "windows" {
+
+			if err := p.Process.Kill(); err != nil {
+				fmt.Errorf("Failed to kill process: %v", err)
+			}
+		} else { // unix variant
+			if err := p.Process.Kill(); err != nil {
+				fmt.Errorf("Failed to kill process: %v", err)
+			}
 		}
+
 	}
 	processes = nil
 }
@@ -233,12 +248,20 @@ func StartScriptApplication(c *gin.Context) {
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
 			fmt.Println(config.Config.Win32DomefyBinary + " " + scriptName)
-			cmd = exec.Command(config.Config.Win32DomefyBinary, scriptName)
-		} else {
+			// cmd = exec.Command(config.Config.Win32DomefyBinary, scriptName)
+
+			s := []string{config.Config.Win32DomefyBinary, scriptName}
+
+			cmd := exec.Command(s[0], s[1:]...)
+			// if err := cmd.Run(); err != nil {
+			// 	log.Println("Error:", err)
+			// }
+			go RunDomefy(cmd)
+		} else { // Linux or similar variant
 			fmt.Println(config.Config.GNULinuxDomefyBinary + " " + scriptName)
 			cmd = exec.Command(config.Config.GNULinuxDomefyBinary, scriptName)
+			go RunDomefy(cmd)
 		}
-		go RunDomefy(cmd)
 
 		// save the parameters in a local file
 		c.JSON(http.StatusOK, "done")
