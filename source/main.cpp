@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     fpmedInit(argc, argv);
     p1->LoadConfigFile("./config.json");
 
-    if (argc > 1) {
+    if (argc > 1 && argc < 3) {
         scriptPath = std::string(argv[1]);
     } else {
         scriptPath = std::string("./Data/Scripts/18_CharacterDemo2.as");

@@ -8,8 +8,10 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 #include <Application/Components/VHP/VHP.h>
+#ifdef CEF_INTEGRATION
 #include <Application/Components/WebBrowser/WebBrowser.h>
 #include <Application/WebBrowser/CEFWebBrowser.h>
+#endif
 #include <Core/ProgramConfig.h>
 
 #include <Urho3D/AngelScript/APITemplates.h>
