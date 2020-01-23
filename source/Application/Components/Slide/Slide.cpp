@@ -14,27 +14,24 @@
 #include <Application/Components/Slide/Slide.h>
 
 // constructor and destructor
-Slide::Slide(Urho3D::Context *context) : Urho3D::LogicComponent(context)
-{
+Slide::Slide(Urho3D::Context *context) : Urho3D::LogicComponent(context) {
     currentSlideIndex = 0;
 }
 Slide::~Slide() {}
 
 // CreateSlide - Load data and creates the slide model into the root node
-void Slide::CreateSlide(Urho3D::String filePath)
-{
+void Slide::CreateSlide(Urho3D::String filePath) {
     // TODO: reade the code below and remove unecessary blocks
     // ------- slide node PROTOTYPE of FDS file -------
     slideReader.LoadSlides(
-        filePath.CString()); // default was: ./presentation/set.xml
+        filePath.CString());  // default was: ./presentation/set.xml
     int maxSize = slideReader.getNumberOfSlides();
     int slideTextRefId = 0;
 
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
 
     // iterate the slides
-    for (int i = 0; i < maxSize; ++i)
-    {
+    for (int i = 0; i < maxSize; ++i) {
         slidesMaterialArray[i] = cache->GetResource<Material>(
             slideReader.slides.at(i).materialPath.c_str());
 
@@ -117,10 +114,9 @@ void Slide::CreateSlide(Urho3D::String filePath)
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
     // no slides at all
-    if (slideReader.getNumberOfSlides())
-    {
+    if (slideReader.getNumberOfSlides()) {
         slideModel->SetMaterial(
-            slidesMaterialArray[0]); // starts in the first slide
+            slidesMaterialArray[0]);  // starts in the first slide
 
         // breaks here
         modelSlideNode->SetScale(Vector3(
@@ -144,9 +140,8 @@ void Slide::CreateSlide(Urho3D::String filePath)
 
 // TODO: implement it for something maybe?
 void Slide::Update(float timeStep) {}
-void Slide::NextSlide()
-{
-    if (!slideReader.getNumberOfSlides()) // no slides at all
+void Slide::NextSlide() {
+    if (!slideReader.getNumberOfSlides())  // no slides at all
         return;
     if (currentSlideIndex < slideReader.getNumberOfSlides() - 1)
         ++currentSlideIndex;
@@ -155,12 +150,10 @@ void Slide::NextSlide()
     // &pitch_,
     //                                  &yaw_, &polarRadius_, 0, 2000);
 }
-void Slide::PreviousSlide()
-{
-    if (!slideReader.getNumberOfSlides()) // no slides at all
+void Slide::PreviousSlide() {
+    if (!slideReader.getNumberOfSlides())  // no slides at all
         return;
-    if (currentSlideIndex > 0)
-        --currentSlideIndex;
+    if (currentSlideIndex > 0) --currentSlideIndex;
     slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
     // mainSlideAnimator->SetParameters(s.slides[currentSlideIndex],
     // &pitch_,
@@ -168,11 +161,15 @@ void Slide::PreviousSlide()
 }
 
 // Passes the data to GrabbableUI to apply movement and momentum
-void Slide::ApplyMouseMoveLegacy(Vec2<int> d) { slideGrabbableUI->ApplyMouseMove(d); }
-void Slide::ApplyMouseMove(Urho3D::IntVector2 d) { slideGrabbableUI->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_)); }
+void Slide::ApplyMouseMoveLegacy(Vec2<int> d) {
+    slideGrabbableUI->ApplyMouseMove(d);
+}
+void Slide::ApplyMouseMove(Urho3D::IntVector2 d) {
+    slideGrabbableUI->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_));
+}
 
-void Slide::SetZoom(float zoom)
-{
+void Slide::SetZoom(float zoom) {
     slideGrabbableUI->SetRadius(zoom);
-    ApplyMouseMove(Urho3D::IntVector2(0, 0)); // hack to update the rendering TODO: actually fix this!
+    ApplyMouseMove(Urho3D::IntVector2(
+        0, 0));  // hack to update the rendering TODO: actually fix this!
 }

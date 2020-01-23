@@ -65,7 +65,9 @@ class MyCustomApplication : public Sample {
     // Visible Human Project Component - The actual model
     VHP *vhp;
     GrabbableUI *slideGrab;
+#ifdef CEF_INTEGRATION
     WebBrowser *webbrowser;
+#endif
     // experimental, used for OGV videos feature
    private:
 #ifdef CEF_INTEGRATION

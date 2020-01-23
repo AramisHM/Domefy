@@ -1,3 +1,4 @@
+#ifdef CEF_INTEGRATION
 #ifndef CEFWEBBROWSER_H
 #define CEFWEBBROWSER_H
 #include <Core/CoreParameters.h>
@@ -32,3 +33,4 @@ class CEFWebBrowser {
 };
 
 #endif
+#endif  // CEF_INTEGRATION

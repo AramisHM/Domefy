@@ -336,14 +336,14 @@ class Fpmed : ScriptObject {
         XMLFile @space =
             cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
         XMLFile @ship =
-            cache.GetResource("XMLFile", "Objects/spaceship-prefab.xml");
+            cache.GetResource("XMLFile", "Objects/sapaceship-prefab.xml");
         Node @spaceshipPrefab = scene.InstantiateXML(
             space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
         // Node @spaceScenePrefab = scene.InstantiateXML(
         //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
-        // slideComp = cameraNode.CreateComponent("Slide");
-        // slideComp.CreateSlide("./presentation/set.xml");
+        slideComp = cameraNode.CreateComponent("Slide");
+        slideComp.CreateSlide("./presentation/set.xml");
 
         // testing video component
         // Node @videoNode = scene_.CreateChild("Video");

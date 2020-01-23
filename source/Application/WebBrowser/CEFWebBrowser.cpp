@@ -1,3 +1,5 @@
+#ifdef CEF_INTEGRATION
+
 #include <Application/WebBrowser/CEFWebBrowser.h>
 
 CEFWebBrowser* CEFWebBrowser::_instance = NULL;
@@ -38,3 +40,5 @@ void CEFWebBrowser::Init(Urho3D::Context* context_) {
     uCefApp_ = new UCefApp(context_);
     uCefApp_->CreateAppBrowser();
 }
+
+#endif

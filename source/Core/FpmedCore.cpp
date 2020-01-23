@@ -172,7 +172,10 @@ void defineSoftwareDirecotry(int argc, char *argv[]) {
 #else
     chdir(softwareDirectory);
 #endif
-    if (argc > 1)  // get the parameter file data and process it
+    if (argc > 1 &&
+        argc <
+            2)  // get the parameter file data and process it, larger than 4,
+                // probably means somethign is wrong or we are using a debbuger
     {
         printf("Warning, %d parameter(s) found", argc);
 // also get the executable file extension directory

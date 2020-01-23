@@ -33,7 +33,9 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<Slide>();
     context_->RegisterFactory<AnatomicViewer>();
+#ifdef CEF_INTEGRATION
     context_->RegisterFactory<WebBrowser>();
+#endif
     context_->RegisterFactory<SlideTransitionAnimatior>();
     // TVComponent::RegisterObject(context_); // alternative way to do this
 
@@ -103,8 +105,10 @@ MyCustomApplication::MyCustomApplication(Context *context) : Sample(context) {
 
 MyCustomApplication::~MyCustomApplication() {
 #ifdef WIN32
+#ifdef CEF_INTEGRATION
     CEFWebBrowser *wb = CEFWebBrowser::GetInstance();
     wb->ShutDown();
+#endif
     ExitProcess(0);
 #endif
 }
@@ -190,7 +194,9 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
     if (input->GetKeyDown(KEY_F)) {
         IntVector2 md = input->GetMouseMove();
+#ifdef CEF_INTEGRATION
         webbrowser->ApplyMouseMove(md);
+#endif
     }
 
     // external commands

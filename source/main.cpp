@@ -15,8 +15,10 @@
 #include <ahm/net/net.h>
 
 #ifdef WIN32
+#ifdef _MSC_VER
 #include <atlstr.h>
 #include <shellapi.h>  // for CommandLineToArgvW
+#endif
 #include <codecvt>
 #include <cstring>
 #include <iostream>
@@ -86,7 +88,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-#ifdef _WIN32  // NON-CONSOLE LIKE/WINDOWS WAY OF RUNNING PROGRAMS
+#ifdef _MSC_VER
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
                    int showCmd) {
     Urho3D::ParseArguments(GetCommandLineW());
