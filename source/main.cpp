@@ -1,7 +1,7 @@
 
 //
 // FpMED - Framework for Distributed Multiprojection Systems
-// Copyright Aramis Hornung Moraes 2014-2019
+// Copyright Aramis Hornung Moraes 2014-2020
 //
 
 #include <Application/MyCustomApplication.h>
@@ -87,34 +87,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-#ifdef _MSC_VER
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine,
-                   int showCmd) {
-    Urho3D::ParseArguments(GetCommandLineW());
-
-    // conver windows args to classic main() args
-    LPWSTR *szArglist;
-    int nArgs;
-    int i;
-    char *argv[50];
-    szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
-    if (NULL == szArglist) {
-        wprintf(L"CommandLineToArgvW failed\n");
-        return 0;
-    } else {
-        for (i = 0; i < nArgs; i++) {
-            printf("%d: %ws\n", i, szArglist[i]);
-            std::string MyString = CW2A(szArglist[i]);
-            char *cstr =
-                new char[MyString.length() + 1];  // FIXME: free memory?
-            std::strcpy(cstr, MyString.c_str());
-            argv[i] = cstr;
-        }
-    }
-    main(nArgs, argv);
-
-    // Free memory allocated for CommandLineToArgvW arguments.
-    LocalFree(szArglist);
-}
-#endif

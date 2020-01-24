@@ -24,6 +24,7 @@ extern std::string commandString;  // main.cpp
 extern std::string scriptPath;
 MyCustomApplication *application;
 Slide *slidecomp;
+bool cef_created = false;
 
 void MyCustomApplication::RegisterCustomScriptAPI() {
 #ifdef fpmed_allow_scripted_application
@@ -187,6 +188,20 @@ void MyCustomApplication::Start() {
     frameworkScriptInstance->CreateObject(sf, "Fpmed");
     frameworkScriptInstance->Execute("void FpmedStart()");
 #endif
+
+#ifdef CEF_INTEGRATION
+    Cursor *cursor = new Cursor(context_);
+    Graphics *graphics = GetSubsystem<Graphics>();
+    XMLFile *uiStyle = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+    UI *ui = GetSubsystem<UI>();
+    cursor->SetName("Cursor");
+    cursor->SetStyleAuto(uiStyle);
+    cursor->SetPosition(graphics->GetWidth() / 2, graphics->GetHeight() / 2);
+    ui->SetCursor(cursor);
+
+    cursor->SetVisible(true);
+    GetSubsystem<Input>()->SetMouseVisible(true);
+#endif
 }
 
 void MyCustomApplication::Stop() {}
@@ -200,9 +215,15 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
     if (input->GetKeyDown(KEY_F)) {
         IntVector2 md = input->GetMouseMove();
-        slidecomp->ApplyMouseMove(md);
+        // slidecomp->ApplyMouseMove(md);
 #ifdef CEF_INTEGRATION
-        webbrowser->ApplyMouseMove(md);
+        webbrowser->ApplyMouseMove(md * 10);
+#endif
+    }
+    if (input->GetKeyDown(KEY_H)) {
+        IntVector2 md = input->GetMouseMove();
+#ifdef CEF_INTEGRATION
+        webbrowser->AddZoom(md.y_);
 #endif
     }
 
@@ -344,18 +365,19 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     commandString = "";  // Must clean it.
 
 #ifdef CEF_INTEGRATION
-    if (input->GetKeyPress(KEY_F5)) {
+    if (input->GetKeyPress(KEY_F5) && cef_created == false) {
         // second browser
-        Node *browserNode = scene_->CreateChild("browserNode");
-        browserNode->SetPosition(Vector3(0, 2.0f, 0));
-        browserNode->SetRotation(Quaternion(0, 0, 180.0f));
+        Node *browserNode = cameraNode_->CreateChild("browserNode");
         webbrowser = browserNode->CreateComponent<WebBrowser>();
         webbrowser->CreateWebBrowser();
+        cef_created = true;
     }
-    if (input->GetKeyPress(KEY_F6)) {
-        webbrowser->LoadURL("file:///./Data/Textures/360-example.JPG");
-        // https://www.google.com/maps/@-25.453766,-49.2517911,96a,35y,39.24t/data=!3m1!1e3
+    if (input->GetKeyPress(KEY_F6) && cef_created == true) {
+        webbrowser->LoadURL("https://youtu.be/FRx5M6NgDk8?t=79");
     }
 
+    if (input->GetKeyPress(KEY_F8) && cef_created == true) {
+        webbrowser->ToggleUIRender();
+    }
 #endif
 }

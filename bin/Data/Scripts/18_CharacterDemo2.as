@@ -356,14 +356,14 @@ class Fpmed : ScriptObject {
         // videoComp.SetOutputModel(videoNode.GetComponent("StaticModel"));
 
         // VHP
-        Node @vhpNode = scene_.CreateChild("VHP");
-        vhpComp = vhpNode.CreateComponent("VHP");
-        String path = progConf.GetVHPFile();
-        log.Info("Loading VHP model" + path);
-        // vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
-        vhpComp.CreateModel(path);
-        vhpComp.SetViewNodeReference(cameraNode);
-        vhpNode.Rotate(Quaternion(90, 0, 0));
+        // Node @vhpNode = scene_.CreateChild("VHP");
+        // vhpComp = vhpNode.CreateComponent("VHP");
+        // String path = progConf.GetVHPFile();
+        // log.Info("Loading VHP model" + path);
+        // // vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
+        // vhpComp.CreateModel(path);
+        // vhpComp.SetViewNodeReference(cameraNode);
+        // vhpNode.Rotate(Quaternion(90, 0, 0));
     }
 
     void CreateCharacter() {

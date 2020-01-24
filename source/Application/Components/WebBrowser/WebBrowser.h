@@ -57,6 +57,8 @@ class WebBrowser : public LogicComponent {
 
     UBrowserImage *browser_;
 
+    bool UIRender;
+
    public:
     // WebBrowser - The constructor
     WebBrowser(Context *context);
@@ -64,7 +66,9 @@ class WebBrowser : public LogicComponent {
     ~WebBrowser();
     // CreateWebBrowser - Load data and creates the WebBrowser model into the
     // root node
-    void CreateWebBrowser();
+    void CreateWebBrowser(int resX = 640, int resY = 480);
+
+    void ToggleUIRender();
 
     // Runs every render loop
     virtual void Update(float timeStep) override;
@@ -75,6 +79,11 @@ class WebBrowser : public LogicComponent {
     // Urho3D's IntVector2
     void ApplyMouseMove(Urho3D::IntVector2 d);
     void SetZoom(float zoom);
+    // Similar to SetZoom, but the float value is added to the current zoom
+    // value, instead of set.
+    void AddZoom(float zoom);
+
+    UBrowserImage *GetBrowserImage();
 
     void LoadURL(std::string url);
 };

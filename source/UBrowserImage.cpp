@@ -202,7 +202,7 @@ void UBrowserImage::InitTexture(int width, int height) {
     texture_ = new Texture2D(context_);
 
     // set texture format
-    texture_->SetMipsToSkip(QUALITY_LOW, 0);
+    texture_->SetMipsToSkip(QUALITY_HIGH, 0);
     texture_->SetNumLevels(1);
     texture_->SetSize(CEFBUF_WIDTH, CEFBUF_HEIGHT, Graphics::GetRGBAFormat());
 
@@ -216,7 +216,7 @@ void UBrowserImage::InitTexture(int width, int height) {
 
     scaleDiff_ = Vector2((float)CEFBUF_WIDTH / (float)width_,
                          (float)CEFBUF_HEIGHT / (float)height_);
-    initalOffset_ = IntVector2(4, 4);
+    initalOffset_ = IntVector2(0, 0);
 
     // init
     SetVisible(false);
@@ -224,7 +224,7 @@ void UBrowserImage::InitTexture(int width, int height) {
     SetTexture(texture_);
     SetSize(width_, height_);
     SetEnabled(true);
-    SetOpacity(0.95f);
+    SetOpacity(1.0f);
 }
 
 void UBrowserImage::UpdateBuffer() {

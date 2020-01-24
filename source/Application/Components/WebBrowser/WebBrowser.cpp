@@ -22,9 +22,8 @@ WebBrowser::WebBrowser(Urho3D::Context *context)
     : Urho3D::LogicComponent(context) {}
 WebBrowser::~WebBrowser() {}
 
-// CreateWebBrowser - Load data and creates the WebBrowser model into the root
-// node
-void WebBrowser::CreateWebBrowser() {
+// CreateWebBrowser - Creates a WebBrowser on given scene node
+void WebBrowser::CreateWebBrowser(int resX, int resY) {
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
 
     webBrowserNode_ = node_->CreateChild("WebBrowser");
@@ -34,18 +33,25 @@ void WebBrowser::CreateWebBrowser() {
     // at center.
     webBrowserGrabbableUI_->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
     webBrowserGrabbableUI_->SetRadius(1.0f);
-    webBrowserModel_ = webBrowserNode_->CreateComponent<StaticModel>();
-    webBrowserModel_->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
-    webBrowserNode_->SetScale(Vector3(4.0f, 0.0f, 2.25f));
 
-    // modelSlideNode->SetRotation(Quaternion(-90,180,0));
-    webBrowserNode_->SetRotation(Quaternion(0, 0.0f, 180.0f));
+    // the model node can be adjusted, because the root node is always rotated
+    // and moved by the spheric coord system, this solves the problem of
+    // upsidedown image
+    Node *webBrowserModelNode_ =
+        webBrowserNode_->CreateChild("WebBrowserModel");
+    webBrowserModel_ = webBrowserModelNode_->CreateComponent<StaticModel>();
+    webBrowserModel_->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    webBrowserModelNode_->SetScale(Vector3(4.0f, 0.0f, 2.25f));
+    webBrowserModelNode_->SetRotation(Quaternion(0, 180.0f, 0.0f));
 
     {
         browser_ = new UBrowserImage(context_);
+        UI *ui = GetSubsystem<UI>();
+        ui->GetRoot()->AddChild(browser_);
         UCefRenderHandle *uCefRenderHandler_ = new UCefRenderHandle(
             CEFBUF_WIDTH, CEFBUF_HEIGHT, CEFBUF_COMPONENTS);
-        browser_->Init(uCefRenderHandler_, 1920, 1080);
+        browser_->Init(uCefRenderHandler_, CEFBUF_WIDTH, CEFBUF_HEIGHT);
+
         CefMainArgs main_args(NULL);
 
         // Specify CEF global settings here.
@@ -60,8 +66,6 @@ void WebBrowser::CreateWebBrowser() {
         CefBrowserSettings browser_settings;
         std::string url;
 
-        // Check if a "--url=" value was provided via the command-line. If
-        // so, use that instead of the default URL.
         url = command_line->GetSwitchValue("url");
         if (url.empty()) {
             url = "file:///./Data/fpmed/domefy_logo_fullsize.png";
@@ -80,10 +84,26 @@ void WebBrowser::CreateWebBrowser() {
 
         // programmatically create a material
         SharedPtr<Material> m(new Material(context_));
-        m->SetTechnique(0, cache->GetResource<Technique>(
-                               "Techniques/DiffAlphaTranslucent.xml"));
+        m->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffOverlay.xml"));
         m->SetTexture(TU_DIFFUSE, browser_->GetTexture());
+        m->SetLineAntiAlias(true);
         webBrowserModel_->SetMaterial(m);
+    }
+    UIRender = false;
+}
+
+UBrowserImage *WebBrowser::GetBrowserImage() { return browser_; }
+
+void WebBrowser::ToggleUIRender() {
+    UIRender = !UIRender;
+    UI *ui = GetSubsystem<UI>();
+    if (UIRender) {  // add the ui element
+        ui->GetRoot()->SetOpacity(1.0f);
+        ui->GetRoot()->SetEnabled(true);
+    } else {  // remove the ui
+        ui->GetRoot()->SetOpacity(0.0f);
+        ui->GetRoot()->SetEnabled(false);
     }
 }
 
@@ -98,5 +118,16 @@ void WebBrowser::ApplyMouseMove(Urho3D::IntVector2 d) {
     webBrowserGrabbableUI_->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_));
 }
 
-void WebBrowser::SetZoom(float zoom) {}
+void WebBrowser::SetZoom(float zoom) {
+    webBrowserGrabbableUI_->SetRadius(zoom);
+    ApplyMouseMove(Urho3D::IntVector2(
+        0, 0));  // hack to update the rendering TODO: actually fix this!
+}
+
+void WebBrowser::AddZoom(float zoom) {
+    float currZoom = webBrowserGrabbableUI_->GetRadius();
+    webBrowserGrabbableUI_->SetRadius(currZoom + (zoom * 0.001f));
+    ApplyMouseMove(Urho3D::IntVector2(
+        0, 0));  // hack to update the rendering TODO: actually fix this!
+}
 #endif
