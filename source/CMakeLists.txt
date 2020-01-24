@@ -1,9 +1,9 @@
 #  tells to use or not cef
-# add_definitions(-DCEF_INTEGRATION)
-# set(CEF_INTEGRATION 1)
+add_definitions(-DCEF_INTEGRATION)
+set(CEF_INTEGRATION 1)
 
 if(CEF_INTEGRATION)
-	set(CEF_DISTRIBUTION cef_binary_3.2785.1466.g80e473e_windows32)
+	set(CEF_DISTRIBUTION ../third_party/cef_binary_3.2785.1466.g80e473e_windows32)
 	file (GLOB SIMPLE_CC_FILES ${CEF_DISTRIBUTION}/cefsimple/*.cc )
 	file (GLOB SIMPLE_H_FILES ${CEF_DISTRIBUTION}/cefsimple/*.h )
 	set (CEF_SOURCE_FILES ${SIMPLE_CC_FILES} ${SIMPLE_H_FILES})

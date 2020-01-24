@@ -20,6 +20,8 @@
 // THE SOFTWARE.
 //
 
+#ifdef CEF_INTEGRATION
+
 #include <SDL/SDL_log.h>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/CoreEvents.h>
@@ -412,3 +414,5 @@ unsigned UBrowserImage::GetKeyModifiers(int qualifiers) {
 
     return modifier;
 }
+
+#endif  // #ifdef CEF_INTEGRATION

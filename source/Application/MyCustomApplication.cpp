@@ -23,6 +23,7 @@
 extern std::string commandString;  // main.cpp
 extern std::string scriptPath;
 MyCustomApplication *application;
+Slide *slidecomp;
 
 void MyCustomApplication::RegisterCustomScriptAPI() {
 #ifdef fpmed_allow_scripted_application
@@ -157,6 +158,9 @@ void MyCustomApplication::CreateScene() {
         renderer->SetViewport(aux, tempViewport);
         ++aux;
     }
+
+    slidecomp = cameraNode_->CreateComponent<Slide>();
+    slidecomp->CreateSlide("./presentation/set.xml");
 }
 
 std::vector<std::string> split(std::string strToSplit, char delimeter) {
@@ -196,6 +200,7 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 
     if (input->GetKeyDown(KEY_F)) {
         IntVector2 md = input->GetMouseMove();
+        slidecomp->ApplyMouseMove(md);
 #ifdef CEF_INTEGRATION
         webbrowser->ApplyMouseMove(md);
 #endif

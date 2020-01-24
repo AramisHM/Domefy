@@ -2,6 +2,8 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#ifdef CEF_INTEGRATION
+
 #include "UCefApp.h"
 #include <SDL/SDL_log.h>
 #include <Urho3D/Core/Context.h>
@@ -93,3 +95,5 @@ void UCefApp::DestroyAppBrowser() {
     }
     Time::Sleep(10);
 }
+
+#endif  // #ifdef CEF_INTEGRATION

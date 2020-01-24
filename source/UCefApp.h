@@ -2,6 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#ifdef CEF_INTEGRATION
 #ifndef UCEFAPP_H
 #define UCEFAPP_H
 
@@ -32,3 +33,4 @@ class UCefApp : public Object {
 };
 
 #endif  // UCEFAPP_H
+#endif  // #ifdef CEF_INTEGRATION

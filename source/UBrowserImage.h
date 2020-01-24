@@ -20,6 +20,8 @@
 // THE SOFTWARE.
 //
 
+#ifdef CEF_INTEGRATION
+
 #pragma once
 
 #include <Urho3D/Container/ArrayPtr.h>
@@ -147,3 +149,5 @@ class UBrowserImage : public BorderImage {
     IntVector2 initalOffset_;
     Vector2 scaleDiff_;
 };
+
+#endif  // #ifdef CEF_INTEGRATION

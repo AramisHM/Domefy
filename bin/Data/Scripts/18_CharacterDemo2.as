@@ -23,6 +23,7 @@ Node @characterNode;
 Slide @slideComp;
 // TVComponent @videoComp;
 
+VHP @vhpComp;
 class Character : ScriptObject {
     VariantMap controlsInput;
     Controls controls;
@@ -343,7 +344,7 @@ class Fpmed : ScriptObject {
         //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
         slideComp = cameraNode.CreateComponent("Slide");
-        slideComp.CreateSlide("./presentation/set.xml");
+        // slideComp.CreateSlide("./presentation/set.xml");
 
         // testing video component
         // Node @videoNode = scene_.CreateChild("Video");
@@ -353,6 +354,16 @@ class Fpmed : ScriptObject {
         // videoComp.OpenFileName("./Data/Videos/test_video.ogv");
         // // StaticModel @sm = videoNode.GetComponent("StaticModel");
         // videoComp.SetOutputModel(videoNode.GetComponent("StaticModel"));
+
+        // VHP
+        Node @vhpNode = scene_.CreateChild("VHP");
+        vhpComp = vhpNode.CreateComponent("VHP");
+        String path = progConf.GetVHPFile();
+        log.Info("Loading VHP model" + path);
+        // vhpComp.CreateModel("./Data/FakeVHD/test-set.json");
+        vhpComp.CreateModel(path);
+        vhpComp.SetViewNodeReference(cameraNode);
+        vhpNode.Rotate(Quaternion(90, 0, 0));
     }
 
     void CreateCharacter() {

@@ -55,7 +55,7 @@
       "MIMode": "gdb",
       "setupCommands": [
         {
-          "description": "Automatische Strukturierung und Einrückung für "gdb" aktivieren",
+          "description": "Automatische Strukturierung und Einrückung für gdb aktivieren",
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         }
