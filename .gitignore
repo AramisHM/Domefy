@@ -5,3 +5,5 @@
 /build
 .vscode/ipch/
 Urho3D.lib
+fpmed.exe.manifest
+fpmed.exe
