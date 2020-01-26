@@ -29,7 +29,9 @@
       "type": "cppvsdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed.exe",
-      "args": [],
+      "args": [
+        ".\\Scripts\\BrowserPresentation.as"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

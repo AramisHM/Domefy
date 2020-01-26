@@ -365,7 +365,7 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     commandString = "";  // Must clean it.
 
 #ifdef CEF_INTEGRATION
-    if (input->GetKeyPress(KEY_F5) && cef_created == false) {
+    if (cef_created == false) {
         // second browser
         Node *browserNode = cameraNode_->CreateChild("browserNode");
         webbrowser = browserNode->CreateComponent<WebBrowser>();

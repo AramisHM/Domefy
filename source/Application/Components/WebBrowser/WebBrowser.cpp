@@ -90,7 +90,8 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         m->SetLineAntiAlias(true);
         webBrowserModel_->SetMaterial(m);
     }
-    UIRender = false;
+    UIRender = true;
+    ToggleUIRender();  // hide it at start
 }
 
 UBrowserImage *WebBrowser::GetBrowserImage() { return browser_; }
