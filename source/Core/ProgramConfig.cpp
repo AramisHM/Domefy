@@ -42,7 +42,8 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     std::string presetFile = myConfig["presets_file"];
 
     // If any preset file, load it
-    if (presetFile.length() > 0) {  // TODO: is there another propper way to check if any data has been suplied?
+    if (presetFile.length() > 0) {  // TODO: is there another propper way to
+                                    // check if any data has been suplied?
         std::ifstream presetsStream(presetFile);
         json presetsJ;
         presetsStream >> presetsJ;
@@ -84,12 +85,16 @@ int ProgramConfig::LoadConfigFile(std::string path) {
 
                 // load morph mesh for this projection mesh
                 for (const auto& line : item["morph_mesh"]) {  // for each line
-                    for (const auto& vertex : line) {          // for each column, that happens to be the actual vertex itself too
+                    for (const auto& vertex :
+                         line) {  // for each column, that happens to be the
+                                  // actual vertex itself too
                         MorphVertex mv;
                         mv.index = vertex["index"].get<int>();
                         mv.x = vertex["x"].get<float>();
                         mv.y = vertex["y"].get<float>();
-                        p._morphMesh.push_back(mv);  // push vertex into the morphmesh structure array
+                        p._morphMesh.push_back(
+                            mv);  // push vertex into the morphmesh structure
+                                  // array
                     }
                 }
                 p._index = nProjections;
@@ -116,6 +121,7 @@ int ProgramConfig::LoadConfigFile(std::string path) {
     _pathToCustomResources =
         myConfig["custom_assets_path"]["linux"].get<std::string>();
 #endif  //_WIN32
+    return 1;
 }
 
 std::list<Projection> ProgramConfig::GetProjections() { return _projections; }
