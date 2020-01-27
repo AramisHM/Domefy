@@ -1,5 +1,6 @@
 
 #include "Scripts/Utilities/Sample.as"
+#include "Scripts/Utilities/Sample.as"
 
 const int CTRL_FORWARD = 1;
 const int CTRL_BACK = 2;
@@ -307,7 +308,7 @@ class Fpmed : ScriptObject {
         }
 
         // Create movable boxes. Let them fall from the sky at first
-        const uint NUM_BOXES = 500;
+        const uint NUM_BOXES = 20;
         for (uint i = 0; i < NUM_BOXES; ++i) {
             float scale = Random(2.0f) + 0.5f;
 
@@ -334,14 +335,17 @@ class Fpmed : ScriptObject {
         }
 
         // load prefab
-        XMLFile @space =
+        XMLFile @spaceSceneFile =
             cache.GetResource("XMLFile", "Objects/space-scene-prefab.xml");
-        XMLFile @ship =
-            cache.GetResource("XMLFile", "Objects/sapaceship-prefab.xml");
-        Node @spaceshipPrefab = scene.InstantiateXML(
-            space, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
-        // Node @spaceScenePrefab = scene.InstantiateXML(
-        //    ship, Vector3(0.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        Node @spaceScene = scene.InstantiateXML(
+            spaceSceneFile, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+
+        XMLFile @viewer360File =
+            cache.GetResource("XMLFile", "Objects/360-photo-viewer.xml");
+        Node @viewer360Node = scene.InstantiateXML(
+            viewer360File, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+
+        
 
         slideComp = cameraNode.CreateComponent("Slide");
         // slideComp.CreateSlide("./presentation/set.xml");
@@ -445,25 +449,6 @@ class Fpmed : ScriptObject {
 
             // Switch between 1st and 3rd person
             if (input.keyPress[KEY_F]) firstPerson = !firstPerson;
-
-            // Check for loading / saving the scene
-            if (input.keyPress[KEY_F5]) {
-                File saveFile(
-                    fileSystem.programDir + "Data/Scenes/CharacterDemo.xml",
-                    FILE_WRITE);
-                scene_.SaveXML(saveFile);
-            }
-            if (input.keyPress[KEY_F7]) {
-                File loadFile(
-                    fileSystem.programDir + "Data/Scenes/CharacterDemo.xml",
-                    FILE_READ);
-                scene_.LoadXML(loadFile);
-                // After loading we have to reacquire the character scene node,
-                // as it has been recreated Simply find by name as there's only
-                // one of them
-                characterNode = scene_.GetChild("Jack", true);
-                if (characterNode is null) return;
-            }
         }
     }
 
