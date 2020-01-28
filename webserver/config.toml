@@ -28,7 +28,7 @@ use_middleware = true
 win32_domefy_binary = "..\\bin\\fpmed.exe"
 gnulinux_domefy_binary = "../bin/fpmed"
 
-selected_index_host_ip = 3
+selected_index_host_ip = 9
 
 [databases]
   # MainBackendDBConn - It is the new database scheme from Postgresql

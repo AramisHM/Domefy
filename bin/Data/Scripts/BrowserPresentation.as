@@ -340,10 +340,10 @@ class Fpmed : ScriptObject {
         Node @spaceScene = scene.InstantiateXML(
             spaceSceneFile, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
-        XMLFile @viewer360File =
-            cache.GetResource("XMLFile", "Objects/360-photo-viewer.xml");
-        Node @viewer360Node = scene.InstantiateXML(
-            viewer360File, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
+        // XMLFile @viewer360File =
+        //     cache.GetResource("XMLFile", "Objects/360-photo-viewer.xml");
+        // Node @viewer360Node = scene.InstantiateXML(
+        //     viewer360File, Vector3(20.0f, 4.0f, 0.0f), Quaternion(0.0f, 0.0f, 0.0f));
 
         
 

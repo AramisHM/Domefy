@@ -225,6 +225,17 @@ func KillAllApplicationProcesses() {
 
 			if err := p.Process.Kill(); err != nil {
 				fmt.Errorf("Failed to kill process: %v", err)
+				// Taskkill /F /IM fpmed.exe
+				// force kill remaining fpmed with browser instances
+				s := []string{"Taskkill", "/F", "/IM", "fpmed.exe"}
+				cmd := exec.Command(s[0], s[1:]...)
+				cmd.Stdout = os.Stdout
+				err := cmd.Start()
+				if err != nil {
+					fmt.Println("Failed to kill FPMED.", err)
+				} else {
+					fmt.Println("KILLED fpmed process: %d\n", cmd.Process.Pid)
+				}
 			}
 		} else { // unix variant
 			if err := p.Process.Kill(); err != nil {

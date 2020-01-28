@@ -161,7 +161,7 @@ void MyCustomApplication::CreateScene() {
     }
 
     slidecomp = cameraNode_->CreateComponent<Slide>();
-    slidecomp->CreateSlide("./presentation/set.xml");
+    //slidecomp->CreateSlide("./presentation/set.xml");
 }
 
 std::vector<std::string> split(std::string strToSplit, char delimeter) {
