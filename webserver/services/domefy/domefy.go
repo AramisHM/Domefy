@@ -205,16 +205,16 @@ func GetThisMachineIpAddresses() string {
 	return ips[selected]
 }
 
-// RunDomefy - Runs a Domefy instance
-func RunDomefy(cmd *exec.Cmd) {
+// StartDomefy - Runs a Domefy instance
+func StartDomefy(cmd *exec.Cmd) {
 	KillAllApplicationProcesses() // kill and remove all previous processes
 	cmd.Stdout = os.Stdout
-	err := cmd.Start()
+	fmt.Println("Starting Domefy subprocess\n")
+	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Started Domefy subprocess %d\n", cmd.Process.Pid)
-	processes = append(processes, cmd)
+	fmt.Println("Domefy Finished\n")
 }
 
 // KillAllApplicationProcesses - Kills all runniing process of Domefy
@@ -225,17 +225,6 @@ func KillAllApplicationProcesses() {
 
 			if err := p.Process.Kill(); err != nil {
 				fmt.Errorf("Failed to kill process: %v", err)
-				// Taskkill /F /IM fpmed.exe
-				// force kill remaining fpmed with browser instances
-				s := []string{"Taskkill", "/F", "/IM", "fpmed.exe"}
-				cmd := exec.Command(s[0], s[1:]...)
-				cmd.Stdout = os.Stdout
-				err := cmd.Start()
-				if err != nil {
-					fmt.Println("Failed to kill FPMED.", err)
-				} else {
-					fmt.Println("KILLED fpmed process: %d\n", cmd.Process.Pid)
-				}
 			}
 		} else { // unix variant
 			if err := p.Process.Kill(); err != nil {
@@ -244,6 +233,21 @@ func KillAllApplicationProcesses() {
 		}
 
 	}
+	if runtime.GOOS == "windows" {
+		// FORCE KILL
+		// Taskkill /F /IM fpmed.exe
+		// force kill remaining fpmed with browser instances
+		s := []string{"Taskkill", "/F", "/T", "/IM", "fpmed.exe"}
+		cmd := exec.Command(s[0], s[1:]...)
+		cmd.Stdout = os.Stdout
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println("Failed to kill FPMED.", err)
+		} else {
+			fmt.Println("KILLED fpmed process\n")
+		}
+	}
+
 	processes = nil
 }
 
@@ -259,19 +263,18 @@ func StartScriptApplication(c *gin.Context) {
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
 			fmt.Println(config.Config.Win32DomefyBinary + " " + scriptName)
-			// cmd = exec.Command(config.Config.Win32DomefyBinary, scriptName)
-
 			s := []string{config.Config.Win32DomefyBinary, scriptName}
+			//s := []string{"cmd", "/C", "start", config.Config.Win32DomefyBinary, scriptName}
 
 			cmd := exec.Command(s[0], s[1:]...)
 			// if err := cmd.Run(); err != nil {
 			// 	log.Println("Error:", err)
 			// }
-			go RunDomefy(cmd)
+			go StartDomefy(cmd)
 		} else { // Linux or similar variant
 			fmt.Println(config.Config.GNULinuxDomefyBinary + " " + scriptName)
 			cmd = exec.Command(config.Config.GNULinuxDomefyBinary, scriptName)
-			go RunDomefy(cmd)
+			go StartDomefy(cmd)
 		}
 
 		// save the parameters in a local file
