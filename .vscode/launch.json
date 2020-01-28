@@ -28,7 +28,7 @@
       "name": "Debug Windows (MSVC)",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/bin/fpmed.exe",
+      "program": "${workspaceFolder}/bin/fpmed-with-cef.exe",
       "args": [
         ".\\Scripts\\BrowserPresentation.as"
       ],

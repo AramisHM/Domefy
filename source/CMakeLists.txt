@@ -44,6 +44,14 @@ set_target_properties(fpmed
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
+# custom executable name for cef modded
+if(CEF_INTEGRATION)
+set_target_properties(fpmed
+    PROPERTIES
+    OUTPUT_NAME "fpmed-with-cef"
+)
+endif(CEF_INTEGRATION)
+
 if(WIN32)
 	add_definitions(-DURHO3D_SSE)
 	add_definitions(-DURHO3D_MINIDUMPS)

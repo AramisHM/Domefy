@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <material>
 	<technique name="Techniques/DiffAdd.xml" quality="0" loddistance="0" />
-	<texture unit="diffuse" name="Textures/smart-dome-theater-logo.jpg" />
+	<texture unit="diffuse" name="Textures/assets-march/pucpr-shadown.png" />
 	<parameter name="UOffset" value="1 0 0 0" />
 	<parameter name="VOffset" value="0 1 0 0" />
 	<parameter name="MatDiffColor" value="0.8 0.8 0.70635 1" />
