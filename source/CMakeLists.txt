@@ -1,6 +1,9 @@
 #  tells to use or not cef, MUST USE Microsoft Visual Compiler
+
+if(MSVC)
 add_definitions(-DCEF_INTEGRATION)
 set(CEF_INTEGRATION 1)
+endif(MSVC)
 
 if(CEF_INTEGRATION)
 	set(CEF_DISTRIBUTION ../third_party/cef_binary_3.2785.1466.g80e473e_windows32)

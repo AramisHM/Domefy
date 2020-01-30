@@ -27,6 +27,7 @@ sudo make
 ```
 
 # Windows 10
+// TODO: FIXME: bote um break point aqui se vc usar o MinGW GCC
 
 These are required to be installed in your system:
 

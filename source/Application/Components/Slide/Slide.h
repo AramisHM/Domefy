@@ -18,13 +18,13 @@
 #include <Math/vector3.h>
 #include <iostream>
 #include <string>
-#include <vector> // c++ standar vector calss
+#include <vector>  // c++ standar vector calss
 
 #include <Urho3D.h>
 #include <Urho3DAll.h>
 
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
-#include <Application/SlideReader/SlideReader.h> // TODO: refactor this cllass to SlideReader
+#include <Application/SlideReader/SlideReader.h>  // TODO: refactor this cllass to SlideReader
 #include <Urho3D/Scene/LogicComponent.h>
 using namespace Urho3D;
 using namespace fpmed;
@@ -38,18 +38,17 @@ using namespace fpmed;
 
 /// Custom logic component: Used to load and display slides in the 3D
 /// scene of the application
-class Slide : public LogicComponent
-{
+class Slide : public LogicComponent {
     // Must do this to register your class componenet
     URHO3D_OBJECT(Slide, LogicComponent);
 
-private:
+   private:
     // the slide reader, reads files and convert info that we can bring to our
     // 3D application
     fpmed::Slides slideReader;
 
     // this holds the individual slides materials
-    Material *slidesMaterialArray[MAX_SLIDE_COUNT];
+    Texture2D *slideTextureArray[MAX_SLIDE_COUNT];
 
     // the texts for interest points (they float arroud the scene, its a
     // prototype)
@@ -71,7 +70,9 @@ private:
     // Simple indicator of wich slide we currently are.
     int currentSlideIndex;
 
-public:
+    int nLoadedSlides;
+
+   public:
     // Slide - The constructor
     Slide(Context *context);
     // ~Slide - The destructor
@@ -84,7 +85,8 @@ public:
 
     // Passes the data to GrabbableUI to apply movement and momentum
     void ApplyMouseMoveLegacy(Vec2<int> d);
-    // Passes the data to GrabbableUI to apply movement and momentum with Urho3D's IntVector2
+    // Passes the data to GrabbableUI to apply movement and momentum with
+    // Urho3D's IntVector2
     void ApplyMouseMove(Urho3D::IntVector2 d);
     void SetZoom(float zoom);
 
@@ -93,6 +95,8 @@ public:
 
     // Go to previous slide
     void PreviousSlide();
+
+    int LoadSlideFromJSON(std::string path);
 };
 
 #endif

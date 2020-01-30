@@ -26,8 +26,7 @@ static const unsigned CTRL_RIGHT = 8;
 
 Sample::Sample(Context *context) : Application(context) { scene_ = 0; }
 
-void Sample::Setup()
-{
+void Sample::Setup() {
     fpmed::ProgramConfig *config = fpmed::ProgramConfig::GetInstance();
 
     // Modify engine startup parameters
@@ -45,13 +44,11 @@ void Sample::Setup()
     engineParameters_["Monitor"] = config->GetMonitor();
 }
 
-void Sample::CreateLogo()
-{
+void Sample::CreateLogo() {
     ResourceCache *cache = GetSubsystem<ResourceCache>();
     Texture2D *logoTexture =
         cache->GetResource<Texture2D>("fpmed/watermark_small.png");
-    if (!logoTexture)
-        return;
+    if (!logoTexture) return;
 
     UI *ui = GetSubsystem<UI>();
     logoSprite_ = ui->GetRoot()->CreateChild<Sprite>();
@@ -68,8 +65,7 @@ void Sample::CreateLogo()
     logoSprite_->SetPriority(-100);
 }
 
-void Sample::Start()
-{
+void Sample::Start() {
 #ifdef fpmed_allow_scripted_application
 
     // LOAD THE SCRIPTS - IF ANY
@@ -96,61 +92,49 @@ void Sample::Start()
 void Sample::Stop() { engine_->DumpResources(true); }
 
 void Sample::CloseApplication() { engine_->Exit(); }
-int Sample::isApplication()
-{
+int Sample::isApplication() {
     // printf("isapplication %d\n", (!engine_->IsExiting()) );
     return !engine_->IsExiting();
 }
 // auxiliar functions --------------------------
 
 // extra functions --------------------------
-int Sample::Prepare()
-{
+int Sample::Prepare() {
     // Emscripten-specific: C++ exceptions are turned off by default in -O1 (and
     // above), unless '-s DISABLE_EXCEPTION_CATCHING=0' flag is set Urho3D build
     // configuration uses -O3 (Release), -O2 (RelWithDebInfo), and -O0 (Debug)
     // Thus, the try-catch block below should be optimised out except in Debug
     // build configuration
-    try
-    {
+    try {
         Setup();
-        if (exitCode_)
-            return exitCode_;
+        if (exitCode_) return exitCode_;
 
-        if (engine_->Initialize(engineParameters_) == false)
-        {
+        // TODO: FIXME: bote um break point aqui se vc usar o MinGW GCC
+        if (engine_->Initialize(engineParameters_) == false) {
             ErrorExit();
             return exitCode_;
         }
 
-        if (exitCode_)
-            return exitCode_;
-    }
-    catch (std::bad_alloc &)
-    {
+        if (exitCode_) return exitCode_;
+    } catch (std::bad_alloc &) {
         ErrorDialog(
             GetTypeName(),
             "An out-of-memory error occurred. The application will now exit.");
         return EXIT_FAILURE;
     }
 }
-int Sample::RunFrameC()
-{
+int Sample::RunFrameC() {
     // Emscripten-specific: C++ exceptions are turned off by default in -O1 (and
     // above), unless '-s DISABLE_EXCEPTION_CATCHING=0' flag is set
     // Urho3D build configuration uses -O3 (Release), -O2 (RelWithDebInfo), and
     // -O0 (Debug) Thus, the try-catch block below should be optimised out
     // except in Debug build configuration
-    try
-    {
-        if (!engine_->IsExiting())
-            engine_->RunFrame();
+    try {
+        if (!engine_->IsExiting()) engine_->RunFrame();
         // else
         // Stop();
         return exitCode_;
-    }
-    catch (std::bad_alloc &)
-    {
+    } catch (std::bad_alloc &) {
         ErrorDialog(
             GetTypeName(),
             "An out-of-memory error occurred. The application will now exit.");
@@ -158,16 +142,14 @@ int Sample::RunFrameC()
     }
 }
 
-void Sample::SetWindowTitleAndIcon()
-{
+void Sample::SetWindowTitleAndIcon() {
     ResourceCache *cache = GetSubsystem<ResourceCache>();
     Graphics *graphics = GetSubsystem<Graphics>();
     Image *icon = cache->GetResource<Image>("fpmed/domefy_logo256.png");
     graphics->SetWindowIcon(icon);
     graphics->SetWindowTitle("Domefy");
 }
-void Sample::CreateConsoleAndDebugHud()
-{
+void Sample::CreateConsoleAndDebugHud() {
     // Get default style
     ResourceCache *cache = GetSubsystem<ResourceCache>();
     XMLFile *xmlFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
@@ -183,15 +165,13 @@ void Sample::CreateConsoleAndDebugHud()
     // console->SetVisible(true);
 }
 
-void Sample::HandleKeyDown(StringHash eventType, VariantMap &eventData)
-{
+void Sample::HandleKeyDown(StringHash eventType, VariantMap &eventData) {
     using namespace KeyDown;
 
     int key = eventData[P_KEY].GetInt();
 
     // Close console (if open) or exit when ESC is pressed
-    if (key == KEY_ESCAPE)
-    {
+    if (key == KEY_ESCAPE) {
         Console *console = GetSubsystem<Console>();
         if (console->IsVisible())
             console->SetVisible(false);
@@ -210,10 +190,8 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 
 // Create the main scene and camera, tjis scene is special because we simualte
 // the fulldome and/or planar multiprojection view
-void Sample::CreateScene()
-{
-    if (!scene_)
-        scene_ = new Scene(context_);
+void Sample::CreateScene() {
+    if (!scene_) scene_ = new Scene(context_);
     scene_->Clear();
 
     ResourceCache *cache = GetSubsystem<ResourceCache>();
@@ -221,9 +199,9 @@ void Sample::CreateScene()
     scene_->CreateComponent<PhysicsWorld>(LOCAL);
 
     cameraNode_ = scene_->CreateChild(
-        "CameRef"); // criar uma camera normal para depois ser replicada
-                    // pelos outros clientes, e com o dado nome para
-                    // facilitar a referenciação desta mais tarde
+        "CameRef");  // criar uma camera normal para depois ser replicada
+                     // pelos outros clientes, e com o dado nome para
+                     // facilitar a referenciação desta mais tarde
 
     NetworkPriority *networkPriority =
         cameraNode_->CreateComponent<NetworkPriority>();
@@ -234,11 +212,10 @@ void Sample::CreateScene()
 
     Camera *camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(1024.0f);
-    cameraNode_->SetPosition(Vector3(0.0f, 0.0f, 0.0f)); // reset position
+    cameraNode_->SetPosition(Vector3(0.0f, 0.0f, 0.0f));  // reset position
 }
 
-void Sample::SubscribeToEvents()
-{
+void Sample::SubscribeToEvents() {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Sample, HandleUpdate));
     SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Sample, HandlePostUpdate));
     GetSubsystem<Network>()->RegisterRemoteEvent(E_CLIENTOBJECTID);
@@ -246,8 +223,7 @@ void Sample::SubscribeToEvents()
 
 void Sample::HandlePostUpdate(StringHash eventType, VariantMap &eventData) {}
 
-void Sample::AnimateVertex(int mesh, int vertex, float x, float y)
-{
+void Sample::AnimateVertex(int mesh, int vertex, float x, float y) {
     float startPhase = time_ + mesh * 30.0f;
     VertexBuffer *buffer = animatingBuffers_[mesh];
 
@@ -256,8 +232,7 @@ void Sample::AnimateVertex(int mesh, int vertex, float x, float y)
     // data (normals, UVs) that we are not overwriting
     unsigned char *vertexData =
         (unsigned char *)buffer->Lock(0, buffer->GetVertexCount());
-    if (vertexData)
-    {
+    if (vertexData) {
         unsigned vertexSize = buffer->GetVertexSize();
         // unsigned numVertices = buffer->GetVertexCount();
 
@@ -274,8 +249,7 @@ void Sample::AnimateVertex(int mesh, int vertex, float x, float y)
     }
 }
 
-void Sample::HandleUpdate(StringHash eventType, VariantMap &eventData)
-{
+void Sample::HandleUpdate(StringHash eventType, VariantMap &eventData) {
     // Take the frame time step, which is stored as a float
     using namespace Update;
     float timeStep = eventData[P_TIMESTEP].GetFloat();
@@ -287,8 +261,7 @@ void Sample::HandleUpdate(StringHash eventType, VariantMap &eventData)
 // scene that holds a special mesh that we use to do a morphologic
 // point-to-point geometry correction. Returns the node with the camera that
 // view the final geometry compositions.
-Node *Sample::CreateDomeCamera(Projection p)
-{
+Node *Sample::CreateDomeCamera(Projection p) {
     SharedPtr<Scene> sceneDome_;
     SharedPtr<Node> cameraNodeDome_;
 
@@ -308,7 +281,7 @@ Node *Sample::CreateDomeCamera(Projection p)
     StaticModel *domeMesh = domeNode->CreateComponent<StaticModel>();
     domeMesh->SetModel(cache->GetResource<Model>("Dome/Models/domeMesh.mdl"));
     domeNode->SetRotation(Urho3D::Quaternion(0.0f, p._domeYaw, 0.0f));
-    _virtualDomes.push_back(domeNode); // save for later referencing
+    _virtualDomes.push_back(domeNode);  // save for later referencing
 
     // create the grid for the virtual dome
     Node *domeGridNode = domeNode->CreateChild("DOME_GRID", LOCAL);
@@ -319,10 +292,10 @@ Node *Sample::CreateDomeCamera(Projection p)
         cache->GetResource<Material>("Dome/Materials/domegrid.xml"));
     // Invert the mesh
     domeGridNode->SetScale(
-        Vector3(1.265f, -1.265f, 1.265f)); // this size is a magic number.
-                                           // don't boder trying to understand.
+        Vector3(1.265f, -1.265f, 1.265f));  // this size is a magic number.
+                                            // don't boder trying to understand.
     domeGridNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));
-    domeGridNode->SetEnabled(false); // initially, it should be hidden
+    domeGridNode->SetEnabled(false);  // initially, it should be hidden
 
     // Create the camera that will see the vitual dome
     {
@@ -502,7 +475,7 @@ Node *Sample::CreateDomeCamera(Projection p)
     // Create the scene that will hold the deformable mesh for point-to-point
     // geometry correction
     // TODO: this block repeats too much, we should write a function for it.
-    Node *retCam; // the camera node we are going to return
+    Node *retCam;  // the camera node we are going to return
     {
         Scene *geometryCorrectionScene_ = new Scene(context_);
         geometryCorrectionScene_->Clear();
@@ -524,8 +497,7 @@ Node *Sample::CreateDomeCamera(Projection p)
         // source data for the animation
         auto *originalModel =
             cache->GetResource<Model>("Models/geometryCorrection.mdl");
-        if (!originalModel)
-        {
+        if (!originalModel) {
             URHO3D_LOGERROR("Model not found, cannot initialize example scene");
             return NULL;
         }
@@ -537,14 +509,12 @@ Node *Sample::CreateDomeCamera(Projection p)
         const auto *vertexData =
             (const unsigned char *)buffer->Lock(0, buffer->GetVertexCount());
 
-        if (vertexData)
-        {
+        if (vertexData) {
             unsigned numVertices = buffer->GetVertexCount();
             unsigned vertexSize = buffer->GetVertexSize();
 
             // Copy the original vertex positions
-            for (unsigned i = 0; i < numVertices; ++i)
-            {
+            for (unsigned i = 0; i < numVertices; ++i) {
                 const Vector3 &src = *reinterpret_cast<const Vector3 *>(
                     vertexData + i * vertexSize);
                 originalVertices_.Push(src);
@@ -553,21 +523,16 @@ Node *Sample::CreateDomeCamera(Projection p)
 
             // Detect duplicate vertices to allow seamless animation
             vertexDuplicates_.Resize(originalVertices_.Size());
-            for (unsigned i = 0; i < originalVertices_.Size(); ++i)
-            {
-                vertexDuplicates_[i] = i; // Assume not a duplicate
-                for (unsigned j = 0; j < i; ++j)
-                {
-                    if (originalVertices_[i].Equals(originalVertices_[j]))
-                    {
+            for (unsigned i = 0; i < originalVertices_.Size(); ++i) {
+                vertexDuplicates_[i] = i;  // Assume not a duplicate
+                for (unsigned j = 0; j < i; ++j) {
+                    if (originalVertices_[i].Equals(originalVertices_[j])) {
                         vertexDuplicates_[i] = j;
                         break;
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             URHO3D_LOGERROR(
                 "Failed to lock the model vertex buffer to get original "
                 "vertices");
@@ -619,10 +584,10 @@ Node *Sample::CreateDomeCamera(Projection p)
             Camera *geometryCorrCamera =
                 geometryCorrCameraNode->CreateComponent<Camera>();
             geometryCorrCameraNode->SetPosition(Vector3(
-                0, 0, -1.005f)); // Back off a bit, just to show the outline
-                                 // created by the scene ambient color TODO:
-                                 // should be parametrized and configurable on
-                                 // the new calibrator
+                0, 0, -1.005f));  // Back off a bit, just to show the outline
+                                  // created by the scene ambient color TODO:
+                                  // should be parametrized and configurable on
+                                  // the new calibrator
 
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(p._farClip);
@@ -633,8 +598,7 @@ Node *Sample::CreateDomeCamera(Projection p)
         }
 
         // apply the morph correction loaded from config file
-        for (auto v : p._morphMesh)
-        {
+        for (auto v : p._morphMesh) {
             AnimateVertex(p._index, v.index, v.x, v.y);
         }
 
@@ -664,8 +628,8 @@ Node *Sample::CreateDomeCamera(Projection p)
         m->SetShaderParameter("MatDiffColor", va);
         boxMesh->SetMaterial(m);
         _calibrationAidNodes.push_back(
-            calibReferenceNode);               // save for later referencing
-        calibReferenceNode->SetEnabled(false); // disabled by default
+            calibReferenceNode);                // save for later referencing
+        calibReferenceNode->SetEnabled(false);  // disabled by default
     }
     return retCam;
 }

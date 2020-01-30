@@ -13,9 +13,16 @@
 #include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Application/Components/Slide/Slide.h>
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include <streambuf>
+
+using json = nlohmann::json;
+
 // constructor and destructor
 Slide::Slide(Urho3D::Context *context) : Urho3D::LogicComponent(context) {
     currentSlideIndex = 0;
+    nLoadedSlides = 0;
 }
 Slide::~Slide() {}
 
@@ -23,80 +30,14 @@ Slide::~Slide() {}
 void Slide::CreateSlide(Urho3D::String filePath) {
     // TODO: reade the code below and remove unecessary blocks
     // ------- slide node PROTOTYPE of FDS file -------
-    slideReader.LoadSlides(
-        filePath.CString());  // default was: ./presentation/set.xml
-    int maxSize = slideReader.getNumberOfSlides();
-    int slideTextRefId = 0;
+    // slideReader.LoadSlides(
+    //     filePath.CString());  // default was: ./presentation/set.xml
+    std::string s = std::string(filePath.CString());
+    nLoadedSlides = this->LoadSlideFromJSON(
+        "D:\\GoPath\\src\\github."
+        "com\\AramisHM\\Domefy\\bin\\slides\\aramis\\aramis.json");
 
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
-
-    // iterate the slides
-    for (int i = 0; i < maxSize; ++i) {
-        slidesMaterialArray[i] = cache->GetResource<Material>(
-            slideReader.slides.at(i).materialPath.c_str());
-
-        // TODO:
-        // The segment below is the code that adds the points of interest in the
-        // *scene*. BUT, *THIS* componenet is suggested to be created in the
-        // camera node, not in the scene. Therefore, we should migrate this code
-        // and log to its own componenet
-        // -----------------------------------------------------------------------
-        //
-        //
-        // if (s.slides[i].hasRefPoint == true) {
-        //     Node* nodeSet = node_->CreateChild("hologramPointOfInterest");
-        //     nodeSet->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
-
-        //     BillboardSet* billboardObject =
-        //         nodeSet->CreateComponent<BillboardSet>();
-        //     billboardObject->SetNumBillboards(1);
-        //     billboardObject->SetMaterial(
-        //         cache->GetResource<Material>("Materials/point.xml"));
-        //     billboardObject->SetSorted(true);
-
-        //     Billboard* bb = billboardObject->GetBillboard(0);
-        //     bb->position_ = Vector3(s.slides[i].refPoint.getX(),
-        //                             s.slides[i].refPoint.getY(),
-        //                             s.slides[i].refPoint.getZ());
-        //     bb->size_ = Vector2(0.5f, 0.5f);
-        //     bb->enabled_ = true;
-        //     billboardObject->Commit();
-
-        //     float fontSize = 15.0f;
-
-        //     // add text to reference point if any
-        //     if (s.slides[i].text != std::string("")) {
-        //         s.slides[i].interestPointIndex = slideTextRefId;
-
-        //         Node* shapeTextNode = node_->CreateChild("text1");
-
-        //         interestPointTexts_[slideTextRefId] =
-        //             shapeTextNode;  // save reference
-
-        //         shapeTextNode->SetPosition(Vector3(
-        //             s.slides[i].refPoint.getX(), s.slides[i].refPoint.getY(),
-        //             s.slides[i].refPoint.getZ()));
-
-        //         Text3D* shapeText = shapeTextNode->CreateComponent<Text3D>();
-        //         shapeText->SetFont(
-        //             cache->GetResource<Urho3D::Font>("Fonts/BlueHighway.sdf"),
-        //             fontSize);
-        //         shapeText->SetText(s.slides[i].text.c_str());
-        //         // shapeText->SetWordwrap(true);
-        //         shapeText->SetWidth(12.0f);
-
-        //         shapeTextNode->Rotate(Quaternion(-180.0f, 0.0f, 180.0f));
-        //         shapeTextNode->SetScale(
-        //             Vector3((fontSize * 0.16f), (fontSize * 0.16f),
-        //                     (fontSize * 0.16f)));  // O = i*0.16;
-        //         shapeText->SetColor(Color());
-
-        //         shapeText->SetFaceCameraMode(FC_ROTATE_XYZ);
-
-        //         ++slideTextRefId;
-        //     }
-        // }
-    }
 
     Node *masterSlideNode;
     Node *modelSlideNode;
@@ -114,50 +55,37 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
     // no slides at all
-    if (slideReader.getNumberOfSlides()) {
-        slideModel->SetMaterial(
-            slidesMaterialArray[0]);  // starts in the first slide
+    if (nLoadedSlides) {
+        SharedPtr<Material> m(new Material(context_));
+        m->SetTechnique(0, cache->GetResource<Technique>(
+                               "Techniques/DiffAlphaTranslucent.xml"));
+        m->SetTexture(TU_DIFFUSE, slideTextureArray[0]);
+        slideModel->SetMaterial(m);  // starts in the first slide
 
         // breaks here
-        modelSlideNode->SetScale(Vector3(
-            slideModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetWidth() / 45,
-            0,
-            slideModel->GetMaterial(0)->GetTexture(TU_DIFFUSE)->GetHeight() /
-                45));
+        modelSlideNode->SetScale(Vector3(800 / 45, 0, 600 / 45));
     }
     // modelSlideNode->SetRotation(Quaternion(-90,180,0));
     modelSlideNode->SetRotation(Quaternion(0, 180, 0));
-
-    // Create our custom Mover component that will move & animate the model
-    // during each frame's update
-    // mainSlideAnimator =
-    //     masterSlideNode->CreateComponent<SlideTransitionAnimatior>();
-    // mainSlideAnimator->setCameraUpdateCallback(cameraCallback);
-    // mainSlideAnimator->SetParameters(0, 400);
-
-    // ------- slide node -------
 }
 
 // TODO: implement it for something maybe?
 void Slide::Update(float timeStep) {}
 void Slide::NextSlide() {
-    if (!slideReader.getNumberOfSlides())  // no slides at all
+    printf("loaded slides %d", nLoadedSlides);
+    if (!nLoadedSlides)  // no slides at all
         return;
-    if (currentSlideIndex < slideReader.getNumberOfSlides() - 1)
-        ++currentSlideIndex;
-    slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
-    // mainSlideAnimator->SetParameters(slideReader.slides[currentSlideIndex],
-    // &pitch_,
-    //                                  &yaw_, &polarRadius_, 0, 2000);
+    if (currentSlideIndex < nLoadedSlides - 1) ++currentSlideIndex;
+    slideModel->GetMaterial(0)->SetTexture(
+        TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
 }
 void Slide::PreviousSlide() {
-    if (!slideReader.getNumberOfSlides())  // no slides at all
+    printf("loaded slides %d", nLoadedSlides);
+    if (!nLoadedSlides)  // no slides at all
         return;
     if (currentSlideIndex > 0) --currentSlideIndex;
-    slideModel->SetMaterial(slidesMaterialArray[currentSlideIndex]);
-    // mainSlideAnimator->SetParameters(s.slides[currentSlideIndex],
-    // &pitch_,
-    //                                  &yaw_, &polarRadius_, 0, 2000);
+    slideModel->GetMaterial(0)->SetTexture(
+        TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
 }
 
 // Passes the data to GrabbableUI to apply movement and momentum
@@ -172,4 +100,53 @@ void Slide::SetZoom(float zoom) {
     slideGrabbableUI->SetRadius(zoom);
     ApplyMouseMove(Urho3D::IntVector2(
         0, 0));  // hack to update the rendering TODO: actually fix this!
+}
+
+// LoadSlide
+int Slide::LoadSlideFromJSON(std::string path) {
+    for (int i = 0; i < MAX_SLIDE_COUNT; ++i) {
+        slideTextureArray[i] = 0;
+    }
+
+    std::ifstream filest(path);
+    json slideData;
+    filest >> slideData;
+
+    // Get projection viewport configurations
+    std::string fileType = slideData["type"];
+    std::string fileName = slideData["name"];
+
+    int nSlidesLoaded = 0;
+    // If any preset file, load it
+    if (slideData["slides"].size() > 0) {
+        Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
+
+        for (const auto &item : slideData["slides"]) {
+            std::string imageName = item["image"].get<std::string>();
+            printf("%s", imageName.c_str());
+
+            // create material
+
+            Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
+                Urho3D::String(imageName.c_str()));
+            if (!t) continue;
+#ifdef FPMED_LATEST_URHO3D
+            t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+#else
+            t->SetFilterMode(FILTER_NEAREST);
+#endif
+            t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+            t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+            t->SetNumLevels(1);
+
+            // save slide data
+            slideTextureArray[nSlidesLoaded] = t;
+            ++nSlidesLoaded;
+        }
+    } else {
+        printf("Couldn't load slides\n\n");
+    }
+    // fflush(stdin);
+    // getchar();
+    return nSlidesLoaded;
 }
