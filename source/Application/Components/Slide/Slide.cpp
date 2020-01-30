@@ -32,10 +32,8 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     // ------- slide node PROTOTYPE of FDS file -------
     // slideReader.LoadSlides(
     //     filePath.CString());  // default was: ./presentation/set.xml
-    std::string s = std::string(filePath.CString());
-    nLoadedSlides = this->LoadSlideFromJSON(
-        "D:\\GoPath\\src\\github."
-        "com\\AramisHM\\Domefy\\bin\\slides\\aramis\\aramis.json");
+    std::string pathString = std::string(filePath.CString());
+    nLoadedSlides = this->LoadSlideFromJSON(pathString);
 
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
 
@@ -54,11 +52,18 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     slideModel = modelSlideNode->CreateComponent<StaticModel>();
     slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
 
+    float h, w, ps;
+    h = 1;
+    w = (float)slideTextureArray[0]->GetWidth() /
+        (float)slideTextureArray[0]->GetHeight();
+    ps = 0.5f;  // proportion size
+    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
+
     // no slides at all
     if (nLoadedSlides) {
         SharedPtr<Material> m(new Material(context_));
-        m->SetTechnique(0, cache->GetResource<Technique>(
-                               "Techniques/DiffAlphaTranslucent.xml"));
+        m->SetTechnique(
+            0, cache->GetResource<Technique>("Techniques/DiffOverlay.xml"));
         m->SetTexture(TU_DIFFUSE, slideTextureArray[0]);
         slideModel->SetMaterial(m);  // starts in the first slide
 
@@ -76,6 +81,15 @@ void Slide::NextSlide() {
     if (!nLoadedSlides)  // no slides at all
         return;
     if (currentSlideIndex < nLoadedSlides - 1) ++currentSlideIndex;
+
+    // set size
+    float h, w, ps;
+    h = 1;
+    w = (float)slideTextureArray[currentSlideIndex]->GetWidth() /
+        (float)slideTextureArray[currentSlideIndex]->GetHeight();
+    ps = 0.5f;  // proportion size
+    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
+
     slideModel->GetMaterial(0)->SetTexture(
         TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
 }
@@ -84,6 +98,15 @@ void Slide::PreviousSlide() {
     if (!nLoadedSlides)  // no slides at all
         return;
     if (currentSlideIndex > 0) --currentSlideIndex;
+
+    // set size
+    float h, w, ps;
+    h = 1;
+    w = (float)slideTextureArray[currentSlideIndex]->GetWidth() /
+        (float)slideTextureArray[currentSlideIndex]->GetHeight();
+    ps = 0.5f;  // proportion size
+    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
+
     slideModel->GetMaterial(0)->SetTexture(
         TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
 }

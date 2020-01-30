@@ -43,7 +43,7 @@ class Slide : public LogicComponent {
     URHO3D_OBJECT(Slide, LogicComponent);
 
    private:
-    // the slide reader, reads files and convert info that we can bring to our
+       // the slide reader, reads files and convert info that we can bring to our
     // 3D application
     fpmed::Slides slideReader;
 

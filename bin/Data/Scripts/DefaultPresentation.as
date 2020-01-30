@@ -207,7 +207,7 @@ class Fpmed : ScriptObject {
                                  Quaternion(0.0f, 0.0f, 0.0f));
 
         slideComp = cameraNode.CreateComponent("Slide");
-        slideComp.CreateSlide("./presentation/set.xml");
+        slideComp.CreateSlide("./slides/justino/justino.json");
 
         cameraNode.position = Vector3(0.0f, 0.0f, 0.0f);
         pitch = 80.0f;
