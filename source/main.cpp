@@ -44,6 +44,10 @@ class UIElement;
 conn extChanel;
 std::string commandString;
 std::string scriptPath;
+#ifdef CEF_INTEGRATION
+std::string defaultCefUrl =
+    "file:///./Data/Textures/assets-march/pucpr-shadown.png";
+#endif
 
 void ListenForExternalCommands() {
     if (sock_read(&extChanel, 1) > 0) {
@@ -63,6 +67,7 @@ int main(int argc, char *argv[]) {
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
     ahmnet_init();
+
     udp_listen("127.0.0.1:42871", &extChanel);
     fpmedInit(argc, argv);
     p1->LoadConfigFile("./config.json");
@@ -71,6 +76,10 @@ int main(int argc, char *argv[]) {
         scriptPath = std::string(argv[1]);
     } else {
         scriptPath = std::string("./Data/Scripts/DefaultPresentation.as");
+    }
+
+    if (argc >= 3) {  // url for browser
+        defaultCefUrl = std::string(argv[2]);
     }
 
     if (application->isApplication()) {

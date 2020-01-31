@@ -17,7 +17,7 @@
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
+      "miDebuggerPath": "C:/MinGW/bin/gdb32.exe",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -32,7 +32,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed-with-cef.exe",
       "args": [
-        ".\\Scripts\\BrowserPresentation.as"
+        ".\\Scripts\\DefaultPresentation.as"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

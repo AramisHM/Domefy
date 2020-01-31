@@ -47,7 +47,14 @@ function MoveSlide(event) {
     mv.x = Math.floor(cp.x - lp.x);
     mv.y = Math.floor(cp.y - lp.y);
     var cmd = "SLIDEMOVE;" + mv.x + ";" + mv.y + ";";
+
+    var channelSel = document.getElementById("channelSelector").value;
+    if (channelSel == "CPP") {
+        cmd = "CPP;" + cmd;
+    }
+
     console.log(cmd);
+
     baudCommand(cmd, thumbstick3.baudInterval, commandsEndpoint);
     lp.x = cp.x;
     lp.y = cp.y;
@@ -59,8 +66,19 @@ function PreviousSlide() {
 function NextSlide() {
     ajaxPost("NEXTSLIDE;0;", true, commandsEndpoint);
 }
-
+function RunURL() {
+    ajaxPost("CPP;RUNURL;0;", true, commandsEndpoint);
+}
+function StopURL() {
+    ajaxPost("CPP;STOPCEFMEDIA;0;", true, commandsEndpoint);
+}
 function SlideZoom(zoom) {
     console.log("SLIDEZOOM;" + zoom + ";")
-    ajaxPost("SLIDEZOOM;" + zoom + ";", true, commandsEndpoint);
+    var cmd = "SLIDEZOOM;" + zoom + ";";
+    var channelSel = document.getElementById("channelSelector").value;
+    if (channelSel == "CPP") {
+        cmd = "CPP;" + cmd;
+    }
+
+    ajaxPost(cmd, true, commandsEndpoint);
 }

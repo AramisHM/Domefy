@@ -217,6 +217,22 @@ func StartDomefy(cmd *exec.Cmd) {
 	fmt.Println("Domefy Finished\n")
 }
 
+// KillProcByNameWindows - kills a process on windows by its name
+func KillProcByNameWindows(name string) {
+	// FORCE KILL
+	// Taskkill /F /IM fpmed.exe
+	// force kill remaining fpmed with browser instances
+	s := []string{"Taskkill", "/F", "/T", "/IM", name}
+	cmd := exec.Command(s[0], s[1:]...)
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println("Failed to kill FPMED.", err)
+	} else {
+		fmt.Println("KILLED fpmed process\n")
+	}
+}
+
 // KillAllApplicationProcesses - Kills all runniing process of Domefy
 func KillAllApplicationProcesses() {
 	for _, p := range processes {
@@ -234,18 +250,8 @@ func KillAllApplicationProcesses() {
 
 	}
 	if runtime.GOOS == "windows" {
-		// FORCE KILL
-		// Taskkill /F /IM fpmed.exe
-		// force kill remaining fpmed with browser instances
-		s := []string{"Taskkill", "/F", "/T", "/IM", "fpmed.exe"}
-		cmd := exec.Command(s[0], s[1:]...)
-		cmd.Stdout = os.Stdout
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println("Failed to kill FPMED.", err)
-		} else {
-			fmt.Println("KILLED fpmed process\n")
-		}
+		KillProcByNameWindows("fpmed.exe")
+		KillProcByNameWindows("fpmed-with-cef.exe")
 	}
 
 	processes = nil
@@ -255,6 +261,8 @@ func KillAllApplicationProcesses() {
 func StartScriptApplication(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	scriptName, gotScript := paramObj["script"].(string)
+	useCef, gotCefFlag := paramObj["cef"].(bool)
+	urlForCef, gotUrl := paramObj["url"].(string)
 
 	if gotScript {
 		// get configuration globals
@@ -262,9 +270,20 @@ func StartScriptApplication(c *gin.Context) {
 		fmt.Println(os.Getwd())
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
-			fmt.Println(config.Config.Win32DomefyBinary + " " + scriptName)
-			s := []string{config.Config.Win32DomefyBinary, scriptName}
+			win32Bin := config.Config.Win32DomefyBinary
+			if gotCefFlag && useCef {
+				win32Bin = config.Config.Win32DomefyBinaryCef
+			}
+			fmt.Println(win32Bin + " " + scriptName)
+			s := []string{win32Bin, scriptName}
 			//s := []string{"cmd", "/C", "start", config.Config.Win32DomefyBinary, scriptName}
+
+			// default = Data\Textures\assets-march
+			if gotUrl && len(urlForCef) > 0 {
+				s = append(s, urlForCef)
+			} else {
+				s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo
+			}
 
 			cmd := exec.Command(s[0], s[1:]...)
 			// if err := cmd.Run(); err != nil {

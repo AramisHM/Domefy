@@ -22,6 +22,9 @@
 
 extern std::string commandString;  // main.cpp
 extern std::string scriptPath;
+#ifdef CEF_INTEGRATION
+extern std::string defaultCefUrl;
+#endif
 MyCustomApplication *application;
 Slide *slidecomp;
 bool cef_created = false;
@@ -352,18 +355,24 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                                    std::stof(commandSplitted[3]) * 150.0f));
 #endif
                 }
+#ifdef CEF_INTEGRATION
+                if (!commandSplitted[1].compare(std::string("RUNURL"))) {
+                    webbrowser->LoadURL(defaultCefUrl);
+                }
+                if (!commandSplitted[1].compare(std::string("STOPCEFMEDIA"))) {
+                    webbrowser->LoadURL(defaultCefUrl);
+                }
                 if (!commandSplitted[1].compare(std::string("SLIDEZOOM"))) {
                     printf("%s", commandSplitted[1].c_str());
                     printf("%s", commandSplitted[2].c_str());
 
-#ifdef CEF_INTEGRATION
-                    webbrowser->SetZoom(std::stof(commandSplitted[2]) / 5.0f);
+                    float radius = std::stof(commandSplitted[2]) / 5.0f;
+                    webbrowser->SetZoom(radius);
 
                     fpmed::Vec2<float> coords =
                         webbrowser->GetGrabbableUI()->GetCoordinates();
-                    printf("%f  - <%f, %f>",
-                           webbrowser->GetGrabbableUI()->GetRadius(),
-                           coords.getX(), coords.getY());
+                    printf("\n\n%f  - <%f, %f>", radius, coords.getX(),
+                           coords.getY());
 
 #endif
                 }
@@ -401,9 +410,15 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         webbrowser = browserNode->CreateComponent<WebBrowser>();
         webbrowser->CreateWebBrowser();
         cef_created = true;
+        // set initial position and coordinates
+        webbrowser->GetGrabbableUI()->SetCoordinates(
+            fpmed::Vec2<float>(270.26f, 17.58f));
+        webbrowser->SetZoom(3.6f);
+        // 183.600000  - <270.265472, 17.580265>
     }
+
     if (input->GetKeyPress(KEY_F6) && cef_created == true) {
-        webbrowser->LoadURL("https://youtu.be/FRx5M6NgDk8?t=79");
+        webbrowser->LoadURL(defaultCefUrl);
     }
 
     if (input->GetKeyPress(KEY_F8) && cef_created == true) {

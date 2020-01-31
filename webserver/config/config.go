@@ -47,6 +47,7 @@ type tomlConfig struct {
 
 	// path with executable for the domefy application binary
 	Win32DomefyBinary    string `toml:"win32_domefy_binary"`
+	Win32DomefyBinaryCef string `toml:"win32_domefy_binary_cef"`
 	GNULinuxDomefyBinary string `toml:"gnulinux_domefy_binary"`
 
 	Databases map[string]Database

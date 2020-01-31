@@ -58,6 +58,7 @@ class WebBrowser : public LogicComponent {
     UBrowserImage *browser_;
 
     bool UIRender;
+    std::string defaultStartUrl;
 
    public:
     // WebBrowser - The constructor
@@ -86,6 +87,7 @@ class WebBrowser : public LogicComponent {
     UBrowserImage *GetBrowserImage();
 
     void LoadURL(std::string url);
+    void DefaultURL();
 
     GrabbableUI *GetGrabbableUI();
 };

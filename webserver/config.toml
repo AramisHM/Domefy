@@ -25,10 +25,11 @@ system_version = "0.196.0.1"
 use_middleware = true
 
 # path with executable for the domefy application binary
+win32_domefy_binary_cef = "..\\bin\\fpmed-with-cef.exe"
 win32_domefy_binary = "..\\bin\\fpmed.exe"
 gnulinux_domefy_binary = "../bin/fpmed"
 
-selected_index_host_ip = 0
+selected_index_host_ip = 5
 
 [databases]
   # MainBackendDBConn - It is the new database scheme from Postgresql

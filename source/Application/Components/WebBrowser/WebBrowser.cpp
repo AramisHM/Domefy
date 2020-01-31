@@ -19,7 +19,10 @@
 
 // constructor and destructor
 WebBrowser::WebBrowser(Urho3D::Context *context)
-    : Urho3D::LogicComponent(context) {}
+    : Urho3D::LogicComponent(context) {
+    defaultStartUrl =
+        std::string("file:///./Data/Textures/assets-march/pucpr-shadown.png");
+}
 WebBrowser::~WebBrowser() {}
 
 // CreateWebBrowser - Creates a WebBrowser on given scene node
@@ -68,7 +71,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
 
         url = command_line->GetSwitchValue("url");
         if (url.empty()) {
-            url = "file:///./Data/fpmed/domefy_logo_fullsize.png";
+            url = defaultStartUrl;
         }
 
         // Information used when creating the native window.
@@ -109,6 +112,8 @@ void WebBrowser::ToggleUIRender() {
 }
 
 void WebBrowser::LoadURL(std::string url) { browser_->LoadURL(url); }
+
+void WebBrowser::DefaultURL() { this->LoadURL(defaultStartUrl); }
 
 // TODO: implement it for something maybe?
 void WebBrowser::Update(float timeStep) {}

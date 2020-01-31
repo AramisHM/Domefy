@@ -53,45 +53,39 @@
     <h1>Administrator Panel</h1>
     <button type="button" class="large-buttom" onclick="startDomefy()">Start
         Domefy</button>
+    <button type="button" class="large-buttom" onclick="startDomefyWithCEF()">Start
+        CEF Domefy</button>
     <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
         Domefy</button>
 
-    <select id="scriptSelector" class="large-buttom">
-        <option value="Scripts/DefaultPresentation.as">AIA</option>
-        <option value="Scripts/18_CharacterDemo2.as">Slide Vanilla</option>
-        <option value="Scripts/BrowserPresentation.as">Browser</option>
-        <option value="Scripts/DummySpaceNav.as">Video Component Test
-        </option>
-        <option value="Scripts/Video1.as">Video 1
-        </option>
-        <option value="Scripts/Video2.as">Video 2
-        </option>
-        <option value="Scripts/Video3.as">Video 3
-        </option>
-        <option value="Scripts/Video4.as">Video 4
-        </option>
-        <option value="Scripts/Video5.as">Video 5
-        </option>
-        <option value="Scripts/Video6.as">Video 6
-        </option>
-        <option value="Scripts/Video7.as">Video 7
-        </option>
-        <option value="Scripts/Video8.as">Video 8
-        </option>
-        <option value="Scripts/Video9.as">Video 9
-        </option>
-        <option value="Scripts/Video10.as">Video 10
-        </option>
-        <option value="Scripts/Pathfinder.as">Pathfinder</option>
-        <option value="Scripts/11_Physics.as">Physics</option>
-        <option value="Scripts/13_Ragdolls.as">Ragdoll
-        </option>
-        <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car
-        </option>
-    </select>
+    <p>
+        <select id="scriptSelector" class="large-buttom">
+            <option value="Scripts/DefaultPresentation.as">AIA</option>
+            <option value="Scripts/marco3th2020/justino.as">Slide Professor</option>
+            <option value="Scripts/marco3th2020/cinthia.as">Slide Cinthia</option>
+            <option value="Scripts/VideoAIA.as">Video AIA </option>
+            <option value="Scripts/Pathfinder.as">Pathfinder</option>
+            <option value="Scripts/11_Physics.as">Physics</option>
+            <option value="Scripts/13_Ragdolls.as">Ragdoll</option>
+            <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car</option>
+        </select>
+        Script
+    </p>
+    <p>
+        <select id="urlSelector" class="large-buttom">
+            <option
+                value="https://www.youtube.com/watch?v=4Js-XbNj6Tk&list=PLe_w30AtYQ6KedpFft_llpQ6Dlclki_8T&index=129">
+                Apresentacao AIA FALTANDO</option>
+            <option value="https://youtu.be/8b-FEaGJG8Y?t=7">Bass test</option>
+            <option value="https://youtu.be/FRx5M6NgDk8?t=79">Ghost in the shell</option>
+            <option value="https://play.kahoot.it/v2/lobby?quizId=bd4f2755-4f16-42ba-a01e-60e99cb66e91">Kahoot</option>
+        </select>
+        Video to play
+    </p>
 
-    <br>
-    <button class="large-buttom" onclick="RedirectToControllerPage()">Controller</button>
+    <p>
+        <button class="large-buttom" onclick="RedirectToControllerPage()">Controller</button>
+    </p>
     <br>
     <button class="large-buttom" onclick="RedirectToSlideControllerPage()">Slide
         Controller</button>
@@ -104,6 +98,14 @@
     function startDomefy() {
         var command = {
             script: document.getElementById("scriptSelector").value
+        };
+        ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
+    }
+    function startDomefyWithCEF() {
+        var command = {
+            script: document.getElementById("scriptSelector").value,
+            cef: true,
+            url: document.getElementById("urlSelector").value
         };
         ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
     }
