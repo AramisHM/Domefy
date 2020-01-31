@@ -234,6 +234,10 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         int cmdLen = commandSplitted.size();
 
         if (cmdLen > 1) {
+            for (int i = 0; i < commandSplitted.size(); ++i) {
+                printf("\ncomand %s\n\n", commandSplitted[i].c_str());
+            }
+
             if (!commandSplitted[0].compare(
                     std::string("CPP"))) {  // C++ exclusively
                 // TODO: move all this block to a separated file!
@@ -337,8 +341,34 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         node->SetEnabled(isEnabled);
                     }
                 }
+                if (!commandSplitted[1].compare(std::string("SLIDEMOVE"))) {
+                    printf("%s", commandSplitted[1].c_str());
+                    printf("%s", commandSplitted[2].c_str());
+                    printf("%s", commandSplitted[3].c_str());
+#ifdef CEF_INTEGRATION
+                    // FIXME: dont use fix values
+                    webbrowser->ApplyMouseMove(
+                        IntVector2(std::stof(commandSplitted[2]) * 150.0f,
+                                   std::stof(commandSplitted[3]) * 150.0f));
+#endif
+                }
+                if (!commandSplitted[1].compare(std::string("SLIDEZOOM"))) {
+                    printf("%s", commandSplitted[1].c_str());
+                    printf("%s", commandSplitted[2].c_str());
+
+#ifdef CEF_INTEGRATION
+                    webbrowser->SetZoom(std::stof(commandSplitted[2]) / 5.0f);
+
+                    fpmed::Vec2<float> coords =
+                        webbrowser->GetGrabbableUI()->GetCoordinates();
+                    printf("%f  - <%f, %f>",
+                           webbrowser->GetGrabbableUI()->GetRadius(),
+                           coords.getX(), coords.getY());
+
+#endif
+                }
             } else {  // forward to script instance
-                // if (!cmd.compare(std::string("SCRIPT"))) {  // external
+                // if (!cmd.compare(std::string("SCRIPT"))) p{  // external
                 // text Get the command from network, redirect to script,
                 // execute it, and print the scrip's response.
                 VariantVector parameters;
@@ -365,7 +395,7 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
     commandString = "";  // Must clean it.
 
 #ifdef CEF_INTEGRATION
-    if (input->GetKeyPress(KEY_M) && cef_created == false) {
+    if (cef_created == false) {
         // second browser
         Node *browserNode = cameraNode_->CreateChild("browserNode");
         webbrowser = browserNode->CreateComponent<WebBrowser>();

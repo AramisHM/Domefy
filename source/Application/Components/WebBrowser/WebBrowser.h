@@ -86,6 +86,8 @@ class WebBrowser : public LogicComponent {
     UBrowserImage *GetBrowserImage();
 
     void LoadURL(std::string url);
+
+    GrabbableUI *GetGrabbableUI();
 };
 
 #endif

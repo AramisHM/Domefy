@@ -452,8 +452,8 @@
                 "z": 0
             },
             "resolution": {
-                "x": 300,
-                "y": 150
+                "x": 1920,
+                "y": 1200
             },
             "rtt_resolution": 1024,
             "viewport_pos": {
@@ -912,7 +912,7 @@
                 "z": 0
             },
             "resolution": {
-                "x": 300,
+                "x": 1920,
                 "y": 150
             },
             "rtt_resolution": 1024,

@@ -19,7 +19,7 @@ const float CAMERA_MIN_DIST = 1.0f;
 const float CAMERA_MAX_DIST = 20.0f;
 float cameraDistance = 5.0;
 
-Slide @slideComp;
+// Slide @slideComp;
 
 VHP @vhpComp;
 class Character : ScriptObject {
@@ -143,20 +143,20 @@ class Fpmed : ScriptObject {
 
         if (cmds[0] == "SLIDEMOVE") {
             log.Info(str);
-            slideComp.ApplyMouseMove(IntVector2(cmds[1].ToFloat() * 75.0f,
-                                                cmds[2].ToFloat() * 75.0f));
+            // slideComp.ApplyMouseMove(IntVector2(cmds[1].ToFloat() * 75.0f,
+            //                                     cmds[2].ToFloat() * 75.0f));
         }
         if (cmds[0] == "SLIDEZOOM") {
             log.Info(str);
-            slideComp.SetZoom(cmds[1].ToFloat() / 5.0f);
+            // slideComp.SetZoom(cmds[1].ToFloat() / 5.0f);
         }
         if (cmds[0] == "NEXTSLIDE") {
             log.Info(str);
-            slideComp.NextSlide();
+            // slideComp.NextSlide();
         }
         if (cmds[0] == "PREVIOUSSLIDE") {
             log.Info(str);
-            slideComp.PreviousSlide();
+            // slideComp.PreviousSlide();
         }
     }
 
@@ -206,8 +206,8 @@ class Fpmed : ScriptObject {
             scene.InstantiateXML(spaceSceneFile, Vector3(20.0f, 4.0f, 0.0f),
                                  Quaternion(0.0f, 0.0f, 0.0f));
 
-        slideComp = cameraNode.CreateComponent("Slide");
-        slideComp.CreateSlide("./slides/justino/justino.json");
+        // slideComp = cameraNode.CreateComponent("Slide");
+        // slideComp.CreateSlide("./slides/aramis/aramis.json");
 
         cameraNode.position = Vector3(0.0f, 0.0f, 0.0f);
         pitch = 80.0f;

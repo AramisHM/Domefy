@@ -131,4 +131,7 @@ void WebBrowser::AddZoom(float zoom) {
     ApplyMouseMove(Urho3D::IntVector2(
         0, 0));  // hack to update the rendering TODO: actually fix this!
 }
+
+GrabbableUI *WebBrowser::GetGrabbableUI() { return webBrowserGrabbableUI_; }
+
 #endif
