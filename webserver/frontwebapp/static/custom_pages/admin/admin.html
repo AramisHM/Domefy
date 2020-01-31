@@ -71,7 +71,7 @@
         </select>
         Script
     </p>
-    <p>
+    <!-- <p>
         <select id="urlSelector" class="large-buttom">
             <option
                 value="https://www.youtube.com/watch?v=4Js-XbNj6Tk&list=PLe_w30AtYQ6KedpFft_llpQ6Dlclki_8T&index=129">
@@ -81,7 +81,7 @@
             <option value="https://play.kahoot.it/v2/lobby?quizId=bd4f2755-4f16-42ba-a01e-60e99cb66e91">Kahoot</option>
         </select>
         Video to play
-    </p>
+    </p> -->
 
     <p>
         <button class="large-buttom" onclick="RedirectToControllerPage()">Controller</button>
@@ -89,6 +89,8 @@
     <br>
     <button class="large-buttom" onclick="RedirectToSlideControllerPage()">Slide
         Controller</button>
+    <button class="large-buttom" onclick="RedirectToBrowserControllerPage()">Browser
+        basic controller</button>
 </body>
 
 <script type="text/javascript" src="../../config.js"></script>
@@ -104,8 +106,7 @@
     function startDomefyWithCEF() {
         var command = {
             script: document.getElementById("scriptSelector").value,
-            cef: true,
-            url: document.getElementById("urlSelector").value
+            cef: true
         };
         ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
     }
@@ -117,6 +118,9 @@
     }
     function RedirectToSlideControllerPage() {
         window.location = "http://" + frontendIPPort + "/virtual_controller/slider.html"
+    }
+    function RedirectToBrowserControllerPage() {
+        window.location = "http://" + frontendIPPort + "/virtual_controller/browserbasic.html"
     }
 </script>
 

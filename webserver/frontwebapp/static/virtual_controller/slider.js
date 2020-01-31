@@ -48,10 +48,10 @@ function MoveSlide(event) {
     mv.y = Math.floor(cp.y - lp.y);
     var cmd = "SLIDEMOVE;" + mv.x + ";" + mv.y + ";";
 
-    var channelSel = document.getElementById("channelSelector").value;
-    if (channelSel == "CPP") {
-        cmd = "CPP;" + cmd;
-    }
+    // var channelSel = document.getElementById("channelSelector").value;
+    // if (channelSel == "CPP") {
+    //     cmd = "CPP;" + cmd;
+    // }
 
     console.log(cmd);
 
@@ -75,10 +75,17 @@ function StopURL() {
 function SlideZoom(zoom) {
     console.log("SLIDEZOOM;" + zoom + ";")
     var cmd = "SLIDEZOOM;" + zoom + ";";
-    var channelSel = document.getElementById("channelSelector").value;
-    if (channelSel == "CPP") {
-        cmd = "CPP;" + cmd;
-    }
+    // var channelSel = document.getElementById("channelSelector").value;
+    // if (channelSel == "CPP") {
+    //     cmd = "CPP;" + cmd;
+    // }
 
+    ajaxPost(cmd, true, commandsEndpoint);
+}
+
+// CenterSlide()
+function CenterSlide(zoom) {
+    var cmd = "CENTERSLIDE;0;"
+    console.log(cmd)
     ajaxPost(cmd, true, commandsEndpoint);
 }

@@ -71,6 +71,9 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     engine->RegisterObjectMethod("Slide", "void ApplyMouseMove(IntVector2&in)",
                                  asMETHOD(Slide, ApplyMouseMove),
                                  asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void SetCoordinates(IntVector2&in)",
+                                 asMETHOD(Slide, SetCoordinates),
+                                 asCALL_THISCALL);
     engine->RegisterObjectMethod("Slide", "void NextSlide()",
                                  asMETHOD(Slide, NextSlide), asCALL_THISCALL);
     engine->RegisterObjectMethod("Slide", "void PreviousSlide()",
@@ -356,11 +359,15 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
 #endif
                 }
 #ifdef CEF_INTEGRATION
+
                 if (!commandSplitted[1].compare(std::string("RUNURL"))) {
-                    webbrowser->LoadURL(defaultCefUrl);
+                    std::string url = commandSplitted[2];
+                    if (url.length() > 3) {
+                        webbrowser->LoadURL(url);
+                    }
                 }
                 if (!commandSplitted[1].compare(std::string("STOPCEFMEDIA"))) {
-                    webbrowser->LoadURL(defaultCefUrl);
+                    webbrowser->DefaultURL();
                 }
                 if (!commandSplitted[1].compare(std::string("SLIDEZOOM"))) {
                     printf("%s", commandSplitted[1].c_str());
@@ -373,9 +380,22 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         webbrowser->GetGrabbableUI()->GetCoordinates();
                     printf("\n\n%f  - <%f, %f>", radius, coords.getX(),
                            coords.getY());
+                }
+
+                // USER360BROWSER
+                if (!commandSplitted[1].compare(
+                        std::string("USER360BROWSER"))) {
+                    printf("%s", commandSplitted[2].c_str());
+
+                    if (!commandSplitted[2].compare(std::string("1"))) {
+                        webbrowser->SetSphericView(true);
+                    } else {
+                        webbrowser->SetSphericView(false);
+                    }
+                }
 
 #endif
-                }
+
             } else {  // forward to script instance
                 // if (!cmd.compare(std::string("SCRIPT"))) p{  // external
                 // text Get the command from network, redirect to script,

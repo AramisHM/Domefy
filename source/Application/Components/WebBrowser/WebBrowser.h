@@ -47,6 +47,8 @@ class WebBrowser : public LogicComponent {
     // WebBrowserNode is a secondary reference that we place ontop of the camera
     // node. So it can move arround the camera's node
     Node *webBrowserNode_;
+    Node *webBrowser360Node_;
+    Node *webBrowser360ModelNode_;
 
     // WebBrowserGrabbableUI - We use this to move the WebBrowser arround the
     // camera node, accordingly to a spheric coordinate system
@@ -54,6 +56,7 @@ class WebBrowser : public LogicComponent {
 
     // WebBrowserModel - The model of the scene node
     StaticModel *webBrowserModel_;
+    StaticModel *webBrowser360Model_;  // used for 360 panoramic media
 
     UBrowserImage *browser_;
 
@@ -83,6 +86,8 @@ class WebBrowser : public LogicComponent {
     // Similar to SetZoom, but the float value is added to the current zoom
     // value, instead of set.
     void AddZoom(float zoom);
+
+    void SetSphericView(bool isSpheric);
 
     UBrowserImage *GetBrowserImage();
 

@@ -279,7 +279,7 @@ func StartScriptApplication(c *gin.Context) {
 			//s := []string{"cmd", "/C", "start", config.Config.Win32DomefyBinary, scriptName}
 
 			// default = Data\Textures\assets-march
-			if gotUrl && len(urlForCef) > 0 {
+			if gotCefFlag && useCef && gotUrl && len(urlForCef) > 0 {
 				s = append(s, urlForCef)
 			} else {
 				s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo

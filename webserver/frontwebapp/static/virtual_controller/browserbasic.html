@@ -1,0 +1,111 @@
+<!--
+File: controller.html
+Project: FpMED - Framework for Distributed Multiprojection Systems
+File Created: Friday, 9th August 2019 8:28:35 pm
+Author: Aramis Hornung Moraes (aramishm@gmail.com)
+-----
+Last Modified: Friday, 9th August 2019 8:29:03 pm
+Modified By: Aramis Hornung Moraes (aramishm@gmail.com>)
+-----
+Copyright 2014 - 2019 Aramis Hornung Moraes
+-->
+
+
+
+<!DOCTYPE html>
+<html>
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="HandheldFriendly" content="true" />
+<!-- embanded css classes in the html file -->
+<style>
+    /* class to disable scrolling in the page */
+    .noScroll {
+        overflow-y: hidden;
+        overscroll-behavior: none;
+    }
+
+    /* The region with for the touch enabled input */
+    .joystick {
+        width: 200px;
+        height: 200px;
+        border: 1px solid;
+
+        z-index: 2;
+    }
+
+    .large-buttom {
+        width: auto;
+        height: 75px;
+    }
+</style>
+
+<body class="noScroll">
+    <table style="width:100%">
+        <tr>
+            <th>Move Browser</th>
+            <th></th>
+            <th>Run/Halt</th>
+        </tr>
+        <tr>
+            <td>
+                <div class="joystick" ontouchstart="RegisterTouchStartSliderStick3(event)" ontouchmove="
+                        MoveSlide(event)">
+                    <img id="stick3" style="position:absolute" src=" ../../assets/images/marker.png">
+                    </img>
+                </div>
+            </td>
+            <td>
+                <p><button onclick="RunURLFromSelector()" type="button" class="large-buttom"> Run URL </button></p>
+
+                <p></p><button onclick="StopURL()" type="button" class="large-buttom"> Halt browser </button></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                ZOOM: <input type="range" id="slideZoom" min="1" max="100" value="100" style="width: 100%" oninput="
+                        SlideZoom(this.value)">
+            </td>
+            <td>Empty</td>
+            <td>
+                <select id="channelSelector" class="large-buttom">
+                    <option value="AS">AS</option>
+                    <option value="CPP">CPP</option>
+                </select>
+            </td>
+        </tr>
+        <br>
+        <tr>
+            <p>
+                <select id="urlSelectorbb" class="large-buttom">
+                    <option
+                        value="https://www.youtube.com/watch?v=4Js-XbNj6Tk&list=PLe_w30AtYQ6KedpFft_llpQ6Dlclki_8T&index=129">
+                        Apresentacao AIA FALTANDO</option>
+                    <option value="https://youtu.be/8b-FEaGJG8Y?t=7">Bass test</option>
+                    <option value="https://youtu.be/FRx5M6NgDk8?t=79">Ghost in the shell</option>
+                    <option value="https://play.kahoot.it/v2/lobby?quizId=bd4f2755-4f16-42ba-a01e-60e99cb66e91">Kahoot
+                    </option>
+                    <option value="file:///./Data/Textures/360-example.JPG">360 test
+                    </option>
+                    <option value="custom_url">Input URL</option>
+                </select>
+                URL collection
+            </p>
+            <p><input type="text" id="customUrlInput"></p>
+            <p><input type="checkbox" id="user360browsercb" value="user_360_browser" onclick='ChangeBrowserMesh(this);'>
+                360
+                browser<br></p>
+        </tr>
+    </table>
+
+
+
+    <!-- utilities for sending ajax etc -->
+    <script type="text/javascript" src="../config.js"></script>
+    <script type="text/javascript" src="../domefy/utils.js"></script>
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="controller.js"></script>
+    <script src="browserbasic.js"></script>
+</body>
+
+</html>

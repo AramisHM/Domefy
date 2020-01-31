@@ -208,6 +208,9 @@ class Fpmed : ScriptObject {
 
         slideComp = cameraNode.CreateComponent("Slide");
         slideComp.CreateSlide("./slides/cinthia/cinthia.json");
+        // center at start
+        slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
+        slideComp.SetZoom(7.2f);
 
         cameraNode.position = Vector3(0.0f, 0.0f, 0.0f);
         pitch = 80.0f;

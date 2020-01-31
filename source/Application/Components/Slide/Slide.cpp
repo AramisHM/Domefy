@@ -115,6 +115,11 @@ void Slide::PreviousSlide() {
 void Slide::ApplyMouseMoveLegacy(Vec2<int> d) {
     slideGrabbableUI->ApplyMouseMove(d);
 }
+
+void Slide::SetCoordinates(Urho3D::IntVector2 d) {
+    slideGrabbableUI->SetCoordinates(Vec2<float>(d.x_, d.y_));
+}
+
 void Slide::ApplyMouseMove(Urho3D::IntVector2 d) {
     slideGrabbableUI->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_));
 }

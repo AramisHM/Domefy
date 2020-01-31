@@ -46,7 +46,7 @@ std::string commandString;
 std::string scriptPath;
 #ifdef CEF_INTEGRATION
 std::string defaultCefUrl =
-    "file:///./Data/Textures/assets-march/pucpr-shadown.png";
+    "file:///./Data/Textures/assets-march/browser-ready.jpeg";
 #endif
 
 void ListenForExternalCommands() {
@@ -77,11 +77,11 @@ int main(int argc, char *argv[]) {
     } else {
         scriptPath = std::string("./Data/Scripts/DefaultPresentation.as");
     }
-
+#ifdef CEF_INTEGRATION
     if (argc >= 3) {  // url for browser
         defaultCefUrl = std::string(argv[2]);
     }
-
+#endif
     if (application->isApplication()) {
         application->Prepare();
         application->Start();

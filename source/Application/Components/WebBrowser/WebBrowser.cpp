@@ -21,7 +21,7 @@
 WebBrowser::WebBrowser(Urho3D::Context *context)
     : Urho3D::LogicComponent(context) {
     defaultStartUrl =
-        std::string("file:///./Data/Textures/assets-march/pucpr-shadown.png");
+        std::string("file:///./Data/Textures/assets-march/browser-ready.jpeg");
 }
 WebBrowser::~WebBrowser() {}
 
@@ -30,6 +30,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();
 
     webBrowserNode_ = node_->CreateChild("WebBrowser");
+    webBrowser360Node_ = node_->CreateChild("WebBrowser360");
     webBrowserGrabbableUI_ = webBrowserNode_->CreateComponent<GrabbableUI>();
 
     // this is expected to ve linked to the camera, therefore, camera always is
@@ -46,6 +47,19 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
     webBrowserModel_->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
     webBrowserModelNode_->SetScale(Vector3(4.0f, 0.0f, 2.25f));
     webBrowserModelNode_->SetRotation(Quaternion(0, 180.0f, 0.0f));
+
+    // 360 node
+    {
+        webBrowser360ModelNode_ =
+            webBrowser360Node_->CreateChild("WebBrowser360Model");
+        webBrowser360Model_ =
+            webBrowser360ModelNode_->CreateComponent<StaticModel>();
+        webBrowser360Model_->SetModel(
+            cache->GetResource<Model>("Models/360projection-2.mdl"));
+        webBrowser360ModelNode_->SetScale(Vector3(-64.0f, 64.0f, 64.0f));
+        webBrowser360ModelNode_->SetRotation(Quaternion(0, 90.0f, 0.0f));
+        webBrowser360ModelNode_->SetEnabled(false);  // default is invisible
+    }
 
     {
         browser_ = new UBrowserImage(context_);
@@ -92,6 +106,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         m->SetTexture(TU_DIFFUSE, browser_->GetTexture());
         m->SetLineAntiAlias(true);
         webBrowserModel_->SetMaterial(m);
+        webBrowser360Model_->SetMaterial(m);
     }
     UIRender = true;
     ToggleUIRender();  // hide it at start
@@ -138,5 +153,9 @@ void WebBrowser::AddZoom(float zoom) {
 }
 
 GrabbableUI *WebBrowser::GetGrabbableUI() { return webBrowserGrabbableUI_; }
+
+void WebBrowser::SetSphericView(bool isSpheric) {
+    webBrowser360ModelNode_->SetEnabled(isSpheric);
+}
 
 #endif

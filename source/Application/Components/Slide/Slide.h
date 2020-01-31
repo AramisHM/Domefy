@@ -43,7 +43,7 @@ class Slide : public LogicComponent {
     URHO3D_OBJECT(Slide, LogicComponent);
 
    private:
-       // the slide reader, reads files and convert info that we can bring to our
+    // the slide reader, reads files and convert info that we can bring to our
     // 3D application
     fpmed::Slides slideReader;
 
@@ -88,6 +88,7 @@ class Slide : public LogicComponent {
     // Passes the data to GrabbableUI to apply movement and momentum with
     // Urho3D's IntVector2
     void ApplyMouseMove(Urho3D::IntVector2 d);
+    void SetCoordinates(Urho3D::IntVector2 d);
     void SetZoom(float zoom);
 
     // Go to next slide
