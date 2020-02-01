@@ -394,6 +394,18 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     }
                 }
 
+                // USER360CUBEBROWSER
+                if (!commandSplitted[1].compare(
+                        std::string("USER360CUBEBROWSER"))) {
+                    printf("%s", commandSplitted[2].c_str());
+
+                    if (!commandSplitted[2].compare(std::string("1"))) {
+                        webbrowser->SetCubeView(true);
+                    } else {
+                        webbrowser->SetCubeView(false);
+                    }
+                }
+
 #endif
 
             } else {  // forward to script instance

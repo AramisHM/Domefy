@@ -31,6 +31,8 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
 
     webBrowserNode_ = node_->CreateChild("WebBrowser");
     webBrowser360Node_ = node_->CreateChild("WebBrowser360");
+    webBrowserYoutube360Node_ = node_->CreateChild("WebBrowserYoutube360");
+
     webBrowserGrabbableUI_ = webBrowserNode_->CreateComponent<GrabbableUI>();
 
     // this is expected to ve linked to the camera, therefore, camera always is
@@ -59,6 +61,20 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         webBrowser360ModelNode_->SetScale(Vector3(-64.0f, 64.0f, 64.0f));
         webBrowser360ModelNode_->SetRotation(Quaternion(0, 90.0f, 0.0f));
         webBrowser360ModelNode_->SetEnabled(false);  // default is invisible
+    }
+
+    //  youtube 360 node
+    {
+        webBrowserYoutube360ModelNode_ =
+            webBrowserYoutube360Node_->CreateChild("WebBrowserYoutube360Model");
+        webBrowserYoutube360Model_ =
+            webBrowserYoutube360ModelNode_->CreateComponent<StaticModel>();
+        webBrowserYoutube360Model_->SetModel(
+            cache->GetResource<Model>("Models/360-youtube-mesh-inverted.mdl"));
+        webBrowserYoutube360ModelNode_->SetScale(Vector3(5.0f, 5.0f, 5.0f));
+        webBrowserYoutube360ModelNode_->SetRotation(Quaternion(0, 0.0f, 0.0f));
+        webBrowserYoutube360ModelNode_->SetEnabled(
+            false);  // default is invisible
     }
 
     {
@@ -107,6 +123,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         m->SetLineAntiAlias(true);
         webBrowserModel_->SetMaterial(m);
         webBrowser360Model_->SetMaterial(m);
+        webBrowserYoutube360Model_->SetMaterial(m);
     }
     UIRender = true;
     ToggleUIRender();  // hide it at start
@@ -156,6 +173,10 @@ GrabbableUI *WebBrowser::GetGrabbableUI() { return webBrowserGrabbableUI_; }
 
 void WebBrowser::SetSphericView(bool isSpheric) {
     webBrowser360ModelNode_->SetEnabled(isSpheric);
+}
+
+void WebBrowser::SetCubeView(bool isCubic) {
+    webBrowserYoutube360ModelNode_->SetEnabled(isCubic);
 }
 
 #endif

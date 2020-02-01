@@ -326,7 +326,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -355,7 +355,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -384,7 +384,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -413,7 +413,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -442,7 +442,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -563,7 +563,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
             p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
             TEXTURE_RENDERTARGET);
 
-        geometryCorrectionRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        geometryCorrectionRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));

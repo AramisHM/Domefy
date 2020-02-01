@@ -158,6 +158,11 @@ class Fpmed : ScriptObject {
             log.Info(str);
             slideComp.PreviousSlide();
         }
+        if (cmds[0] == "CENTERSLIDE") {
+            log.Info(str);
+            slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
+            slideComp.SetZoom(7.2f);
+        }
     }
 
     void FpmedStart() {

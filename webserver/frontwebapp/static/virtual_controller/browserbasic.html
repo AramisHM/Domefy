@@ -78,14 +78,22 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         <tr>
             <p>
                 <select id="urlSelectorbb" class="large-buttom">
-                    <option
-                        value="https://www.youtube.com/watch?v=4Js-XbNj6Tk&list=PLe_w30AtYQ6KedpFft_llpQ6Dlclki_8T&index=129">
-                        Apresentacao AIA FALTANDO</option>
+                    <option value="https://www.youtube.com/embed/wfoez7Njz4s?autoplay=1">
+                        Apresentacao AIA</option>
+                    <option value="https://www.youtube.com/embed/p0VlY5hZMEY?autoplay=1">F2S2
+                    </option>
                     <option value="https://youtu.be/8b-FEaGJG8Y?t=7">Bass test</option>
-                    <option value="https://youtu.be/FRx5M6NgDk8?t=79">Ghost in the shell</option>
+                    <option value="https://www.youtube.com/embed/zKiM9n5wrKQ?autoplay=1">Mandelbrot Zoom
+                    </option>
+                    <option value="https://www.youtube.com/embed/kYx_V_yNydk?autoplay=1&start=98">Lamborghini Quality
+                    </option>
+                    <option value="https://www.youtube.com/embed/FRx5M6NgDk8?autoplay=1&start=78">Ghost in the shell
+                    </option>
                     <option value="https://play.kahoot.it/v2/lobby?quizId=bd4f2755-4f16-42ba-a01e-60e99cb66e91">Kahoot
                     </option>
-                    <option value="file:///./Data/Textures/360-example.JPG">360 test
+                    <option value="file:///./Data/Textures/360-example.JPG">360 Panoramic Warp test
+                    </option>
+                    <option value="file:///./Data/Textures/youtube-template.jpeg">360 Youtube Warp test
                     </option>
                     <option value="custom_url">Input URL</option>
                 </select>
@@ -93,7 +101,11 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             </p>
             <p><input type="text" id="customUrlInput"></p>
             <p><input type="checkbox" id="user360browsercb" value="user_360_browser" onclick='ChangeBrowserMesh(this);'>
-                360
+                360 Sphere
+                browser<br></p>
+            <p><input type="checkbox" id="user360cubebrowsercb" value="user_360_cube_browser"
+                    onclick='ChangeBrowserMeshCubic(this);'>
+                360 Cube
                 browser<br></p>
         </tr>
     </table>
