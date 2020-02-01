@@ -1,0 +1,9 @@
+{
+  "type": "slide_presentation",
+  "name": "Apresentacao aramis",
+  "slides": [
+    {
+      "image": "./slides/qr/Slide1.jpeg"
+    }
+  ]
+}
