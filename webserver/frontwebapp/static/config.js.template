@@ -3,5 +3,10 @@ serviceIPPort = "{{.thisMachineIP}}:9090";
 frontendIPPort = "{{.thisMachineIP}}:3000";
 commandsEndpoint = "/setExampleTextMessage";
 cmdurlStartDomefy = "/StartScriptApplication";
-cmdurlStopDomefy = "/KillAllApplicationProcesses";
+cmdurlStopDomefy = "/KillDomefy";
+cmdurlStartCEF = "/StartCEF";
+cmdurlKillCEF = "/KillCEF";
+cmdurlHideCEF = "/HideCEF";
+cmdurlShowCEF = "/ShowCEF";
+
  

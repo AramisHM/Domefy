@@ -148,6 +148,9 @@ void Sample::SetWindowTitleAndIcon() {
     Image *icon = cache->GetResource<Image>("fpmed/domefy_logo256.png");
     graphics->SetWindowIcon(icon);
     graphics->SetWindowTitle("Domefy");
+#ifdef CEF_INTEGRATION
+    graphics->SetWindowTitle("DomefyCEF");
+#endif
 }
 void Sample::CreateConsoleAndDebugHud() {
     // Get default style

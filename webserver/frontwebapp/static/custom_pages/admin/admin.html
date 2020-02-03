@@ -51,19 +51,29 @@
 
 <body>
     <h1>Administrator Panel</h1>
-    <button type="button" class="large-buttom" onclick="startDomefy()">Start
-        Domefy</button>
-    <button type="button" class="large-buttom" onclick="startDomefyWithCEF()">Start
-        CEF Domefy</button>
-    <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
-        Domefy</button>
+    <p>
+        <button type="button" class="large-buttom" onclick="startDomefy()">Start
+            Domefy</button>
+        <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
+            Domefy</button>
+    </p>
+    <p>
+        <button type="button" class="large-buttom" onclick="startCEF()">Start
+            CEF</button>
+        <button type="button" class="large-buttom" onclick="stopCEF()">Kill
+            CEF</button>
+        <button type="button" class="large-buttom" onclick="hideCEF()">Hide
+            CEF</button>
+        <button type="button" class="large-buttom" onclick="showCEF()">Show
+            CEF</button>
+    </p>
 
     <p>
         <select id="scriptSelector" class="large-buttom">
             <option value="Scripts/DefaultPresentation.as">AIA</option>
             <option value="Scripts/marco3th2020/justino.as">Slide Professor</option>
             <option value="Scripts/marco3th2020/cinthia.as">Slide Cinthia</option>
-            <option value="Scripts/VideoAIA.as">Video AIA </option>
+            <option value="Scripts/marco3th2020/qr.as">QR</option>
             <option value="Scripts/Pathfinder.as">Pathfinder</option>
             <option value="Scripts/11_Physics.as">Physics</option>
             <option value="Scripts/13_Ragdolls.as">Ragdoll</option>
@@ -103,21 +113,32 @@
         };
         ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
     }
-    function startDomefyWithCEF() {
+    function stopDomefy() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlStopDomefy);
+    }
+
+    function startCEF() {
         var command = {
             script: document.getElementById("scriptSelector").value,
             cef: true
         };
-        ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
+        ajaxPostRaw(JSON.stringify(command), true, cmdurlStartCEF);
     }
-    function stopDomefy() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlStopDomefy);
+    function stopCEF() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlKillCEF);
     }
+    function hideCEF() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlHideCEF);
+    }
+    function showCEF() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlShowCEF);
+    }
+
     function RedirectToControllerPage() {
         window.location = "http://" + frontendIPPort + "/virtual_controller/controller.html"
     }
     function RedirectToSlideControllerPage() {
-        window.location = "http://" + frontendIPPort + "/virtual_controller/slider.html"
+        window.location = "http://" + frontendIPPort + "/s/s.html"
     }
     function RedirectToBrowserControllerPage() {
         window.location = "http://" + frontendIPPort + "/virtual_controller/browserbasic.html"

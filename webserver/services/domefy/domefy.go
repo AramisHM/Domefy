@@ -20,11 +20,54 @@ import (
 	"github.com/AramisHM/Domefy/webserver/rest"
 	"github.com/mdp/qrterminal"
 
+	"syscall"
+
 	"github.com/gin-gonic/gin"
+
+	"github.com/TheTitanrain/w32"
+	"github.com/hnakamur/w32syscall"
 )
 
 // processes - slice of Domefy Processes
 var processes []*exec.Cmd
+var CEFprocesses []*exec.Cmd
+var cefHibernate bool
+
+// indicates if browser has been spawnd (might not be)
+var browserSpawnd bool
+
+// HideWindow - Hide a window process by name
+func HideWindow(windowName string) {
+	err := w32syscall.EnumWindows(func(hwnd syscall.Handle, lparam uintptr) bool {
+		h := w32.HWND(hwnd)
+		text := w32.GetWindowText(h)
+		if strings.Contains(text, windowName) {
+			// r := w32.GetWindowRect(h)
+			//w32.MoveWindow(h, 0, 7000, 1, 1, true)
+			w32.ShowWindow(h, 0)
+		}
+		return true
+	}, 0)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+// ShowWindow - Hide a window process by name
+func ShowWindow(windowName string) {
+	err := w32syscall.EnumWindows(func(hwnd syscall.Handle, lparam uintptr) bool {
+		h := w32.HWND(hwnd)
+		text := w32.GetWindowText(h)
+		if strings.Contains(text, windowName) {
+			// r := w32.GetWindowRect(h)
+			w32.ShowWindow(h, 1)
+		}
+		return true
+	}, 0)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
 
 // SendExample - Sends a single dummy POST to own API.
 func SendExample() {
@@ -48,10 +91,79 @@ func RegisterDomefy(router *gin.Engine) {
 	router.POST("/getConfigJSON", func(c *gin.Context) { GetConfigJSON(c) })
 	router.POST("/saveCalibrationParameters", func(c *gin.Context) { SaveCalibrationParameters(c) })
 	router.POST("/StartScriptApplication", func(c *gin.Context) { StartScriptApplication(c) })
-	router.POST("/KillAllApplicationProcesses", func(c *gin.Context) { KillAllApplicationProcesses() })
+	router.POST("/KillDomefy", func(c *gin.Context) { KillDomefy() })
+	router.POST("/KillCEF", func(c *gin.Context) { KillCEF(c) })
+	router.POST("/StartCEF", func(c *gin.Context) { StartCEF(c) })
+	router.POST("/HideCEF", func(c *gin.Context) { HideCEF(c) })
+	router.POST("/ShowCEF", func(c *gin.Context) { ShowCEF(c) })
 }
 
-// SetExampleTextMessage - Sets the debug text auxiliar message
+// HideCEF -
+func HideCEF(c *gin.Context) {
+	HideWindow("DomefyCEF")
+	cefHibernate = true
+}
+
+// ShowCEF -
+func ShowCEF(c *gin.Context) {
+	ShowWindow("DomefyCEF")
+	cefHibernate = false
+}
+
+// KillCEF - Kills all runniing process of Domefy
+func KillCEF(c *gin.Context) {
+	for _, p := range CEFprocesses {
+		if err := p.Process.Kill(); err != nil {
+			fmt.Errorf("Failed to kill process: %v", err)
+		}
+	}
+	KillProcByNameWindows("fpmed-with-cef.exe")
+	CEFprocesses = nil
+}
+
+// StartCEF - Starts a Domefy process with CEF support
+func StartCEF(c *gin.Context) {
+	paramObj := rest.GetPostParameters(c)
+	scriptName, gotScript := paramObj["script"].(string)
+	useCef, gotCefFlag := paramObj["cef"].(bool)
+	urlForCef, gotUrl := paramObj["url"].(string)
+
+	if gotScript {
+		// get configuration globals
+		fmt.Println("GOOS: ", runtime.GOOS)
+		fmt.Println(os.Getwd())
+
+		if runtime.GOOS == "windows" {
+			KillCEF(c) // Kill previous processes
+
+			win32Bin := config.Config.Win32DomefyBinaryCef
+
+			fmt.Println(win32Bin + " " + scriptName)
+			// force a safe script // TODO: make this less HACKY
+			scriptName = "Scripts/CEFOnly.as"
+			s := []string{win32Bin, scriptName}
+
+			if gotCefFlag && useCef && gotUrl && len(urlForCef) > 0 {
+				s = append(s, urlForCef)
+			} else {
+				s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo
+			}
+
+			cmd := exec.Command(s[0], s[1:]...)
+
+			go StartDomefy(cmd)
+		} else { // Linux or similar variant
+			fmt.Println("CEF IS NOT SUPPORTED ON LINUX YET!")
+		}
+		// save the parameters in a local file
+		c.JSON(http.StatusOK, "done")
+		return
+	}
+	c.JSON(http.StatusBadRequest, "Something went wrong")
+	return
+}
+
+// SetExampleTextMessage - Used to send commands to the CPP instance of Domefy. TODO: FIXME: change this name
 func SetExampleTextMessage(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	cmdStr := paramObj["command"].(string)
@@ -63,6 +175,16 @@ func SetExampleTextMessage(c *gin.Context) {
 	}
 	// send package to domefy c++ application
 	fmt.Fprintf(conn, cmdStr)
+
+	// for CEF only
+	if !cefHibernate {
+		conn2, err2 := net.Dial("udp", "127.0.0.1:42872")
+		if err2 != nil {
+			fmt.Printf("Some error %v", err2)
+			return
+		}
+		fmt.Fprintf(conn2, cmdStr)
+	}
 
 	c.JSON(http.StatusOK, "done")
 }
@@ -207,7 +329,7 @@ func GetThisMachineIpAddresses() string {
 
 // StartDomefy - Runs a Domefy instance
 func StartDomefy(cmd *exec.Cmd) {
-	KillAllApplicationProcesses() // kill and remove all previous processes
+
 	cmd.Stdout = os.Stdout
 	fmt.Println("Starting Domefy subprocess\n")
 	err := cmd.Run()
@@ -233,8 +355,8 @@ func KillProcByNameWindows(name string) {
 	}
 }
 
-// KillAllApplicationProcesses - Kills all runniing process of Domefy
-func KillAllApplicationProcesses() {
+// KillDomefy - Kills all runniing process of Domefy
+func KillDomefy() {
 	for _, p := range processes {
 
 		if runtime.GOOS == "windows" {
@@ -247,11 +369,9 @@ func KillAllApplicationProcesses() {
 				fmt.Errorf("Failed to kill process: %v", err)
 			}
 		}
-
 	}
 	if runtime.GOOS == "windows" {
 		KillProcByNameWindows("fpmed.exe")
-		KillProcByNameWindows("fpmed-with-cef.exe")
 	}
 
 	processes = nil
@@ -261,34 +381,32 @@ func KillAllApplicationProcesses() {
 func StartScriptApplication(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	scriptName, gotScript := paramObj["script"].(string)
-	useCef, gotCefFlag := paramObj["cef"].(bool)
-	urlForCef, gotUrl := paramObj["url"].(string)
+	// useCef, gotCefFlag := paramObj["cef"].(bool)
+	// urlForCef, gotUrl := paramObj["url"].(string)
 
 	if gotScript {
 		// get configuration globals
 		fmt.Println("GOOS: ", runtime.GOOS)
 		fmt.Println(os.Getwd())
 		var cmd *exec.Cmd
+		KillDomefy() // kill and remove all previous processes
 		if runtime.GOOS == "windows" {
 			win32Bin := config.Config.Win32DomefyBinary
-			if gotCefFlag && useCef {
-				win32Bin = config.Config.Win32DomefyBinaryCef
-			}
+			// if gotCefFlag && useCef {
+			// 	win32Bin = config.Config.Win32DomefyBinaryCef
+			// 	browserSpawnd = true
+			// }
 			fmt.Println(win32Bin + " " + scriptName)
 			s := []string{win32Bin, scriptName}
-			//s := []string{"cmd", "/C", "start", config.Config.Win32DomefyBinary, scriptName}
 
-			// default = Data\Textures\assets-march
-			if gotCefFlag && useCef && gotUrl && len(urlForCef) > 0 {
-				s = append(s, urlForCef)
-			} else {
-				s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo
-			}
+			// if gotCefFlag && useCef && gotUrl && len(urlForCef) > 0 {
+			// 	s = append(s, urlForCef)
+			// } else {
+			// 	s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo
+			// }
 
 			cmd := exec.Command(s[0], s[1:]...)
-			// if err := cmd.Run(); err != nil {
-			// 	log.Println("Error:", err)
-			// }
+
 			go StartDomefy(cmd)
 		} else { // Linux or similar variant
 			fmt.Println(config.Config.GNULinuxDomefyBinary + " " + scriptName)
@@ -302,8 +420,4 @@ func StartScriptApplication(c *gin.Context) {
 	}
 	c.JSON(http.StatusBadRequest, "Something went wrong")
 	return
-}
-
-// StopScriptApplication - Stops the Domefy processes
-func StopScriptApplication(c *gin.Context) {
 }

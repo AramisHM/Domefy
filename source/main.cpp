@@ -68,7 +68,11 @@ int main(int argc, char *argv[]) {
 
     ahmnet_init();
 
+#ifdef CEF_INTEGRATION
+    udp_listen("127.0.0.1:42872", &extChanel);
+#else
     udp_listen("127.0.0.1:42871", &extChanel);
+#endif
     fpmedInit(argc, argv);
     p1->LoadConfigFile("./config.json");
 
