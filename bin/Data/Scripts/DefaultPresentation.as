@@ -201,7 +201,7 @@ class Fpmed : ScriptObject {
 
         // load prefab
         XMLFile @spaceSceneFile =
-            cache.GetResource("XMLFile", "Objects/marco-presentation.xml");
+            cache.GetResource("XMLFile", "Objects/marco-presentation-2.xml");
         Node @spaceScene =
             scene.InstantiateXML(spaceSceneFile, Vector3(20.0f, 4.0f, 0.0f),
                                  Quaternion(0.0f, 0.0f, 0.0f));

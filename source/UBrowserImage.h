@@ -38,7 +38,7 @@ using namespace Urho3D;
 class CefAppThread;
 
 #define CEFBUF_WIDTH 1366
-#define CEFBUF_HEIGHT 768
+#define CEFBUF_HEIGHT 768 
 #define CEFBUF_COMPONENTS 4
 
 #define BROWSER_RENDER_WIDTH 1366

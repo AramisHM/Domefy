@@ -405,6 +405,17 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         webbrowser->SetCubeView(false);
                     }
                 }
+                // USER360CUBE3DBROWSER
+                if (!commandSplitted[1].compare(
+                        std::string("USER3603DCUBEBROWSER"))) {
+                    printf("%s", commandSplitted[2].c_str());
+
+                    if (!commandSplitted[2].compare(std::string("1"))) {
+                        webbrowser->SetCube3DView(true);
+                    } else {
+                        webbrowser->SetCube3DView(false);
+                    }
+                }
 
 #endif
 
@@ -444,8 +455,8 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
         cef_created = true;
         // set initial position and coordinates
         webbrowser->GetGrabbableUI()->SetCoordinates(
-            fpmed::Vec2<float>(270.26f, 17.58f));
-        webbrowser->SetZoom(3.6f);
+            fpmed::Vec2<float>(263.19f, 22.12f));
+        webbrowser->SetZoom(2.8f);
         // 183.600000  - <270.265472, 17.580265>
     }
 

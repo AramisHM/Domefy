@@ -113,3 +113,14 @@ function ChangeBrowserMeshCubic(cb) {
     }
     ajaxPost(cmdset360, true, commandsEndpoint);
 }
+
+function ChangeBrowserMeshCubic3D(cb) {
+    var cmdset360 = "";
+    var checked = document.getElementById("user3603dcubebrowsercb").checked
+    if (checked) { // activate the 36- browwser
+        cmdset360 = "CPP;USER3603DCUBEBROWSER;1;";
+    } else {
+        cmdset360 = "CPP;USER3603DCUBEBROWSER;0;";
+    }
+    ajaxPost(cmdset360, true, commandsEndpoint)
+}

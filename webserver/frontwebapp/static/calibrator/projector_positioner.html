@@ -62,10 +62,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
     </style>
     <link rel="stylesheet" href="../W3.CSS Template_files/w3.css">
     <link rel="stylesheet" href="../W3.CSS Template_files/w3-theme-blue-grey.css">
-    <link rel="stylesheet" href="../W3.CSS Template_files/css">
     <link rel="stylesheet" href="../W3.CSS Template_files/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="../W3.CSS Template_files/slider94.css" />
 </head>
+<script src="../config.js"></script>
+<script src="../jquery/jquery.min.js"></script>
+<script src="../domefy/utils.js"></script>
 
 <body onload="CreateMeshCals()">
     <!-- Draggable DIV -->
@@ -84,10 +86,24 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
                 //console.log(cmd);
                 ajaxPost(cmd, false, "/setExampleTextMessage");
             }
+            // FIXME: lame, doesnt change when have more than 4 projectors
+            function selectProjector() {
+                var projIndex = Number(document.getElementById("projector_selector").value);
+
+                SelectedObject = cubes[projIndex]
+            }
 
 
         </script>
         <p>
+            Projector:
+            <select id="projector_selector" onchange="selectProjector()">
+                <!-- TODO: load from file or a handle -->
+                <option value="1">DS 1</option>
+                <option value="2">DS 2</option>
+                <option value="3">DS 3</option>
+                <option value="4">DS 4</option>
+            </select>
             <input type="checkbox" id="domegrid" onchange="setDomegrid()" value="0"> Dome Grid
             <input type="checkbox" id="aidgrid" onchange="setAidgrid()" value="0"> Aid Grid
         </p>
@@ -246,9 +262,6 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
     </div>
 
-    <!-- this is where Threejs draw its contents -->
-    <div id="container">
-
     </div>
     <!-- own custom html on top of container -->
     <div id="info">
@@ -257,6 +270,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 <!-- application logic -->
 <script>
+
     var cubes = []; // list of objects on the calibrator
     // matrix to translate the visible mesh vertex to actual index on buffer
     var transMatrix = [
@@ -418,18 +432,8 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         //console.log(command);
         ajaxPost(command, false, "/setExampleTextMessage")
     }
-</script>
-<!-- threejs app -->
-<script type="module">
-    var container, stats;
-    var camera, scene, renderer;
-    var geometry = new THREE.BoxBufferGeometry(3, 3, 3);
-    var transformControl;
-    var Objects = {};
-    // the object beeinge edited at the moment
 
     init();
-    animate();
 
     function UpdateRanges() {
         document.getElementById("rotx").value = SelectedObject.rotation.z * (180 / Math.PI);
@@ -460,138 +464,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
 
     function init() {
-        container = document.getElementById('container');
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xf0f0f0);
-        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 250, 1000);
-        scene.add(camera);
 
-        scene.add(new THREE.AmbientLight(0xf0f0f0));
-        var light = new THREE.SpotLight(0xffffff, 1.5);
-        light.position.set(0, 1500, 200);
-        light.castShadow = true;
-        light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(70, 1, 200, 2000));
-        light.shadow.bias = - 0.000222;
-        light.shadow.mapSize.width = 1024;
-        light.shadow.mapSize.height = 1024;
-        scene.add(light);
-
-        var planeGeometry = new THREE.PlaneBufferGeometry(2000, 2000);
-        planeGeometry.rotateX(- Math.PI / 2);
-        var planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.position.y = - 200;
-        plane.receiveShadow = true;
-        scene.add(plane);
-
-        var helper = new THREE.GridHelper(2000, 100);
-        helper.position.y = - 199;
-        helper.material.opacity = 0.25;
-        helper.material.transparent = true;
-        scene.add(helper);
-
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        container.appendChild(renderer.domElement);
-        stats = new Stats();
-        container.appendChild(stats.dom);
-
-        // Controls
-        var controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.damping = 0.2;
-        controls.addEventListener('change', render);
-        controls.addEventListener('start', function () {
-            cancelHideTransform();
-        });
-
-        controls.addEventListener('end', function () {
-            delayHideTransform();
-        });
-
-        transformControl = new THREE.TransformControls(camera, renderer.domElement);
-        transformControl.addEventListener('change', render);
-        transformControl.addEventListener('dragging-changed', function (event) {
-            controls.enabled = !event.value;
-        });
-
-        scene.add(transformControl);
-        // Hiding transform situation is a little in a mess :()
-        transformControl.addEventListener('change', function () {
-            cancelHideTransform();
-            UpdateProjectorPosition();
-        });
-
-        transformControl.addEventListener('mouseDown', function () {
-            cancelHideTransform();
-        });
-
-        transformControl.addEventListener('mouseUp', function () {
-            delayHideTransform();
-        });
-
-        var dragcontrols = new THREE.DragControls(cubes, camera, renderer.domElement);
-        dragcontrols.enabled = false;
-        dragcontrols.addEventListener('hoveron', function (event) {
-            transformControl.attach(event.object);
-            SelectedObject = event.object;
-            UpdateRanges();
-            cancelHideTransform();
-
-            // unhide the meshcal for this node
-            HideAllMeshCals();
-            SelectedObject.userData.meshcalElement.style.display = "block";
-        });
-        dragcontrols.addEventListener('hoveroff', function () {
-            delayHideTransform();
-        });
-
-        window.addEventListener('resize', onWindowResize, false);
-
-
-
-        window.addEventListener('keydown', function (event) {
-            switch (event.keyCode) {
-                case 81: // Q
-                    transformControl.setSpace(transformControl.space === "local" ? "world" : "local");
-                    break;
-                case 17: // Ctrl
-                    transformControl.setTranslationSnap(1);
-                    break;
-            }
-        });
-        window.addEventListener('keyup', function (event) {
-            switch (event.keyCode) {
-                case 17: // Ctrl
-                    transformControl.setTranslationSnap(null);
-                    break;
-            }
-        });
-
-        var hiding;
-
-        function delayHideTransform() {
-            cancelHideTransform();
-            hideTransform();
-        }
-        function hideTransform() {
-            hiding = setTimeout(function () {
-                transformControl.detach(transformControl.object);
-            }, 2500);
-        }
-
-        function cancelHideTransform() {
-            if (hiding) clearTimeout(hiding);
-        }
-
+        // UpdateProjectorPosition(); // registers this to update projection position
 
         // Get projector info from backend server
         var projConfs = GetConfigurationJSON();
 
-
-        var geometry = new THREE.BufferGeometry();
 
         projConfs.presets.forEach(function (item, index) {
             var obj = addObjectObject(item, index);
@@ -599,8 +477,7 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
     }
     function addObjectObject(preset, index) {
-        var material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
-        var object = new THREE.Mesh(geometry, material);
+        var object;
         if (preset) {
             var pos = preset.proj_position;
             var rot = preset.proj_rotation;
@@ -664,30 +541,13 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
 
         object.userData.index = Number(index);
 
-
         object.castShadow = true;
         object.receiveShadow = true;
-        scene.add(object);
         cubes.push(object);
         return object;
     }
 
-    function animate() {
-        requestAnimationFrame(animate);
-        render();
-        stats.update();
-    }
 
-    function render() {
-        renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        render();
-    }
 </script>
 <!-- UI functions (draggable div and accordion) script -->
 <script>// Make the DIV element draggable:
@@ -746,14 +606,5 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
         }
     }
 </script>
-<script src="../threejs/three.js"></script>
-<script src="../threejs/js/libs/stats.min.js"></script>
-<script src="../threejs/js/libs/dat.gui.min.js"></script>
-<script src="../threejs/js/controls/DragControls.js"></script>
-<script src="../threejs/js/controls/OrbitControls.js"></script>
-<script src="../threejs/js/controls/TransformControls.js"></script>
-<script src="../config.js"></script>
-<script src="../jquery/jquery.min.js"></script>
-<script src="../domefy/utils.js"></script>
 
 </html>

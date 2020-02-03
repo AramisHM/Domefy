@@ -60,6 +60,11 @@ class WebBrowser : public LogicComponent {
     Node *webBrowserYoutube360ModelNode_;
     StaticModel *webBrowserYoutube360Model_;  // used for 360 panoramic media
 
+    // youtube 360 3D warp
+    Node *webBrowserYoutube3603DNode_;
+    Node *webBrowserYoutube3603DModelNode_;
+    StaticModel *webBrowserYoutube3603DModel_;  // used for 360 panoramic media
+
     // WebBrowserGrabbableUI - We use this to move the WebBrowser arround the
     // camera node, accordingly to a spheric coordinate system
     GrabbableUI *webBrowserGrabbableUI_;
@@ -95,6 +100,7 @@ class WebBrowser : public LogicComponent {
 
     void SetSphericView(bool isSpheric);
     void SetCubeView(bool isCubic);
+    void SetCube3DView(bool isCubic);
 
     UBrowserImage *GetBrowserImage();
 

@@ -32,6 +32,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
     webBrowserNode_ = node_->CreateChild("WebBrowser");
     webBrowser360Node_ = node_->CreateChild("WebBrowser360");
     webBrowserYoutube360Node_ = node_->CreateChild("WebBrowserYoutube360");
+    webBrowserYoutube3603DNode_ = node_->CreateChild("WebBrowserYoutube3603D");
 
     webBrowserGrabbableUI_ = webBrowserNode_->CreateComponent<GrabbableUI>();
 
@@ -72,8 +73,25 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         webBrowserYoutube360Model_->SetModel(
             cache->GetResource<Model>("Models/360-youtube-mesh-inverted.mdl"));
         webBrowserYoutube360ModelNode_->SetScale(Vector3(5.0f, 5.0f, 5.0f));
-        webBrowserYoutube360ModelNode_->SetRotation(Quaternion(0, 0.0f, 0.0f));
+        webBrowserYoutube360ModelNode_->SetRotation(
+            Quaternion(-45.0f, 0.0f, 0.0f));
         webBrowserYoutube360ModelNode_->SetEnabled(
+            false);  // default is invisible
+    }
+
+    //  youtube 360 3D node
+    {
+        webBrowserYoutube3603DModelNode_ =
+            webBrowserYoutube3603DNode_->CreateChild(
+                "WebBrowserYoutube3603DModel");
+        webBrowserYoutube3603DModel_ =
+            webBrowserYoutube3603DModelNode_->CreateComponent<StaticModel>();
+        webBrowserYoutube3603DModel_->SetModel(
+            cache->GetResource<Model>("Models/youtube-360-3d.mdl"));
+        webBrowserYoutube3603DModelNode_->SetScale(Vector3(1.0f, 1.0f, 1.0f));
+        webBrowserYoutube3603DModelNode_->SetRotation(
+            Quaternion(-45.0f, 0.0f, .0f));
+        webBrowserYoutube3603DModelNode_->SetEnabled(
             false);  // default is invisible
     }
 
@@ -124,6 +142,7 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         webBrowserModel_->SetMaterial(m);
         webBrowser360Model_->SetMaterial(m);
         webBrowserYoutube360Model_->SetMaterial(m);
+        webBrowserYoutube3603DModel_->SetMaterial(m);
     }
     UIRender = true;
     ToggleUIRender();  // hide it at start
@@ -177,6 +196,10 @@ void WebBrowser::SetSphericView(bool isSpheric) {
 
 void WebBrowser::SetCubeView(bool isCubic) {
     webBrowserYoutube360ModelNode_->SetEnabled(isCubic);
+}
+
+void WebBrowser::SetCube3DView(bool isCubic) {
+    webBrowserYoutube3603DModelNode_->SetEnabled(isCubic);
 }
 
 #endif

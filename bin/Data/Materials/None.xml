@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <material>
 	<technique name="Techniques/Diff.xml" />
-	<texture unit="diffuse" name="Textures/elem1.png" />
+	<texture unit="diffuse" name="Textures/34968243-74341138-fa25-11e7-9400-72a7736095ed.jpg" />
 	<parameter name="MatDiffColor" value="0.8 0.8 0.8 1" />
 	<parameter name="MatSpecColor" value="0.8 0.8 0.8 0" />
 	<parameter name="MatEmissiveColor" value="0 0 0 1" />

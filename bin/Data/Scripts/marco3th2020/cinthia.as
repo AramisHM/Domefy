@@ -161,7 +161,7 @@ class Fpmed : ScriptObject {
         if (cmds[0] == "CENTERSLIDE") {
             log.Info(str);
             slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
-            slideComp.SetZoom(7.2f);
+            slideComp.SetZoom(8.5f);
         }
     }
 
@@ -215,7 +215,7 @@ class Fpmed : ScriptObject {
         slideComp.CreateSlide("./slides/cinthia/cinthia.json");
         // center at start
         slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
-        slideComp.SetZoom(7.2f);
+        slideComp.SetZoom(8.5f);
 
         cameraNode.position = Vector3(0.0f, 0.0f, 0.0f);
         pitch = 80.0f;

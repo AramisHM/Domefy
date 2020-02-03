@@ -52,8 +52,8 @@ int UCefApp::CreateAppBrowser() {
     CefRefPtr<SimpleApp> sApp = new SimpleApp(simpHandler);
 
     // Initialize CEF.
+    Sleep(500);
     CefInitialize(main_args, settings, sApp.get(), NULL);
-
     return 0;
 }
 

@@ -161,7 +161,7 @@ class Fpmed : ScriptObject {
         if (cmds[0] == "CENTERSLIDE") {
             log.Info(str);
             slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
-            slideComp.SetZoom(7.2f);
+            slideComp.SetZoom(8.5f);
         }
     }
 
@@ -206,7 +206,7 @@ class Fpmed : ScriptObject {
 
         // load prefab
         XMLFile @spaceSceneFile =
-            cache.GetResource("XMLFile", "Objects/marco-presentation.xml");
+            cache.GetResource("XMLFile", "Objects/marco-presentation-2.xml");
         Node @spaceScene =
             scene.InstantiateXML(spaceSceneFile, Vector3(20.0f, 4.0f, 0.0f),
                                  Quaternion(0.0f, 0.0f, 0.0f));
@@ -215,7 +215,7 @@ class Fpmed : ScriptObject {
         slideComp.CreateSlide("./slides/justino/justino.json");
         // center at start
         slideComp.SetCoordinates(IntVector2(270.26f, 24.0));
-        slideComp.SetZoom(7.2f);
+        slideComp.SetZoom(8.5f);
 
         cameraNode.position = Vector3(0.0f, 0.0f, 0.0f);
         pitch = 80.0f;
