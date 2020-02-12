@@ -16,7 +16,7 @@
 #endif
 
 #include <Core/ProgramConfig.h>  // Singleton
-#include <ahm/net/net.h>
+#include <ptr/net/net.h>         // net lib
 
 #ifdef WIN32
 #ifdef _MSC_VER
@@ -41,7 +41,7 @@ class UIElement;
 }  // namespace Urho3D
 
 // extern MyCustomApplication *application;
-conn extChanel;
+cn extChanel;
 std::string commandString;
 std::string scriptPath;
 #ifdef CEF_INTEGRATION
@@ -50,10 +50,7 @@ std::string defaultCefUrl =
 #endif
 
 void ListenForExternalCommands() {
-    if (sock_read(&extChanel, 1) > 0) {
-        // printf(
-        //     "\nReceived a command via AHMNet from %s, with the following data
-        //     : %s\n\n", sender_ip(&extChanel), extChanel.buf);
+    if (nrdudp(&extChanel, 1) > 0) {
         commandString = std::string(extChanel.buf);
     } else {
         commandString = "";
@@ -66,12 +63,12 @@ int main(int argc, char *argv[]) {
     MyCustomApplication *application = new MyCustomApplication(context);
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
-    ahmnet_init();
+    ninudp();  // start udp server
 
 #ifdef CEF_INTEGRATION
-    udp_listen("127.0.0.1:42872", &extChanel);
+    nudsrv("127.0.0.1:42872", &extChanel);  // udp server
 #else
-    udp_listen("127.0.0.1:42871", &extChanel);
+    nudsrv("127.0.0.1:42871", &extChanel);
 #endif
     fpmedInit(argc, argv);
     p1->LoadConfigFile("./config.json");
@@ -100,7 +97,7 @@ int main(int argc, char *argv[]) {
     application->Stop();
     delete application;
     delete context;
-    ahmnet_clean();
+    nstpudp();  // stop udp server
 
     return 0;
 }
