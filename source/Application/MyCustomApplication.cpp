@@ -416,6 +416,12 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                         webbrowser->SetCube3DView(false);
                     }
                 }
+                // center browser
+                if (!commandSplitted[1].compare(std::string("CENTERBROWSER"))) {
+                    printf("%s", commandSplitted[2].c_str());
+
+                    webbrowser->CenterBrowser();
+                }
 
 #endif
 

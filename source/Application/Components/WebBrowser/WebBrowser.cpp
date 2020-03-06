@@ -173,6 +173,24 @@ void WebBrowser::Update(float timeStep) {}
 void WebBrowser::ApplyMouseMoveLegacy(Vec2<int> d) {}
 void WebBrowser::ApplyMouseMove(Urho3D::IntVector2 d) {
     webBrowserGrabbableUI_->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_));
+
+    // move the 360 videos aswell
+    Quaternion q = webBrowserYoutube360Node_->GetRotation();
+    float influence = 0.0045f;
+    Quaternion q2 = Quaternion(q.x_ + (float)((float)(d.x_) * influence),
+                               q.y_ + (float)((float)(d.y_) * influence), q.z_);
+    webBrowser360Node_->Rotate(
+        Quaternion((float)((float)(d.y_) * influence),
+                   (float)((float)(d.x_) * influence), 0.0f),
+        TS_PARENT);
+    webBrowserYoutube360Node_->Rotate(
+        Quaternion((float)((float)(d.y_) * influence),
+                   (float)((float)(d.x_) * influence), 0.0f),
+        TS_PARENT);
+    webBrowserYoutube3603DNode_->Rotate(
+        Quaternion((float)((float)(d.y_) * influence),
+                   (float)((float)(d.x_) * influence), 0.0f),
+        TS_PARENT);
 }
 
 void WebBrowser::SetZoom(float zoom) {
@@ -191,15 +209,27 @@ void WebBrowser::AddZoom(float zoom) {
 GrabbableUI *WebBrowser::GetGrabbableUI() { return webBrowserGrabbableUI_; }
 
 void WebBrowser::SetSphericView(bool isSpheric) {
+    webBrowserModel_->SetEnabled(!isSpheric);
     webBrowser360ModelNode_->SetEnabled(isSpheric);
 }
 
 void WebBrowser::SetCubeView(bool isCubic) {
+    webBrowserModel_->SetEnabled(!isCubic);
     webBrowserYoutube360ModelNode_->SetEnabled(isCubic);
 }
 
 void WebBrowser::SetCube3DView(bool isCubic) {
+    webBrowserModel_->SetEnabled(!isCubic);
     webBrowserYoutube3603DModelNode_->SetEnabled(isCubic);
+}
+
+void WebBrowser::CenterBrowser() {
+    webBrowser360Node_->SetRotation(Quaternion(-45.0f, 0.0f, .0f));
+    webBrowserYoutube360Node_->SetRotation(Quaternion(-45.0f, 0.0f, .0f));
+    webBrowserYoutube3603DNode_->SetRotation(Quaternion(-45.0f, 0.0f, .0f));
+
+    GetGrabbableUI()->SetCoordinates(fpmed::Vec2<float>(263.19f, 22.12f));
+    SetZoom(2.8f);
 }
 
 #endif

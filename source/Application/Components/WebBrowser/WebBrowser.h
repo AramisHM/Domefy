@@ -101,6 +101,7 @@ class WebBrowser : public LogicComponent {
     void SetSphericView(bool isSpheric);
     void SetCubeView(bool isCubic);
     void SetCube3DView(bool isCubic);
+    void CenterBrowser();
 
     UBrowserImage *GetBrowserImage();
 

@@ -124,3 +124,10 @@ function ChangeBrowserMeshCubic3D(cb) {
     }
     ajaxPost(cmdset360, true, commandsEndpoint)
 }
+
+// CenterSlide()
+function CenterBrowser() {
+    var cmd = "CPP;CENTERBROWSER;0;"
+    console.log(cmd)
+    ajaxPost(cmd, true, commandsEndpoint);
+}
