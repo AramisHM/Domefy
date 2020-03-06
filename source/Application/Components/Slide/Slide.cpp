@@ -63,7 +63,7 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     if (nLoadedSlides) {
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(
-            0, cache->GetResource<Technique>("Techniques/DiffOverlay.xml"));
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
         m->SetTexture(TU_DIFFUSE, slideTextureArray[0]);
         slideModel->SetMaterial(m);  // starts in the first slide
 
@@ -158,14 +158,25 @@ int Slide::LoadSlideFromJSON(std::string path) {
             Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
                 Urho3D::String(imageName.c_str()));
             if (!t) continue;
-#ifdef FPMED_LATEST_URHO3D
-            t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
-#else
-            t->SetFilterMode(FILTER_NEAREST);
-#endif
+            // #ifdef FPMED_LATEST_URHO3D
+            //             t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
+            // #else
+            //             t->SetFilterMode(FILTER_BILINEAR);
+            //             t->SetMipsToSkip(QUALITY_HIGH, 0);
+            // #endif
+
             t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
             t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
             t->SetNumLevels(1);
+
+            // set texture format
+            t->SetMipsToSkip(QUALITY_HIGH, 0);
+            t->SetFilterMode(FILTER_BILINEAR);
+            t->SetMipsToSkip(QUALITY_HIGH, 0);
+            // t->SetSize(CEFBUF_WIDTH, CEFBUF_HEIGHT,
+            // Graphics::GetRGBAFormat());
+
+            // set modes
 
             // save slide data
             slideTextureArray[nSlidesLoaded] = t;

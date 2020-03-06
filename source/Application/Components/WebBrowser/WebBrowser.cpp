@@ -136,9 +136,9 @@ void WebBrowser::CreateWebBrowser(int resX, int resY) {
         // programmatically create a material
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(
-            0, cache->GetResource<Technique>("Techniques/DiffOverlay.xml"));
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
         m->SetTexture(TU_DIFFUSE, browser_->GetTexture());
-        m->SetLineAntiAlias(true);
+        // m->SetLineAntiAlias(true);
         webBrowserModel_->SetMaterial(m);
         webBrowser360Model_->SetMaterial(m);
         webBrowserYoutube360Model_->SetMaterial(m);

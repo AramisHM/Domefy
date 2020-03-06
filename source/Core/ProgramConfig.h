@@ -61,7 +61,7 @@ class ProgramConfig {
     // This is how clients can access the single instance
     static ProgramConfig *GetInstance();
 
-    int LoadConfigFile(std::string path);
+    int LoadConfigFile(std::string path, std::string presFile);
     // GetProjections - Returns the std::list of viewport projections.
     std::list<Projection> GetProjections();
 

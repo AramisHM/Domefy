@@ -10,14 +10,15 @@
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed.exe",
       "args": [
-        "./Data/Scripts/18_CharacterDemo2.as"
+        "./Data/Scripts/DefaultPresentation.as",
+        "./presets/defaiçt.json"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "C:/MinGW/bin/gdb32.exe",
+      "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",

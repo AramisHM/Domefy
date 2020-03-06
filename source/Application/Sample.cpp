@@ -330,6 +330,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
+        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -359,11 +361,14 @@ Node *Sample::CreateDomeCamera(Projection p) {
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
+        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
         renderMaterial->SetTexture(TU_DIFFUSE, domeRenderTexture);
         renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
+
         RenderSurface *surface = domeRenderTexture->GetRenderSurface();
         surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
         Node *cameraRttDomeNode_ = cameraReferenceForDomeRender->CreateChild(
@@ -388,6 +393,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
+        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -417,6 +424,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
+        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -446,6 +455,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
         domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
+        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));

@@ -44,6 +44,7 @@ class UIElement;
 cn extChanel;
 std::string commandString;
 std::string scriptPath;
+std::string viewportConfigPath = "";
 #ifdef CEF_INTEGRATION
 std::string defaultCefUrl =
     "file:///./Data/Textures/assets-march/browser-ready.jpeg";
@@ -71,16 +72,24 @@ int main(int argc, char *argv[]) {
     nudsrv("127.0.0.1:42871", &extChanel);
 #endif
     fpmedInit(argc, argv);
-    p1->LoadConfigFile("./config.json");
 
-    if (argc > 1 && argc < 3) {
+#ifndef CEF_INTEGRATION
+    if (argc <= 3) {  // config
+        viewportConfigPath = std::string(std::string(argv[2]));
+    }
+#endif
+
+    p1->LoadConfigFile("./config.json", viewportConfigPath);
+
+    if (argc > 1 && argc < 4) {
         scriptPath = std::string(argv[1]);
     } else {
         scriptPath = std::string("./Data/Scripts/DefaultPresentation.as");
     }
+
 #ifdef CEF_INTEGRATION
-    if (argc >= 3) {  // url for browser
-        defaultCefUrl = std::string(argv[2]);
+    if (argc >= 4) {  // url for browser
+        defaultCefUrl = std::string(argv[3]);
     }
 #endif
     if (application->isApplication()) {

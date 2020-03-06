@@ -1,0 +1,45 @@
+{
+  "type": "slide_presentation",
+  "name": "Apresentacao aramis",
+  "slides": [
+    {
+      "image": "./slides/aramis/1.png"
+    },
+    {
+      "image": "./slides/aramis/2.png"
+    },
+    {
+      "image": "./slides/aramis/3.png"
+    },
+    {
+      "image": "./slides/aramis/4.png"
+    },
+    {
+      "image": "./slides/aramis/5.png"
+    },
+    {
+      "image": "./slides/aramis/6.png"
+    },
+    {
+      "image": "./slides/aramis/7.png"
+    },
+    {
+      "image": "./slides/aramis/8.png"
+    },
+    {
+      "image": "./slides/aramis/9.png"
+    },
+    {
+      "image": "./slides/aramis/10.png"
+    },
+    {
+      "image": "./slides/aramis/11.png"
+    },
+    {
+      "image": "./slides/aramis/12.png"
+    },
+    {
+      "image": "./slides/aramis/13.png"
+    }
+  ]
+}

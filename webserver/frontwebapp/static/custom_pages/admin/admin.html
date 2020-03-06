@@ -70,7 +70,8 @@
 
     <p>
         <select id="scriptSelector" class="large-buttom">
-            <option value="Scripts/DefaultPresentation.as">AIA</option>
+            <option value="Scripts/DefaultPresentation.as">Default</option>
+            <option value="Scripts/marco3th2020/aramis.as">Slide Aramis</option>
             <option value="Scripts/marco3th2020/justino.as">Slide Professor</option>
             <option value="Scripts/marco3th2020/cinthia.as">Slide Cinthia</option>
             <option value="Scripts/marco3th2020/qr.as">QR</option>
@@ -80,6 +81,14 @@
             <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car</option>
         </select>
         Script
+    </p>
+
+    <p>
+        <select id="viewportConfigSelector" class="large-buttom">
+            <option value="./presets/default.json">Default</option>
+            <option value="./presets/default-debug.json">Debug</option>
+        </select>
+        Viewport-settings
     </p>
     <!-- <p>
         <select id="urlSelector" class="large-buttom">
@@ -109,7 +118,8 @@
 <script>
     function startDomefy() {
         var command = {
-            script: document.getElementById("scriptSelector").value
+            script: document.getElementById("scriptSelector").value,
+            viewport_config: document.getElementById("viewportConfigSelector").value
         };
         ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
     }

@@ -31,7 +31,7 @@ ProgramConfig* ProgramConfig::GetInstance() {
     return (_instance);
 }
 
-int ProgramConfig::LoadConfigFile(std::string path) {
+int ProgramConfig::LoadConfigFile(std::string path, std::string presFile = "") {
     std::ifstream filest(path);
     json myConfig;
     filest >> myConfig;
@@ -40,6 +40,11 @@ int ProgramConfig::LoadConfigFile(std::string path) {
 
     // Get projection viewport configurations
     std::string presetFile = myConfig["presets_file"];
+    if (presFile != "") {
+        presetFile = presFile;
+    }
+
+    printf("used file for presets: %s\n", presetFile.c_str());
 
     // If any preset file, load it
     if (presetFile.length() > 0) {  // TODO: is there another propper way to
@@ -49,6 +54,7 @@ int ProgramConfig::LoadConfigFile(std::string path) {
         presetsStream >> presetsJ;
 
         if (presetsJ["presets"].size() > 0) {
+            printf("preset got %d elements\n", presetsJ["presets"].size());
             nProjections = 0;
             for (const auto& item : presetsJ["presets"]) {
                 // new projection reference
@@ -103,6 +109,9 @@ int ProgramConfig::LoadConfigFile(std::string path) {
                 ++nProjections;
             }
         }
+    } else {
+        printf("Unable to read viewport preset file\n %s\n",
+               presetFile.c_str());
     }
 
     _borderless = myConfig["borderless"].get<bool>();

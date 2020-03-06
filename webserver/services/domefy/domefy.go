@@ -381,6 +381,7 @@ func KillDomefy() {
 func StartScriptApplication(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	scriptName, gotScript := paramObj["script"].(string)
+	configName, gotConfig := paramObj["viewport_config"].(string)
 	// useCef, gotCefFlag := paramObj["cef"].(bool)
 	// urlForCef, gotUrl := paramObj["url"].(string)
 
@@ -392,18 +393,15 @@ func StartScriptApplication(c *gin.Context) {
 		KillDomefy() // kill and remove all previous processes
 		if runtime.GOOS == "windows" {
 			win32Bin := config.Config.Win32DomefyBinary
-			// if gotCefFlag && useCef {
-			// 	win32Bin = config.Config.Win32DomefyBinaryCef
-			// 	browserSpawnd = true
-			// }
+
 			fmt.Println(win32Bin + " " + scriptName)
 			s := []string{win32Bin, scriptName}
 
-			// if gotCefFlag && useCef && gotUrl && len(urlForCef) > 0 {
-			// 	s = append(s, urlForCef)
-			// } else {
-			// 	s = append(s, "file:///./Data/Textures/assets-march/pucpr-shadown.png") // default puc logo
-			// }
+			if gotConfig {
+				s = append(s, configName)
+			} else {
+				s = append(s, "./presets/default.json")
+			}
 
 			cmd := exec.Command(s[0], s[1:]...)
 
@@ -418,6 +416,6 @@ func StartScriptApplication(c *gin.Context) {
 		c.JSON(http.StatusOK, "done")
 		return
 	}
-	c.JSON(http.StatusBadRequest, "Something went wrong")
+	c.JSON(http.StatusBadRequest, "No script supplied.")
 	return
 }

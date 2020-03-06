@@ -174,10 +174,10 @@ void defineSoftwareDirecotry(int argc, char *argv[]) {
 #endif
     if (argc > 1 &&
         argc <
-            2)  // get the parameter file data and process it, larger than 4,
+            4)  // get the parameter file data and process it, larger than 4,
                 // probably means somethign is wrong or we are using a debbuger
     {
-        printf("Warning, %d parameter(s) found", argc);
+        printf("Warning, %d parameter(s) found\n", argc);
 // also get the executable file extension directory
 #ifdef _WIN32
         lastOccur = strrchr(argv[1], '\\');
@@ -219,20 +219,19 @@ void defineSoftwareDirecotry(int argc, char *argv[]) {
 
 void fpmedInit(int argc, char *argv[]) {
     defineSoftwareDirecotry(argc, argv);
-    loadIniFile();
+    // loadIniFile();
 
-    if (debug_enabled) {  // show black console?
-#ifdef _WIN32
-        AllocConsole();
-        freopen("CONOUT$", "w", stdout);
-#else
-#endif
-        printf("DEBUG CONSOLE ENABLED\n\nPARAMETERS ARE:\n");
-        int ai;
-        for (ai = 0; ai < argc; ++ai) printf("argument %d: %s\n", ai, argv[ai]);
-        printf(" ");
-        printf("\n\n");
-    }
+    //     if (debug_enabled) {  // show black console?
+    // #ifdef _WIN32
+    //         AllocConsole();
+    //         freopen("CONOUT$", "w", stdout);
+    // #else
+    // #endif
+    //         printf("DEBUG CONSOLE ENABLED\n\nPARAMETERS ARE:\n");
+    //         int ai;
+    //         for (ai = 0; ai < argc; ++ai) printf("argument %d: %s\n", ai,
+    //         argv[ai]); printf(" "); printf("\n\n");
+    //     }
 
     Urho3D::SetRandomSeed(time(NULL));  // TODO : check randomness
 
