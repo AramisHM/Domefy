@@ -55,17 +55,25 @@ class Slide : public LogicComponent {
     // TODO: move it to it own componenet
     Node *interestPointTexts_[1024];
 
+    // auxiliar slide, used, for example, given a fulldome theaterm, the
+    // presenter, that might be facing back the main slide, can see what slide
+    // he/she is on with the mirror slide
+    bool useMirrorSlide;
+
     // slideNode is a secondary reference that we place ontop of the camera
     // node. So it can move arround the camera's node
     Node *slideNode;
+    Node *mirrorSlideNode;  // secondary slide node
 
     // slideGrabbableUI - We use this to move the slide arround the camera node,
     // accordingly to a spheric coordinate system
     GrabbableUI *slideGrabbableUI;
+    GrabbableUI *mirrorSlideGrabbableUI;
 
     // slideModel - the master-slide model reference, used for swap slides on
     // the fly. Saves use one step, had we try to get it by the node children.
     StaticModel *slideModel;
+    StaticModel *mirrorSlideModel;
 
     // Simple indicator of wich slide we currently are.
     int currentSlideIndex;
@@ -91,11 +99,18 @@ class Slide : public LogicComponent {
     void SetCoordinates(Urho3D::IntVector2 d);
     void SetZoom(float zoom);
 
+    void MirrorApplyMouseMove(Urho3D::IntVector2 d);
+    void MirrorSetCoordinates(Urho3D::IntVector2 d);
+    void MirrorSetZoom(float zoom);
+
     // Go to next slide
     void NextSlide();
 
     // Go to previous slide
     void PreviousSlide();
+
+    // enable or disable the mirror slider
+    void ToggleMirrorSlide();
 
     int LoadSlideFromJSON(std::string path);
 };

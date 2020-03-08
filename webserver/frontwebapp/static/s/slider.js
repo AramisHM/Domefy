@@ -48,6 +48,12 @@ function MoveSlide(event) {
     mv.y = Math.floor(cp.y - lp.y);
     var cmd = "SLIDEMOVE;" + mv.x + ";" + mv.y + ";";
 
+    var slideControlMode = document.getElementById("slideControlSelector").value
+    if (slideControlMode == "mirror") {
+        cmd = "MIRROR_SLIDEMOVE;" + mv.x + ";" + mv.y + ";";
+    }
+
+
     // var channelSel = document.getElementById("channelSelector").value;
     // if (channelSel == "CPP") {
     //     cmd = "CPP;" + cmd;
@@ -72,9 +78,18 @@ function RunURL() {
 function StopURL() {
     ajaxPost("CPP;STOPCEFMEDIA;0;", true, commandsEndpoint);
 }
+
+function ToggleMirror() {
+    ajaxPost("TOGGLE_MIRROR;0;", true, commandsEndpoint);
+}
 function SlideZoom(zoom) {
     console.log("SLIDEZOOM;" + zoom + ";")
     var cmd = "SLIDEZOOM;" + zoom + ";";
+    var slideControlMode = document.getElementById("slideControlSelector").value
+    if (slideControlMode == "mirror") {
+        cmd = "MIRROR_SLIDEZOOM;" + zoom + ";";
+    }
+
     // var channelSel = document.getElementById("channelSelector").value;
     // if (channelSel == "CPP") {
     //     cmd = "CPP;" + cmd;
@@ -86,6 +101,12 @@ function SlideZoom(zoom) {
 // CenterSlide()
 function CenterSlide(zoom) {
     var cmd = "CENTERSLIDE;0;"
+
+    var slideControlMode = document.getElementById("slideControlSelector").value
+    if (slideControlMode == "mirror") {
+        cmd = "MIRROR_CENTERSLIDE;" + zoom + ";";
+    }
+
     console.log(cmd)
     ajaxPost(cmd, true, commandsEndpoint);
 }

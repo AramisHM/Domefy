@@ -82,6 +82,19 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     engine->RegisterObjectMethod("Slide", "void SetZoom(float)",
                                  asMETHOD(Slide, SetZoom), asCALL_THISCALL);
 
+    engine->RegisterObjectMethod("Slide", "void MirrorSetZoom(float)",
+                                 asMETHOD(Slide, MirrorSetZoom),
+                                 asCALL_THISCALL);
+    engine->RegisterObjectMethod(
+        "Slide", "void MirrorApplyMouseMove(IntVector2&in)",
+        asMETHOD(Slide, MirrorApplyMouseMove), asCALL_THISCALL);
+    engine->RegisterObjectMethod(
+        "Slide", "void MirrorSetCoordinates(IntVector2&in)",
+        asMETHOD(Slide, MirrorSetCoordinates), asCALL_THISCALL);
+    engine->RegisterObjectMethod("Slide", "void ToggleMirrorSlide()",
+                                 asMETHOD(Slide, ToggleMirrorSlide),
+                                 asCALL_THISCALL);
+
     // Registers custom C++ class in AngelScript and pass a class instance
     // (singleton)
     ProgramConfig *config = ProgramConfig::GetInstance();

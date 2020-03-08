@@ -23,6 +23,7 @@ using json = nlohmann::json;
 Slide::Slide(Urho3D::Context *context) : Urho3D::LogicComponent(context) {
     currentSlideIndex = 0;
     nLoadedSlides = 0;
+    useMirrorSlide = false;
 }
 Slide::~Slide() {}
 
@@ -31,7 +32,7 @@ void Slide::CreateSlide(Urho3D::String filePath) {
     // TODO: reade the code below and remove unecessary blocks
     // ------- slide node PROTOTYPE of FDS file -------
     // slideReader.LoadSlides(
-    //     filePath.CString());  // default was: ./presentation/set.xml
+    //     filePath.CS otring());  // default was: ./presentation/set.xml
     std::string pathString = std::string(filePath.CString());
     nLoadedSlides = this->LoadSlideFromJSON(pathString);
 
@@ -39,25 +40,56 @@ void Slide::CreateSlide(Urho3D::String filePath) {
 
     Node *masterSlideNode;
     Node *modelSlideNode;
-    masterSlideNode = node_->CreateChild("Slide");
-    slideNode = masterSlideNode;
-    modelSlideNode = masterSlideNode->CreateChild("SlideModel");
-    masterSlideNode->SetPosition(Vector3(20, 0, 20));
 
-    slideGrabbableUI = masterSlideNode->CreateComponent<GrabbableUI>();
-    // slideGrabbableUI->SetOrbitableReference(node_);
-    // this is supposed to link to the camera, therefore, camera always is at
-    // center.
-    slideGrabbableUI->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
-    slideModel = modelSlideNode->CreateComponent<StaticModel>();
-    slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+    Node *mirrorMasterSlideNode;
+    Node *mirrorModelSlideNode;
 
-    float h, w, ps;
-    h = 1;
-    w = (float)slideTextureArray[0]->GetWidth() /
-        (float)slideTextureArray[0]->GetHeight();
-    ps = 0.5f;  // proportion size
-    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
+    // Create main slide
+    {
+        masterSlideNode = node_->CreateChild("Slide");
+        slideNode = masterSlideNode;
+        modelSlideNode = masterSlideNode->CreateChild("SlideModel");
+        masterSlideNode->SetPosition(Vector3(20, 0, 20));
+
+        slideGrabbableUI = masterSlideNode->CreateComponent<GrabbableUI>();
+        // slideGrabbableUI->SetOrbitableReference(node_);
+        // this is supposed to link to the camera, therefore, camera always is
+        // at center.
+        slideGrabbableUI->SetOrbitableReference(Vector3(0.0f, 0.0f, 0.0f));
+        slideModel = modelSlideNode->CreateComponent<StaticModel>();
+        slideModel->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
+        float h, w, ps;
+        h = 1;
+        w = (float)slideTextureArray[0]->GetWidth() /
+            (float)slideTextureArray[0]->GetHeight();
+        ps = 0.5f;  // proportion size
+        slideNode->SetScale(Vector3(w * ps, 0, h * ps));
+    }
+    // Create mirror slide
+    {
+        mirrorMasterSlideNode = node_->CreateChild("MirrorSlide");
+        mirrorSlideNode = mirrorMasterSlideNode;
+        mirrorModelSlideNode =
+            mirrorMasterSlideNode->CreateChild("MirrorSlideModel");
+        mirrorMasterSlideNode->SetPosition(Vector3(20, 0, 20));
+
+        mirrorSlideGrabbableUI =
+            mirrorMasterSlideNode->CreateComponent<GrabbableUI>();
+        // slideGrabbableUI->SetOrbitableReference(node_);
+        // this is supposed to link to the camera, therefore, camera always is
+        // at center.
+        mirrorSlideGrabbableUI->SetOrbitableReference(
+            Vector3(0.0f, 0.0f, 0.0f));
+        mirrorSlideModel = mirrorModelSlideNode->CreateComponent<StaticModel>();
+        mirrorSlideModel->SetModel(
+            cache->GetResource<Model>("Models/Plane.mdl"));
+        float h, w, ps;
+        h = 1;
+        w = (float)slideTextureArray[0]->GetWidth() /
+            (float)slideTextureArray[0]->GetHeight();
+        ps = 0.5f;  // proportion size
+        mirrorSlideNode->SetScale(Vector3(w * ps, 0, h * ps));
+    }
 
     // no slides at all
     if (nLoadedSlides) {
@@ -65,13 +97,20 @@ void Slide::CreateSlide(Urho3D::String filePath) {
         m->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
         m->SetTexture(TU_DIFFUSE, slideTextureArray[0]);
-        slideModel->SetMaterial(m);  // starts in the first slide
 
-        // breaks here
+        slideModel->SetMaterial(m);  // starts in the first slide
         modelSlideNode->SetScale(Vector3(800 / 45, 0, 600 / 45));
+
+        mirrorSlideModel->SetMaterial(m);  // starts in the first slide
+        mirrorModelSlideNode->SetScale(Vector3(800 / 45, 0, 600 / 45));
     }
     // modelSlideNode->SetRotation(Quaternion(-90,180,0));
     modelSlideNode->SetRotation(Quaternion(0, 180, 0));
+    mirrorModelSlideNode->SetRotation(Quaternion(0, 180, 0));
+
+    // mirror starts hiden
+    useMirrorSlide = false;
+    mirrorSlideModel->SetEnabled(false);
 }
 
 // TODO: implement it for something maybe?
@@ -88,10 +127,18 @@ void Slide::NextSlide() {
     w = (float)slideTextureArray[currentSlideIndex]->GetWidth() /
         (float)slideTextureArray[currentSlideIndex]->GetHeight();
     ps = 0.5f;  // proportion size
-    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
 
+    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
     slideModel->GetMaterial(0)->SetTexture(
         TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
+
+    // FIXME: TODO: code is repeating... make a function for setting the
+    // material and scale
+    if (useMirrorSlide) {
+        mirrorSlideNode->SetScale(Vector3(w * ps, 0, h * ps));
+        mirrorSlideModel->GetMaterial(0)->SetTexture(
+            TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
+    }
 }
 void Slide::PreviousSlide() {
     printf("loaded slides %d", nLoadedSlides);
@@ -105,10 +152,16 @@ void Slide::PreviousSlide() {
     w = (float)slideTextureArray[currentSlideIndex]->GetWidth() /
         (float)slideTextureArray[currentSlideIndex]->GetHeight();
     ps = 0.5f;  // proportion size
-    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
 
+    slideNode->SetScale(Vector3(w * ps, 0, h * ps));
     slideModel->GetMaterial(0)->SetTexture(
         TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
+
+    if (useMirrorSlide) {
+        mirrorSlideNode->SetScale(Vector3(w * ps, 0, h * ps));
+        mirrorSlideModel->GetMaterial(0)->SetTexture(
+            TU_DIFFUSE, slideTextureArray[currentSlideIndex]);
+    }
 }
 
 // Passes the data to GrabbableUI to apply movement and momentum
@@ -128,6 +181,24 @@ void Slide::SetZoom(float zoom) {
     slideGrabbableUI->SetRadius(zoom);
     ApplyMouseMove(Urho3D::IntVector2(
         0, 0));  // hack to update the rendering TODO: actually fix this!
+}
+
+void Slide::MirrorApplyMouseMove(Urho3D::IntVector2 d) {
+    if (useMirrorSlide) {
+        mirrorSlideGrabbableUI->ApplyMouseMove(fpmed::Vec2<int>(d.x_, d.y_));
+    }
+}
+void Slide::MirrorSetCoordinates(Urho3D::IntVector2 d) {
+    if (useMirrorSlide) {
+        mirrorSlideGrabbableUI->SetCoordinates(Vec2<float>(d.x_, d.y_));
+    }
+}
+void Slide::MirrorSetZoom(float zoom) {
+    if (useMirrorSlide) {
+        mirrorSlideGrabbableUI->SetRadius(zoom);
+        MirrorApplyMouseMove(Urho3D::IntVector2(
+            0, 0));  // hack to update the rendering TODO: actually fix this!
+    }
 }
 
 // LoadSlide
@@ -158,12 +229,6 @@ int Slide::LoadSlideFromJSON(std::string path) {
             Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
                 Urho3D::String(imageName.c_str()));
             if (!t) continue;
-            // #ifdef FPMED_LATEST_URHO3D
-            //             t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
-            // #else
-            //             t->SetFilterMode(FILTER_BILINEAR);
-            //             t->SetMipsToSkip(QUALITY_HIGH, 0);
-            // #endif
 
             t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
             t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
@@ -172,7 +237,6 @@ int Slide::LoadSlideFromJSON(std::string path) {
             // set texture format
             t->SetMipsToSkip(QUALITY_HIGH, 0);
             t->SetFilterMode(FILTER_BILINEAR);
-            t->SetMipsToSkip(QUALITY_HIGH, 0);
             // t->SetSize(CEFBUF_WIDTH, CEFBUF_HEIGHT,
             // Graphics::GetRGBAFormat());
 
@@ -188,4 +252,9 @@ int Slide::LoadSlideFromJSON(std::string path) {
     // fflush(stdin);
     // getchar();
     return nSlidesLoaded;
+}
+
+void Slide::ToggleMirrorSlide() {
+    useMirrorSlide = !useMirrorSlide;
+    mirrorSlideModel->SetEnabled(useMirrorSlide);
 }

@@ -48,6 +48,12 @@ Copyright 2014 - 2019 Aramis Hornung Moraes
             <th>View</th>
         </tr>
         <tr>
+            <select id="slideControlSelector" class="large-buttom">
+                <option value="main">Main</option>
+                <option value="mirror">Mirror</option>
+            </select>
+
+            <button ontouchstart="ToggleMirror()" type="button" class="large-buttom"> Toggle Mirror </button>
             <td>
                 <div class="joystick" ontouchstart="RegisterTouchStartSliderStick3(event)" ontouchmove="
                         MoveSlide(event)">
