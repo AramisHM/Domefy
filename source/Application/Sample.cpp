@@ -147,7 +147,7 @@ void Sample::SetWindowTitleAndIcon() {
     Graphics *graphics = GetSubsystem<Graphics>();
     Image *icon = cache->GetResource<Image>("fpmed/domefy_logo256.png");
     graphics->SetWindowIcon(icon);
-    graphics->SetWindowTitle("Domefy");
+    graphics->SetWindowTitle("Domefy_STD");
 #ifdef CEF_INTEGRATION
     graphics->SetWindowTitle("DomefyCEF");
 #endif

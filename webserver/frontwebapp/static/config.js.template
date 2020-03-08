@@ -8,5 +8,6 @@ cmdurlStartCEF = "/StartCEF";
 cmdurlKillCEF = "/KillCEF";
 cmdurlHideCEF = "/HideCEF";
 cmdurlShowCEF = "/ShowCEF";
-
+cmdurlHideSTD = "/HideSTD";
+cmdurlShowSTD = "/ShowSTD";
  

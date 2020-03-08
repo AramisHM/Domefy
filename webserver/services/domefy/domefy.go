@@ -32,6 +32,7 @@ import (
 var processes []*exec.Cmd
 var CEFprocesses []*exec.Cmd
 var cefHibernate bool
+var stdHibernate bool
 
 // indicates if browser has been spawnd (might not be)
 var browserSpawnd bool
@@ -96,6 +97,20 @@ func RegisterDomefy(router *gin.Engine) {
 	router.POST("/StartCEF", func(c *gin.Context) { StartCEF(c) })
 	router.POST("/HideCEF", func(c *gin.Context) { HideCEF(c) })
 	router.POST("/ShowCEF", func(c *gin.Context) { ShowCEF(c) })
+	router.POST("/HideSTD", func(c *gin.Context) { HideStd(c) })
+	router.POST("/ShowSTD", func(c *gin.Context) { ShowStd(c) })
+}
+
+// HideStd -
+func HideStd(c *gin.Context) {
+	HideWindow("Domefy_STD")
+	stdHibernate = true
+}
+
+// ShowStd -
+func ShowStd(c *gin.Context) {
+	ShowWindow("Domefy_STD")
+	stdHibernate = false
 }
 
 // HideCEF -
@@ -168,14 +183,15 @@ func SetExampleTextMessage(c *gin.Context) {
 	paramObj := rest.GetPostParameters(c)
 	cmdStr := paramObj["command"].(string)
 
-	conn, err := net.Dial("udp", "127.0.0.1:42871")
-	if err != nil {
-		fmt.Printf("Some error %v", err)
-		return
+	if !stdHibernate {
+		conn, err := net.Dial("udp", "127.0.0.1:42871")
+		if err != nil {
+			fmt.Printf("Some error %v", err)
+			return
+		}
+		// send package to domefy c++ application
+		fmt.Fprintf(conn, cmdStr)
 	}
-	// send package to domefy c++ application
-	fmt.Fprintf(conn, cmdStr)
-
 	// for CEF only
 	if !cefHibernate {
 		conn2, err2 := net.Dial("udp", "127.0.0.1:42872")

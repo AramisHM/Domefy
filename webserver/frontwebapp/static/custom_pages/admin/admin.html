@@ -56,6 +56,10 @@
             Domefy</button>
         <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
             Domefy</button>
+        <button type="button" class="large-buttom" onclick="hideSTD()">Hide
+            Domefy</button>
+        <button type="button" class="large-buttom" onclick="showSTD()">Show
+            Domefy</button>
     </p>
     <p>
         <button type="button" class="large-buttom" onclick="startCEF()">Start
@@ -144,6 +148,12 @@
     }
     function showCEF() {
         ajaxPostRaw(JSON.stringify(""), true, cmdurlShowCEF);
+    }
+    function hideSTD() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlHideSTD);
+    }
+    function showSTD() {
+        ajaxPostRaw(JSON.stringify(""), true, cmdurlShowSTD);
     }
 
     function RedirectToControllerPage() {
