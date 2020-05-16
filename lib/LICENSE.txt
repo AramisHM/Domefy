@@ -1,0 +1,3 @@
+libNet.a ptr/net/net.h - Net lib - Copyright 2018, 2019, 2020 pteronura.com
+THIS IS PROPRIETARY SOFTWARE.
+DO NOT USE IT WITHOUT PRIOR WRITTEN CONSCENT OF THE OWNER
