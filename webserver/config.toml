@@ -4,46 +4,10 @@
 #    Date: June 2019
 #    
 #
-
-
-# The IP or Domain where this service is running
 hosting_address = "localhost"
-
-# The port where this service is running
-# It is an string because, we don't ever do arithmetics with it
 hosting_port = "9090"
-
-# Development host key. It's purpose is to restrict access from testing handlers
-# from our service
-# There is no righ or wrong, it can be anything we decide.
-development_key = "ag3lrf9s-f3tk535c-c5ggbjov-85p57dab"
-
-# describes this software version
 system_version = "0.196.0.1"
-
-# prototype functionf
-use_middleware = true
-
-# path with executable for the domefy application binary
 win32_domefy_binary_cef = "..\\bin\\fpmed-with-cef.exe"
 win32_domefy_binary = "..\\bin\\fpmed.exe"
 gnulinux_domefy_binary = "../bin/fpmed"
-
 selected_index_host_ip = 0
-
-[databases]
-  # MainBackendDBConn - It is the new database scheme from Postgresql
-  [databases.postgre]
-    ip = "postgresql" # postgresql docker container name
-    port = 5432
-    name = "domefy" # database's name
-    user = "dmf"
-    pass = "0djif"
-  
-  # The developer mode credentials
-  [databases.postgredev]
-    ip = "localhost" # postgresql docker container name
-    port = 5432
-    name = "domefy" # database's name
-    user = "dmf"
-    pass = "0djif"

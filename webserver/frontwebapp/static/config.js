@@ -1,6 +1,6 @@
 // server host and port that contains the backend
-serviceIPPort = "127.0.0.1:9090";
-frontendIPPort = "127.0.0.1:3000";
+serviceIPPort = "192.168.0.22:9090";
+frontendIPPort = "192.168.0.22:3000";
 commandsEndpoint = "/setExampleTextMessage";
 cmdurlStartDomefy = "/StartScriptApplication";
 cmdurlStopDomefy = "/KillDomefy";

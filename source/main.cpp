@@ -6,7 +6,6 @@
 
 #include <Application/MyCustomApplication.h>
 #include <Application/Sample.h>
-#include <Core/auxiliarAppFuncs.h>
 #include <FPMED.H>
 #include <Urho3D.h>
 #include <Urho3DAll.h>

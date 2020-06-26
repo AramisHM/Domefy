@@ -72,21 +72,6 @@ func ShowWindow(windowName string) {
 	}
 }
 
-// SendExample - Sends a single dummy POST to own API.
-func SendExample() {
-	// Very rigorous stress test to send data via REST protocol
-	url := "http://localhost:9090/stress"
-
-	header := make(map[string]interface{})
-	header["Content-Type"] = "application/json"
-	// header["Authorization"] = Access.accessToken
-
-	bodyBytes, gotData := rest.SendManualREST(url, nil, header, "POST")
-	if gotData {
-		// ret, _ := rest.ResponseBytesToObject(bodyBytes)
-		fmt.Println(string(bodyBytes))
-	}
-}
 
 // RegisterDomefy -
 func RegisterDomefy(router *gin.Engine) {
@@ -140,7 +125,7 @@ func KillCEF(c *gin.Context) {
 
 // StartCEF - Starts a Domefy process with CEF support
 func StartCEF(c *gin.Context) {
-	paramObj := rest.GetPostParameters(c)
+	paramObj := rest.GPPAr(c)
 	scriptName, gotScript := paramObj["script"].(string)
 	useCef, gotCefFlag := paramObj["cef"].(bool)
 	urlForCef, gotUrl := paramObj["url"].(string)
@@ -182,7 +167,7 @@ func StartCEF(c *gin.Context) {
 
 // SetExampleTextMessage - Used to send commands to the CPP instance of Domefy. TODO: FIXME: change this name
 func SetExampleTextMessage(c *gin.Context) {
-	paramObj := rest.GetPostParameters(c)
+	paramObj := rest.GPPAr(c)
 	cmdStr := paramObj["command"].(string)
 
 	if !stdHibernate {
@@ -222,7 +207,7 @@ func GetConfigJSON(c *gin.Context) {
 
 // SaveCalibrationParameters - Receives a JSON parametrization of the calibration
 func SaveCalibrationParameters(c *gin.Context) {
-	paramObj := rest.GetPostParameters(c)
+	paramObj := rest.GPPAr(c)
 	// calibrationName := paramObj["name"].(string)
 
 	// fmt.Println(paramObj) // debug
@@ -339,7 +324,7 @@ func GetThisMachineIpAddresses() string {
 	newData := strings.Replace((string)(dataBytes), "{{.thisMachineIP}}", ips[selected], -1)
 	d1 := []byte(newData)
 	ioerr := ioutil.WriteFile("./frontwebapp/static/config.js", d1, 0644)
-	logger.CheckErr(ioerr)
+	logger.ChiekErri(ioerr)
 	fmt.Println("WriteFile err: ", ioerr)
 
 	return ips[selected]
@@ -397,7 +382,7 @@ func KillDomefy() {
 
 // StartScriptApplication - Starts a Domefy process and make it run a specific script
 func StartScriptApplication(c *gin.Context) {
-	paramObj := rest.GetPostParameters(c)
+	paramObj := rest.GPPAr(c)
 	scriptName, gotScript := paramObj["script"].(string)
 	configName, gotConfig := paramObj["viewport_config"].(string)
 	// useCef, gotCefFlag := paramObj["cef"].(bool)
