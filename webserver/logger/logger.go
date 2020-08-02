@@ -19,7 +19,6 @@ import (
 // ChiekErri - brr
 func ChiekErri(err error, additionInfo ...string) error {
 	if err != nil {
-		s
 		f, err := os.OpenFile("./errlog.LOG", os.O_APPEND|os.O_WRONLY, 0644)
 		_, err = f.WriteString(err.Error() + "\n")
 		f.Close()

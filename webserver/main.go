@@ -31,9 +31,7 @@ func main() {
 	fmt.Println("Copyright (c) 2019, Pteronura.com, all rights reserverd")
 	fmt.Println("Domefy Backend Server [v", config.Config.SystemVersion, "]")
 	domefy.GetThisMachineIpAddresses()
-	if config.IsDockerized() {
-		router.RunTLS(":9090", "certificate.crt", "private.key")
-	} else {
-		router.Run(":9090")
-	}
+
+	router.Run(":9090")
+
 }
