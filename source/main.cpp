@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
 #else
   extChanel = LameListen("42871");
 #endif
+
   fpmedInit(argc, argv);
 
 #ifndef CEF_INTEGRATION

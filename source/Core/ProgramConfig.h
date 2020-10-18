@@ -16,14 +16,13 @@
 #include <Math/vector2.h>
 #include <Math/vector3.h>
 #include <Math/vector4.h>
-#include <list>
-#include <nlohmann/json.hpp>
-#include <string>
-
 #include <Urho3DAll.h>  // urho3d types
 
 #include <fstream>
+#include <list>
+#include <nlohmann/json.hpp>
 #include <streambuf>
+#include <string>
 
 using json = nlohmann::json;
 
@@ -50,6 +49,11 @@ typedef struct Pojection {
     // the mesh that holds the mesh transformation for point-to-point
     // calibration
     std::vector<MorphVertex> _morphMesh;
+
+    // customCorrectionMeshPath - Used to load custom mesh, with calibration
+    // done externally, e.g. Blender.
+    std::string _customCorrectionMeshPath;
+    bool _hasCustomCorrectionMesh;
 } Projection;
 
 // Singleton class that holds all configurations for our software.

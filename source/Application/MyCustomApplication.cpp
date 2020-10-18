@@ -13,7 +13,6 @@
 #include <Application/WebBrowser/CEFWebBrowser.h>
 #endif
 #include <Core/ProgramConfig.h>
-
 #include <Urho3D/AngelScript/APITemplates.h>
 
 #ifdef WIN32
@@ -31,6 +30,7 @@ bool cef_created = false;
 
 void MyCustomApplication::RegisterCustomScriptAPI() {
 #ifdef fpmed_allow_scripted_application
+
     // Enable the script subsystem;
     context_->RegisterSubsystem(new Script(context_));
 

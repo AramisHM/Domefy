@@ -13,8 +13,8 @@
     "y": 0
   },
   "master_resolution": {
-    "x": 1366,
-    "y": 768
+    "x": 800,
+    "y": 600
   },
   "presets_file": "./presets/default-debug.json"
 }

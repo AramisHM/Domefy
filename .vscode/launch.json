@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/bin/fpmed.exe",
       "args": [
         "./Data/Scripts/DefaultPresentation.as",
-        "./presets/defaiçt.json"
+        "./presets/default.json"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -52,7 +52,10 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed",
-      "args": [],
+      "args": [
+        "./Data/Scripts/DefaultPresentation.as",
+        "./presets/default.json"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

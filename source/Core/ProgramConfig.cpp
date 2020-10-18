@@ -34,7 +34,7 @@ ProgramConfig* ProgramConfig::GetInstance() {
 int ProgramConfig::LoadConfigFile(std::string path, std::string presFile = "") {
     std::ifstream filest(path);
     json myConfig;
-    filest >> myConfig;
+    filest >> myConfig;  // loads file
 
     _projections;
 
@@ -61,6 +61,15 @@ int ProgramConfig::LoadConfigFile(std::string path, std::string presFile = "") {
                 Projection p;
 
                 p.name = item["name"].get<std::string>().c_str();
+                // attempt to get the parameter, if not found, assign default
+                // value ""
+                p._customCorrectionMeshPath = item.value("morph_mesh_path", "");
+
+                if (p._customCorrectionMeshPath == "") {
+                    p._hasCustomCorrectionMesh = false;
+                } else {
+                    p._hasCustomCorrectionMesh = true;
+                }
 
                 Vec3<float> offPos(item["offset_position"]["x"].get<float>(),
                                    item["offset_position"]["y"].get<float>(),

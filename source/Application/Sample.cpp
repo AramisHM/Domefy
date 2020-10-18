@@ -1,13 +1,11 @@
-#include <FPMED.H>
-#include <Urho3DAll.h>
-
 #include <Application/Sample.h>
-
 #include <Core/ProgramConfig.h>
+#include <FPMED.H>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Network/NetworkPriority.h>
 #include <Urho3D/Physics/PhysicsWorld.h>
+#include <Urho3DAll.h>
 
 static const unsigned short SERVER_PORT = defaultSceneRepPort;
 // Identifier for our custom remote event we use to tell the client which object
@@ -262,14 +260,15 @@ void Sample::HandleUpdate(StringHash eventType, VariantMap &eventData) {
 // Creates the camera that should be used by the fulldome viewports.
 // It creates the scene the virtual dome, and on top of that, it creates another
 // scene that holds a special mesh that we use to do a morphologic
-// point-to-point geometry correction. Returns the node with the camera that
-// view the final geometry compositions.
+// point-to-point geometry correction. Returns the node with the camera
+// componenet that view the final geometry compositions.
 Node *Sample::CreateDomeCamera(Projection p) {
     SharedPtr<Scene> sceneDome_;
     SharedPtr<Node> cameraNodeDome_;
 
     // create the scene that will hold the virtual dome
     ResourceCache *cache = GetSubsystem<ResourceCache>();
+
     sceneDome_ = new Scene(context_);
     sceneDome_->Clear();
     sceneDome_->CreateComponent<Octree>(LOCAL);
@@ -485,10 +484,14 @@ Node *Sample::CreateDomeCamera(Projection p) {
     cameraNodeDomeList_.push_back(cameraNodeDome_);
 
     // ----------------------------------------------------------------------
+    // Create scene with blender made correction mesh
+
+    // ----------------------------------------------------------------------
 
     // Create the scene that will hold the deformable mesh for point-to-point
     // geometry correction
-    // TODO: this block repeats too much, we should write a function for it.
+    // TODO: this block repeats too much/too large, we should write a function
+    // for it.
     Node *retCam;  // the camera node we are going to return
     {
         Scene *geometryCorrectionScene_ = new Scene(context_);
@@ -507,10 +510,18 @@ Node *Sample::CreateDomeCamera(Projection p) {
             "GEOMETRY_CORRECTION_NODE", LOCAL);
         StaticModel *geometryCorrectionMesh;
 
+        std::string correctionMeshPath = "Models/geometryCorrection.mdl";
         // Get the original model and its unmodified vertices, which are used as
-        // source data for the animation
+        // source data for the morphing
+        if (p._hasCustomCorrectionMesh) {  // This is used when calibration is
+                                           // done externally, e.g. on Blender.
+                                           // Then
+            // after exporting the mesh, we ignore our in-house point-to-point
+            // methode, and use the blender-warped mesh instead
+            correctionMeshPath = p._customCorrectionMeshPath;
+        }
         auto *originalModel =
-            cache->GetResource<Model>("Models/geometryCorrection.mdl");
+            cache->GetResource<Model>(correctionMeshPath.c_str());
         if (!originalModel) {
             URHO3D_LOGERROR("Model not found, cannot initialize example scene");
             return NULL;
@@ -559,7 +570,25 @@ Node *Sample::CreateDomeCamera(Projection p) {
             geometryCorrectionNode->CreateComponent<StaticModel>();
         SharedPtr<Model> cloneModel = originalModel->Clone();
         geometryCorrectionMesh->SetModel(cloneModel);
-        geometryCorrectionNode->SetRotation(Quaternion(180.0f, -90.0f, 0.0f));
+        if (p._hasCustomCorrectionMesh) {
+            geometryCorrectionNode->SetRotation(
+                Quaternion(270.0f, -90.0f, 90.0f));
+            // Note, the correction mesh camera scene, is squarish... the
+            // viewport
+            // is then streched to fit the final viewport.
+            geometryCorrectionNode->SetScale(Vector3(2, 1, 2));
+        } else {
+            geometryCorrectionNode->SetRotation(
+                Quaternion(180.0f, -90.0f, 0.0f));
+        }
+
+        if (p._hasCustomCorrectionMesh) {
+            // -0.0045f approximates to fit the borders
+            geometryCorrectionNode->SetPosition(Vector3(-1, 1, -0.0045f));
+        } else {
+            geometryCorrectionNode->SetPosition(Vector3(-1, 1, 0.0f));
+        }
+
         _geometryCorrectionNodes.push_back(geometryCorrectionNode);
 
         // Store the cloned vertex buffer that we will modify when
@@ -571,12 +600,13 @@ Node *Sample::CreateDomeCamera(Projection p) {
         SharedPtr<Texture2D> geometryCorrectionRenderTexture(
             new Texture2D(context_));
 
-        // TODO: this size shoulbe have its own config value on the
+        // TODO: this size should have its own config value on the
         // config.JSON
         geometryCorrectionRenderTexture->SetSize(
             p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
             TEXTURE_RENDERTARGET);
 
+        // Setup RTT
         geometryCorrectionRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -598,10 +628,10 @@ Node *Sample::CreateDomeCamera(Projection p) {
             Camera *geometryCorrCamera =
                 geometryCorrCameraNode->CreateComponent<Camera>();
             geometryCorrCameraNode->SetPosition(Vector3(
-                0, 0, -1.005f));  // Back off a bit, just to show the outline
-                                  // created by the scene ambient color TODO:
-                                  // should be parametrized and configurable on
-                                  // the new calibrator
+                0, 0, -1.005f));  // Back off a bit, just to show the
+                                  // outline created by the scene ambient
+                                  // color TODO: should be parametrized and
+                                  // configurable on the new calibrator
 
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(p._farClip);
@@ -612,8 +642,11 @@ Node *Sample::CreateDomeCamera(Projection p) {
         }
 
         // apply the morph correction loaded from config file
-        for (auto v : p._morphMesh) {
-            AnimateVertex(p._index, v.index, v.x, v.y);
+        if (!p._hasCustomCorrectionMesh) {  // do so, only if has no custom
+                                            // external correction mesh
+            for (auto v : p._morphMesh) {
+                AnimateVertex(p._index, v.index, v.x, v.y);
+            }
         }
 
         // Add calibration aid mesh

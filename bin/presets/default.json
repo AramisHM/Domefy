@@ -1,5 +1,5 @@
 {
-    "calibration_name": "agorafoi1",
+    "calibration_name": "default-march-presentation",
     "presets": [
         {
             "dome_yaw": 0,
@@ -430,6 +430,7 @@
                     }
                 ]
             ],
+            "morph_mesh_path": "./presets/correc-meshes/test-import.mdl",
             "name": "DS-1",
             "offset_position": {
                 "x": 0.0,
