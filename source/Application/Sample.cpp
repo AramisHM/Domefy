@@ -577,16 +577,11 @@ Node *Sample::CreateDomeCamera(Projection p) {
             // viewport
             // is then streched to fit the final viewport.
             geometryCorrectionNode->SetScale(Vector3(2, 1, 2));
-        } else {
-            geometryCorrectionNode->SetRotation(
-                Quaternion(180.0f, -90.0f, 0.0f));
-        }
-
-        if (p._hasCustomCorrectionMesh) {
             // -0.0045f approximates to fit the borders
             geometryCorrectionNode->SetPosition(Vector3(-1, 1, -0.0045f));
         } else {
-            geometryCorrectionNode->SetPosition(Vector3(-1, 1, 0.0f));
+            geometryCorrectionNode->SetRotation(
+                Quaternion(180.0f, -90.0f, 0.0f));
         }
 
         _geometryCorrectionNodes.push_back(geometryCorrectionNode);
@@ -642,8 +637,9 @@ Node *Sample::CreateDomeCamera(Projection p) {
         }
 
         // apply the morph correction loaded from config file
-        if (!p._hasCustomCorrectionMesh) {  // do so, only if has no custom
-                                            // external correction mesh
+        if (!p._hasCustomCorrectionMesh &&
+            p._useRTMorphData) {  // do so, only if has no custom
+                                  // external correction mesh
             for (auto v : p._morphMesh) {
                 AnimateVertex(p._index, v.index, v.x, v.y);
             }

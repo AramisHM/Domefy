@@ -430,8 +430,6 @@
                     }
                 ]
             ],
-            "morph_mesh_path": "./presets/correc-meshes/test-import.mdl",
-            "init_correction_morph": false,
             "name": "DS-1",
             "offset_position": {
                 "x": 0.0,
@@ -892,8 +890,6 @@
                     }
                 ]
             ],
-            "morph_mesh_path": "./presets/correc-meshes/test-import.mdl",
-            "init_correction_morph": false,
             "name": "DS-2",
             "offset_position": {
                 "x": 0.0,

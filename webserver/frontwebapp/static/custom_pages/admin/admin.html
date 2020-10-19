@@ -1,103 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<style>
-    /* class to disable scrolling in the page */
-    .noScroll {
-        overflow-y: hidden;
-        overscroll-behavior: none;
-    }
+    <style>
+        /* class to disable scrolling in the page */
+        .noScroll {
+            overflow-y: hidden;
+            overscroll-behavior: none;
+        }
 
-    /* The region with for the touch enabled input */
-    .joystick {
-        width: 200px;
-        height: 200px;
-        border: 1px solid;
+        /* The region with for the touch enabled input */
+        .joystick {
+            width: 200px;
+            height: 200px;
+            border: 1px solid;
 
-        z-index: 2;
-    }
+            z-index: 2;
+        }
 
-    .large-buttom {
-        width: auto;
-        height: 80px;
-    }
+        .large-buttom {
+            width: auto;
+            height: 80px;
+        }
 
-    .byel {
-        background-color: rgb(255, 204, 35);
-    }
+        .byel {
+            background-color: rgb(255, 204, 35);
+        }
 
-    .bred {
-        background-color: rgb(255, 0, 0);
-        color: aliceblue;
-    }
+        .bred {
+            background-color: rgb(255, 0, 0);
+            color: aliceblue;
+        }
 
-    .bblu {
-        background-color: rgb(0, 37, 139);
-        color: aliceblue;
-    }
+        .bblu {
+            background-color: rgb(0, 37, 139);
+            color: aliceblue;
+        }
 
-    .bgre {
-        background-color: rgb(29, 117, 63);
-        color: aliceblue;
-    }
-</style>
+        .bgre {
+            background-color: rgb(29, 117, 63);
+            color: aliceblue;
+        }
+    </style>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=], initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Administrator Panel</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=], initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Administrator Panel</title>
+    </head>
 
-<body>
-    <h1>Administrator Panel</h1>
-    <p>
-        <button type="button" class="large-buttom" onclick="startDomefy()">Start
-            Domefy</button>
-        <button type="button" class="large-buttom" onclick="stopDomefy()">Kill
-            Domefy</button>
-        <button type="button" class="large-buttom" onclick="hideSTD()">Hide
-            Domefy</button>
-        <button type="button" class="large-buttom" onclick="showSTD()">Show
-            Domefy</button>
-    </p>
-    <p>
-        <button type="button" class="large-buttom" onclick="startCEF()">Start
-            CEF</button>
-        <button type="button" class="large-buttom" onclick="stopCEF()">Kill
-            CEF</button>
-        <button type="button" class="large-buttom" onclick="hideCEF()">Hide
-            CEF</button>
-        <button type="button" class="large-buttom" onclick="showCEF()">Show
-            CEF</button>
-    </p>
+    <body>
+        <h1>Administrator Panel</h1>
+        <p>
+            <button type="button" class="large-buttom"
+                onclick="startDomefy()">Start
+                Domefy</button>
+            <button type="button" class="large-buttom"
+                onclick="stopDomefy()">Kill
+                Domefy</button>
+            <button type="button" class="large-buttom" onclick="hideSTD()">Hide
+                Domefy</button>
+            <button type="button" class="large-buttom" onclick="showSTD()">Show
+                Domefy</button>
+        </p>
+        <p>
+            <button type="button" class="large-buttom"
+                onclick="startCEF()">Start
+                CEF</button>
+            <button type="button" class="large-buttom" onclick="stopCEF()">Kill
+                CEF</button>
+            <button type="button" class="large-buttom" onclick="hideCEF()">Hide
+                CEF</button>
+            <button type="button" class="large-buttom" onclick="showCEF()">Show
+                CEF</button>
+        </p>
 
-    <p>
-        <select id="scriptSelector" class="large-buttom">
-            <option value="Scripts/DefaultPresentation.as">Default</option>
-            <option value="Scripts/marco3th2020/aramis-mirror.as">Slide Aramis Mirrored</option>
-            <option value="Scripts/marco3th2020/aramis.as">Slide Aramis</option>
-            <option value="Scripts/marco3th2020/justino.as">Slide Professor</option>
-            <option value="Scripts/marco3th2020/cinthia.as">Slide Cinthia</option>
-            <option value="Scripts/marco3th2020/qr.as">QR</option>
-            <option value="Scripts/Pathfinder.as">Pathfinder</option>
-            <option value="Scripts/11_Physics.as">Physics</option>
-            <option value="Scripts/13_Ragdolls.as">Ragdoll</option>
-            <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car</option>
-        </select>
-        Script
-    </p>
+        <script>
+            function setDomegrid() {
+                var cmd = "CPP;DOMEGRID;" + (document.getElementById("domegrid").checked ? 1 : 0) + ";";
+                //console.log(cmd);
+                ajaxPost(cmd, false, "/setExampleTextMessage");
+            }
+            function setAidgrid() {
+                var cmd = "CPP;AIDGRID;" + (document.getElementById("aidgrid").checked ? 1 : 0) + ";";
+                //console.log(cmd);
+                ajaxPost(cmd, false, "/setExampleTextMessage");
+            }
 
-    <p>
-        <select id="viewportConfigSelector" class="large-buttom">
-            <option value="./presets/default.json">Default</option>
-            <option value="./presets/default-debug.json">Debug</option>
-        </select>
-        Viewport-settings
+
+        </script>
+        <p>
+            <input type="checkbox" id="domegrid" onchange="setDomegrid()"
+                value="0"> Dome Grid
+            <input type="checkbox" id="aidgrid" onchange="setAidgrid()"
+                value="0"> Aid Grid
+        </p>
+
+        <p>
+            <select id="scriptSelector" class="large-buttom">
+                <option value="Scripts/DefaultPresentation.as">Default</option>
+                <option value="Scripts/marco3th2020/aramis-mirror.as">Slide
+                    Aramis Mirrored</option>
+                <option value="Scripts/marco3th2020/aramis.as">Slide Aramis
+                </option>
+                <option value="Scripts/marco3th2020/justino.as">Slide Professor
+                </option>
+                <option value="Scripts/marco3th2020/cinthia.as">Slide Cinthia
+                </option>
+                <option value="Scripts/marco3th2020/qr.as">QR</option>
+                <option value="Scripts/Pathfinder.as">Pathfinder</option>
+                <option value="Scripts/11_Physics.as">Physics</option>
+                <option value="Scripts/13_Ragdolls.as">Ragdoll</option>
+                <option value="Scripts/46_RaycastVehicleDemo.as">Raycast Car
+                </option>
+            </select>
+            Script
+        </p>
+
+        <p>
+            <select id="viewportConfigSelector" class="large-buttom">
+                <option value="./presets/default.json">Default</option>
+                <option value="./presets/default-debug.json">Debug</option>
+            </select>
+            Viewport-settings
         <p>Works on Domefy without CEF only.</p>
         <p>DomefyCEF will use default.json.</p>
-    </p>
-    <!-- <p>
+        </p>
+        <!-- <p>
         <select id="urlSelector" class="large-buttom">
             <option
                 value="https://www.youtube.com/watch?v=4Js-XbNj6Tk&list=PLe_w30AtYQ6KedpFft_llpQ6Dlclki_8T&index=129">
@@ -109,63 +138,66 @@
         Video to play
     </p> -->
 
-    <p>
-        <button class="large-buttom" onclick="RedirectToControllerPage()">Controller</button>
-    </p>
-    <br>
-    <button class="large-buttom" onclick="RedirectToSlideControllerPage()">Slide
-        Controller</button>
-    <button class="large-buttom" onclick="RedirectToBrowserControllerPage()">Browser
-        basic controller</button>
-</body>
+        <p>
+            <button class="large-buttom"
+                onclick="RedirectToControllerPage()">Controller</button>
+        </p>
+        <br>
+        <button class="large-buttom"
+            onclick="RedirectToSlideControllerPage()">Slide
+            Controller</button>
+        <button class="large-buttom"
+            onclick="RedirectToBrowserControllerPage()">Browser
+            basic controller</button>
+    </body>
 
-<script type="text/javascript" src="../../config.js"></script>
-<script type="text/javascript" src="../../domefy/utils.js"></script>
-<script src="../../jquery/jquery.min.js"></script>
-<script>
-    function startDomefy() {
-        var command = {
-            script: document.getElementById("scriptSelector").value,
-            viewport_config: document.getElementById("viewportConfigSelector").value
-        };
-        ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
-    }
-    function stopDomefy() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlStopDomefy);
-    }
+    <script type="text/javascript" src="../../config.js"></script>
+    <script type="text/javascript" src="../../domefy/utils.js"></script>
+    <script src="../../jquery/jquery.min.js"></script>
+    <script>
+        function startDomefy() {
+            var command = {
+                script: document.getElementById("scriptSelector").value,
+                viewport_config: document.getElementById("viewportConfigSelector").value
+            };
+            ajaxPostRaw(JSON.stringify(command), true, cmdurlStartDomefy);
+        }
+        function stopDomefy() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlStopDomefy);
+        }
 
-    function startCEF() {
-        var command = {
-            script: document.getElementById("scriptSelector").value,
-            cef: true
-        };
-        ajaxPostRaw(JSON.stringify(command), true, cmdurlStartCEF);
-    }
-    function stopCEF() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlKillCEF);
-    }
-    function hideCEF() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlHideCEF);
-    }
-    function showCEF() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlShowCEF);
-    }
-    function hideSTD() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlHideSTD);
-    }
-    function showSTD() {
-        ajaxPostRaw(JSON.stringify(""), true, cmdurlShowSTD);
-    }
+        function startCEF() {
+            var command = {
+                script: document.getElementById("scriptSelector").value,
+                cef: true
+            };
+            ajaxPostRaw(JSON.stringify(command), true, cmdurlStartCEF);
+        }
+        function stopCEF() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlKillCEF);
+        }
+        function hideCEF() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlHideCEF);
+        }
+        function showCEF() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlShowCEF);
+        }
+        function hideSTD() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlHideSTD);
+        }
+        function showSTD() {
+            ajaxPostRaw(JSON.stringify(""), true, cmdurlShowSTD);
+        }
 
-    function RedirectToControllerPage() {
-        window.location = "http://" + frontendIPPort + "/virtual_controller/controller.html"
-    }
-    function RedirectToSlideControllerPage() {
-        window.location = "http://" + frontendIPPort + "/s/s.html"
-    }
-    function RedirectToBrowserControllerPage() {
-        window.location = "http://" + frontendIPPort + "/virtual_controller/browserbasic.html"
-    }
-</script>
+        function RedirectToControllerPage() {
+            window.location = "http://" + frontendIPPort + "/virtual_controller/controller.html"
+        }
+        function RedirectToSlideControllerPage() {
+            window.location = "http://" + frontendIPPort + "/s/s.html"
+        }
+        function RedirectToBrowserControllerPage() {
+            window.location = "http://" + frontendIPPort + "/virtual_controller/browserbasic.html"
+        }
+    </script>
 
 </html>

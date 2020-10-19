@@ -53,6 +53,9 @@ typedef struct Pojection {
     // customCorrectionMeshPath - Used to load custom mesh, with calibration
     // done externally, e.g. Blender.
     std::string _customCorrectionMeshPath;
+    // _useRTMorphData, should we apply morph data from json when loading the
+    // mesh?
+    bool _useRTMorphData;
     bool _hasCustomCorrectionMesh;
 } Projection;
 

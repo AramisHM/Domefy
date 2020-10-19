@@ -64,6 +64,7 @@ int ProgramConfig::LoadConfigFile(std::string path, std::string presFile = "") {
                 // attempt to get the parameter, if not found, assign default
                 // value ""
                 p._customCorrectionMeshPath = item.value("morph_mesh_path", "");
+                p._useRTMorphData = item.value("init_correction_morph", true);
 
                 if (p._customCorrectionMeshPath == "") {
                     p._hasCustomCorrectionMesh = false;
