@@ -1,0 +1,9 @@
+Windows is tricky.
+
+Before anything, should you build lamenet, you will have to do so with 32bit arch, Go will attempt to use 64bit symbols. By using a 32bit install go, I was able to compile lamenet for windows 32bit (using IE11 virtual machine)
+
+After that, ming32 with gcc 5.10, will compile and link fine.
+
+CEF is MSVC 2019 (i guess) 32 bit ONLY.
+
+in short, for windows, it all got to be 32bit, sorry.
