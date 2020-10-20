@@ -33,6 +33,7 @@ include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
 if(WIN32)
 # FIXME: TODO: build specific lamenet's .h for this architecture!!!!
+include_directories (../include/custom/windows32bit)
 endif()
 if(MINGW)
 # custom architecture-specific includes from Go LIbraries (mingw 32 bit ONLY)
@@ -138,7 +139,7 @@ else()
 	winmm.lib
 	imm32.lib
 	version.lib
-	ws2_32.lib
+	ws2_32.lib	
 	winmm.lib
 	dbghelp.lib
 	kernel32.lib
