@@ -50,66 +50,66 @@ std::string defaultCefUrl =
 #endif
 
 void ListenForExternalCommands() {
-  char *recdata;
-  recdata = LameServRead(extChanel);
-  if (strcmp(recdata, "") != 0) {
-    commandString = std::string(recdata);
-    printf("data: %s", recdata);
-  } else {
-    commandString = "";
-  }
+    char *recdata;
+    recdata = LameServRead(extChanel);
+    if (strcmp(recdata, "") != 0) {
+        commandString = std::string(recdata);
+        printf("data: %s", recdata);
+    } else {
+        commandString = "";
+    }
 }
 
 int main(int argc, char *argv[]) {
-  Urho3D::ParseArguments(argc, argv);
-  Urho3D::Context *context = new Urho3D::Context();
-  MyCustomApplication *application = new MyCustomApplication(context);
-  ProgramConfig *p1 = ProgramConfig::GetInstance();
+    Urho3D::ParseArguments(argc, argv);
+    Urho3D::Context *context = new Urho3D::Context();
+    MyCustomApplication *application = new MyCustomApplication(context);
+    ProgramConfig *p1 = ProgramConfig::GetInstance();
 
-  LameNetStart();
+    LameNetStart();
 
 #ifdef CEF_INTEGRATION
-  extChanel = LameListen("42872");  // udp server
+    extChanel = LameListen("42872");  // udp server
 #else
-  extChanel = LameListen("42871");
+    extChanel = LameListen("42871");
 #endif
 
-  fpmedInit(argc, argv);
+    fpmedInit(argc, argv);
 
 #ifndef CEF_INTEGRATION
-  if (argc <= 3) {  // config
-    viewportConfigPath = std::string(std::string(argv[2]));
-  }
+    if (argc <= 3) {  // config
+        viewportConfigPath = std::string(std::string(argv[2]));
+    }
 #endif
 
-  p1->LoadConfigFile("./config.json", viewportConfigPath);
+    p1->LoadConfigFile("./config.json", viewportConfigPath);
 
-  if (argc > 1 && argc < 4) {
-    scriptPath = std::string(argv[1]);
-  } else {
-    scriptPath = std::string("./Data/Scripts/DefaultPresentation.as");
-  }
+    if (argc > 1 && argc < 4) {
+        scriptPath = std::string(argv[1]);
+    } else {
+        scriptPath = std::string("./Data/Scripts/DefaultPresentation.as");
+    }
 
 #ifdef CEF_INTEGRATION
-  if (argc >= 4) {  // url for browser
-    defaultCefUrl = std::string(argv[3]);
-  }
-#endif
-  if (application->isApplication()) {
-    application->Prepare();
-    application->Start();
-
-    while (application->isApplication()) {
-      ListenForExternalCommands();
-      application->RunFrameC();
+    if (argc >= 4) {  // url for browser
+        defaultCefUrl = std::string(argv[3]);
     }
+#endif
+    if (application->isApplication()) {
+        application->Prepare();
+        application->Start();
+
+        while (application->isApplication()) {
+            ListenForExternalCommands();
+            application->RunFrameC();
+        }
+        application->Stop();
+    }
+
     application->Stop();
-  }
+    delete application;
+    delete context;
+    LameNetStop();
 
-  application->Stop();
-  delete application;
-  delete context;
-  LameNetStop();
-
-  return 0;
+    return 0;
 }

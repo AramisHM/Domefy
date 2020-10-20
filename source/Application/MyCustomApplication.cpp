@@ -371,6 +371,41 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                                    std::stof(commandSplitted[3]) * 150.0f));
 #endif
                 }
+                // set custom grid, passing file path
+                if (!commandSplitted[1].compare(std::string("SETGRID"))) {
+                    printf("%s", commandSplitted[1].c_str());
+
+                    Urho3D::ResourceCache *cache =
+                        GetSubsystem<ResourceCache>();
+
+                    // create new material from scratch
+                    SharedPtr<Material> m(new Material(context_));
+                    m->SetTechnique(0, cache->GetResource<Technique>(
+                                           "Techniques/DiffAddAlpha.xml"));
+                    Urho3D::Texture2D *t =
+                        cache->GetResource<Urho3D::Texture2D>(
+                            Urho3D::String(commandSplitted[2].c_str()));
+                    if (t) {
+                        t->SetFilterMode(FILTER_NEAREST);
+                        t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
+                        t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
+                        t->SetNumLevels(1);
+                        m->SetTexture(TU_DIFFUSE, t);
+                        // m->SetShaderParameter("MatDiffColor", _modelColor);
+                        // m->SetTechnique(0, cache->GetResource<Technique>(
+                        //                        "Techniques/DiffAlphaTranslucent.xml"));
+                        for (auto dome : _virtualDomes) {
+                            auto grid = dome->GetChild("DOME_GRID");
+                            Variant va;  // we will set the material color with
+                                         // this variant
+
+                            va = Variant(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+                            m->SetShaderParameter("MatDiffColor", va);
+                            grid->GetComponent<Urho3D::StaticModel>()
+                                ->SetMaterial(m);
+                        }
+                    }
+                }
 #ifdef CEF_INTEGRATION
 
                 if (!commandSplitted[1].compare(std::string("RUNURL"))) {

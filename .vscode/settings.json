@@ -80,7 +80,12 @@
     "xlocbuf": "cpp",
     "xlocmes": "cpp",
     "xlocmon": "cpp",
-    "xloctime": "cpp"
+    "xloctime": "cpp",
+    "csignal": "cpp",
+    "strstream": "cpp",
+    "memory_resource": "cpp",
+    "cfenv": "cpp",
+    "typeindex": "cpp"
   },
   "psi-header.variables": [
     ["projectCreationYear", "2014"],
