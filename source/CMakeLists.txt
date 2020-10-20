@@ -23,7 +23,7 @@ if(MINGW)
   set(CMAKE_RC_COMPILER_INIT windres)
   ENABLE_LANGUAGE(RC)
   SET(CMAKE_RC_COMPILE_OBJECT
-    "<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
+	"<CMAKE_RC_COMPILER> <FLAGS> -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
 endif(MINGW)
 
 include_directories (./)
@@ -31,12 +31,23 @@ include_directories(${CMAKE_SOURCE_DIR}/source/ThirdParty/irrXML)
 include_directories (../include)
 include_directories (../include/Urho3D)
 include_directories (../include/Urho3D/ThirdParty)
+if(WIN32)
+# FIXME: TODO: build specific lamenet's .h for this architecture!!!!
+endif()
+if(MINGW)
+# custom architecture-specific includes from Go LIbraries (mingw 32 bit ONLY)
+include_directories (../include/custom/windows32bit)
+else() # assume LINUX ONLY, NO MAC SUPPORT
+# custom architecture-specific includes from Go LIbraries (linux)
+include_directories (../include/custom/linux64bit)
+endif()
 
 if(CEF_INTEGRATION)
 	# CEF specific
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/include)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/${CEF_DISTRIBUTION}/cefsimple)
+
 	set(CEF_BLD_TYPE Release)
 endif(CEF_INTEGRATION)
 
@@ -72,6 +83,7 @@ if(WIN32)
 	add_definitions(-DURHO3D_STATIC_DEFINE)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 	set ( CMAKE_CXX_FLAGS "-msse3 -msse4.1")
+
 if(MINGW)
 	LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/bin" "${CMAKE_SOURCE_DIR}/lib/windows")
 	FILE(GLOB_RECURSE Dependency_Libs_A "${CMAKE_SOURCE_DIR}/lib/mingw/*.a")
@@ -101,6 +113,7 @@ if(MINGW)
 	ole32.lib
 	oleaut32.lib
 	uuid.lib)
+
 else()
 	LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/bin" "${CMAKE_SOURCE_DIR}/lib/windows")
 	FILE(GLOB_RECURSE Dependency_Libs_A "${CMAKE_SOURCE_DIR}/lib/windows/*.a")
