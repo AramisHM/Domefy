@@ -325,11 +325,12 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // up
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetNumLevels(1);
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
-        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        // domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
 
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -356,11 +357,12 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // right
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetNumLevels(1);
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
-        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        // domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
 
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -388,11 +390,12 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // back
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetNumLevels(1);
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
-        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        // domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
 
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -419,11 +422,12 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // left
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetNumLevels(1);
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
-        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        // domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
 
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -450,11 +454,12 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // front
     {
         SharedPtr<Texture2D> domeRenderTexture(new Texture2D(context_));
+        domeRenderTexture->SetNumLevels(1);
         domeRenderTexture->SetSize(p._rttResolution, p._rttResolution,
                                    Graphics::GetRGBFormat(),
                                    TEXTURE_RENDERTARGET);
-        domeRenderTexture->SetFilterMode(FILTER_BILINEAR);
-        domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
+        domeRenderTexture->SetFilterMode(FILTER_ANISOTROPIC);
+        // domeRenderTexture->SetMipsToSkip(QUALITY_HIGH, 0);
 
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
@@ -602,7 +607,6 @@ Node *Sample::CreateDomeCamera(Projection p) {
             TEXTURE_RENDERTARGET);
 
         // Setup RTT
-        geometryCorrectionRenderTexture->SetFilterMode(FILTER_BILINEAR);
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
@@ -654,14 +658,14 @@ Node *Sample::CreateDomeCamera(Projection p) {
 
         SharedPtr<Material> m(new Material(context_));
         m->SetTechnique(
-            0, cache->GetResource<Technique>("Techniques/DiffAddAlpha.xml"));
+            0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
         Urho3D::Texture2D *t = cache->GetResource<Urho3D::Texture2D>(
             Urho3D::String("./Dome/Aid/"
                            "CURRENT.png"));
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
 #else
-        t->SetFilterMode(FILTER_NEAREST);
+        // t->SetFilterMode(FILTER_NEAREST);
 #endif
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);

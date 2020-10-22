@@ -381,12 +381,12 @@ void MyCustomApplication::HandleUpdates(StringHash eventType,
                     // create new material from scratch
                     SharedPtr<Material> m(new Material(context_));
                     m->SetTechnique(0, cache->GetResource<Technique>(
-                                           "Techniques/DiffAddAlpha.xml"));
+                                           "Techniques/DiffUnlit.xml"));
                     Urho3D::Texture2D *t =
                         cache->GetResource<Urho3D::Texture2D>(
                             Urho3D::String(commandSplitted[2].c_str()));
                     if (t) {
-                        t->SetFilterMode(FILTER_NEAREST);
+                        // t->SetFilterMode(FILTER_NEAREST);
                         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
                         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);
                         t->SetNumLevels(1);
