@@ -598,8 +598,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
         // TODO: this size should have its own config value on the
         // config.JSON
         geometryCorrectionRenderTexture->SetSize(
-            p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
-            TEXTURE_RENDERTARGET);
+            p._viewport.getR() * 4, p._viewport.getS() * 4,
+            Graphics::GetRGBFormat(), TEXTURE_RENDERTARGET);
 
         // Setup RTT
         geometryCorrectionRenderTexture->SetFilterMode(FILTER_BILINEAR);
