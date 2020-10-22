@@ -289,14 +289,14 @@ Node *Sample::CreateDomeCamera(Projection p) {
     Node *domeGridNode = domeNode->CreateChild("DOME_GRID", LOCAL);
     StaticModel *domeGridMesh = domeGridNode->CreateComponent<StaticModel>();
     domeGridMesh->SetModel(
-        cache->GetResource<Model>("Dome/Models/domeRuler.mdl"));
+        cache->GetResource<Model>("Dome/CAL-GRID/grid-2.mdl"));
     domeGridMesh->SetMaterial(
-        cache->GetResource<Material>("Dome/Materials/domegrid.xml"));
+        cache->GetResource<Material>("Dome/CAL-GRID/domegrid.xml"));
     // Invert the mesh
     domeGridNode->SetScale(
-        Vector3(1.265f, -1.265f, 1.265f));  // this size is a magic number.
+        Vector3(-1.265f, 1.265f, 1.265f));  // this size is a magic number.
                                             // don't boder trying to understand.
-    domeGridNode->Rotate(Quaternion(180.0f, 0.0f, 0.0f));
+    domeGridNode->Rotate(Quaternion(0.0f, 90.0f, 0.0f));
     domeGridNode->SetEnabled(false);  // initially, it should be hidden
 
     // Create the camera that will see the vitual dome
@@ -598,8 +598,8 @@ Node *Sample::CreateDomeCamera(Projection p) {
         // TODO: this size should have its own config value on the
         // config.JSON
         geometryCorrectionRenderTexture->SetSize(
-            p._viewport.getR() * 4, p._viewport.getS() * 4,
-            Graphics::GetRGBFormat(), TEXTURE_RENDERTARGET);
+            p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
+            TEXTURE_RENDERTARGET);
 
         // Setup RTT
         geometryCorrectionRenderTexture->SetFilterMode(FILTER_BILINEAR);
