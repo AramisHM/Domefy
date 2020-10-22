@@ -6,6 +6,4 @@
 .vscode/ipch/
 Urho3D.lib
 fpmed.exe.manifest
-fpmed.exe
 /webserver
-/bin/fpmed*
