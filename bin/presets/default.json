@@ -430,7 +430,7 @@
                     }
                 ]
             ],
-            "morph_mesh_path": "./presets/correc-meshes/NO-WARP.mdl",
+            "morph_mesh_path": "./presets/correc-meshes/ds1.mdl",
             "init_correction_morph": false,
             "name": "DS-1",
             "offset_position": {
@@ -457,7 +457,7 @@
                 "x": 1920,
                 "y": 1200
             },
-            "rtt_resolution": 1600,
+            "rtt_resolution": 1024,
             "viewport_pos": {
                 "x": 0,
                 "y": 0
@@ -892,7 +892,7 @@
                     }
                 ]
             ],
-            "morph_mesh_path": "./presets/correc-meshes/NO-WARP.mdl",
+            "morph_mesh_path": "./presets/correc-meshes/ds2.mdl",
             "init_correction_morph": false,
             "name": "DS-2",
             "offset_position": {
@@ -919,7 +919,7 @@
                 "x": 1920,
                 "y": 1200
             },
-            "rtt_resolution": 1600,
+            "rtt_resolution": 1024,
             "viewport_pos": {
                 "x": 1920,
                 "y": 0

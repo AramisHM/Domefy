@@ -499,6 +499,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
     // for it.
     Node *retCam;  // the camera node we are going to return
     {
+        // create the scene
         Scene *geometryCorrectionScene_ = new Scene(context_);
         geometryCorrectionScene_->Clear();
         geometryCorrectionScene_->CreateComponent<Octree>(LOCAL);
@@ -525,128 +526,126 @@ Node *Sample::CreateDomeCamera(Projection p) {
             // methode, and use the blender-warped mesh instead
             correctionMeshPath = p._customCorrectionMeshPath;
         }
-        auto *originalModel =
-            cache->GetResource<Model>(correctionMeshPath.c_str());
-        if (!originalModel) {
-            URHO3D_LOGERROR("Model not found, cannot initialize example scene");
-            return NULL;
-        }
 
-        // Get the vertex buffer from the first geometry's first LOD level
-        VertexBuffer *buffer =
-            originalModel->GetGeometry(0, 0)->GetVertexBuffer(0);
-
-        const auto *vertexData =
-            (const unsigned char *)buffer->Lock(0, buffer->GetVertexCount());
-
-        if (vertexData) {
-            unsigned numVertices = buffer->GetVertexCount();
-            unsigned vertexSize = buffer->GetVertexSize();
-
-            // Copy the original vertex positions
-            for (unsigned i = 0; i < numVertices; ++i) {
-                const Vector3 &src = *reinterpret_cast<const Vector3 *>(
-                    vertexData + i * vertexSize);
-                originalVertices_.Push(src);
-            }
-            buffer->Unlock();
-
-            // Detect duplicate vertices to allow seamless animation
-            vertexDuplicates_.Resize(originalVertices_.Size());
-            for (unsigned i = 0; i < originalVertices_.Size(); ++i) {
-                vertexDuplicates_[i] = i;  // Assume not a duplicate
-                for (unsigned j = 0; j < i; ++j) {
-                    if (originalVertices_[i].Equals(originalVertices_[j])) {
-                        vertexDuplicates_[i] = j;
-                        break;
-                    }
-                }
-            }
-        } else {
-            URHO3D_LOGERROR(
-                "Failed to lock the model vertex buffer to get original "
-                "vertices");
-            return NULL;
-        }
-
-        // Create StaticModel in the scene. Clone the model so we
-        // can modify the vertex data individually
-        geometryCorrectionMesh =
-            geometryCorrectionNode->CreateComponent<StaticModel>();
-        SharedPtr<Model> cloneModel = originalModel->Clone();
-        geometryCorrectionMesh->SetModel(cloneModel);
+        // TODO: clean this code, too messy.
+        // Here we alternate between in-house mesh deform or extenal (e.g.
+        // blender) generated calibration
         if (p._hasCustomCorrectionMesh) {
             geometryCorrectionNode->SetRotation(
                 Quaternion(270.0f, -90.0f, 90.0f));
-            // Note, the correction mesh camera scene, is squarish... the
+            // The correction mesh camera scene, is squarish... the
             // viewport
             // is then streched to fit the final viewport.
             geometryCorrectionNode->SetScale(Vector3(2, 1, 2));
-            // -0.0045f approximates to fit the borders
-            geometryCorrectionNode->SetPosition(Vector3(-1, 1, -0.0045f));
+            geometryCorrectionNode->SetPosition(
+                Vector3(-1, 1, -0.0045f));  // approximates to fit the borders
+            geometryCorrectionMesh =
+                geometryCorrectionNode->CreateComponent<StaticModel>();
+            geometryCorrectionMesh->SetModel(
+                cache->GetResource<Model>(correctionMeshPath.c_str()));
         } else {
+            auto *originalModel =
+                cache->GetResource<Model>(correctionMeshPath.c_str());
+            if (!originalModel) {
+                URHO3D_LOGERROR(
+                    "Model not found, cannot initialize example scene");
+                return NULL;
+            }
+            // Get the vertex buffer from the first geometry's first LOD level
+            VertexBuffer *buffer =
+                originalModel->GetGeometry(0, 0)->GetVertexBuffer(0);
+
+            const auto *vertexData = (const unsigned char *)buffer->Lock(
+                0, buffer->GetVertexCount());
+
+            if (vertexData) {
+                unsigned numVertices = buffer->GetVertexCount();
+                unsigned vertexSize = buffer->GetVertexSize();
+
+                // Copy the original vertex positions
+                for (unsigned i = 0; i < numVertices; ++i) {
+                    const Vector3 &src = *reinterpret_cast<const Vector3 *>(
+                        vertexData + i * vertexSize);
+                    originalVertices_.Push(src);
+                }
+                buffer->Unlock();
+
+                // Detect duplicate vertices to allow seamless animation
+                vertexDuplicates_.Resize(originalVertices_.Size());
+                for (unsigned i = 0; i < originalVertices_.Size(); ++i) {
+                    vertexDuplicates_[i] = i;  // Assume not a duplicate
+                    for (unsigned j = 0; j < i; ++j) {
+                        if (originalVertices_[i].Equals(originalVertices_[j])) {
+                            vertexDuplicates_[i] = j;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                URHO3D_LOGERROR(
+                    "Failed to lock the model vertex buffer to get original "
+                    "vertices");
+                return NULL;
+            }
+
+            // Create StaticModel in the scene. Clone the model so we
+            // can modify the vertex data individually
+            geometryCorrectionMesh =
+                geometryCorrectionNode->CreateComponent<StaticModel>();
+            SharedPtr<Model> cloneModel = originalModel->Clone();
+            geometryCorrectionMesh->SetModel(cloneModel);
+
             geometryCorrectionNode->SetRotation(
                 Quaternion(180.0f, -90.0f, 0.0f));
+
+            // Store the cloned vertex buffer that we will modify when
+            // animating
+            animatingBuffers_.Push(SharedPtr<VertexBuffer>(
+                cloneModel->GetGeometry(0, 0)->GetVertexBuffer(0)));
+
+            // apply the morph correction loaded from config file
+            for (auto v : p._morphMesh) {
+                AnimateVertex(p._index, v.index, v.x, v.y);
+            }
         }
 
         _geometryCorrectionNodes.push_back(geometryCorrectionNode);
 
-        // Store the cloned vertex buffer that we will modify when
-        // animating
-        animatingBuffers_.Push(SharedPtr<VertexBuffer>(
-            cloneModel->GetGeometry(0, 0)->GetVertexBuffer(0)));
-
-        // create rtt onto geometry correction mesh
-        SharedPtr<Texture2D> geometryCorrectionRenderTexture(
-            new Texture2D(context_));
-
-        // TODO: this size should have its own config value on the
-        // config.JSON
-        geometryCorrectionRenderTexture->SetSize(
-            p._viewport.getR(), p._viewport.getS(), Graphics::GetRGBFormat(),
-            TEXTURE_RENDERTARGET);
-
-        // Setup RTT
+        // Create RTT texture
+        SharedPtr<Texture2D> renderTexture(new Texture2D(context_));
+        renderTexture->SetSize(p._viewport.getR(), p._viewport.getS(),
+                               Graphics::GetRGBFormat(), TEXTURE_RENDERTARGET);
+        renderTexture->SetFilterMode(FILTER_BILINEAR);
+        // custom material
         SharedPtr<Material> renderMaterial(new Material(context_));
         renderMaterial->SetTechnique(
             0, cache->GetResource<Technique>("Techniques/DiffUnlit.xml"));
-        renderMaterial->SetTexture(TU_DIFFUSE, geometryCorrectionRenderTexture);
-        renderMaterial->SetDepthBias(BiasParameters(-0.0001f, 0.0f));
-        RenderSurface *surface =
-            geometryCorrectionRenderTexture->GetRenderSurface();
-        surface->SetUpdateMode(SURFACE_UPDATEALWAYS);
+        renderMaterial->SetTexture(TU_DIFFUSE, renderTexture);
+        geometryCorrectionMesh->SetMaterial(renderMaterial);
 
+        // Get the texture's RenderSurface object (exists when the texture has
+        // been created in rendertarget mode) and define the viewport for
+        // rendering the second scene, similarly as how backbuffer viewports are
+        // defined to the Renderer subsystem. By default the texture viewport
+        // will be updated when the texture is visible in the main view
+        RenderSurface *surface = renderTexture->GetRenderSurface();
         SharedPtr<Viewport> rttViewport(new Viewport(
             context_, sceneDome_, cameraNodeDome_->GetComponent<Camera>()));
         surface->SetViewport(0, rttViewport);
 
-        geometryCorrectionMesh->SetMaterial(0, renderMaterial);
+        // final camera
         {
             Node *geometryCorrCameraNode =
                 geometryCorrectionScene_->CreateChild();
             Camera *geometryCorrCamera =
                 geometryCorrCameraNode->CreateComponent<Camera>();
-            geometryCorrCameraNode->SetPosition(Vector3(
-                0, 0, -1.005f));  // Back off a bit, just to show the
-                                  // outline created by the scene ambient
-                                  // color TODO: should be parametrized and
-                                  // configurable on the new calibrator
-
+            geometryCorrCameraNode->SetPosition(Vector3(0, 0, -1.005f));
             geometryCorrCameraNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             geometryCorrCamera->SetFarClip(p._farClip);
             geometryCorrCamera->SetAspectRatio(1.0f);
             geometryCorrCamera->SetFov(90.0f);
             cameraNodeMorphcorrList_.push_back(geometryCorrCameraNode);
             retCam = geometryCorrCameraNode;
-        }
-
-        // apply the morph correction loaded from config file
-        if (!p._hasCustomCorrectionMesh &&
-            p._useRTMorphData) {  // do so, only if has no custom
-                                  // external correction mesh
-            for (auto v : p._morphMesh) {
-                AnimateVertex(p._index, v.index, v.x, v.y);
-            }
         }
 
         // Add calibration aid mesh
@@ -665,7 +664,7 @@ Node *Sample::CreateDomeCamera(Projection p) {
 #ifdef FPMED_LATEST_URHO3D
         t->SetFilterMode(FILTER_NEAREST_ANISOTROPIC);
 #else
-        // t->SetFilterMode(FILTER_NEAREST);
+        t->SetFilterMode(FILTER_ANISOTROPIC);
 #endif
         t->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         t->SetAddressMode(COORD_V, ADDRESS_CLAMP);

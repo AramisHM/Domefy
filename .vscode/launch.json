@@ -53,7 +53,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/bin/fpmed",
       "args": [
-        "./Data/Scripts/DefaultPresentation.as",
+        "./Data/Scripts/Pathfinder.as",
         "./presets/default.json"
       ],
       "stopAtEntry": false,
