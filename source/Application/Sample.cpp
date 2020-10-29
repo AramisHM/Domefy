@@ -294,8 +294,11 @@ Node *Sample::CreateDomeCamera(Projection p) {
         cache->GetResource<Material>("Dome/CAL-GRID/domegrid.xml"));
     // Invert the mesh
     domeGridNode->SetScale(
-        Vector3(-1.265f, 1.265f, 1.265f));  // this size is a magic number.
-                                            // don't boder trying to understand.
+        Vector3(-1.2808f, 1.2808f,
+                1.2808f));  // This custom size is used to match to the size of
+                            // the domeNode, they are different sizes, this one
+                            // being the normalized 1.0, and domeNode being a
+                            // random number (1.2808)
     domeGridNode->Rotate(Quaternion(0.0f, 90.0f, 0.0f));
     domeGridNode->SetEnabled(false);  // initially, it should be hidden
 
