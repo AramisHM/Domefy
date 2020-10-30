@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"image/png"
 	"io/ioutil"
 	"log"
 	"net"
@@ -20,6 +21,7 @@ import (
 	"github.com/AramisHM/Domefy/webserver/config"
 	"github.com/AramisHM/Domefy/webserver/logger"
 	"github.com/AramisHM/Domefy/webserver/rest"
+	"github.com/kbinani/screenshot"
 	"github.com/mdp/qrterminal"
 
 	"syscall"
@@ -72,7 +74,6 @@ func ShowWindow(windowName string) {
 	}
 }
 
-
 // RegisterDomefy -
 func RegisterDomefy(router *gin.Engine) {
 	router.POST("/setExampleTextMessage", func(c *gin.Context) { SetExampleTextMessage(c) })
@@ -86,6 +87,42 @@ func RegisterDomefy(router *gin.Engine) {
 	router.POST("/ShowCEF", func(c *gin.Context) { ShowCEF(c) })
 	router.POST("/HideSTD", func(c *gin.Context) { HideStd(c) })
 	router.POST("/ShowSTD", func(c *gin.Context) { ShowStd(c) })
+	router.POST("/GetScreens", func(c *gin.Context) { GetScreens(c) })
+}
+
+// GetScreens - Gets a screenshot of each monitor from the this computer
+func GetScreens(c *gin.Context) {
+	n := screenshot.NumActiveDisplays()
+
+	paramObj := rest.GPPAr(c)
+	saveDir, gsd := paramObj["save_dir"].(string)
+
+	if gsd {
+		for i := 0; i < n; i++ {
+			bounds := screenshot.GetDisplayBounds(i)
+
+			img, err := screenshot.CaptureRect(bounds)
+			if err != nil {
+				panic(err)
+			}
+
+			pathToSave := "./" + saveDir
+			if _, err := os.Stat(pathToSave); os.IsNotExist(err) {
+				os.Mkdir(pathToSave, os.ModePerm)
+			}
+
+			fileName := fmt.Sprintf(pathToSave+"/"+"%d_%dx%d.png", i, bounds.Dx(), bounds.Dy())
+			file, _ := os.Create(fileName)
+			defer file.Close()
+			png.Encode(file, img)
+
+			fmt.Printf("#%d : %v \"%s\"\n", i, bounds, fileName)
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, "Missing target dir to save the files.")
+	}
+
+	c.JSON(http.StatusOK, "done")
 }
 
 // HideStd -
