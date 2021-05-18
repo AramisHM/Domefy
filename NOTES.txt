@@ -1,1 +1,3 @@
-18/10/2020 - The feature to load custom calibraton geometry only works if all viewports use custom geometry, IF you want to use in-house geometry correction, no projection (from json file) may use custom external geometry at all, otherwise, it breaks.
+18/10/2020 - The feature to load custom calibraton geometry only works if all viewports
+use custom geometry, IF you want to use in-house geometry correction, no projection
+(from json file) may use custom external geometry at all, otherwise, it breaks.

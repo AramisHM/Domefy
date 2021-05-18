@@ -236,7 +236,7 @@ int Slide::LoadSlideFromJSON(std::string path) {
 
             // set texture format
             t->SetMipsToSkip(QUALITY_HIGH, 0);
-            t->SetFilterMode(FILTER_BILINEAR);
+            t->SetFilterMode(FILTER_TRILINEAR);
             // t->SetSize(CEFBUF_WIDTH, CEFBUF_HEIGHT,
             // Graphics::GetRGBAFormat());
 
