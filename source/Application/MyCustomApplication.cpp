@@ -3,21 +3,12 @@
 #include <iostream>
 #include <sstream>
 
-// Our custom componenets
-#include <Application/Components/AnatomicViewer/AnatomicViewer.h>
-#include <Application/Components/GrabbableUI/GrabbableUI.h>
-#include <Application/Components/Slide/Slide.h>
-#include <Application/Components/VHP/VHP.h>
 #ifdef CEF_INTEGRATION
 #include <Application/Components/WebBrowser/WebBrowser.h>
 #include <Application/WebBrowser/CEFWebBrowser.h>
 #endif
 #include <Core/ProgramConfig.h>
 #include <Urho3D/AngelScript/APITemplates.h>
-
-#ifdef WIN32
-#include <Windows.h>
-#endif
 
 extern std::string commandString;  // main.cpp
 extern std::string scriptPath;
@@ -39,13 +30,9 @@ void MyCustomApplication::RegisterCustomScriptAPI() {
     context_->RegisterFactory<VHP>();
     context_->RegisterFactory<GrabbableUI>();
     context_->RegisterFactory<Slide>();
-    context_->RegisterFactory<AnatomicViewer>();
 #ifdef CEF_INTEGRATION
     context_->RegisterFactory<WebBrowser>();
 #endif
-    context_->RegisterFactory<SlideTransitionAnimatior>();
-    // TVComponent::RegisterObject(context_); // alternative way to do this
-
     // Register custom Urho3D componenets on scripting engine
     asIScriptEngine *engine = GetSubsystem<Script>()->GetScriptEngine();
 

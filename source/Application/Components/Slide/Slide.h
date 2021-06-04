@@ -13,19 +13,17 @@
 #ifndef SLIDE_H
 #define SLIDE_H
 
+#include <Application/Components/GrabbableUI/GrabbableUI.h>
 #include <Core/CoreParameters.h>
 #include <Math/vector2.h>
 #include <Math/vector3.h>
+#include <Urho3D.h>
+#include <Urho3D/Scene/LogicComponent.h>
+#include <Urho3DAll.h>
+
 #include <iostream>
 #include <string>
 #include <vector>  // c++ standar vector calss
-
-#include <Urho3D.h>
-#include <Urho3DAll.h>
-
-#include <Application/Components/GrabbableUI/GrabbableUI.h>
-#include <Application/SlideReader/SlideReader.h>  // TODO: refactor this cllass to SlideReader
-#include <Urho3D/Scene/LogicComponent.h>
 using namespace Urho3D;
 using namespace fpmed;
 
@@ -43,10 +41,6 @@ class Slide : public LogicComponent {
     URHO3D_OBJECT(Slide, LogicComponent);
 
    private:
-    // the slide reader, reads files and convert info that we can bring to our
-    // 3D application
-    fpmed::Slides slideReader;
-
     // this holds the individual slides materials
     Texture2D *slideTextureArray[MAX_SLIDE_COUNT];
 

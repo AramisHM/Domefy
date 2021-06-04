@@ -1,6 +1,6 @@
 //
 // FpMED - Framework for Distributed Multiprojection Systems
-// Copyright Aramis Hornung Moraes 2014-2019
+// Copyright Aramis Hornung Moraes 2014-2021
 //
 
 #ifndef FPMED_H
@@ -11,15 +11,7 @@
 #endif
 
 #include <Core/CoreParameters.h>
-#include <Core/FpmedCore.h>
 #include <stdio.h>
 #include <string.h>
-
-//#include "Splash.h"
-
-//#include "Urho3DAll.h"
-
-// major, year+month, version, minor
-#define fpmed_version "0.195.0.1"
 
 #endif

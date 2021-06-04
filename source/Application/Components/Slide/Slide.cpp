@@ -29,11 +29,7 @@ Slide::~Slide() {}
 
 // CreateSlide - Load data and creates the slide model into the root node
 void Slide::CreateSlide(Urho3D::String filePath) {
-    // TODO: reade the code below and remove unecessary blocks
-    // ------- slide node PROTOTYPE of FDS file -------
-    // slideReader.LoadSlides(
-    //     filePath.CS otring());  // default was: ./presentation/set.xml
-    std::string pathString = std::string(filePath.CString());
+      std::string pathString = std::string(filePath.CString());
     nLoadedSlides = this->LoadSlideFromJSON(pathString);
 
     Urho3D::ResourceCache *cache = GetSubsystem<ResourceCache>();

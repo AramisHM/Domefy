@@ -1,21 +1,19 @@
-
 //
 // FpMED - Framework for Distributed Multiprojection Systems
-// Copyright Aramis Hornung Moraes 2014-2020
+// Copyright Aramis Hornung Moraes 2014-2021
 //
 
 #include <Application/MyCustomApplication.h>
 #include <Application/Sample.h>
+#include <Core/ProgramConfig.h>  // Singleton
 #include <FPMED.H>
 #include <Urho3D.h>
 #include <Urho3DAll.h>
+#include <libLameNet.h>  // network
 
 #ifdef CEF_INTEGRATION
 #include <Application/WebBrowser/CEFWebBrowser.h>
 #endif
-
-#include <Core/ProgramConfig.h>  // Singleton
-#include <libLameNet.h>          // network
 
 #ifdef WIN32
 #ifdef _MSC_VER
@@ -63,18 +61,19 @@ void ListenForExternalCommands() {
 int main(int argc, char *argv[]) {
     Urho3D::ParseArguments(argc, argv);
     Urho3D::Context *context = new Urho3D::Context();
+    Urho3D::SetRandomSeed(time(NULL));
     MyCustomApplication *application = new MyCustomApplication(context);
     ProgramConfig *p1 = ProgramConfig::GetInstance();
 
     LameNetStart();
 
 #ifdef CEF_INTEGRATION
-    extChanel = LameListen("42872");  // udp server
+    extChanel = LameListen("42872");
 #else
     extChanel = LameListen("42871");
 #endif
 
-    fpmedInit(argc, argv);
+    // fpmedInit(argc, argv);  // TODO: recap
 
 #ifndef CEF_INTEGRATION
     if (argc <= 3) {  // config
@@ -82,7 +81,7 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    p1->LoadConfigFile("./config.json", viewportConfigPath);
+    p1->LoadConfigFile("./config.json", "");
 
     if (argc > 1 && argc < 4) {
         scriptPath = std::string(argv[1]);
@@ -105,8 +104,8 @@ int main(int argc, char *argv[]) {
         }
         application->Stop();
     }
-
     application->Stop();
+
     delete application;
     delete context;
     LameNetStop();

@@ -86,26 +86,6 @@ void GrabbableUI::MoveArroundOrbitableReference(
         Quaternion(pitch + correction.x_, yaw + correction.y_, correction.z_));
 }
 
-// void GrabbableUI::MoveArroundOrbitableReference(float yaw, float pitch,
-//                                                 float radius,
-//                                                 Urho3D::Vector3 reference,
-//                                                 Urho3D::Vector3 correction) {
-//     coords = Vec2<float>(yaw, pitch);
-//     radius_ = radius;
-//     if (orbitableNode) {
-//         float radiusMagnetude = Cos(Abs(pitch));
-//         node_->SetPosition(
-//             Vector3((Cos(yaw) * radius * radiusMagnetude) + reference.x_,
-//                     (Sin(pitch) * radius) + reference.y_,
-//                     (-Sin(yaw) * radius * radiusMagnetude) + reference.z_));
-
-//         // Construct new orientation for the camera scene node from yaw and
-//         // pitch. Roll is fixed to zero
-//         node_->SetRotation(Quaternion(pitch + correction.x_,
-//                                       yaw + correction.y_, correction.z_));
-//     }
-// }
-
 void GrabbableUI::ApplyMouseMove(Vec2<int> mouseDelta) {
     // Moves slide arround camera
     // Get mouse move
