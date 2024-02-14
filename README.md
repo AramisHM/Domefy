@@ -1,8 +1,49 @@
-![N|Solid](https://bitbucket.org/Aramis/domefy/raw/d301b980947a867a387198b9fae519b5d6154c12/bin/Data/fpmed/domefy_logo256.png)
-
 # Domefy
-Domefy is an application framework used for development of multi-projector
-systems based software. It is written in C++ and uses Urho3D as core engine.
+
+**What is it:** Domefy is an application framework designed for multi-projector systems, particularly enhancing the immersive environments of fulldome theaters. It is written in C++ and uses Urho3D as core engine
+
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/1.jpg)
+
+**Why:** A fulldome is a unique, dome-shaped projection space that surrounds viewers, offering a captivating and all-encompassing visual experience. Domefy serves as a bridge between these fulldome theaters and the vast world of online immersive content, providing tools for developing interactive experiences controlled through mobile devices like smartphones and tablets. In essence, Domefy brings a blend of technology, interactivity, and online content to elevate the immersive experience in fulldome environments.
+
+Architecture:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/2.png)
+
+A slideshow demonstration using the Domefy framework:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/5.jpeg)
+
+Example 39 "Crowd Navigation" (in agenscript) of Urho3D ported and runnning in a real Fulldome Theater:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/4.jpg)
+
+A port of angelscript example 11 "Physics" of Urho and a prototype panel that controls the backend of the framework:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/6.png)
+
+A port of angelscript example 46 "Raycast Vehicle" of Urho and a prototype of the controls that user may open in any smartphone with a browser:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/7.png)
+
+Prototype of regular Smartphone as controller for application:
+![alt tag](https://github.com/AramisHM/Domefy/blob/master/snapshots/3.jpeg)
+
+## Video demonstrations
+Video demonstration of controlling application with smartphone:
+
+
+[![Controls](https://github.com/AramisHM/Domefy/blob/master/snapshots/tn1.jpeg)](https://youtu.be/ge5aO6qlKP4)
+
+Video demonstration of calibration:
+
+
+[![Controls](https://github.com/AramisHM/Domefy/blob/master/snapshots/tn3.jpeg)](https://youtu.be//KAlLalKcC7o)
+
+Video demonstration of VHP in fulldome **(sensitive content!!, contain medical images)**:
+
+
+[![Controls](https://github.com/AramisHM/Domefy/blob/master/snapshots/tn2.jpeg)](https://youtu.be/JmlqDRLmoUM)
+
+Video demonstration of VHP planecut **(sensitive content!!, contain medical images)**:
+
+
+[![Controls](https://github.com/AramisHM/Domefy/blob/master/snapshots/tn4.jpeg)](https://youtu.be/MgEEJWsn2o8)
 
 ## Build/Installation
 The following steps shows how to fully compile the Domefy for Windows and Linux
@@ -101,9 +142,4 @@ i) Check if you are debugging with GCC for mingw32 5.1.0
 ------------------------
 
 Afther that, make sure you have all the packages installed and happy coding. :-)
-
-Proudly made in Brazil [![Brazil Flag](https://www.escavador.com/assets/escavador/user/img/flag/24/Brazil.png)]()
-
-Development Leader: \
-Aramis Hornung Moraes [![N|Solid](https://plus.google.com/_/focus/photos/public/AIbEiAIAAABDCJic9sjGqsKHaiILdmNhcmRfcGhvdG8qKDQ5ZTQzZTQ3MTc4MGM0NGZjMTgwMzU0MzhiMzM2ZTc0NWVlNjY4Y2EwATerYkh1psreGZrSbWKM4OxVztVc?sz=128)](https://www.aramishm.com/about-aramis)
 
